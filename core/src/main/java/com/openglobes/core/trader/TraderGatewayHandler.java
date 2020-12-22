@@ -37,10 +37,10 @@ import java.util.Objects;
  */
 public class TraderGatewayHandler extends IdTranslator implements ITraderGatewayHandler {
 
-    private final TraderGatewayRuntime info;
+    private final TraderContext ctx;
 
-    public TraderGatewayHandler(TraderGatewayRuntime info) {
-        this.info = info;
+    public TraderGatewayHandler(TraderContext context) {
+        this.ctx = context;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
     @Override
     public void onResponse(Response response) {
         try {
-            info.getEngine().getDataSource().getConnection().addResponse(response);
+            ctx.getEngine().getDataSource().getConnection().addResponse(response);
             preprocess(response);
             if (response.getAction() == ActionType.DELETE) {
                 dealDelete(response);
@@ -229,7 +229,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
          */
         var price = response.getPrice();
         var instrument = getInstrument(response.getInstrumentId());
-        var amount = info.getEngine().getAlgorithm().getAmount(price, instrument);
+        var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
         contract.setCloseAmount(amount);
         contract.setStatus(ContractStatus.CLOSED);
         conn.updateContract(contract);
@@ -304,7 +304,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
          */
         var price = trade.getPrice();
         var instrument = getInstrument(trade.getInstrumentId());
-        var amount = info.getEngine().getAlgorithm().getAmount(price, instrument);
+        var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
         contract.setOpenAmount(amount);
         contract.setStatus(ContractStatus.OPEN);
         contract.setTradeId(trade.getTradeId());
@@ -406,7 +406,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
     }
 
     private ITraderDataSource getDataSource() throws GatewayException {
-        var ds = info.getEngine().getDataSource();
+        var ds = ctx.getEngine().getDataSource();
         if (ds == null) {
             throw new GatewayException(Exceptions.DATASOURCE_NULL.code(),
                                        Exceptions.DATASOURCE_NULL.message());
@@ -434,7 +434,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
     }
 
     private Instrument getInstrument(String instrumentId) throws EngineException {
-        var instrument = info.getEngine().getRelatedInstrument(instrumentId);
+        var instrument = ctx.getEngine().getRelatedInstrument(instrumentId);
         if (instrument == null) {
             throw new EngineException(
                     Exceptions.INSTRUMENT_NULL.code(),
@@ -464,12 +464,12 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
         return srcId;
     }
 
-    private Response initResponse(Request request) {
+    private Response initResponse(Request request) throws EngineException {
         var r = new Response();
         r.setInstrumentId(request.getInstrumentId());
         r.setOrderId(request.getOrderId());
         r.setTraderId(request.getTraderId());
-        r.setTradingDay(info.getTrader().getServiceInfo().getTradingDay());
+        r.setTradingDay(ctx.getGatewayInfo().getTradingDay());
         r.setSignature(Utils.nextUuid().toString());
         return r;
     }
@@ -522,7 +522,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
              */
             super.countDown(trade.getOrderId(), trade.getQuantity());
             trade.setOrderId(getSrcId(trade.getOrderId()));
-            trade.setTraderId(info.getTraderId());
+            trade.setTraderId(ctx.getTraderId());
         }
         catch (Throwable th) {
             throw new EngineException(Exceptions.PREPROC_RSPS_FAILED.code(),
@@ -542,7 +542,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
              */
             super.countDown(response.getOrderId(), rest);
             response.setOrderId(getSrcId(response.getOrderId()));
-            response.setTraderId(info.getTraderId());
+            response.setTraderId(ctx.getTraderId());
         }
         catch (Throwable th) {
             throw new EngineException(Exceptions.PREPROC_RSPS_FAILED.code(),
@@ -552,7 +552,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
     }
 
     private <T> void publishEvent(Class<T> clazz, T object) {
-        var e = (TraderEngine) info.getEngine();
+        var e = (TraderEngine) ctx.getEngine();
         e.publishEvent(clazz, object);
     }
 

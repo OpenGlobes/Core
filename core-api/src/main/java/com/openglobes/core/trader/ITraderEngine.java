@@ -49,9 +49,9 @@ public interface ITraderEngine {
 
     ServiceRuntimeStatus getStatus();
 
-    TraderGatewayRuntime getTraderServiceInfo(int traderId) throws EngineException;
+    TraderGatewayContext getTraderGatewayContext(int traderId) throws EngineException;
 
-    Collection<TraderGatewayRuntime> getTraderServiceRuntimes() throws EngineException;
+    Collection<TraderGatewayContext> getTraderGatewayContexts() throws EngineException;
 
     void settle(Properties properties) throws EngineException;
 

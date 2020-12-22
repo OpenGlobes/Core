@@ -45,7 +45,7 @@ public class TraderEngine implements ITraderEngine {
     private final HashMap<String, Instrument> instruments;
     private final HashMap<Long, Integer> orderTraders;
     private ServiceRuntimeStatus status;
-    private final HashMap<Integer, ExtendedTraderGatewayRuntime> traders;
+    private final HashMap<Integer, TraderContext> traders;
 
     public TraderEngine() {
         traders = new HashMap<>(32);
@@ -56,7 +56,7 @@ public class TraderEngine implements ITraderEngine {
 
     @Override
     public void enableTrader(int traderId, boolean enabled) throws EngineException {
-        var i = getTraderServiceInfo(traderId);
+        var i = getTraderGatewayContext(traderId);
         i.setEnabled(enabled);
     }
 
@@ -113,13 +113,17 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public TraderGatewayRuntime getTraderServiceInfo(int traderId) throws EngineException {
-        return findTraderServiceRuntimeByTraderId(traderId);
+    public TraderGatewayContext getTraderGatewayContext(int traderId) throws EngineException {
+        return findContextByTraderId(traderId).getTraderGatewayContext();
     }
 
     @Override
-    public Collection<TraderGatewayRuntime> getTraderServiceRuntimes() throws EngineException {
-        return new HashSet<>(traders.values());
+    public Collection<TraderGatewayContext> getTraderGatewayContexts() throws EngineException {
+        var r = new HashSet<TraderGatewayContext>(64);
+        traders.values().forEach(c -> {
+            r.add(c.getTraderGatewayContext());
+        });
+        return r;
     }
 
     @Override
@@ -142,10 +146,6 @@ public class TraderEngine implements ITraderEngine {
                                       Exceptions.UNEXPECTED_ERROR.message(),
                                       th);
         }
-    }
-
-    private ServiceRuntimeStatus buildStatus(TraderEngineStatuses enums) {
-        return new ServiceRuntimeStatus(enums.code(), enums.message());
     }
 
     @Override
@@ -222,17 +222,17 @@ public class TraderEngine implements ITraderEngine {
 
     @Override
     public void setInitProperties(int traderId, Properties properties) throws EngineException {
-        getTraderServiceInfo(traderId).setInitProperties(properties);
+        getTraderGatewayContext(traderId).setInitProperties(properties);
     }
 
     @Override
     public void setSettleProperties(int traderId, Properties properties) throws EngineException {
-        getTraderServiceInfo(traderId).setSettleProperties(properties);
+        getTraderGatewayContext(traderId).setSettleProperties(properties);
     }
 
     @Override
     public void setStartProperties(int traderId, Properties properties) throws EngineException {
-        getTraderServiceInfo(traderId).setStartProperties(properties);
+        getTraderGatewayContext(traderId).setStartProperties(properties);
     }
 
     @Override
@@ -286,17 +286,21 @@ public class TraderEngine implements ITraderEngine {
         /*
          * Verify trader with specified ID exists, or throw exception.
          */
-        getTraderServiceInfo(traderId);
+        getTraderGatewayContext(traderId);
         traders.remove(traderId);
     }
 
     private void addTrader(int traderId, ITraderGateway trader) {
-        var i = new ExtendedTraderGatewayRuntime();
-        i.setEnabled(false);
-        i.setEngine(this);
-        i.setTrader(trader);
-        i.setTraderId(traderId);
-        traders.put(traderId, i);
+        var c = new TraderGatewayContext();
+        c.setEnabled(false);
+        c.setEngine(this);
+        c.setTrader(trader);
+        c.setTraderId(traderId);
+        traders.put(traderId, new TraderContext(c));
+    }
+
+    private ServiceRuntimeStatus buildStatus(TraderEngineStatuses enums) {
+        return new ServiceRuntimeStatus(enums.code(), enums.message());
     }
 
     /*
@@ -315,17 +319,6 @@ public class TraderEngine implements ITraderEngine {
             return;
         }
         publishEvent(ServiceRuntimeStatus.class, s);
-    }
-
-    <T> void publishEvent(Class<T> clazz, T object) {
-        try {
-            es.publish(clazz, object);
-        }
-        catch (EventSourceException ex) {
-            throw new EngineRuntimeException(Exceptions.EVENT_PUBLISH_FAIL.code(),
-                                             Exceptions.EVENT_PUBLISH_FAIL.message(),
-                                             ex);
-        }
     }
 
     private boolean canClose(Contract c, Request request) throws EngineException {
@@ -350,36 +343,6 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void deleteOrderRequest(Request request) throws EngineException {
-        var orderId = request.getOrderId();
-        var traderId = findTraderIdByOrderId(orderId);
-        var rt = findTraderServiceRuntimeByTraderId(traderId);
-        var h = rt.getHandler();
-        if (h == null) {
-            throw new EngineException(Exceptions.TRADER_GW_HANDLER_NULL.code(),
-                                      Exceptions.TRADER_GW_HANDLER_NULL.message());
-        }
-        var r = new Response();
-        r.setInstrumentId(request.getInstrumentId());
-        r.setOrderId(orderId);
-        r.setTraderId(traderId);
-        r.setAction(ActionType.DELETE);
-        r.setOffset(request.getOffset());
-        r.setDirection(request.getDirection());
-        r.setTradingDay(rt.getTrader().getServiceInfo().getTradingDay());
-        r.setSignature(Utils.nextUuid().toString());
-        r.setStatusCode(0);
-
-        try {
-            h.onResponse(r);
-        }
-        catch (Throwable th) {
-            callOnException(new EngineRuntimeException(Exceptions.DELETE_ORDER_FAILED.code(),
-                                                       Exceptions.DELETE_ORDER_FAILED.message(),
-                                                       th));
-        }
-    }
-
     private void changeStatus(TraderEngineStatuses enums) {
         this.status = buildStatus(enums);
         callOnStatusChange(this.status);
@@ -396,16 +359,11 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void check1(Integer key, TraderGatewayRuntime rt) throws EngineException {
+    private void check1(Integer key, TraderContext rt) throws EngineException {
         if (rt == null) {
             throw new EngineException(
                     Exceptions.TRADER_ID_NOT_FOUND.code(),
                     Exceptions.TRADER_ID_NOT_FOUND.message() + "(Trader ID:" + key.toString() + ")");
-        }
-        if (rt.getTrader() == null) {
-            throw new EngineException(
-                    Exceptions.TRADER_GATEWAY_NULL.code(),
-                    Exceptions.TRADER_GATEWAY_NULL.message() + "(Trader ID:" + key.toString() + ")");
         }
     }
 
@@ -485,6 +443,93 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
+    private void deleteOrderRequest(Request request) throws EngineException {
+        var orderId = request.getOrderId();
+        var traderId = findTraderIdByOrderId(orderId);
+        var ctx = findContextByTraderId(traderId);
+        var h = ctx.getHandler();
+        if (h == null) {
+            throw new EngineException(Exceptions.TRADER_GW_HANDLER_NULL.code(),
+                                      Exceptions.TRADER_GW_HANDLER_NULL.message());
+        }
+        var r = new Response();
+        r.setInstrumentId(request.getInstrumentId());
+        r.setOrderId(orderId);
+        r.setTraderId(traderId);
+        r.setAction(ActionType.DELETE);
+        r.setOffset(request.getOffset());
+        r.setDirection(request.getDirection());
+        r.setTradingDay(ctx.getGatewayInfo().getTradingDay());
+        r.setSignature(Utils.nextUuid().toString());
+        r.setStatusCode(0);
+
+        try {
+            h.onResponse(r);
+        }
+        catch (Throwable th) {
+            callOnException(new EngineRuntimeException(Exceptions.DELETE_ORDER_FAILED.code(),
+                                                       Exceptions.DELETE_ORDER_FAILED.message(),
+                                                       th));
+        }
+    }
+
+    private void deleteRequest(Request request,
+                               TraderContext context,
+                               int requestId) throws EngineException {
+        var ids = context.getIdTranslator().getDestinatedIds(request.getOrderId());
+        if (ids == null) {
+            throw new EngineException(Exceptions.DEST_ID_NOT_FOUND.code(),
+                                      Exceptions.DEST_ID_NOT_FOUND.message()
+                                      + "(Source order ID:" + request.getOrderId() + ")");
+        }
+        for (var i : ids) {
+            /*
+             * If the order is fulfilled, don't cancel it any more.
+             */
+            var cd = context.getIdTranslator().getDownCountByDestId(i);
+            if (cd == null) {
+                throw new EngineException(
+                        Exceptions.COUNTDOWN_NOT_FOUND.code(),
+                        Exceptions.COUNTDOWN_NOT_FOUND.message() + "(Destinated ID: " + i + ")");
+            }
+            if (cd <= 0) {
+                continue;
+            }
+            var c = Utils.copy(request);
+            c.setOrderId(i);
+            try {
+                context.insert(c, requestId);
+            }
+            catch (GatewayException ex) {
+                throw new EngineException(ex.getCode(),
+                                          ex.getMessage(),
+                                          ex);
+            }
+        }
+    }
+
+    private TraderContext findContextByTraderId(int traderId) throws EngineException {
+        var rt = traders.get(traderId);
+        check1(traderId, rt);
+        return rt;
+    }
+
+    private TraderContext findContextRandomly(Request request) throws EngineException {
+        var a = new ArrayList<>(traders.keySet());
+        traders.forEach((k, v) -> {
+            if (v.isEnabled()) {
+                a.add(k);
+            }
+        });
+        if (a.isEmpty()) {
+            throw new EngineException(Exceptions.NO_TRADER.code(),
+                                      Exceptions.NO_TRADER.message());
+        }
+        var traderId = a.get(new Random().nextInt(a.size()));
+        orderTraders.put(request.getOrderId(), traderId);
+        return traders.get(traderId);
+    }
+
     private Map<String, Instrument> findRelatedInstruments(Collection<String> instrumentIds,
                                                            ITraderData conn) throws EngineException {
         final var r = new HashMap<String, Instrument>(512);
@@ -522,90 +567,18 @@ public class TraderEngine implements ITraderEngine {
         return traderId;
     }
 
-    private ExtendedTraderGatewayRuntime findTraderRandomly(Request request) throws EngineException {
-        var a = new ArrayList<>(traders.keySet());
-        traders.forEach((k, v) -> {
-            if (v.isEnabled()) {
-                a.add(k);
-            }
-        });
-        if (a.isEmpty()) {
-            throw new EngineException(Exceptions.NO_TRADER.code(),
-                                      Exceptions.NO_TRADER.message());
-        }
-        var traderId = a.get(new Random().nextInt(a.size()));
-        orderTraders.put(request.getOrderId(), traderId);
-        return traders.get(traderId);
-    }
-
-    private ExtendedTraderGatewayRuntime findTraderServiceRuntimeByTraderId(int traderId) throws EngineException {
-        var rt = traders.get(traderId);
-        check1(traderId, rt);
-        return rt;
-    }
-
-    private void newRequest(Request request,
-                            ExtendedTraderGatewayRuntime tr,
-                            int requestId) throws EngineException {
-        var destId = tr.getIdTranslator().getDestinatedId(request.getOrderId(), request.getQuantity());
-        request.setOrderId(destId);
-        try {
-            tr.getTrader().insert(request, requestId);
-        }
-        catch (GatewayException ex) {
-            throw new EngineException(ex.getCode(),
-                                      ex.getMessage(),
-                                      ex);
-        }
-    }
-
-    private void deleteRequest(Request request,
-                               ExtendedTraderGatewayRuntime tr,
-                               int requestId) throws EngineException {
-        var ids = tr.getIdTranslator().getDestinatedIds(request.getOrderId());
-        if (ids == null) {
-            throw new EngineException(Exceptions.DEST_ID_NOT_FOUND.code(),
-                                      Exceptions.DEST_ID_NOT_FOUND.message()
-                                      + "(Source order ID:" + request.getOrderId() + ")");
-        }
-        for (var i : ids) {
-            /*
-             * If the order is fulfilled, don't cancel it any more.
-             */
-            var cd = tr.getIdTranslator().getDownCountByDestId(i);
-            if (cd == null) {
-                throw new EngineException(
-                        Exceptions.COUNTDOWN_NOT_FOUND.code(),
-                        Exceptions.COUNTDOWN_NOT_FOUND.message() + "(Destinated ID: " + i + ")");
-            }
-            if (cd <= 0) {
-                continue;
-            }
-            var c = Utils.copy(request);
-            c.setOrderId(i);
-            try {
-                tr.getTrader().insert(c, requestId);
-            }
-            catch (GatewayException ex) {
-                throw new EngineException(ex.getCode(),
-                                          ex.getMessage(),
-                                          ex);
-            }
-        }
-    }
-
     private void forwardRequest(Request request, Integer traderId, int requestId) throws EngineException {
-        var tr = findTraderServiceRuntimeByTraderId(traderId);
-        check1(traderId, tr);
+        var ctx = findContextByTraderId(traderId);
+        check1(traderId, ctx);
         if (null == request.getAction()) {
             throw new EngineException(Exceptions.ACTION_NULL.code(),
                                       Exceptions.ACTION_NULL.message());
         }
         if (request.getAction() == ActionType.NEW) {
-            newRequest(request, tr, requestId);
+            newRequest(request, ctx, requestId);
         }
         else {
-            deleteRequest(request, tr, requestId);
+            deleteRequest(request, ctx, requestId);
         }
     }
 
@@ -650,20 +623,20 @@ public class TraderEngine implements ITraderEngine {
         return cs;
     }
 
-    private TraderGatewayRuntime getProperTrader(Request request) throws EngineException {
+    private TraderContext getProperTrader(Request request) throws EngineException {
         var traderId = request.getTraderId();
         if (traderId == null) {
-            return findTraderRandomly(request);
+            return findContextRandomly(request);
         }
         else {
-            var rt = findTraderServiceRuntimeByTraderId(traderId);
-            check1(traderId, rt);
-            if (!rt.isEnabled()) {
+            var ctx = findContextByTraderId(traderId);
+            check1(traderId, ctx);
+            if (!ctx.isEnabled()) {
                 throw new EngineException(Exceptions.TRADER_NOT_ENABLED.code(),
                                           Exceptions.TRADER_NOT_ENABLED.message() + "(Trader ID:" + traderId + ")");
             }
             orderTraders.put(request.getOrderId(), traderId);
-            return rt;
+            return ctx;
         }
     }
 
@@ -759,6 +732,21 @@ public class TraderEngine implements ITraderEngine {
         }
         for (var c : cs) {
             conn.removeContract(c.getContractId());
+        }
+    }
+
+    private void newRequest(Request request,
+                            TraderContext context,
+                            int requestId) throws EngineException {
+        var destId = context.getIdTranslator().getDestinatedId(request.getOrderId(), request.getQuantity());
+        request.setOrderId(destId);
+        try {
+            context.insert(request, requestId);
+        }
+        catch (GatewayException ex) {
+            throw new EngineException(ex.getCode(),
+                                      ex.getMessage(),
+                                      ex);
         }
     }
 
@@ -902,27 +890,22 @@ public class TraderEngine implements ITraderEngine {
         clearInternals();
     }
 
-    private void startEach(Integer key, ExtendedTraderGatewayRuntime info) throws EngineException {
-        check1(key, info);
-        if (!info.isEnabled()) {
+    private void startEach(Integer key, TraderContext context) throws EngineException {
+        check1(key, context);
+        if (!context.isEnabled()) {
             return;
         }
-        var properties = new Properties();
-        if (info.getStartProperties() != null) {
-            properties.putAll(info.getStartProperties());
-        }
-        properties.putAll(globalStartProps);
         /*
          * Trader services share the same class of handler, not same instance of
          * handler. To shared information among these handlers, use STATIC.
          */
-        if (info.getHandler() == null) {
-            var h = new TraderGatewayHandler(info);
-            info.setHandler(h);
-            info.setIdTranslator(h);
+        if (context.getHandler() == null) {
+            var h = new TraderGatewayHandler(context);
+            context.setHandler(h);
+            context.setIdTranslator(h);
         }
         try {
-            info.getTrader().start(properties, info.getHandler());
+            context.start(globalStartProps);
         }
         catch (GatewayException ex) {
             throw new EngineException(
@@ -933,16 +916,30 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void stopEach(Integer key, TraderGatewayRuntime info) throws EngineException {
-        check1(key, info);
+    private void stopEach(Integer key, TraderContext context) throws EngineException {
+        check1(key, context);
         try {
-            info.getTrader().stop();
+            context.stop();
         }
         catch (GatewayException ex) {
             throw new EngineException(
                     ex.getCode(),
                     ex.getMessage() + "(Trader ID:" + key.toString() + ")",
                     ex);
+        }
+    }
+
+    <T> void publishEvent(Class<T> clazz, T object) {
+        if (es == null) {
+            return;
+        }
+        try {
+            es.publish(clazz, object);
+        }
+        catch (EventSourceException ex) {
+            throw new EngineRuntimeException(Exceptions.EVENT_PUBLISH_FAIL.code(),
+                                             Exceptions.EVENT_PUBLISH_FAIL.message(),
+                                             ex);
         }
     }
 

@@ -21,5 +21,5 @@ public interface ITraderGateway {
 
     Properties getProperties();
 
-    TraderGatewayInfo getServiceInfo();
+    TraderGatewayInfo getGatewayInfo();
 }

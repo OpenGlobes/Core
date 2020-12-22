@@ -25,7 +25,7 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderGatewayRuntime {
+public class TraderGatewayContext {
 
     private Boolean enabled;
     private ITraderEngine engine;
@@ -39,7 +39,7 @@ public class TraderGatewayRuntime {
     private Integer traderId;
     private ZonedDateTime updateTimestamp;
 
-    public TraderGatewayRuntime() {
+    public TraderGatewayContext() {
         registerTimestamp = ZonedDateTime.now();
     }
 
