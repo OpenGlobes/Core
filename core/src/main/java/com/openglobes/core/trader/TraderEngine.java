@@ -308,16 +308,10 @@ public class TraderEngine implements ITraderEngine {
      * tell user the handling is wrong.
      */
     private void callOnException(EngineRuntimeException e) {
-        if (es.isEmpty()) {
-            return;
-        }
         publishEvent(EngineRuntimeException.class, e);
     }
 
     private void callOnStatusChange(ServiceRuntimeStatus s) {
-        if (es.isEmpty()) {
-            return;
-        }
         publishEvent(ServiceRuntimeStatus.class, s);
     }
 
@@ -928,7 +922,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     <T> void publishEvent(Class<T> clazz, T object) {
-        if (es == null) {
+        if (es == null || es.isEmpty()) {
             return;
         }
         try {
