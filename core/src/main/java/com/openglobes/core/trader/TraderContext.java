@@ -25,9 +25,8 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderContext {
+public class TraderContext extends IdTranslator {
 
-    private IdTranslator idTranslator;
     private final TraderGatewayContext ctx;
 
     TraderContext(TraderGatewayContext ctx) {
@@ -36,14 +35,6 @@ public class TraderContext {
 
     ITraderEngine getEngine() {
         return ctx.getEngine();
-    }
-
-    IdTranslator getIdTranslator() {
-        return idTranslator;
-    }
-
-    void setIdTranslator(IdTranslator idTranslator) {
-        this.idTranslator = idTranslator;
     }
 
     TraderGatewayContext getTraderGatewayContext() {

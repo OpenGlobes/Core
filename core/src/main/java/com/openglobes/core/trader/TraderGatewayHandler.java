@@ -35,7 +35,7 @@ import java.util.Objects;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderGatewayHandler extends IdTranslator implements ITraderGatewayHandler {
+public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private final TraderContext ctx;
 
@@ -457,7 +457,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
         if (destId == null) {
             throw new NullPointerException("Destinated ID null.");
         }
-        var srcId = getSourceId(destId);
+        var srcId = ctx.getSourceId(destId);
         if (srcId == null) {
             throw new NullPointerException("Source ID not found(Destinated ID:" + destId + ").");
         }
@@ -520,7 +520,7 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
             /*
              * Order is deleted, so count down to zero.
              */
-            super.countDown(trade.getOrderId(), trade.getQuantity());
+            ctx.countDown(trade.getOrderId(), trade.getQuantity());
             trade.setOrderId(getSrcId(trade.getOrderId()));
             trade.setTraderId(ctx.getTraderId());
         }
@@ -533,14 +533,14 @@ public class TraderGatewayHandler extends IdTranslator implements ITraderGateway
 
     private void preprocess(Response response) throws EngineException {
         try {
-            var rest = super.getDownCountByDestId(response.getOrderId());
+            var rest = ctx.getDownCountByDestId(response.getOrderId());
             if (rest == null) {
                 throw new NullPointerException("Count down not found(" + response.getOrderId() + ").");
             }
             /*
              * Order is deleted, so count down to zero.
              */
-            super.countDown(response.getOrderId(), rest);
+            ctx.countDown(response.getOrderId(), rest);
             response.setOrderId(getSrcId(response.getOrderId()));
             response.setTraderId(ctx.getTraderId());
         }

@@ -432,7 +432,7 @@ public class TraderEngine implements ITraderEngine {
         orderTraders.clear();
         instruments.clear();
         traders.values().forEach(s -> {
-            s.getIdTranslator().clear();
+            s.clear();
         });
     }
 
@@ -476,7 +476,7 @@ public class TraderEngine implements ITraderEngine {
     private void deleteRequest(Request request,
                                TraderContext context,
                                int requestId) throws EngineException {
-        var ids = context.getIdTranslator().getDestinatedIds(request.getOrderId());
+        var ids = context.getDestinatedIds(request.getOrderId());
         if (ids == null) {
             throw new EngineException(Exceptions.DEST_ID_NOT_FOUND.code(),
                                       Exceptions.DEST_ID_NOT_FOUND.message()
@@ -486,7 +486,7 @@ public class TraderEngine implements ITraderEngine {
             /*
              * If the order is fulfilled, don't cancel it any more.
              */
-            var cd = context.getIdTranslator().getDownCountByDestId(i);
+            var cd = context.getDownCountByDestId(i);
             if (cd == null) {
                 throw new EngineException(
                         Exceptions.COUNTDOWN_NOT_FOUND.code(),
@@ -738,7 +738,7 @@ public class TraderEngine implements ITraderEngine {
     private void newRequest(Request request,
                             TraderContext context,
                             int requestId) throws EngineException {
-        var destId = context.getIdTranslator().getDestinatedId(request.getOrderId(), request.getQuantity());
+        var destId = context.getDestinatedId(request.getOrderId(), request.getQuantity());
         request.setOrderId(destId);
         try {
             context.insert(request, requestId);
@@ -900,9 +900,7 @@ public class TraderEngine implements ITraderEngine {
          * handler. To shared information among these handlers, use STATIC.
          */
         if (context.getHandler() == null) {
-            var h = new TraderGatewayHandler(context);
-            context.setHandler(h);
-            context.setIdTranslator(h);
+            context.setHandler(new TraderGatewayHandler(context));
         }
         try {
             context.start(globalStartProps);
