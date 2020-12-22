@@ -14,22 +14,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public enum TraderEngineStatuses {
+    WORKING(0x0, "Working."),
+    SETTLING(0x1, "Settling."),
+    INITIALIZING(0x2, "Initializing."),
+    INIT_FAILED(0x3, "Initialization failed."),
+    SETTLE_FAILED(0x4, "Settlement failed."),
+    STARTING(0x5, "Starting."),
+    START_FAILED(0x6, "Start failed."),
+    STOPPING(0x7, "Stopping."),
+    STOPPED(0x8, "Stopped."),
+    STOP_FAILED(0x9, "Stop failed.");
 
-    private static final long serialVersionUID = 3421665487930276L;
+    private final int code;
+    private final String message;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    private TraderEngineStatuses(int code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public int code() {
+        return code;
     }
 
+    public String message() {
+        return message;
+    }
 }

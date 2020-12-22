@@ -14,22 +14,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
+
+import com.openglobes.core.exceptions.GatewayRuntimeException;
+import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 
 /**
+ * Handler for trading responses from {@link ITraderService}.
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public interface ITraderGatewayHandler {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    void onTrade(Trade trade);
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
-    }
+    void onResponse(Response response);
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
+    void onException(GatewayRuntimeException exception);
 
+    void onException(Request request, GatewayRuntimeException exception, int requestId);
+
+    void onStatusChange(ServiceRuntimeStatus status);
 }

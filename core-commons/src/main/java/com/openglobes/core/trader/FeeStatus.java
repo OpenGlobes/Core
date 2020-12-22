@@ -14,22 +14,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
 
 /**
+ * Fee status.
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @sine 1.0
  */
-public class EngineException extends ServiceStatus {
+public enum FeeStatus {
+    FORZEN(0x20),
+    DEALED(0x21),
+    REMOVED(0x22);
 
-    private static final long serialVersionUID = 3421665487930276L;
+    private final int code;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    private FeeStatus(int code) {
+        this.code = code;
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public int code() {
+        return code;
     }
-
 }

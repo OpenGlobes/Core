@@ -14,22 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.event;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public class EventSourceException extends Exception {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    private static final long serialVersionUID = 123654729875L;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    private final int code;
+
+    public EventSourceException(int code, String message) {
+        super(message);
+        this.code = code;
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public EventSourceException(int code, String message, Throwable cause) {
+        super(message, cause);
+        this.code = code;
     }
 
+    public int getCode() {
+        return code;
+    }
 }

@@ -14,22 +14,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
+
+import com.openglobes.core.trader.TraderGatewayRuntime;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public class ExtendedTraderGatewayRuntime extends TraderGatewayRuntime {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    private IdTranslator idTranslator;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    public ExtendedTraderGatewayRuntime() {
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public IdTranslator getIdTranslator() {
+        return idTranslator;
+    }
+
+    public void setIdTranslator(IdTranslator idTranslator) {
+        this.idTranslator = idTranslator;
     }
 
 }

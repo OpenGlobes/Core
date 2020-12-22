@@ -20,23 +20,16 @@ package com.openglobes.core.exceptions;
  *
  * @author chenh
  */
-public class GatewayRuntimeException extends RuntimeException {
+public class GatewayRuntimeException extends ServiceRuntimeStatus {
 
     private static final long serialVersionUID = 2955886225335647L;
 
-    private final int code;
-
-    public GatewayRuntimeException(int code, String message) {
-        super(message);
-        this.code = code;
+    public GatewayRuntimeException(Integer code, String msg) {
+        super(code, msg);
     }
 
-    public GatewayRuntimeException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
+    public GatewayRuntimeException(Integer code, String message, Throwable cause) {
+        super(code, message, cause);
     }
 
-    public int getCode() {
-        return code;
-    }
 }

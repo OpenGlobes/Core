@@ -14,22 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.data;
 
 /**
+ * Data source provides basic data to higher level.
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public interface ITraderDataSource {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    ITraderData getConnection() throws DataSourceException;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
-    }
+    <T> void addListener(Class<T> clazz, ITraderDataListener<T> listener) throws DataSourceException;
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
-
+    <T> ITraderDataListener<T> getListener(Class<T> clazz);
 }

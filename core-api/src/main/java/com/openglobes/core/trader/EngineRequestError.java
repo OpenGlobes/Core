@@ -14,24 +14,46 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
+
+import com.openglobes.core.exceptions.EngineRuntimeException;
 
 /**
- * Exception thrown by {@link ITraderService} with code and message.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class GatewayException extends ServiceStatus {
+public class EngineRequestError {
 
-    private static final long serialVersionUID = 4875322229246237L;
+    private EngineRuntimeException exception;
+    private Request request;
+    private int requestId;
 
-    public GatewayException(Integer code, String msg) {
-        super(code, msg);
+    public EngineRequestError() {
     }
 
-    public GatewayException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public EngineRuntimeException getException() {
+        return exception;
+    }
+
+    public void setException(EngineRuntimeException exception) {
+        this.exception = exception;
+    }
+
+    public Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
 }

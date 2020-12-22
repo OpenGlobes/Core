@@ -14,22 +14,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.event;
+
+import java.time.ZonedDateTime;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @param <T>
+ *
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public interface IEvent<T> {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    T get();
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
-    }
+    ZonedDateTime getTimestamp();
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
+    Long getSequence();
 
+    EventType getType();
 }

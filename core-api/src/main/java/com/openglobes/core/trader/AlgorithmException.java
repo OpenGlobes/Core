@@ -14,21 +14,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
+
+import com.openglobes.core.exceptions.EngineException;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public class AlgorithmException extends EngineException {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    private static final long serialVersionUID = 32556476342283L;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    public AlgorithmException(int code, String message) {
+        super(code, message);
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
+    public AlgorithmException(int code, String message, Throwable cause) {
         super(code, message, cause);
     }
 

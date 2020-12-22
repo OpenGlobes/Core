@@ -14,22 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.event;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public interface IEventSource {
 
-    private static final long serialVersionUID = 3421665487930276L;
+    Collection<Class<?>> getSupportedEventTypes();
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
-    }
+    <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
+    void unsubscribe(IEventHandler<?> handler) throws EventSourceException;
 
+    void unsubscribe(Class<?> clazz) throws EventSourceException;
+
+    Map<Class<?>, IEventHandler<?>> handlers();
+
+    void close() throws EventSourceException;
+
+    boolean isEmpty();
+
+    <T> void publish(Class<T> clazz, T object) throws EventSourceException;
 }
