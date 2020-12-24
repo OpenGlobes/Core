@@ -19,11 +19,21 @@ package com.openglobes.core.data;
 /**
  *
  * @author Hongbao Chen
- * @param <T>
- *
  * @since 1.0
  */
-public interface ITraderDataListener<T> {
+public enum DataChangeType {
+    CREATE(0xA0),
+    RETRIEVE(0xA1),
+    UPDATE(0xA2),
+    DELETE(0xA3);
 
-    void onChange(T margin, DataChange change, ITraderData source);
+    private final int code;
+
+    private DataChangeType(int code) {
+        this.code = code;
+    }
+
+    public int code() {
+        return code;
+    }
 }

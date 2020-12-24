@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public interface IEventSource {
 
-    Collection<Class<?>> getSupportedEventTypes();
+    Collection<Class<?>> getSubscribedTypes();
 
     <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
 

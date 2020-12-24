@@ -16,6 +16,9 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.event.IEventHandler;
+import com.openglobes.core.event.IEventSource;
+
 /**
  * Data source provides basic data to higher level.
  *
@@ -26,7 +29,7 @@ public interface ITraderDataSource {
 
     ITraderData getConnection() throws DataSourceException;
 
-    <T> void addListener(Class<T> clazz, ITraderDataListener<T> listener) throws DataSourceException;
+    <T> void addListener(Class<T> clazz, IEventHandler<T> handler, DataChangeType type) throws DataSourceException;
 
-    <T> ITraderDataListener<T> getListener(Class<T> clazz);
+    <T> IEventSource getEventSource(DataChangeType type) throws DataSourceException;
 }

@@ -21,12 +21,13 @@ import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
 import com.openglobes.core.dba.IQuery;
 import com.openglobes.core.dba.Queries;
+import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.exceptions.Exceptions;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
 import com.openglobes.core.trader.ContractStatus;
 import com.openglobes.core.trader.Deposit;
-import com.openglobes.core.trader.Exceptions;
 import com.openglobes.core.trader.FeeStatus;
 import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Margin;
@@ -887,12 +888,9 @@ public class TraderData implements ITraderData {
     private <T> void callInsert(Class<T> clazz, T object) throws DataSourceException {
         try {
             query.insert(clazz, object);
-            var listener = src.getListener(clazz);
-            if (listener != null) {
-                callOnChange(object,
-                             DataChange.CREATE,
-                             listener);
-            }
+            callOnChange(clazz,
+                         object,
+                         DataChangeType.CREATE);
         }
         catch (DbaException ex) {
             throw new DataSourceException(Exceptions.DBA_INSERT_FAIL.code(),
@@ -901,16 +899,16 @@ public class TraderData implements ITraderData {
         }
     }
 
-    private <T> void callOnChange(T object,
-                                  DataChange change,
-                                  ITraderDataListener<T> listener) throws DataSourceException {
+    private <T> void callOnChange(Class<T> clazz,
+                                  T object,
+                                  DataChangeType type) throws DataSourceException {
         try {
-            listener.onChange(object, change, this);
+            src.getEventSource(type).publish(clazz, object);
         }
-        catch (Throwable th) {
-            throw new DataSourceException(Exceptions.USER_CODE_ERROR.code(),
-                                          Exceptions.USER_CODE_ERROR.message(),
-                                          th);
+        catch (EventSourceException ex) {
+            throw new DataSourceException(Exceptions.EVENT_PUBLISH_FAIL.code(),
+                                          Exceptions.EVENT_PUBLISH_FAIL.message(),
+                                          ex);
         }
     }
 
@@ -919,16 +917,13 @@ public class TraderData implements ITraderData {
                                    V id,
                                    IDefaultFactory<T> factory) throws DataSourceException {
         try {
-            var listener = src.getListener(clazz);
-            if (listener != null) {
-                callOnChange(callGetSingle(clazz,
-                                           Queries.equals(clazz.getDeclaredField(fieldName), id),
-                                           factory),
-                             DataChange.DELETE,
-                             listener);
-            }
-            query.remove(Commission.class,
-                         Queries.equals(Commission.class.getField(fieldName), id));
+            callOnChange(clazz,
+                         callGetSingle(clazz,
+                                       Queries.equals(clazz.getDeclaredField(fieldName), id),
+                                       factory),
+                         DataChangeType.DELETE);
+            query.remove(clazz,
+                         Queries.equals(clazz.getField(fieldName), id));
         }
         catch (DbaException ex) {
             throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
@@ -947,12 +942,9 @@ public class TraderData implements ITraderData {
             query.update(clazz,
                          object,
                          Queries.equals(field, field.getLong(object)));
-            var listener = src.getListener(clazz);
-            if (listener != null) {
-                callOnChange(object,
-                             DataChange.UPDATE,
-                             listener);
-            }
+            callOnChange(clazz,
+                         object,
+                         DataChangeType.UPDATE);
         }
         catch (DbaException ex) {
             throw new DataSourceException(Exceptions.DBA_UPDATE_FAIL.code(),

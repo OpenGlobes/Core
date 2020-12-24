@@ -19,21 +19,32 @@ package com.openglobes.core.data;
 /**
  *
  * @author Hongbao Chen
+ * @param <T>
+ *
  * @since 1.0
  */
-public enum DataChange {
-    CREATE(0xA0),
-    RETRIEVE(0xA1),
-    UPDATE(0xA2),
-    DELETE(0xA3);
+public class DataChange<T> {
 
-    private final int code;
+    private final T data;
+    private final DataChangeType type;
+    private final ITraderData source;
 
-    private DataChange(int code) {
-        this.code = code;
+    public DataChange(T data, DataChangeType type, ITraderData source) {
+        this.data = data;
+        this.type = type;
+        this.source = source;
     }
 
-    public int code() {
-        return code;
+    public T getData() {
+        return data;
     }
+
+    public DataChangeType getType() {
+        return type;
+    }
+
+    public ITraderData getSource() {
+        return source;
+    }
+
 }

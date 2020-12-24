@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.trader;
 
+import com.openglobes.core.exceptions.Exceptions;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;

@@ -20,8 +20,9 @@ import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import com.openglobes.core.trader.Exceptions;
+import com.openglobes.core.exceptions.Exceptions;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,8 +44,8 @@ public class EventSource implements IEventSource {
     }
 
     @Override
-    public Collection<Class<?>> getSupportedEventTypes() {
-        return disruptors.keySet();
+    public Collection<Class<?>> getSubscribedTypes() {
+        return new HashSet<>(disruptors.keySet());
     }
 
     @Override
