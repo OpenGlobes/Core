@@ -16,29 +16,54 @@
  */
 package com.openglobes.core.event;
 
-import java.util.Collection;
-import java.util.Map;
+import com.openglobes.core.utils.Utils;
+import java.time.ZonedDateTime;
 
 /**
  *
  * @author Hongbao Chen
+ * @param <T>
+ *
  * @since 1.0
  */
-public interface IEventSource {
+public class Event<T> implements IEvent<T> {
 
-    Collection<Class<?>> getSupportedEventTypes();
+    private T o;
+    private Class<T> c;
+    private final Long seq;
+    private final ZonedDateTime ts;
 
-    <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
+    public Event() {
+        seq = Utils.getExecutionId();
+        ts = ZonedDateTime.now();
+    }
 
-    Map<Class<?>, IEventHandler<?>> handlers();
+    public void set(T o) {
+        this.o = o;
+    }
 
-    void start() throws EventSourceException;
+    public void setType(Class<T> c) {
+        this.c = c;
+    }
 
-    void stop() throws EventSourceException;
+    @Override
+    public T get() {
+        return o;
+    }
 
-    boolean isStarted();
+    @Override
+    public Long getSequence() {
+        return seq;
+    }
 
-    boolean isEmpty();
+    @Override
+    public ZonedDateTime getTimestamp() {
+        return ts;
+    }
 
-    <T> void publish(Class<T> clazz, T object) throws EventSourceException;
+    @Override
+    public Class<T> getType() {
+        return c;
+    }
+
 }

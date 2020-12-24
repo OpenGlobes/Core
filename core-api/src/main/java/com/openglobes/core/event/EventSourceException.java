@@ -16,28 +16,23 @@
  */
 package com.openglobes.core.event;
 
+import com.openglobes.core.exceptions.ServiceStatus;
+
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class EventSourceException extends Exception {
+public class EventSourceException extends ServiceStatus {
 
     private static final long serialVersionUID = 123654729875L;
 
-    private final int code;
-
-    public EventSourceException(int code, String message) {
-        super(message);
-        this.code = code;
+    public EventSourceException(Integer code, String msg) {
+        super(code, msg);
     }
 
-    public EventSourceException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
+    public EventSourceException(Integer code, String message, Throwable cause) {
+        super(code, message, cause);
     }
 
-    public int getCode() {
-        return code;
-    }
 }

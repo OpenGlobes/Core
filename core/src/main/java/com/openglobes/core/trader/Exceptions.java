@@ -109,7 +109,11 @@ public enum Exceptions {
     INVALID_PK_TYPE(0x56, "Invalid primary key type."),
     EVENT_PUBLISH_FAIL(0x57, "Event publish failed."),
     EVENTSOURCE_NULL(0x58, "Event source null."),
-    REQUEST_DISPATCH_FAIL(0x59, "Request dispatch failed.");
+    REQUEST_DISPATCH_FAIL(0x59, "Request dispatch failed."),
+    DUPLCATED_SUBSCRIBE_EVENT(0x5A, "Duplicated subscription to event type."),
+    DUPLICATED_START(0x5B, "Duplicated start."),
+    DUPLICATED_STOP(0x5C, "Duplicated stop."),
+    PUBLISH_TO_STOPPED_QUEUE(0x5D, "Publish events to a stopped queue.");
 
     private final int code;
     private final String message;

@@ -16,8 +16,14 @@
  */
 package com.openglobes.core.event;
 
+import com.lmax.disruptor.EventFactory;
+import com.lmax.disruptor.EventTranslatorTwoArg;
+import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.util.DaemonThreadFactory;
+import com.openglobes.core.trader.Exceptions;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -26,44 +32,117 @@ import java.util.Map;
  */
 public class EventSource implements IEventSource {
 
-    @Override
-    public void close() throws EventSourceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private final Map<Class<?>, Disruptor<?>> disruptors;
+    private final Map<Class<?>, IEventHandler<?>> handlers;
+
+    private boolean started = false;
+
+    public EventSource() {
+        handlers = new ConcurrentHashMap<>(64);
+        disruptors = new ConcurrentHashMap<>(64);
     }
 
     @Override
     public Collection<Class<?>> getSupportedEventTypes() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return disruptors.keySet();
     }
 
     @Override
     public Map<Class<?>, IEventHandler<?>> handlers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return handlers;
     }
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return disruptors.isEmpty();
+    }
+
+    @Override
+    public boolean isStarted() {
+        return started;
     }
 
     @Override
     public <T> void publish(Class<T> clazz, T object) throws EventSourceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        @SuppressWarnings("unchecked")
+        var c = (Disruptor<Event<T>>) findDisruptor(clazz);
+        c.publishEvent(new DefaultEventTranslator<>(), object, clazz);
+    }
+
+    @Override
+    public synchronized void start() throws EventSourceException {
+        if (started) {
+            throw new EventSourceException(Exceptions.DUPLICATED_START.code(),
+                                           Exceptions.DUPLICATED_START.message());
+        }
+        disruptors.values().forEach(d -> {
+            d.start();
+        });
+        started = true;
+    }
+
+    @Override
+
+    public synchronized void stop() throws EventSourceException {
+        if (!started) {
+            throw new EventSourceException(Exceptions.DUPLICATED_STOP.code(),
+                                           Exceptions.DUPLICATED_STOP.message());
+        }
+        disruptors.values().forEach(d -> {
+            d.shutdown();
+        });
+        disruptors.clear();
+        handlers.clear();
+        started = false;
     }
 
     @Override
     public <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (handlers.containsKey(clazz)) {
+            throw new EventSourceException(Exceptions.DUPLCATED_SUBSCRIBE_EVENT.code(),
+                                           Exceptions.DUPLCATED_SUBSCRIBE_EVENT.message()
+                                           + " " + clazz.getCanonicalName());
+        }
+        handlers.put(clazz, handler);
+        @SuppressWarnings("unchecked")
+        var c = (Disruptor<Event<T>>) findDisruptor(clazz);
+        c.handleEventsWith((Event<T> event, long sequence, boolean endOfBatch) -> {
+            handler.handle(event);
+        });
     }
 
-    @Override
-    public void unsubscribe(IEventHandler<?> handler) throws EventSourceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    @SuppressWarnings("unchecked")
+    private <T> Disruptor<T> findDisruptor(Class<T> clazz) {
+        var v = disruptors.get(clazz);
+        if (v == null) {
+            v = new Disruptor<Event<T>>(new DefaultFactory<>(),
+                                        1024,
+                                        DaemonThreadFactory.INSTANCE);
+            disruptors.put(clazz, v);
+        }
+        return (Disruptor<T>) v;
     }
 
-    @Override
-    public void unsubscribe(Class<?> clazz) throws EventSourceException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private class DefaultEventTranslator<T> implements EventTranslatorTwoArg<Event<T>, T, Class<T>> {
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void translateTo(Event<T> event, long sequence, T arg0, Class<T> arg1) {
+            event.set(arg0);
+            event.setType(arg1);
+        }
+    }
+
+    private class DefaultFactory<T> implements EventFactory<Event<T>> {
+
+        DefaultFactory() {
+        }
+
+        @Override
+        public Event<T> newInstance() {
+            return new Event<>();
+        }
+
     }
 
 }

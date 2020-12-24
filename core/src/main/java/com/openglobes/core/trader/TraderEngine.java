@@ -889,6 +889,7 @@ public class TraderEngine implements ITraderEngine {
             es0.subscribe(RequestContext.class, (IEvent<RequestContext> event) -> {
                       dispatchRequest(event.get());
                   });
+            es0.start();
         }
         catch (EventSourceException ignored) {
         }
@@ -976,6 +977,10 @@ public class TraderEngine implements ITraderEngine {
     <T> void publishEvent(Class<T> clazz, T object) {
         if (es == null || es.isEmpty()) {
             return;
+        }
+        if (!es.isStarted()) {
+            throw new EngineRuntimeException(Exceptions.PUBLISH_TO_STOPPED_QUEUE.code(),
+                                             Exceptions.PUBLISH_TO_STOPPED_QUEUE.message());
         }
         try {
             es.publish(clazz, object);
