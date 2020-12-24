@@ -33,7 +33,7 @@ public enum Exceptions {
     ALGORITHM_NULL(0xA, "Algorithm null."),
     ACCOUNT_NULL(0xB, "Account null."),
     USER_CODE_ERROR(0xC, "User code throwed exception."),
-    ORDER_REQS_NULL(0xD, "Order request(s) null."),
+    REQUEST_NULL(0xD, "Order request(s) null."),
     NO_TRADE(0xE, "Order response(s) null."),
     ORDER_ID_NOT_FOUND(0xF, "No such order ID in map."),
     TRADER_GW_HANDLER_NULL(0x10, "Trader gateway handler null."),
@@ -108,7 +108,8 @@ public enum Exceptions {
     OBTAIN_CONDITION_FAIL(0x55, "Obtaining condition failed."),
     INVALID_PK_TYPE(0x56, "Invalid primary key type."),
     EVENT_PUBLISH_FAIL(0x57, "Event publish failed."),
-    EVENTSOURCE_NULL(0x58, "Event source null.");
+    EVENTSOURCE_NULL(0x58, "Event source null."),
+    REQUEST_DISPATCH_FAIL(0x59, "Request dispatch failed.");
 
     private final int code;
     private final String message;

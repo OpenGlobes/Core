@@ -33,5 +33,5 @@ public interface IEvent<T> {
 
     Long getSequence();
 
-    EventType getType();
+    Class<T> getType();
 }

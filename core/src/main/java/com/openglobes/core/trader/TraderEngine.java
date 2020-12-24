@@ -18,7 +18,9 @@ package com.openglobes.core.trader;
 
 import com.openglobes.core.data.ITraderData;
 import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.EngineRuntimeException;
@@ -41,6 +43,7 @@ public class TraderEngine implements ITraderEngine {
     private ITraderEngineAlgorithm algo;
     private ITraderDataSource ds;
     private IEventSource es;
+    private final IEventSource es0;
     private final Properties globalStartProps;
     private final HashMap<String, Instrument> instruments;
     private final HashMap<Long, Integer> orderTraders;
@@ -52,6 +55,8 @@ public class TraderEngine implements ITraderEngine {
         orderTraders = new HashMap<>(1024);
         instruments = new HashMap<>(512);
         globalStartProps = new Properties();
+        es0 = new EventSource();
+        setRequestHandler();
     }
 
     @Override
@@ -192,32 +197,22 @@ public class TraderEngine implements ITraderEngine {
                         Instrument instrument,
                         Properties properties,
                         int requestId) throws EngineException {
-        check0();
-        check2(request, instrument);
-        /*
-         * Remmeber the instrument it once operated.
-         */
-        instruments.put(instrument.getInstrumentId(), instrument);
-        if (request.getOffset() == Offset.OPEN) {
-            decideTrader(request);
-            checkAssetsOpen(request, instrument);
-            forwardRequest(request, request.getTraderId(), requestId);
-        }
-        else {
-            var cs = checkAssetsClose(request, instrument);
-            for (var r : group(cs, request)) {
-                forwardRequest(r, r.getTraderId(), requestId);
-            }
-        }
-    }
-
-    @Override
-    public void request(Request request, int requestId) throws EngineException {
         if (request == null) {
-            throw new EngineException(Exceptions.DELETE_REQS_NULL.code(),
-                                      Exceptions.DELETE_REQS_NULL.message());
+            throw new EngineException(Exceptions.REQUEST_NULL.code(),
+                                      Exceptions.REQUEST_NULL.message());
         }
-        forwardRequest(request, request.getTraderId(), requestId);
+        try {
+            es0.publish(RequestContext.class,
+                        new RequestContext(request,
+                                           instrument,
+                                           properties,
+                                           requestId));
+        }
+        catch (EventSourceException ex) {
+            throw new EngineException(Exceptions.EVENT_PUBLISH_FAIL.code(),
+                                      Exceptions.EVENT_PUBLISH_FAIL.message(),
+                                      ex);
+        }
     }
 
     @Override
@@ -361,11 +356,7 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void check2(Request request, Instrument instrument) throws EngineException {
-        if (request == null) {
-            throw new EngineException(Exceptions.ORDER_REQS_NULL.code(),
-                                      Exceptions.ORDER_REQS_NULL.message());
-        }
+    private void check2(Instrument instrument) throws EngineException {
         if (instrument == null) {
             throw new EngineException(Exceptions.INSTRUMENT_NULL.code(),
                                       Exceptions.INSTRUMENT_NULL.message());
@@ -502,6 +493,26 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
+    private void dispatchRequest(RequestContext ctx) {
+        try {
+            if (ctx.getRequest().getAction() == ActionType.DELETE) {
+                forDelete(ctx.getRequest(),
+                          ctx.getRequestId());
+            }
+            else {
+                forNew(ctx.getRequest(),
+                       ctx.getInstrument(),
+                       ctx.getProperties(),
+                       ctx.getRequestId());
+            }
+        }
+        catch (EngineException e) {
+            callOnException(new EngineRuntimeException(Exceptions.REQUEST_DISPATCH_FAIL.code(),
+                                                       Exceptions.REQUEST_DISPATCH_FAIL.message(),
+                                                       e));
+        }
+    }
+
     private TraderContext findContextByTraderId(int traderId) throws EngineException {
         var rt = traders.get(traderId);
         check1(traderId, rt);
@@ -559,6 +570,37 @@ public class TraderEngine implements ITraderEngine {
                                       Exceptions.ORDER_ID_NOT_FOUND.message() + "(Order ID:" + orderId + ")");
         }
         return traderId;
+    }
+
+    private void forDelete(Request request, int requestId) throws EngineException {
+        if (request == null) {
+            throw new EngineException(Exceptions.DELETE_REQS_NULL.code(),
+                                      Exceptions.DELETE_REQS_NULL.message());
+        }
+        forwardRequest(request, request.getTraderId(), requestId);
+    }
+
+    private void forNew(Request request,
+                        Instrument instrument,
+                        Properties properties,
+                        int requestId) throws EngineException {
+        check0();
+        check2(instrument);
+        /*
+         * Remmeber the instrument it once operated.
+         */
+        instruments.put(instrument.getInstrumentId(), instrument);
+        if (request.getOffset() == Offset.OPEN) {
+            decideTrader(request);
+            checkAssetsOpen(request, instrument);
+            forwardRequest(request, request.getTraderId(), requestId);
+        }
+        else {
+            var cs = checkAssetsClose(request, instrument);
+            for (var r : group(cs, request)) {
+                forwardRequest(r, r.getTraderId(), requestId);
+            }
+        }
     }
 
     private void forwardRequest(Request request, Integer traderId, int requestId) throws EngineException {
@@ -842,12 +884,22 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
+    private void setRequestHandler() {
+        try {
+            es0.subscribe(RequestContext.class, (IEvent<RequestContext> event) -> {
+                      dispatchRequest(event.get());
+                  });
+        }
+        catch (EventSourceException ignored) {
+        }
+    }
+
     private void settle(ITraderDataSource ds, ITraderEngineAlgorithm algo) throws EngineException {
         final var conn = ds.getConnection();
         var rs = conn.getRequests();
         if (rs == null) {
-            throw new EngineException(Exceptions.ORDER_REQS_NULL.code(),
-                                      Exceptions.ORDER_REQS_NULL.message());
+            throw new EngineException(Exceptions.REQUEST_NULL.code(),
+                                      Exceptions.REQUEST_NULL.message());
         }
         for (var r : rs) {
             var orderId = r.getOrderId();

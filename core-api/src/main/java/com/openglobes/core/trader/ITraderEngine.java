@@ -61,8 +61,6 @@ public interface ITraderEngine {
 
     void request(Request request, Instrument instrument, Properties properties, int requestId) throws EngineException;
 
-    void request(Request request, int requestId) throws EngineException;
-
     void setInitProperties(int traderId, Properties properties) throws EngineException;
 
     void setSettleProperties(int traderId, Properties properties) throws EngineException;
