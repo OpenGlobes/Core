@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.trader;
 
+import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.ITraderData;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.event.EventSource;
@@ -135,50 +136,30 @@ public class TraderEngine implements ITraderEngine {
     @Override
     public void settle(Properties properties) throws EngineException {
         changeStatus(TraderEngineStatuses.SETTLING);
+        check0();
+        settle(ds, algo);
         try {
-            check0();
-            settle(ds, algo);
-            var conn = ds.getConnection();
-            conn.updateAccount(getSettledAccount());
-            changeStatus(TraderEngineStatuses.WORKING);
+            settleAccount();
         }
         catch (EngineException e) {
             changeStatus(TraderEngineStatuses.SETTLE_FAILED);
             throw e;
-        }
-        catch (Throwable th) {
-            changeStatus(TraderEngineStatuses.SETTLE_FAILED);
-            throw new EngineException(Exceptions.UNEXPECTED_ERROR.code(),
-                                      Exceptions.UNEXPECTED_ERROR.message(),
-                                      th);
         }
     }
 
     @Override
     public void initialize(Properties properties) throws EngineException {
         changeStatus(TraderEngineStatuses.INITIALIZING);
-        if (ds == null) {
-            changeStatus(TraderEngineStatuses.INIT_FAILED);
-            throw new EngineException(Exceptions.DATASOURCE_NULL.code(),
-                                      Exceptions.DATASOURCE_NULL.message());
-        }
+        check0();
         try {
-            var conn = ds.getConnection();
-            initAccount(conn.getAccount());
-            initContracts(conn.getContractsByStatus(ContractStatus.CLOSED), conn);
-            changeStatus(TraderEngineStatuses.WORKING);
+            initializeAccount();
         }
         catch (EngineException e) {
             changeStatus(TraderEngineStatuses.INIT_FAILED);
             throw e;
         }
-        catch (Throwable th) {
-            changeStatus(TraderEngineStatuses.INIT_FAILED);
-            throw new EngineException(Exceptions.UNEXPECTED_ERROR.code(),
-                                      Exceptions.UNEXPECTED_ERROR.message(),
-                                      th);
-        }
     }
+
 
     @Override
     public void registerTrader(int traderId, ITraderGateway trader) throws EngineException {
@@ -620,8 +601,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private List<Contract> getAvailableContracts(Request request) throws EngineException {
-        var conn = ds.getConnection();
-        var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
+        final var conn = ds.getConnection();
+        final var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
         if (cs == null) {
             throw new EngineException(Exceptions.CONTRACT_NULL.code(),
                                       Exceptions.CONTRACT_NULL.message());
@@ -646,8 +627,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private Collection<Contract> getContractsByOrderResponses(Collection<Trade> rsps) throws EngineException {
-        var cs = new HashSet<Contract>(128);
-        var conn = ds.getConnection();
+        final var cs = new HashSet<Contract>(128);
+        final var conn = ds.getConnection();
         for (var r : rsps) {
             var s = conn.getContractsByTradeId(r.getTradeId());
             if (s == null) {
@@ -699,8 +680,7 @@ public class TraderEngine implements ITraderEngine {
     private Collection<Request> group(Collection<Contract> cs, Request request) throws EngineException {
         final var today = new HashMap<Integer, Request>(64);
         final var yd = new HashMap<Integer, Request>(64);
-        final var conn = ds.getConnection();
-        var tradingDay = conn.getTradingDay().getTradingDay();
+        var tradingDay = ds.getConnection().getTradingDay().getTradingDay();
         for (var c : cs) {
             if (c.getOpenTradingDay().isBefore(tradingDay)) {
                 var o = yd.computeIfAbsent(c.getTraderId(), k -> {
@@ -769,6 +749,28 @@ public class TraderEngine implements ITraderEngine {
         }
         for (var c : cs) {
             conn.removeContract(c.getContractId());
+        }
+    }
+    private void initializeAccount() throws EngineException {
+        ITraderData conn = null;
+        try {
+            conn = ds.getConnection();
+            conn.transaction();
+            initAccount(conn.getAccount());
+            initContracts(conn.getContractsByStatus(ContractStatus.CLOSED), conn);
+            conn.commit();
+            changeStatus(TraderEngineStatuses.WORKING);
+        }
+        catch (DataSourceException e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }
+        catch (Throwable th) {
+            throw new EngineException(Exceptions.UNEXPECTED_ERROR.code(),
+                    Exceptions.UNEXPECTED_ERROR.message(),
+                    th);
         }
     }
 
@@ -936,6 +938,31 @@ public class TraderEngine implements ITraderEngine {
         }
         // Clear everyday to avoid mem leak.
         clearInternals();
+    }
+
+    private void settleAccount() throws EngineException {
+        ITraderData conn = null;
+        try {
+            /*
+             * Update settlement into db.
+             */
+            conn = ds.getConnection();
+            conn.transaction();
+            conn.updateAccount(getSettledAccount());
+            conn.commit();
+            changeStatus(TraderEngineStatuses.WORKING);
+        }
+        catch (DataSourceException e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        }
+        catch (Throwable th) {
+            throw new EngineException(Exceptions.UNEXPECTED_ERROR.code(),
+                                      Exceptions.UNEXPECTED_ERROR.message(),
+                                      th);
+        }
     }
 
     private void startEach(Integer key, TraderContext context) throws EngineException {
