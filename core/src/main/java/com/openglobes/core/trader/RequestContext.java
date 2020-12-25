@@ -25,9 +25,9 @@ import java.util.Properties;
  */
 public class RequestContext {
 
-    private final Request request;
     private final Instrument instrument;
     private final Properties properties;
+    private final Request request;
     private final int requestId;
 
     public RequestContext(Request request,
@@ -40,16 +40,16 @@ public class RequestContext {
         this.requestId = requestId;
     }
 
-    public Request getRequest() {
-        return request;
-    }
-
     public Instrument getInstrument() {
         return instrument;
     }
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public Request getRequest() {
+        return request;
     }
 
     public int getRequestId() {

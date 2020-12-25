@@ -64,10 +64,14 @@ public class EventSource implements IEventSource {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> void publish(Class<T> clazz, T object) throws EventSourceException {
-        @SuppressWarnings("unchecked")
-        var c = (Disruptor<Event<T>>) findDisruptor(clazz);
-        c.publishEvent(new DefaultEventTranslator<>(), object, clazz);
+        var c = findDisruptor(clazz, false);
+        if (c != null) {
+            ((Disruptor<Event<T>>) c).publishEvent(new DefaultEventTranslator<>(),
+                                                   object,
+                                                   clazz);
+        }
     }
 
     @Override
@@ -106,20 +110,25 @@ public class EventSource implements IEventSource {
         }
         handlers.put(clazz, handler);
         @SuppressWarnings("unchecked")
-        var c = (Disruptor<Event<T>>) findDisruptor(clazz);
+        var c = (Disruptor<Event<T>>) findDisruptor(clazz, true);
         c.handleEventsWith((Event<T> event, long sequence, boolean endOfBatch) -> {
             handler.handle(event);
         });
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Disruptor<T> findDisruptor(Class<T> clazz) {
+    private <T> Disruptor<T> findDisruptor(Class<T> clazz, boolean created) {
         var v = disruptors.get(clazz);
         if (v == null) {
-            v = new Disruptor<Event<T>>(new DefaultFactory<>(),
-                                        1024,
-                                        DaemonThreadFactory.INSTANCE);
-            disruptors.put(clazz, v);
+            if (created) {
+                v = new Disruptor<Event<T>>(new DefaultFactory<>(),
+                                            1024,
+                                            DaemonThreadFactory.INSTANCE);
+                disruptors.put(clazz, v);
+            }
+            else {
+                return null;
+            }
         }
         return (Disruptor<T>) v;
     }
