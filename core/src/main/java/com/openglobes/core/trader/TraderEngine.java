@@ -160,7 +160,6 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-
     @Override
     public void registerTrader(int traderId, ITraderGateway trader) throws EngineException {
         if (trader == null) {
@@ -751,6 +750,26 @@ public class TraderEngine implements ITraderEngine {
             conn.removeContract(c.getContractId());
         }
     }
+
+    private void initWithdrawDeposit(Collection<Withdraw> ws,
+                                     Collection<Deposit> ds,
+                                     ITraderData conn) throws EngineException {
+        if (ws == null) {
+            throw new EngineException(Exceptions.WITHDRAW_NULL.code(),
+                                      Exceptions.WITHDRAW_NULL.message());
+        }
+        if (ds == null) {
+            throw new EngineException(Exceptions.DEPOSIT_NULL.code(),
+                                      Exceptions.DEPOSIT_NULL.message());
+        }
+        for (var w : ws) {
+            conn.removeMargin(w.getWithdrawId());
+        }
+        for (var d : ds) {
+            conn.removeDeposit(d.getDepositId());
+        }
+    }
+
     private void initializeAccount() throws EngineException {
         ITraderData conn = null;
         try {
@@ -758,6 +777,9 @@ public class TraderEngine implements ITraderEngine {
             conn.transaction();
             initAccount(conn.getAccount());
             initContracts(conn.getContractsByStatus(ContractStatus.CLOSED), conn);
+            initWithdrawDeposit(conn.getWithdraws(),
+                                conn.getDeposits(),
+                                conn);
             conn.commit();
             changeStatus(TraderEngineStatuses.WORKING);
         }
@@ -769,8 +791,8 @@ public class TraderEngine implements ITraderEngine {
         }
         catch (Throwable th) {
             throw new EngineException(Exceptions.UNEXPECTED_ERROR.code(),
-                    Exceptions.UNEXPECTED_ERROR.message(),
-                    th);
+                                      Exceptions.UNEXPECTED_ERROR.message(),
+                                      th);
         }
     }
 

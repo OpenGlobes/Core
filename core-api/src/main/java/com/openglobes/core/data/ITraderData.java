@@ -135,6 +135,10 @@ public interface ITraderData {
     void removeMargin(long marginId) throws DataSourceException;
 
     void removeSettlementPrice(String instrumentId) throws DataSourceException;
+    
+    void removeWithdraw(long withdrawId) throws DataSourceException;
+    
+    void removeDeposit(long depositId) throws DataSourceException;
 
     void rollback() throws DataSourceException;
 

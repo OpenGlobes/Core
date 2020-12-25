@@ -662,19 +662,6 @@ public class TraderData implements ITraderData {
         }
     }
 
-    @Override
-    public void updateTradingDay(TradingDay day) throws DataSourceException {
-        try {
-            callUpdate(TradingDay.class,
-                       day,
-                       TradingDay.class.getDeclaredField("tradingDayId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
-                                          ex);
-        }
-    }
 
     @Override
     public Collection<Withdraw> getWithdraws() throws DataSourceException {
@@ -710,6 +697,13 @@ public class TraderData implements ITraderData {
                    contractId,
                    Contract::new);
     }
+    @Override
+    public void removeDeposit(long depositId) throws DataSourceException {
+        callRemove(Deposit.class,
+                   "depositId", 
+                   depositId, 
+                   Deposit::new);
+    }
 
     @Override
     public void removeInstrument(String instrumentId) throws DataSourceException {
@@ -733,6 +727,13 @@ public class TraderData implements ITraderData {
                    "instrumentId",
                    instrumentId,
                    SettlementPrice::new);
+    }
+    @Override
+    public void removeWithdraw(long withdrawId) throws DataSourceException {
+        callRemove(Withdraw.class, 
+                   "withdrawId",
+                   withdrawId,
+                   Withdraw::new);
     }
 
     @Override
@@ -845,6 +846,19 @@ public class TraderData implements ITraderData {
             throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
                                           Exceptions.REFLECTION_FAIL.message(),
                                           ex);
+        }
+    }
+    @Override
+    public void updateTradingDay(TradingDay day) throws DataSourceException {
+        try {
+            callUpdate(TradingDay.class,
+                       day,
+                       TradingDay.class.getDeclaredField("tradingDayId"));
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
+                    Exceptions.REFLECTION_FAIL.message(),
+                    ex);
         }
     }
 
