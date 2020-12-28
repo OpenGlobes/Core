@@ -148,7 +148,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void initialize(Properties properties) throws EngineException {
+    public void renew(Properties properties) throws EngineException {
         changeStatus(TraderEngineStatuses.INITIALIZING);
         check0();
         try {

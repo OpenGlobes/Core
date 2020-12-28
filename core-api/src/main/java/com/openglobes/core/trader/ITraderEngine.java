@@ -55,7 +55,7 @@ public interface ITraderEngine {
 
     void settle(Properties properties) throws EngineException;
 
-    void initialize(Properties properties) throws EngineException;
+    void renew(Properties properties) throws EngineException;
 
     void registerTrader(int traderId, ITraderGateway trader) throws EngineException;
 
