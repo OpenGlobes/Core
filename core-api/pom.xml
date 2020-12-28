@@ -10,7 +10,7 @@
 
     <parent>
         <groupId>com.openglobes.core</groupId>
-        <artifactId>all</artifactId>
+        <artifactId>core-engine</artifactId>
         <version>1.0</version>
     </parent>
 

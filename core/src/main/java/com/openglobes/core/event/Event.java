@@ -28,27 +28,22 @@ import java.time.ZonedDateTime;
  */
 public class Event<T> implements IEvent<T> {
 
-    private T o;
     private Class<T> c;
+    private T o;
     private final Long seq;
     private final ZonedDateTime ts;
 
     public Event() {
-        seq = Utils.getExecutionId();
+        seq = Utils.nextId();
         ts = ZonedDateTime.now();
-    }
-
-    public void set(T o) {
-        this.o = o;
-    }
-
-    public void setType(Class<T> c) {
-        this.c = c;
     }
 
     @Override
     public T get() {
         return o;
+    }
+    public void set(T o) {
+        this.o = o;
     }
 
     @Override
@@ -64,6 +59,9 @@ public class Event<T> implements IEvent<T> {
     @Override
     public Class<T> getType() {
         return c;
+    }
+    public void setType(Class<T> c) {
+        this.c = c;
     }
 
 }

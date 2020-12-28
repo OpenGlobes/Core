@@ -34,14 +34,14 @@ public class ServiceRuntimeStatus extends RuntimeException {
 
     public ServiceRuntimeStatus(Integer code, String msg) {
         super(msg);
-        this.serviceRuntimeStatusId = Utils.getExecutionId();
+        this.serviceRuntimeStatusId = Utils.nextId();
         this.code = code;
     }
 
     public ServiceRuntimeStatus(Integer code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
-        this.serviceRuntimeStatusId = Utils.getExecutionId();
+        this.serviceRuntimeStatusId = Utils.nextId();
     }
 
     public Integer getCode() {

@@ -34,14 +34,14 @@ public class ServiceStatus extends Exception {
 
     public ServiceStatus(Integer code, String msg) {
         super(msg);
-        this.serviceStatusId = Utils.getExecutionId();
+        this.serviceStatusId = Utils.nextId();
         this.code = code;
     }
 
     public ServiceStatus(Integer code, String message, Throwable cause) {
         super(message, cause);
         this.code = code;
-        this.serviceStatusId = Utils.getExecutionId();
+        this.serviceStatusId = Utils.nextId();
     }
 
     public Integer getCode() {
