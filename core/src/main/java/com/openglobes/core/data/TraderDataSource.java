@@ -18,6 +18,7 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import java.util.Properties;
 
 /**
  *
@@ -43,6 +44,11 @@ public class TraderDataSource implements ITraderDataSource{
     public <T> IEventSource getEventSource(DataChangeType type) throws DataSourceException {
         // TODO getEventSource
         return null;
+    }
+
+    @Override
+    public void setProperties(Properties properties) throws DataSourceException {
+        // TODO setProperties
     }
     
 }

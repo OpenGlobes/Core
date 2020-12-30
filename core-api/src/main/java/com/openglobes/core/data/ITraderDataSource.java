@@ -18,6 +18,7 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import java.util.Properties;
 
 /**
  * Data source provides basic data to higher level.
@@ -26,6 +27,7 @@ import com.openglobes.core.event.IEventSource;
  * @since 1.0
  */
 public interface ITraderDataSource {
+    void setProperties(Properties properties) throws DataSourceException;
 
     ITraderData getConnection() throws DataSourceException;
 

@@ -19,6 +19,7 @@ package com.openglobes.core.trader;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Algorithms.
@@ -27,6 +28,8 @@ import java.util.Map;
  * @since 1.0
  */
 public interface ITraderEngineAlgorithm {
+    
+    void setProperties(Properties properties) throws AlgorithmException;
 
     Account getAccount(Account pre, Collection<Deposit> deposits, Collection<Withdraw> withdraws, Collection<Position> positions) throws AlgorithmException;
 

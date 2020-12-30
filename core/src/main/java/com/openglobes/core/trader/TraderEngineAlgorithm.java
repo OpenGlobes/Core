@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -34,7 +35,10 @@ import java.util.Set;
  */
 public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
+    private final Properties props;
+
     public TraderEngineAlgorithm() {
+        props = new Properties();
     }
 
     @Override
@@ -227,6 +231,12 @@ public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
         var r = new HashSet<Position>(lp.values());
         r.addAll(sp.values());
         return r;
+    }
+
+    @Override
+    public void setProperties(Properties properties) throws AlgorithmException {
+        props.clear();
+        props.putAll(properties);
     }
 
     private void addClosedContract(Position p,
