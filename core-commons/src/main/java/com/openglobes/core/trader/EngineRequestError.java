@@ -17,6 +17,7 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.exceptions.EngineRuntimeException;
+import com.openglobes.core.trader.Request;
 
 /**
  *
