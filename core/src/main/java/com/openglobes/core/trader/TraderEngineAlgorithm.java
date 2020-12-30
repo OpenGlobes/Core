@@ -894,10 +894,10 @@ public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
         if (trades.isEmpty()) {
             return;
         }
-        var responses = new LinkedList<Trade>(trades);
-        responses.sort((Trade o1, Trade o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
-        order.setTradingDay(responses.getFirst().getTradingDay());
-        order.setInsertTimestamp(responses.getFirst().getTimestamp());
-        order.setUpdateTimestamp(responses.getLast().getTimestamp());
+        var ts = new LinkedList<Trade>(trades);
+        ts.sort((Trade o1, Trade o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
+        order.setTradingDay(ts.getFirst().getTradingDay());
+        order.setInsertTimestamp(ts.getFirst().getTimestamp());
+        order.setUpdateTimestamp(ts.getLast().getTimestamp());
     }
 }

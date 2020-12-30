@@ -183,15 +183,15 @@ public class TraderEngine implements ITraderEngine {
                                       Exceptions.REQUEST_NULL.message());
         }
         try {
-            es0.publish(RequestContext.class,
-                        new RequestContext(request,
-                                           instrument,
-                                           properties,
-                                           requestId));
+            es0.publish(RequestDetail.class,
+                        new RequestDetail(request,
+                                          instrument,
+                                          properties,
+                                          requestId));
         }
         catch (EventSourceException ex) {
-            throw new EngineException(Exceptions.EVENT_PUBLISH_FAIL.code(),
-                                      Exceptions.EVENT_PUBLISH_FAIL.message(),
+            throw new EngineException(ex.getCode(),
+                                      ex.getMessage(),
                                       ex);
         }
     }
@@ -474,7 +474,7 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void dispatchRequest(RequestContext ctx) {
+    private void dispatchRequest(RequestDetail ctx) {
         try {
             if (ctx.getRequest().getAction() == ActionType.DELETE) {
                 forDelete(ctx.getRequest(),
@@ -487,10 +487,10 @@ public class TraderEngine implements ITraderEngine {
                        ctx.getRequestId());
             }
         }
-        catch (EngineException e) {
-            callOnException(new EngineRuntimeException(Exceptions.REQUEST_DISPATCH_FAIL.code(),
-                                                       Exceptions.REQUEST_DISPATCH_FAIL.message(),
-                                                       e));
+        catch (EngineException ex) {
+            callOnException(new EngineRuntimeException(ex.getCode(),
+                                                       ex.getMessage(),
+                                                       ex));
         }
     }
 
@@ -911,7 +911,7 @@ public class TraderEngine implements ITraderEngine {
 
     private void setRequestHandler() {
         try {
-            es0.subscribe(RequestContext.class, (IEvent<RequestContext> event) -> {
+            es0.subscribe(RequestDetail.class, (IEvent<RequestDetail> event) -> {
                       dispatchRequest(event.get());
                   });
             es0.start();
@@ -1003,10 +1003,9 @@ public class TraderEngine implements ITraderEngine {
             context.start(globalStartProps);
         }
         catch (GatewayException ex) {
-            throw new EngineException(
-                    ex.getCode(),
-                    ex.getMessage() + "(Trader ID:" + key.toString() + ")",
-                    ex);
+            throw new EngineException(ex.getCode(),
+                                      ex.getMessage() + "(Trader ID:" + key.toString() + ")",
+                                      ex);
 
         }
     }
@@ -1017,10 +1016,9 @@ public class TraderEngine implements ITraderEngine {
             context.stop();
         }
         catch (GatewayException ex) {
-            throw new EngineException(
-                    ex.getCode(),
-                    ex.getMessage() + "(Trader ID:" + key.toString() + ")",
-                    ex);
+            throw new EngineException(ex.getCode(),
+                                      ex.getMessage() + "(Trader ID:" + key.toString() + ")",
+                                      ex);
         }
     }
 
@@ -1036,8 +1034,8 @@ public class TraderEngine implements ITraderEngine {
             es.publish(clazz, object);
         }
         catch (EventSourceException ex) {
-            throw new EngineRuntimeException(Exceptions.EVENT_PUBLISH_FAIL.code(),
-                                             Exceptions.EVENT_PUBLISH_FAIL.message(),
+            throw new EngineRuntimeException(ex.getCode(),
+                                             ex.getMessage(),
                                              ex);
         }
     }

@@ -23,14 +23,14 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class RequestContext {
+public class RequestDetail {
 
     private final Instrument instrument;
     private final Properties properties;
     private final Request request;
     private final int requestId;
 
-    public RequestContext(Request request,
+    public RequestDetail(Request request,
                           Instrument instrument,
                           Properties properties,
                           int requestId) {

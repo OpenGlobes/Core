@@ -920,8 +920,8 @@ public class TraderData implements ITraderData {
             src.getEventSource(type).publish(clazz, object);
         }
         catch (EventSourceException ex) {
-            throw new DataSourceException(Exceptions.EVENT_PUBLISH_FAIL.code(),
-                                          Exceptions.EVENT_PUBLISH_FAIL.message(),
+            throw new DataSourceException(ex.getCode(),
+                                          ex.getMessage(),
                                           ex);
         }
     }
