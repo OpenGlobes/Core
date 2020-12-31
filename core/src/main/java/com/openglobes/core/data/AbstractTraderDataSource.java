@@ -122,6 +122,7 @@ public abstract class AbstractTraderDataSource implements ITraderDataSource {
                                 .log(Level.SEVERE, ex.getMessage(), ex);
                     }
                 });
+                m.clear();
             }
         }
 
