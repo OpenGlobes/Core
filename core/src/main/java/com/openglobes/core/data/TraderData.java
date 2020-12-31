@@ -48,25 +48,14 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderData implements ITraderData {
+public class TraderData extends AbstractTraderData {
 
-    private final Connection conn;
     private Boolean exAutoCommit;
     private final IQuery query;
-    private final ITraderDataSource src;
 
-    public TraderData(Connection connection, ITraderDataSource source) throws DataSourceException {
-        if (connection == null) {
-            throw new DataSourceException(Exceptions.DATA_CONNECTION_NULL.code(),
-                                          Exceptions.DATA_CONNECTION_NULL.message());
-        }
-        if (source == null) {
-            throw new DataSourceException(Exceptions.DATASOURCE_NULL.code(),
-                                          Exceptions.DATASOURCE_NULL.message());
-        }
-        src = source;
-        conn = connection;
-        query = Queries.createQuery(conn);
+    public TraderData(Connection connection, TraderDataSource source) throws DataSourceException {
+        super(connection, source);
+        query = Queries.createQuery(conn());
     }
 
     @Override
@@ -132,7 +121,7 @@ public class TraderData implements ITraderData {
     @Override
     public void commit() throws DataSourceException {
         try {
-            conn.commit();
+            conn().commit();
         }
         catch (SQLException ex) {
             throw new DataSourceException(Exceptions.TRANSACTION_COMMIT_FAILED.code(),
@@ -336,7 +325,7 @@ public class TraderData implements ITraderData {
 
     @Override
     public ITraderDataSource getDataSource() {
-        return src;
+        return source();
     }
 
     @Override
@@ -587,6 +576,11 @@ public class TraderData implements ITraderData {
     }
 
     @Override
+    public Connection getSqlConnection() throws DataSourceException {
+        return conn();
+    }
+
+    @Override
     public Trade getTradeById(Long tradeId) throws DataSourceException {
         try {
             return callGetSingle(Trade.class,
@@ -662,7 +656,6 @@ public class TraderData implements ITraderData {
         }
     }
 
-
     @Override
     public Collection<Withdraw> getWithdraws() throws DataSourceException {
         try {
@@ -697,11 +690,12 @@ public class TraderData implements ITraderData {
                    contractId,
                    Contract::new);
     }
+
     @Override
     public void removeDeposit(long depositId) throws DataSourceException {
         callRemove(Deposit.class,
-                   "depositId", 
-                   depositId, 
+                   "depositId",
+                   depositId,
                    Deposit::new);
     }
 
@@ -728,9 +722,10 @@ public class TraderData implements ITraderData {
                    instrumentId,
                    SettlementPrice::new);
     }
+
     @Override
     public void removeWithdraw(long withdrawId) throws DataSourceException {
-        callRemove(Withdraw.class, 
+        callRemove(Withdraw.class,
                    "withdrawId",
                    withdrawId,
                    Withdraw::new);
@@ -739,7 +734,7 @@ public class TraderData implements ITraderData {
     @Override
     public void rollback() throws DataSourceException {
         try {
-            conn.rollback();
+            conn().rollback();
         }
         catch (SQLException ex) {
             throw new DataSourceException(Exceptions.TRANSACTION_ROLLBACK_FAILED.code(),
@@ -754,8 +749,8 @@ public class TraderData implements ITraderData {
     @Override
     public void transaction() throws DataSourceException {
         try {
-            exAutoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(false);
+            exAutoCommit = conn().getAutoCommit();
+            conn().setAutoCommit(false);
         }
         catch (SQLException ex) {
             restoreTransaction();
@@ -848,6 +843,7 @@ public class TraderData implements ITraderData {
                                           ex);
         }
     }
+
     @Override
     public void updateTradingDay(TradingDay day) throws DataSourceException {
         try {
@@ -857,8 +853,8 @@ public class TraderData implements ITraderData {
         }
         catch (NoSuchFieldException | SecurityException ex) {
             throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                    Exceptions.REFLECTION_FAIL.message(),
-                    ex);
+                                          Exceptions.REFLECTION_FAIL.message(),
+                                          ex);
         }
     }
 
@@ -917,7 +913,7 @@ public class TraderData implements ITraderData {
                                   T object,
                                   DataChangeType type) throws DataSourceException {
         try {
-            src.getEventSource(type).publish(clazz, object);
+            source().getEventSource(type).publish(clazz, object);
         }
         catch (EventSourceException ex) {
             throw new DataSourceException(ex.getCode(),
@@ -975,7 +971,7 @@ public class TraderData implements ITraderData {
     private void restoreTransaction() throws DataSourceException {
         try {
             if (exAutoCommit != null) {
-                conn.setAutoCommit(exAutoCommit);
+                conn().setAutoCommit(exAutoCommit);
             }
         }
         catch (SQLException ex) {
@@ -984,5 +980,4 @@ public class TraderData implements ITraderData {
                                           ex);
         }
     }
-
 }

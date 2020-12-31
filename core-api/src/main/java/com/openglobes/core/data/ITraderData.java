@@ -30,6 +30,7 @@ import com.openglobes.core.trader.SettlementPrice;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.trader.TradingDay;
 import com.openglobes.core.trader.Withdraw;
+import java.sql.Connection;
 import java.util.Collection;
 
 /**
@@ -38,7 +39,7 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderData {
+public interface ITraderData extends AutoCloseable{
 
     void addAccount(Account account) throws DataSourceException;
 
@@ -114,6 +115,8 @@ public interface ITraderData {
 
     SettlementPrice getSettlementPriceByInstrumentId(String instrumentId) throws DataSourceException;
 
+    Connection getSqlConnection() throws DataSourceException;
+
     Trade getTradeById(Long tradeId) throws DataSourceException;
 
     Collection<Trade> getTrades() throws DataSourceException;
@@ -122,23 +125,21 @@ public interface ITraderData {
 
     TradingDay getTradingDay() throws DataSourceException;
 
-    void updateTradingDay(TradingDay day) throws DataSourceException;
-
     Collection<Withdraw> getWithdraws() throws DataSourceException;
 
     void removeCommission(long commissionId) throws DataSourceException;
 
     void removeContract(long contractId) throws DataSourceException;
 
+    void removeDeposit(long depositId) throws DataSourceException;
+
     void removeInstrument(String instrumentId) throws DataSourceException;
 
     void removeMargin(long marginId) throws DataSourceException;
 
     void removeSettlementPrice(String instrumentId) throws DataSourceException;
-    
+
     void removeWithdraw(long withdrawId) throws DataSourceException;
-    
-    void removeDeposit(long depositId) throws DataSourceException;
 
     void rollback() throws DataSourceException;
 
@@ -155,4 +156,6 @@ public interface ITraderData {
     void updateMargin(Margin margin) throws DataSourceException;
 
     void updateSettlementPrice(SettlementPrice price) throws DataSourceException;
+
+    void updateTradingDay(TradingDay day) throws DataSourceException;
 }

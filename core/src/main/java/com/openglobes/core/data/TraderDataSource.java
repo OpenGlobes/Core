@@ -16,39 +16,80 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.event.EventSource;
+import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.exceptions.Exceptions;
+import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderDataSource implements ITraderDataSource{
-    
+public class TraderDataSource extends AbstractTraderDataSource {
+
+    private final Map<DataChangeType, EventSource> events;
+
+    public TraderDataSource() {
+        events = new ConcurrentHashMap<>(DataChangeType.values().length);
+        setupEvents();
+    }
+
     @Override
-    public <T> void addListener(Class<T> clazz, 
-                                IEventHandler<T> handler, 
+    public <T> void addListener(Class<T> clazz,
+                                IEventHandler<T> handler,
                                 DataChangeType type) throws DataSourceException {
-        // TODO addListener
+        try {
+            getEventSource(type).subscribe(clazz, handler);
+        }
+        catch (EventSourceException ex) {
+            throw new DataSourceException(ex.getCode(),
+                                          ex.getMessage(),
+                                          ex);
+        }
     }
 
     @Override
     public ITraderData getConnection() throws DataSourceException {
-        // TODO getConnection
-        return null;
+        try {
+            return new TraderData(findConnection(), this);
+        }
+        catch (ClassNotFoundException ex) {
+            throw new DataSourceException(Exceptions.DATASOURCE_DRIVER_CLASS_MISSING.code(),
+                                          Exceptions.DATASOURCE_DRIVER_CLASS_MISSING.message(),
+                                          ex);
+        }
+        catch (SQLException ex) {
+            throw new DataSourceException(ex.getErrorCode(),
+                                          ex.getMessage(),
+                                          ex);
+        }
     }
 
     @Override
-    public <T> IEventSource getEventSource(DataChangeType type) throws DataSourceException {
-        // TODO getEventSource
-        return null;
+    public IEventSource getEventSource(DataChangeType type) throws DataSourceException {
+        if (!events.containsKey(type)) {
+            throw new DataSourceException(Exceptions.DATASOURCE_EVENTSOURCE_NOT_FOUND.code(),
+                                          Exceptions.DATASOURCE_EVENTSOURCE_NOT_FOUND.message());
+        }
+        return events.get(type);
     }
 
     @Override
     public void setProperties(Properties properties) throws DataSourceException {
-        // TODO setProperties
+        props().clear();
+        props().putAll(properties);
     }
-    
+
+    private void setupEvents() {
+        for (var c : DataChangeType.values()) {
+            events.put(c, new EventSource());
+        }
+    }
+
 }

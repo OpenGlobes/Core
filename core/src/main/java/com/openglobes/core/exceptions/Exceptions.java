@@ -113,7 +113,10 @@ public enum Exceptions {
     DUPLCATED_SUBSCRIBE_EVENT(0x5A, "Duplicated subscription to event type."),
     DUPLICATED_START(0x5B, "Duplicated start."),
     DUPLICATED_STOP(0x5C, "Duplicated stop."),
-    PUBLISH_TO_STOPPED_QUEUE(0x5D, "Publish events to a stopped queue.");
+    PUBLISH_TO_STOPPED_QUEUE(0x5D, "Publish events to a stopped queue."),
+    DATASOURCE_CONNECTION_NOT_CACHED(0x5E, "Connection not in pool cache."),
+    DATASOURCE_DRIVER_CLASS_MISSING(0x5F, "Driver class not found."),
+    DATASOURCE_EVENTSOURCE_NOT_FOUND(0x60, "No event source for the specified data change.");
 
     private final int code;
     private final String message;
