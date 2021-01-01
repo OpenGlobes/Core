@@ -118,8 +118,9 @@ public abstract class AbstractTraderDataSource implements ITraderDataSource {
                         c.close();
                     }
                     catch (SQLException ex) {
-                        Logger.getLogger(AbstractTraderDataSource.class.getName())
-                                .log(Level.SEVERE, ex.getMessage(), ex);
+                        Logger.getLogger(AbstractTraderDataSource.class.getName()).log(Level.SEVERE,
+                                                                                       ex.toString(),
+                                                                                       ex);
                     }
                 });
                 m.clear();

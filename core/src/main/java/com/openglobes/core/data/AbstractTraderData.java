@@ -77,8 +77,9 @@ public abstract class AbstractTraderData implements ITraderData {
                 src.freeConnection(conn);
             }
             catch (DataSourceException ex) {
-                Logger.getLogger(AbstractTraderDataSource.class.getName())
-                        .log(Level.SEVERE, ex.getMessage(), ex);
+                Logger.getLogger(AbstractTraderDataSource.class.getName()).log(Level.SEVERE, 
+                                                                               ex.toString(),
+                                                                               ex);
             }
         }
 
