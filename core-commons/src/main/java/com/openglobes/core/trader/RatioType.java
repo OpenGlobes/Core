@@ -22,17 +22,11 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum RatioType {
-    BY_MONEY(0x50),
-    BY_VOLUMN(0x51);
+public class RatioType {
 
-    private final int code;
+    public static final int BY_MONEY = (0x50);
+    public static final int BY_VOLUMN = (0x51);
 
-    private RatioType(int code) {
-        this.code = code;
-    }
-
-    public int code() {
-        return code;
+    private RatioType() {
     }
 }

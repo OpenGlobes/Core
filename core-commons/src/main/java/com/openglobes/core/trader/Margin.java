@@ -31,7 +31,7 @@ public class Margin {
     private Double margin;
     private Long marginId;
     private Long orderId;
-    private FeeStatus status;
+    private Integer status;
     private ZonedDateTime timestamp;
     private LocalDate tradingDay;
 
@@ -70,11 +70,11 @@ public class Margin {
         this.orderId = orderId;
     }
 
-    public FeeStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(FeeStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

@@ -136,26 +136,13 @@ public class TraderEngine implements ITraderEngine {
     @Override
     public void settle(Properties properties) throws EngineException {
         changeStatus(TraderEngineStatuses.SETTLING);
-        check0();
+        checkDataSourceAlgorithmNotNull();
         settle(ds, algo);
         try {
             settleAccount();
         }
         catch (EngineException e) {
             changeStatus(TraderEngineStatuses.SETTLE_FAILED);
-            throw e;
-        }
-    }
-
-    @Override
-    public void renew(Properties properties) throws EngineException {
-        changeStatus(TraderEngineStatuses.INITIALIZING);
-        check0();
-        try {
-            initializeAccount();
-        }
-        catch (EngineException e) {
-            changeStatus(TraderEngineStatuses.INIT_FAILED);
             throw e;
         }
     }
@@ -171,6 +158,19 @@ public class TraderEngine implements ITraderEngine {
                                       Exceptions.TRADER_ID_DUPLICATED.message());
         }
         addTrader(traderId, trader);
+    }
+
+    @Override
+    public void renew(Properties properties) throws EngineException {
+        changeStatus(TraderEngineStatuses.INITIALIZING);
+        checkDataSourceAlgorithmNotNull();
+        try {
+            initializeAccount();
+        }
+        catch (EngineException e) {
+            changeStatus(TraderEngineStatuses.INIT_FAILED);
+            throw e;
+        }
     }
 
     @Override
@@ -318,32 +318,6 @@ public class TraderEngine implements ITraderEngine {
         callOnStatusChange(this.status);
     }
 
-    private void check0() throws EngineException {
-        if (ds == null) {
-            throw new EngineException(Exceptions.DATASOURCE_NULL.code(),
-                                      Exceptions.DATASOURCE_NULL.message());
-        }
-        if (algo == null) {
-            throw new EngineException(Exceptions.ALGORITHM_NULL.code(),
-                                      Exceptions.ALGORITHM_NULL.message());
-        }
-    }
-
-    private void check1(Integer key, TraderContext rt) throws EngineException {
-        if (rt == null) {
-            throw new EngineException(
-                    Exceptions.TRADER_ID_NOT_FOUND.code(),
-                    Exceptions.TRADER_ID_NOT_FOUND.message() + "(Trader ID:" + key.toString() + ")");
-        }
-    }
-
-    private void check2(Instrument instrument) throws EngineException {
-        if (instrument == null) {
-            throw new EngineException(Exceptions.INSTRUMENT_NULL.code(),
-                                      Exceptions.INSTRUMENT_NULL.message());
-        }
-    }
-
     private Collection<Contract> checkAssetsClose(Request request, Instrument instrument) throws EngineException {
         checkVolumn(request.getQuantity());
         var cs = getAvailableContracts(request);
@@ -383,11 +357,21 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void checkVolumn(Long v) throws EngineException {
-        if (v == null) {
-            throw new EngineException(Exceptions.VOLUMN_NULL.code(),
-                                      Exceptions.VOLUMN_NULL.message());
+    private void checkDataSourceAlgorithmNotNull() throws EngineException {
+        requireNotNull(ds, Exceptions.DATASOURCE_NULL);
+        requireNotNull(algo, Exceptions.ALGORITHM_NULL);
+    }
+
+    private void checkTraderContextNotNull(Integer key, TraderContext rt) throws EngineException {
+        if (rt == null) {
+            throw new EngineException(
+                    Exceptions.TRADER_ID_NOT_FOUND.code(),
+                    Exceptions.TRADER_ID_NOT_FOUND.message() + "(Trader ID:" + key.toString() + ")");
         }
+    }
+
+    private void checkVolumn(Long v) throws EngineException {
+        requireNotNull(v, Exceptions.VOLUMN_NULL);
         if (v <= 0) {
             throw new EngineException(Exceptions.NONPOSITIVE_VOLUMN.code(),
                                       Exceptions.NONPOSITIVE_VOLUMN.message());
@@ -496,7 +480,7 @@ public class TraderEngine implements ITraderEngine {
 
     private TraderContext findContextByTraderId(int traderId) throws EngineException {
         var rt = traders.get(traderId);
-        check1(traderId, rt);
+        checkTraderContextNotNull(traderId, rt);
         return rt;
     }
 
@@ -565,8 +549,8 @@ public class TraderEngine implements ITraderEngine {
                         Instrument instrument,
                         Properties properties,
                         int requestId) throws EngineException {
-        check0();
-        check2(instrument);
+        checkDataSourceAlgorithmNotNull();
+        requireNotNull(instrument, Exceptions.INSTRUMENT_NULL);
         /*
          * Remmeber the instrument it once operated.
          */
@@ -586,7 +570,7 @@ public class TraderEngine implements ITraderEngine {
 
     private void forwardRequest(Request request, Integer traderId, int requestId) throws EngineException {
         var ctx = findContextByTraderId(traderId);
-        check1(traderId, ctx);
+        checkTraderContextNotNull(traderId, ctx);
         if (null == request.getAction()) {
             throw new EngineException(Exceptions.ACTION_NULL.code(),
                                       Exceptions.ACTION_NULL.message());
@@ -647,7 +631,7 @@ public class TraderEngine implements ITraderEngine {
         }
         else {
             var ctx = findContextByTraderId(traderId);
-            check1(traderId, ctx);
+            checkTraderContextNotNull(traderId, ctx);
             if (!ctx.isEnabled()) {
                 throw new EngineException(Exceptions.TRADER_NOT_ENABLED.code(),
                                           Exceptions.TRADER_NOT_ENABLED.message() + "(Trader ID:" + traderId + ")");
@@ -808,6 +792,13 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ex.getCode(),
                                       ex.getMessage(),
                                       ex);
+        }
+    }
+
+    private <T> void requireNotNull(T object, Exceptions exp) throws EngineException {
+        if (object == null) {
+            throw new EngineException(exp.code(),
+                                      exp.message());
         }
     }
 
@@ -988,7 +979,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void startEach(Integer key, TraderContext context) throws EngineException {
-        check1(key, context);
+        checkTraderContextNotNull(key, context);
         if (!context.isEnabled()) {
             return;
         }
@@ -1011,7 +1002,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void stopEach(Integer key, TraderContext context) throws EngineException {
-        check1(key, context);
+        checkTraderContextNotNull(key, context);
         try {
             context.stop();
         }

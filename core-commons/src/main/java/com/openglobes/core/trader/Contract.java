@@ -30,14 +30,14 @@ public class Contract {
     private Double closeAmount;
     private LocalDate closeTradingDay;
     private Long contractId;
-    private Direction direction;
+    private Integer direction;
     private String instrumentId;
     private Double openAmount;
     private ZonedDateTime openTimestamp;
     private LocalDate openTradingDay;
-    private Long tradeId;
-    private ContractStatus status;
+    private Integer status;
     private ZonedDateTime timestamp;
+    private Long tradeId;
     private Integer traderId;
 
     public Contract() {
@@ -67,11 +67,11 @@ public class Contract {
         this.contractId = contractId;
     }
 
-    public Direction getDirection() {
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 
@@ -107,19 +107,11 @@ public class Contract {
         this.openTradingDay = tradingDay;
     }
 
-    public Long getTradeId() {
-        return tradeId;
-    }
-
-    public void setTradeId(Long tradeId) {
-        this.tradeId = tradeId;
-    }
-
-    public ContractStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(ContractStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -129,6 +121,14 @@ public class Contract {
 
     public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getTradeId() {
+        return tradeId;
+    }
+
+    public void setTradeId(Long tradeId) {
+        this.tradeId = tradeId;
     }
 
     public Integer getTraderId() {

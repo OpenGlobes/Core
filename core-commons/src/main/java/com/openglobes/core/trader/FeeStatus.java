@@ -22,18 +22,13 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @sine 1.0
  */
-public enum FeeStatus {
-    FORZEN(0x20),
-    DEALED(0x21),
-    REMOVED(0x22);
+public class FeeStatus {
 
-    private final int code;
+    public static final int DEALED = (0x21);
+    public static final int FORZEN = (0x20);
+    public static final int REMOVED = (0x22);
 
-    private FeeStatus(int code) {
-        this.code = code;
+    private FeeStatus() {
     }
 
-    public int code() {
-        return code;
-    }
 }

@@ -29,21 +29,21 @@ public class Order {
 
     private Double amount;
     private ZonedDateTime deleteTimestamp;
-    private Direction direction;
+    private Boolean deleted;
+    private Integer direction;
     private ZonedDateTime insertTimestamp;
     private String instrumentId;
-    private Boolean deleted;
-    private Offset offset;
+    private Integer offset;
     private Long orderId;
     private Double price;
-    private OrderStatus status;
+    private Long quantity;
+    private Integer status;
     private Integer statusCode;
     private String statusMessage;
     private Long tradedVolumn;
     private Integer traderId;
     private LocalDate tradingDay;
     private ZonedDateTime updateTimestamp;
-    private Long quantity;
 
     public Order() {
     }
@@ -64,11 +64,16 @@ public class Order {
         this.deleteTimestamp = cancelTimestamp;
     }
 
-    public Direction getDirection() {
+    public void setDeleted(Boolean isCanceled) {
+        this.deleted = isCanceled;
+
+    }
+
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 
@@ -88,16 +93,11 @@ public class Order {
         this.instrumentId = instrumentId;
     }
 
-    public void setDeleted(Boolean isCanceled) {
-        this.deleted = isCanceled;
-
-    }
-
-    public Offset getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(Offset offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
@@ -117,11 +117,19 @@ public class Order {
         this.price = price;
     }
 
-    public OrderStatus getStatus() {
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -171,14 +179,6 @@ public class Order {
 
     public void setUpdateTimestamp(ZonedDateTime updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
-    }
-
-    public Long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
     }
 
     public Boolean isDeleted() {

@@ -19,9 +19,7 @@ package com.openglobes.core.data;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
-import com.openglobes.core.trader.ContractStatus;
 import com.openglobes.core.trader.Deposit;
-import com.openglobes.core.trader.FeeStatus;
 import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Margin;
 import com.openglobes.core.trader.Request;
@@ -75,7 +73,7 @@ public interface ITraderData extends AutoCloseable{
 
     Collection<Commission> getCommissionsByOrderId(long orderId) throws DataSourceException;
 
-    Collection<Commission> getCommissionsByStatus(FeeStatus status) throws DataSourceException;
+    Collection<Commission> getCommissionsByStatus(Integer status) throws DataSourceException;
 
     Contract getContractById(Long contractId) throws DataSourceException;
 
@@ -83,7 +81,7 @@ public interface ITraderData extends AutoCloseable{
 
     Collection<Contract> getContractsByInstrumentId(String instrumentId) throws DataSourceException;
 
-    Collection<Contract> getContractsByStatus(ContractStatus status) throws DataSourceException;
+    Collection<Contract> getContractsByStatus(Integer status) throws DataSourceException;
 
     Collection<Contract> getContractsByTradeId(long tradeId) throws DataSourceException;
 
@@ -101,7 +99,7 @@ public interface ITraderData extends AutoCloseable{
 
     Collection<Margin> getMarginsByOrderId(long orderId) throws DataSourceException;
 
-    Collection<Margin> getMarginsByStatus(FeeStatus status) throws DataSourceException;
+    Collection<Margin> getMarginsByStatus(Integer status) throws DataSourceException;
 
     Request getRequestByOrderId(long orderId) throws DataSourceException;
 

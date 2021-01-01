@@ -22,21 +22,15 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum OrderStatus {
-    ALL_TRADED(0x60),
-    QUEUED(0x61),
-    UNQUEUED(0x62),
-    ACCEPTED(0x63),
-    DELETED(0x64),
-    REJECTED(0x65);
+public class OrderStatus {
 
-    private final int c;
+    public static final int ACCEPTED = (0x63);
+    public static final int ALL_TRADED = (0x60);
+    public static final int DELETED = (0x64);
+    public static final int QUEUED = (0x61);
+    public static final int REJECTED = (0x65);
+    public static final int UNQUEUED = (0x62);
 
-    private OrderStatus(int code) {
-        c = code;
-    }
-
-    public int code() {
-        return c;
+    private OrderStatus() {
     }
 }

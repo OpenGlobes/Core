@@ -15,28 +15,12 @@ import java.time.ZonedDateTime;
  */
 public class TradingDay {
 
-    private Long tradingDayId;
-    private LocalDate tradingDay;
     private LocalDate actionDay;
     private ZonedDateTime timestamp;
+    private LocalDate tradingDay;
+    private Long tradingDayId;
 
     public TradingDay() {
-    }
-
-    public Long getTradingDayId() {
-        return tradingDayId;
-    }
-
-    public void setTradingDayId(Long tradingDayId) {
-        this.tradingDayId = tradingDayId;
-    }
-
-    public LocalDate getTradingDay() {
-        return tradingDay;
-    }
-
-    public void setTradingDay(LocalDate tradingDay) {
-        this.tradingDay = tradingDay;
     }
 
     public LocalDate getActionDay() {
@@ -53,6 +37,22 @@ public class TradingDay {
 
     public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public LocalDate getTradingDay() {
+        return tradingDay;
+    }
+
+    public void setTradingDay(LocalDate tradingDay) {
+        this.tradingDay = tradingDay;
+    }
+
+    public Long getTradingDayId() {
+        return tradingDayId;
+    }
+
+    public void setTradingDayId(Long tradingDayId) {
+        this.tradingDayId = tradingDayId;
     }
 
 }

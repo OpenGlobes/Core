@@ -26,9 +26,7 @@ import com.openglobes.core.exceptions.Exceptions;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
-import com.openglobes.core.trader.ContractStatus;
 import com.openglobes.core.trader.Deposit;
-import com.openglobes.core.trader.FeeStatus;
 import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Margin;
 import com.openglobes.core.trader.Request;
@@ -210,10 +208,10 @@ public class TraderData extends AbstractTraderData {
     }
 
     @Override
-    public Collection<Commission> getCommissionsByStatus(FeeStatus status) throws DataSourceException {
+    public Collection<Commission> getCommissionsByStatus(Integer status) throws DataSourceException {
         try {
             return callGetMany(Commission.class,
-                               Queries.equals(Commission.class.getDeclaredField("status"), status.name()),
+                               Queries.equals(Commission.class.getDeclaredField("status"), status),
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
@@ -286,10 +284,10 @@ public class TraderData extends AbstractTraderData {
     }
 
     @Override
-    public Collection<Contract> getContractsByStatus(ContractStatus status) throws DataSourceException {
+    public Collection<Contract> getContractsByStatus(Integer status) throws DataSourceException {
         try {
             return callGetMany(Contract.class,
-                               Queries.equals(Contract.class.getDeclaredField("status"), status.name()),
+                               Queries.equals(Contract.class.getDeclaredField("status"), status),
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
@@ -443,10 +441,10 @@ public class TraderData extends AbstractTraderData {
     }
 
     @Override
-    public Collection<Margin> getMarginsByStatus(FeeStatus status) throws DataSourceException {
+    public Collection<Margin> getMarginsByStatus(Integer status) throws DataSourceException {
         try {
             return callGetMany(Margin.class,
-                               Queries.equals(Margin.class.getDeclaredField("status"), status.name()),
+                               Queries.equals(Margin.class.getDeclaredField("status"), status),
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {

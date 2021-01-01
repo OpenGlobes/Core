@@ -27,20 +27,12 @@ import java.time.ZonedDateTime;
 public class SettlementPrice {
 
     private String instrumentId;
-    private Long settlementPriceId;
     private Double settlementPrice;
-    private LocalDate tradingDay;
+    private Long settlementPriceId;
     private ZonedDateTime timestamp;
+    private LocalDate tradingDay;
 
     public SettlementPrice() {
-    }
-
-    public Long getSettlementPriceId() {
-        return settlementPriceId;
-    }
-
-    public void setSettlementPriceId(Long settlementPriceId) {
-        this.settlementPriceId = settlementPriceId;
     }
 
     public String getInstrumentId() {
@@ -59,12 +51,12 @@ public class SettlementPrice {
         this.settlementPrice = settlementPrice;
     }
 
-    public LocalDate getTradingDay() {
-        return tradingDay;
+    public Long getSettlementPriceId() {
+        return settlementPriceId;
     }
 
-    public void setTradingDay(LocalDate tradingDay) {
-        this.tradingDay = tradingDay;
+    public void setSettlementPriceId(Long settlementPriceId) {
+        this.settlementPriceId = settlementPriceId;
     }
 
     public ZonedDateTime getTimestamp() {
@@ -73,6 +65,14 @@ public class SettlementPrice {
 
     public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public LocalDate getTradingDay() {
+        return tradingDay;
+    }
+
+    public void setTradingDay(LocalDate tradingDay) {
+        this.tradingDay = tradingDay;
     }
 
 }

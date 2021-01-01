@@ -30,12 +30,12 @@ public class Instrument {
     private Double commissionCloseRatio;
     private Double commissionCloseTodayRatio;
     private Double commissionOpenRatio;
-    private RatioType commissionType;
+    private Integer commissionType;
     private LocalDate endDate;
     private String exchangeId;
     private String instrumentId;
     private Double marginRatio;
-    private RatioType marginType;
+    private Integer marginType;
     private Long multiple;
     private Double priceTick;
     private LocalDate startDate;
@@ -68,11 +68,11 @@ public class Instrument {
         this.commissionOpenRatio = commissionOpenRatio;
     }
 
-    public RatioType getCommissionType() {
+    public Integer getCommissionType() {
         return commissionType;
     }
 
-    public void setCommissionType(RatioType commissionType) {
+    public void setCommissionType(Integer commissionType) {
         this.commissionType = commissionType;
     }
 
@@ -108,11 +108,11 @@ public class Instrument {
         this.marginRatio = marginRatio;
     }
 
-    public RatioType getMarginType() {
+    public Integer getMarginType() {
         return marginType;
     }
 
-    public void setMarginType(RatioType marginType) {
+    public void setMarginType(Integer marginType) {
         this.marginType = marginType;
     }
 

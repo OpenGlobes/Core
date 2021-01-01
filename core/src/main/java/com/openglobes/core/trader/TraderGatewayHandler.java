@@ -569,7 +569,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         publishEvent(EngineRequestError.class, r);
     }
 
-    private void requireStatus(Contract c, ContractStatus s) {
+    private void requireStatus(Contract c, Integer s) {
         if (!Objects.equals(c.getStatus(), s)) {
             throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_CONTRACT_STATUS.code(),
                                               Exceptions.INVALID_DELETING_CONTRACT_STATUS.message()
@@ -577,7 +577,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void requireStatus(Margin m, FeeStatus s) {
+    private void requireStatus(Margin m, Integer s) {
         if (!Objects.equals(m.getStatus(), s)) {
             throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_MARGIN_STATUS.code(),
                                               Exceptions.INVALID_DELETING_MARGIN_STATUS.message()
@@ -585,7 +585,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void requireStatus(Commission c, FeeStatus s) {
+    private void requireStatus(Commission c, Integer s) {
         if (!Objects.equals(c.getStatus(), s)) {
             throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_COMMISSION_STATUS.code(),
                                               Exceptions.INVALID_DELETING_COMMISSION_STATUS.message()

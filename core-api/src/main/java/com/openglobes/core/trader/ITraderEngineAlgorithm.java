@@ -41,5 +41,5 @@ public interface ITraderEngineAlgorithm {
 
     double getMargin(double price, Instrument instrument) throws AlgorithmException;
 
-    double getCommission(double price, Instrument instrument, Direction direction, Offset offset) throws AlgorithmException;
+    double getCommission(double price, Instrument instrument, Integer direction, Integer offset) throws AlgorithmException;
 }

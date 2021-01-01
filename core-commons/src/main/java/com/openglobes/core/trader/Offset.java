@@ -10,18 +10,12 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum Offset {
-    OPEN(0x90),
-    CLOSE(0x91),
-    CLOSE_TODAY(0x92);
+public class Offset {
 
-    private final int code;
+    public static final int CLOSE = (0x91);
+    public static final int CLOSE_TODAY = (0x92);
+    public static final int OPEN = (0x90);
 
-    private Offset(int code) {
-        this.code = code;
-    }
-
-    public int code9() {
-        return code;
+    private Offset() {
     }
 }

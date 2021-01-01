@@ -27,14 +27,14 @@ import java.time.ZonedDateTime;
  */
 public class Response {
 
-    private ActionType action;
-    private Direction direction;
+    private Integer action;
+    private Integer direction;
     private String instrumentId;
-    private Offset offset;
+    private Integer offset;
     private Long orderId;
     private Long responseId;
     private String signature;
-    private OrderStatus status;
+    private Integer status;
     private Integer statusCode;
     private String statusMessage;
     private ZonedDateTime timestamp;
@@ -44,19 +44,19 @@ public class Response {
     public Response() {
     }
 
-    public ActionType getAction() {
+    public Integer getAction() {
         return action;
     }
 
-    public void setAction(ActionType action) {
+    public void setAction(Integer action) {
         this.action = action;
     }
 
-    public Direction getDirection() {
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 
@@ -68,11 +68,11 @@ public class Response {
         this.instrumentId = instrumentId;
     }
 
-    public Offset getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(Offset offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
@@ -100,11 +100,11 @@ public class Response {
         this.signature = signature;
     }
 
-    public OrderStatus getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

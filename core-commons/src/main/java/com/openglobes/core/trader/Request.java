@@ -24,10 +24,10 @@ package com.openglobes.core.trader;
  */
 public class Request {
 
-    private ActionType action;
-    private Direction direction;
+    private Integer action;
+    private Integer direction;
     private String instrumentId;
-    private Offset offset;
+    private Integer offset;
     private Long orderId;
     private Double price;
     private Long quantity;
@@ -37,19 +37,19 @@ public class Request {
     public Request() {
     }
 
-    public ActionType getAction() {
+    public Integer getAction() {
         return action;
     }
 
-    public void setAction(ActionType action) {
+    public void setAction(Integer action) {
         this.action = action;
     }
 
-    public Direction getDirection() {
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 
@@ -61,11 +61,11 @@ public class Request {
         this.instrumentId = instrumentId;
     }
 
-    public Offset getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(Offset offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 

@@ -10,17 +10,11 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum ActionType {
-    NEW(0x80),
-    DELETE(0x81);
+public class ActionType {
 
-    private final int code;
+    public static final int DELETE = (0x81);
+    public static final int NEW = (0x80);
 
-    private ActionType(int code) {
-        this.code = code;
-    }
-
-    public int code() {
-        return code;
+    private ActionType() {
     }
 }

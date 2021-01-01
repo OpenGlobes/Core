@@ -22,19 +22,12 @@ package com.openglobes.core.trader;
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum ContractStatus {
-    OPENING(0x40),
-    OPEN(0x41),
-    CLOSING(0x42),
-    CLOSED(0x43);
+public class ContractStatus {
+    public static final int CLOSED = (0x43);
+    public static final int CLOSING = (0x42);
+    public static final int OPEN = (0x41);
+    public static final int OPENING = (0x40);
 
-    private final int code;
-
-    private ContractStatus(int code) {
-        this.code = code;
-    }
-
-    public int code() {
-        return code;
+    private ContractStatus() {
     }
 }

@@ -35,7 +35,7 @@ public class Position {
     private Double amount;
     private Double closeProfit;
     private Double commission;
-    private Direction direction;
+    private Integer direction;
     private Long frozenCloseVolumn;
     private Double frozenCommission;
     private Double frozenMargin;
@@ -83,11 +83,11 @@ public class Position {
         this.commission = commission;
     }
 
-    public Direction getDirection() {
+    public Integer getDirection() {
         return direction;
     }
 
-    public void setDirection(Direction direction) {
+    public void setDirection(Integer direction) {
         this.direction = direction;
     }
 
