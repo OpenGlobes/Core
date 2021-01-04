@@ -460,15 +460,23 @@ public class TraderEngine implements ITraderEngine {
 
     private void dispatchRequest(RequestDetail ctx) {
         try {
+            if (null == ctx.getRequest().getAction()) {
+                throw new EngineException(Exceptions.ACTION_NULL.code(),
+                                          Exceptions.ACTION_NULL.message());
+            }
             if (ctx.getRequest().getAction() == ActionType.DELETE) {
-                forDelete(ctx.getRequest(),
-                          ctx.getRequestId());
+                synchronized (this) {
+                    forDelete(ctx.getRequest(),
+                              ctx.getRequestId());
+                }
             }
             else {
-                forNew(ctx.getRequest(),
-                       ctx.getInstrument(),
-                       ctx.getProperties(),
-                       ctx.getRequestId());
+                synchronized (this) {
+                    forNew(ctx.getRequest(),
+                           ctx.getInstrument(),
+                           ctx.getProperties(),
+                           ctx.getRequestId());
+                }
             }
         }
         catch (EngineException ex) {
@@ -542,7 +550,7 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(Exceptions.DELETE_REQS_NULL.code(),
                                       Exceptions.DELETE_REQS_NULL.message());
         }
-        forwardRequest(request, request.getTraderId(), requestId);
+        forwardDeleteRequest(request, request.getTraderId(), requestId);
     }
 
     private void forNew(Request request,
@@ -555,32 +563,34 @@ public class TraderEngine implements ITraderEngine {
          * Remmeber the instrument it once operated.
          */
         instruments.put(instrument.getInstrumentId(), instrument);
+
         if (request.getOffset() == Offset.OPEN) {
             decideTrader(request);
             checkAssetsOpen(request, instrument);
-            forwardRequest(request, request.getTraderId(), requestId);
+            forwardNewRequest(request, request.getTraderId(), requestId);
         }
         else {
             var cs = checkAssetsClose(request, instrument);
             for (var r : group(cs, request)) {
-                forwardRequest(r, r.getTraderId(), requestId);
+                forwardNewRequest(r, r.getTraderId(), requestId);
             }
         }
     }
 
-    private void forwardRequest(Request request, Integer traderId, int requestId) throws EngineException {
+    private void forwardDeleteRequest(Request request,
+                                      Integer traderId,
+                                      int requestId) throws EngineException {
         var ctx = findContextByTraderId(traderId);
         checkTraderContextNotNull(traderId, ctx);
-        if (null == request.getAction()) {
-            throw new EngineException(Exceptions.ACTION_NULL.code(),
-                                      Exceptions.ACTION_NULL.message());
-        }
-        if (request.getAction() == ActionType.NEW) {
-            newRequest(request, ctx, requestId);
-        }
-        else {
-            deleteRequest(request, ctx, requestId);
-        }
+        deleteRequest(request, ctx, requestId);
+    }
+
+    private void forwardNewRequest(Request request,
+                                   Integer traderId,
+                                   int requestId) throws EngineException {
+        var ctx = findContextByTraderId(traderId);
+        checkTraderContextNotNull(traderId, ctx);
+        newRequest(request, ctx, requestId);
     }
 
     private List<Contract> getAvailableContracts(Request request) throws EngineException {

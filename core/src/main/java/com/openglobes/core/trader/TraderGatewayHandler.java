@@ -71,10 +71,12 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     @Override
     public void onResponse(Response response) {
         try {
-            ctx.getEngine().getDataSource().getConnection().addResponse(response);
             preprocess(response);
-            if (response.getAction() == ActionType.DELETE) {
-                dealDelete(response);
+            synchronized (ctx.getEngine()) {
+                ctx.getEngine().getDataSource().getConnection().addResponse(response);
+                if (response.getAction() == ActionType.DELETE) {
+                    dealDelete(response);
+                }
             }
             callOnResponse(response);
         }
@@ -99,7 +101,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     public void onTrade(Trade trade) {
         try {
             preprocess(trade);
-            dealTrade(trade);
+            synchronized (ctx.getEngine()) {
+                dealTrade(trade);
+            }
             callOnTrade(trade);
         }
         catch (EngineException ex) {
