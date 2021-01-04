@@ -29,11 +29,11 @@ import java.util.Properties;
  * <p>
  * The URL in call
  * {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}
- * is specified in properties with the key {@code DataSource.URL} and the rest
+ * is specified in properties by the key {@code DataSource.URL} and the rest
  * of the properties are passed directly as second parameter.
  * <p>
  * To usea JDBC driver, set class path to contain that driver when building the
- * application, or loading that driver programatically.
+ * application, or load that driver programatically.
  *
  * @author Hongbao Chen
  * @since 1.0
