@@ -60,7 +60,7 @@ public interface ITraderDataSource extends AutoCloseable {
      * @throws DataSourceException thrown when fail loading driver class or
      *                             getting new connection.
      */
-    void setProperties(Properties properties) throws DataSourceException;
+    void open(Properties properties) throws DataSourceException;
 
     /**
      * Get {@link ITraderData} of the underlying data source with the given

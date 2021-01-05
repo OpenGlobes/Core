@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.openglobes.core.marketdata;
+package com.openglobes.core.market;
 
 import com.openglobes.core.exceptions.GatewayException;
 import java.util.Properties;

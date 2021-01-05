@@ -14,32 +14,49 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.marketdata;
+package com.openglobes.core.market;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class MarketNotice {
+public class InstrumentNotice {
 
-    private Long marketNoticeId;
+    private final Collection<String> instrumentIds;
+    private Long instrumentNoticeId;
     private ZonedDateTime timestamp;
     private LocalDate tradingDay;
     private Integer type;
 
-    public MarketNotice() {
+    public InstrumentNotice() {
+        instrumentIds = new HashSet<>(512);
     }
 
-    public Long getMarketNoticeId() {
-        return marketNoticeId;
+    public Collection<String> getInstrumentIds() {
+        synchronized (this.instrumentIds) {
+            return new HashSet<>(instrumentIds);
+        }
     }
 
-    public void setMarketNoticeId(Long marketNoticeId) {
-        this.marketNoticeId = marketNoticeId;
+    public void setInstrumentIds(Collection<String> instrumentIds) {
+        synchronized (this.instrumentIds) {
+            this.instrumentIds.clear();
+            this.instrumentIds.addAll(instrumentIds);
+        }
+    }
+
+    public Long getInstrumentNoticeId() {
+        return instrumentNoticeId;
+    }
+
+    public void setInstrumentNoticeId(Long instrumentNoticeId) {
+        this.instrumentNoticeId = instrumentNoticeId;
     }
 
     public ZonedDateTime getTimestamp() {

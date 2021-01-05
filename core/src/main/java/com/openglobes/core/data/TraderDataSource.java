@@ -81,7 +81,7 @@ public class TraderDataSource extends AbstractTraderDataSource {
     }
 
     @Override
-    public void setProperties(Properties properties) throws DataSourceException {
+    public void open(Properties properties) throws DataSourceException {
         props().clear();
         props().putAll(properties);
     }
@@ -91,5 +91,4 @@ public class TraderDataSource extends AbstractTraderDataSource {
             events.put(c, new EventSource());
         }
     }
-
 }
