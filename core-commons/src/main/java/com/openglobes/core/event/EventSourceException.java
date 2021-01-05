@@ -16,52 +16,21 @@
  */
 package com.openglobes.core.event;
 
-import com.openglobes.core.utils.Utils;
-import java.time.ZonedDateTime;
-
 /**
  *
  * @author Hongbao Chen
- * @param <T>
- *
  * @since 1.0
  */
-public class Event<T> implements IEvent<T> {
+public class EventSourceException extends Exception {
 
-    private Class<T> c;
-    private T o;
-    private final Long seq;
-    private final ZonedDateTime ts;
+    private static final long serialVersionUID = 123654729875L;
 
-    public Event() {
-        seq = Utils.nextId();
-        ts = ZonedDateTime.now();
+    public EventSourceException(String message) {
+        super(message);
     }
 
-    @Override
-    public T get() {
-        return o;
-    }
-    public void set(T o) {
-        this.o = o;
-    }
-
-    @Override
-    public Long getSequence() {
-        return seq;
-    }
-
-    @Override
-    public ZonedDateTime getTimestamp() {
-        return ts;
-    }
-
-    @Override
-    public Class<T> getType() {
-        return c;
-    }
-    public void setType(Class<T> c) {
-        this.c = c;
+    public EventSourceException(String message, Throwable cause) {
+        super(message, cause);
     }
 
 }

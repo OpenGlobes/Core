@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,32 +14,40 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.trader;
+package com.openglobes.core.marketdata;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- * Trader service information updated upon every start.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderGatewayInfo {
+public class MarketNotice {
 
-    private LocalDate actionDay;
+    private Long marketNoticeId;
+    private ZonedDateTime timestamp;
     private LocalDate tradingDay;
-    private ZonedDateTime updateTimestamp;
+    private Integer type;
 
-    public TraderGatewayInfo() {
+    public MarketNotice() {
     }
 
-    public LocalDate getActionDay() {
-        return actionDay;
+    public Long getMarketNoticeId() {
+        return marketNoticeId;
     }
 
-    public void setActionDay(LocalDate actionDay) {
-        this.actionDay = actionDay;
+    public void setMarketNoticeId(Long marketNoticeId) {
+        this.marketNoticeId = marketNoticeId;
+    }
+
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public LocalDate getTradingDay() {
@@ -50,11 +58,12 @@ public class TraderGatewayInfo {
         this.tradingDay = tradingDay;
     }
 
-    public ZonedDateTime getUpdateTimestamp() {
-        return updateTimestamp;
+    public Integer getType() {
+        return type;
     }
 
-    public void setUpdateTimestamp(ZonedDateTime updateTimestamp) {
-        this.updateTimestamp = updateTimestamp;
+    public void setType(Integer type) {
+        this.type = type;
     }
+
 }

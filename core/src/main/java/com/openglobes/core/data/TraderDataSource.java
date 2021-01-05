@@ -48,7 +48,7 @@ public class TraderDataSource extends AbstractTraderDataSource {
             getEventSource(type).subscribe(clazz, handler);
         }
         catch (EventSourceException ex) {
-            throw new DataSourceException(ex.getCode(),
+            throw new DataSourceException(Exceptions.SUBSCRIBE_EVENT_FAIL.code(),
                                           ex.getMessage(),
                                           ex);
         }

@@ -20,7 +20,6 @@ import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import com.openglobes.core.exceptions.Exceptions;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -77,8 +76,7 @@ public class EventSource implements IEventSource {
     @Override
     public synchronized void start() throws EventSourceException {
         if (started) {
-            throw new EventSourceException(Exceptions.DUPLICATED_START.code(),
-                                           Exceptions.DUPLICATED_START.message());
+            throw new EventSourceException("Duplicated start.");
         }
         disruptors.values().forEach(d -> {
             d.start();
@@ -90,8 +88,7 @@ public class EventSource implements IEventSource {
 
     public synchronized void stop() throws EventSourceException {
         if (!started) {
-            throw new EventSourceException(Exceptions.DUPLICATED_STOP.code(),
-                                           Exceptions.DUPLICATED_STOP.message());
+            throw new EventSourceException("Duplicated stop.");
         }
         disruptors.values().forEach(d -> {
             d.shutdown();
@@ -104,9 +101,7 @@ public class EventSource implements IEventSource {
     @Override
     public <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException {
         if (handlers.containsKey(clazz)) {
-            throw new EventSourceException(Exceptions.DUPLCATED_SUBSCRIBE_EVENT.code(),
-                                           Exceptions.DUPLCATED_SUBSCRIBE_EVENT.message()
-                                           + " " + clazz.getCanonicalName());
+            throw new EventSourceException("Duplicated subscription, " + clazz.getCanonicalName());
         }
         handlers.put(clazz, handler);
         @SuppressWarnings("unchecked")

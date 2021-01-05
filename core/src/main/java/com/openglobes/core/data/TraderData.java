@@ -914,7 +914,7 @@ public class TraderData extends AbstractTraderData {
             source().getEventSource(type).publish(clazz, object);
         }
         catch (EventSourceException ex) {
-            throw new DataSourceException(ex.getCode(),
+            throw new DataSourceException(Exceptions.PUBLISH_EVENT_FAIL.code(),
                                           ex.getMessage(),
                                           ex);
         }

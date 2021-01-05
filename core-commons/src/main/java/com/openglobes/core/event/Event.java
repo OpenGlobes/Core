@@ -16,23 +16,53 @@
  */
 package com.openglobes.core.event;
 
-import com.openglobes.core.exceptions.ServiceStatus;
+import com.openglobes.core.event.IEvent;
+import com.openglobes.core.utils.Utils;
+import java.time.ZonedDateTime;
 
 /**
  *
  * @author Hongbao Chen
+ * @param <T>
+ *
  * @since 1.0
  */
-public class EventSourceException extends ServiceStatus {
+public class Event<T> implements IEvent<T> {
 
-    private static final long serialVersionUID = 123654729875L;
+    private Class<T> c;
+    private T o;
+    private final Long seq;
+    private final ZonedDateTime ts;
 
-    public EventSourceException(Integer code, String msg) {
-        super(code, msg);
+    public Event() {
+        seq = Utils.nextId();
+        ts = ZonedDateTime.now();
     }
 
-    public EventSourceException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    @Override
+    public T get() {
+        return o;
+    }
+    public void set(T o) {
+        this.o = o;
+    }
+
+    @Override
+    public Long getSequence() {
+        return seq;
+    }
+
+    @Override
+    public ZonedDateTime getTimestamp() {
+        return ts;
+    }
+
+    @Override
+    public Class<T> getType() {
+        return c;
+    }
+    public void setType(Class<T> c) {
+        this.c = c;
     }
 
 }

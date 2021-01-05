@@ -190,7 +190,7 @@ public class TraderEngine implements ITraderEngine {
                                           requestId));
         }
         catch (EventSourceException ex) {
-            throw new EngineException(ex.getCode(),
+            throw new EngineException(Exceptions.PUBLISH_EVENT_FAIL.code(),
                                       ex.getMessage(),
                                       ex);
         }
@@ -1035,7 +1035,7 @@ public class TraderEngine implements ITraderEngine {
             es.publish(clazz, object);
         }
         catch (EventSourceException ex) {
-            throw new EngineRuntimeException(ex.getCode(),
+            throw new EngineRuntimeException(Exceptions.PUBLISH_EVENT_FAIL.code(),
                                              ex.getMessage(),
                                              ex);
         }

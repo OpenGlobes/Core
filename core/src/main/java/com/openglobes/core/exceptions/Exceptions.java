@@ -110,13 +110,12 @@ public enum Exceptions {
     EVENT_PUBLISH_FAIL(0x57, "Event publish failed."),
     EVENTSOURCE_NULL(0x58, "Event source null."),
     REQUEST_DISPATCH_FAIL(0x59, "Request dispatch failed."),
-    DUPLCATED_SUBSCRIBE_EVENT(0x5A, "Duplicated subscription to event type."),
-    DUPLICATED_START(0x5B, "Duplicated start."),
-    DUPLICATED_STOP(0x5C, "Duplicated stop."),
+    SUBSCRIBE_EVENT_FAIL(0x5A, "Duplicated subscription to event type."),
     PUBLISH_TO_STOPPED_QUEUE(0x5D, "Publish events to a stopped queue."),
-    DATASOURCE_CONNECTION_NOT_CACHED(0x5E, "Connection not in pool cache."),
-    DATASOURCE_DRIVER_CLASS_MISSING(0x5F, "Driver class not found."),
-    DATASOURCE_EVENTSOURCE_NOT_FOUND(0x60, "No event source for the specified data change.");
+    PUBLISH_EVENT_FAIL(0x5E, "Publish events failed."),
+    DATASOURCE_CONNECTION_NOT_CACHED(0x5F, "Connection not in pool cache."),
+    DATASOURCE_DRIVER_CLASS_MISSING(0x60, "Driver class not found."),
+    DATASOURCE_EVENTSOURCE_NOT_FOUND(0x61, "No event source for the specified data change.");
 
     private final int code;
     private final String message;
