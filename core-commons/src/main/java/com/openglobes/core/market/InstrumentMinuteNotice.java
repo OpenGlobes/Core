@@ -17,8 +17,6 @@
 package com.openglobes.core.market;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  *
@@ -28,14 +26,13 @@ import java.util.HashSet;
 public class InstrumentMinuteNotice {
 
     private ZonedDateTime alignTime;
-    private final Collection<String> instrumentIds;
+    private String instrumentId;
     private Long instrumentMinuteNoticeId;
     private Integer minuteOfTradingDay;
     private Integer minutes;
     private ZonedDateTime timestamp;
 
     public InstrumentMinuteNotice() {
-        instrumentIds = new HashSet<>(512);
     }
 
     public ZonedDateTime getAlignTime() {
@@ -46,17 +43,12 @@ public class InstrumentMinuteNotice {
         this.alignTime = alignTime;
     }
 
-    public Collection<String> getInstrumentIds() {
-        synchronized (this.instrumentIds) {
-            return new HashSet<>(instrumentIds);
-        }
+    public String getInstrumentId() {
+        return instrumentId;
     }
 
-    public void setInstrumentIds(Collection<String> instrumentIds) {
-        synchronized (this.instrumentIds) {
-            this.instrumentIds.clear();
-            this.instrumentIds.addAll(instrumentIds);
-        }
+    public void setInstrumentId(String instrumentId) {
+        this.instrumentId = instrumentId;
     }
 
     public Long getInstrumentMinuteNoticeId() {

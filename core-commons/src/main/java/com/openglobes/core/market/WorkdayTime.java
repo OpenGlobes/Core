@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.market;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -24,31 +24,32 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentNotice {
+public class WorkdayTime {
 
-    private String instrumentId;
-    private Long instrumentNoticeId;
+    private Integer dayRank;
+    private LocalDateTime fromTime;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
+    private LocalDateTime toTime;
     private Integer type;
+    private Long workdayTimeId;
 
-    public InstrumentNotice() {
+    public WorkdayTime() {
     }
 
-    public String getInstrumentId() {
-        return instrumentId;
+    public Integer getDayRank() {
+        return dayRank;
     }
 
-    public void setInstrumentId(String instrumentId) {
-        this.instrumentId = instrumentId;
+    public void setDayRank(Integer dayRank) {
+        this.dayRank = dayRank;
     }
 
-    public Long getInstrumentNoticeId() {
-        return instrumentNoticeId;
+    public LocalDateTime getFromTime() {
+        return fromTime;
     }
 
-    public void setInstrumentNoticeId(Long instrumentNoticeId) {
-        this.instrumentNoticeId = instrumentNoticeId;
+    public void setFromTime(LocalDateTime fromTime) {
+        this.fromTime = fromTime;
     }
 
     public ZonedDateTime getTimestamp() {
@@ -59,12 +60,12 @@ public class InstrumentNotice {
         this.timestamp = timestamp;
     }
 
-    public LocalDate getTradingDay() {
-        return tradingDay;
+    public LocalDateTime getToTime() {
+        return toTime;
     }
 
-    public void setTradingDay(LocalDate tradingDay) {
-        this.tradingDay = tradingDay;
+    public void setToTime(LocalDateTime toTime) {
+        this.toTime = toTime;
     }
 
     public Integer getType() {
@@ -73,6 +74,14 @@ public class InstrumentNotice {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Long getWorkdayTimeId() {
+        return workdayTimeId;
+    }
+
+    public void setWorkdayTimeId(Long workdayTimeId) {
+        this.workdayTimeId = workdayTimeId;
     }
 
 }

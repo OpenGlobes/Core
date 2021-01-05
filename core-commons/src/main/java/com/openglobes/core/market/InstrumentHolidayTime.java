@@ -18,18 +18,39 @@ package com.openglobes.core.market;
 
 /**
  *
- * @author HongbaoChen
+ * @author Hongbao Chen
  * @since 1.0
  */
-public class Notices {
+public class InstrumentHolidayTime {
+    private Long holidayTimeId;
+    private Long instrumentHolidayTimeId;
+    private String instrumentId;
 
-    public static final int MARKET_INIT = 0x1;
-    public static final int MARKET_SETTLE = 0x2;
-    public static final int INSTRUMENT_PRE_TRADE = 0x3;
-    public static final int INSTRUMENT_TRADE = 0x4;
-    public static final int INSTRUMENT_NO_TRADE = 0x5;
-    public static final int INSTRUMENT_END_TRADE = 0x6;
-
-    private Notices() {
+    public InstrumentHolidayTime() {
     }
+
+    public Long getHolidayTimeId() {
+        return holidayTimeId;
+    }
+
+    public void setHolidayTimeId(Long holidayTimeId) {
+        this.holidayTimeId = holidayTimeId;
+    }
+
+    public Long getInstrumentHolidayTimeId() {
+        return instrumentHolidayTimeId;
+    }
+
+    public void setInstrumentHolidayTimeId(Long instrumentHolidayTimeId) {
+        this.instrumentHolidayTimeId = instrumentHolidayTimeId;
+    }
+
+    public String getInstrumentId() {
+        return instrumentId;
+    }
+
+    public void setInstrumentId(String instrumentId) {
+        this.instrumentId = instrumentId;
+    }
+
 }

@@ -16,23 +16,18 @@
  */
 package com.openglobes.core.market;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentNotice {
+public class InstrumentWokrkdayTime {
 
     private String instrumentId;
-    private Long instrumentNoticeId;
-    private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Integer type;
+    private String instrumentWorkdayTimeId;
+    private Long workdayTimeId;
 
-    public InstrumentNotice() {
+    public InstrumentWokrkdayTime() {
     }
 
     public String getInstrumentId() {
@@ -43,36 +38,20 @@ public class InstrumentNotice {
         this.instrumentId = instrumentId;
     }
 
-    public Long getInstrumentNoticeId() {
-        return instrumentNoticeId;
+    public String getInstrumentWorkdayTimeId() {
+        return instrumentWorkdayTimeId;
     }
 
-    public void setInstrumentNoticeId(Long instrumentNoticeId) {
-        this.instrumentNoticeId = instrumentNoticeId;
+    public void setInstrumentWorkdayTimeId(String instrumentWorkdayTimeId) {
+        this.instrumentWorkdayTimeId = instrumentWorkdayTimeId;
     }
 
-    public ZonedDateTime getTimestamp() {
-        return timestamp;
+    public Long getWorkdayTimeId() {
+        return workdayTimeId;
     }
 
-    public void setTimestamp(ZonedDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public LocalDate getTradingDay() {
-        return tradingDay;
-    }
-
-    public void setTradingDay(LocalDate tradingDay) {
-        this.tradingDay = tradingDay;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
+    public void setWorkdayTimeId(Long workdayTimeId) {
+        this.workdayTimeId = workdayTimeId;
     }
 
 }
