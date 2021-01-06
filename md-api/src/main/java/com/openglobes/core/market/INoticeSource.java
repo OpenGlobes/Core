@@ -13,5 +13,5 @@ import com.openglobes.core.event.IEventSource;
  * @since 1.0
  */
 public interface INoticeSource {
-    IEventSource getDataSource() throws NoticeSourceException;
+    IEventSource getEventSource() throws NoticeSourceException;
 }
