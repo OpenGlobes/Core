@@ -21,28 +21,22 @@ package com.openglobes.core.market;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentHolidayTime {
-    private Long holidayTimeId;
-    private Long instrumentHolidayTimeId;
+public class InstrumentTime {
+
+    private Long holidayTimeSetId;
     private String instrumentId;
+    private Long instrumentTimeId;
+    private Long workdayTimeSetId;
 
-    public InstrumentHolidayTime() {
+    public InstrumentTime() {
     }
 
-    public Long getHolidayTimeId() {
-        return holidayTimeId;
+    public Long getHolidayTimeSetId() {
+        return holidayTimeSetId;
     }
 
-    public void setHolidayTimeId(Long holidayTimeId) {
-        this.holidayTimeId = holidayTimeId;
-    }
-
-    public Long getInstrumentHolidayTimeId() {
-        return instrumentHolidayTimeId;
-    }
-
-    public void setInstrumentHolidayTimeId(Long instrumentHolidayTimeId) {
-        this.instrumentHolidayTimeId = instrumentHolidayTimeId;
+    public void setHolidayTimeSetId(Long holidayTimeSetId) {
+        this.holidayTimeSetId = holidayTimeSetId;
     }
 
     public String getInstrumentId() {
@@ -53,4 +47,19 @@ public class InstrumentHolidayTime {
         this.instrumentId = instrumentId;
     }
 
+    public Long getInstrumentTimeId() {
+        return instrumentTimeId;
+    }
+
+    public void setInstrumentTimeId(Long instrumentTimeId) {
+        this.instrumentTimeId = instrumentTimeId;
+    }
+
+    public Long getWorkdayTimeSetId() {
+        return workdayTimeSetId;
+    }
+
+    public void setWorkdayTimeSetId(Long workdayTimeSetId) {
+        this.workdayTimeSetId = workdayTimeSetId;
+    }
 }

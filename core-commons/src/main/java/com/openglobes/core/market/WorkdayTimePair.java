@@ -16,34 +16,29 @@
  */
 package com.openglobes.core.market;
 
+import java.time.ZonedDateTime;
+
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentWokrkdayTime {
+public class WorkdayTimePair {
 
-    private String instrumentId;
-    private String instrumentWorkdayTimeId;
+    private ZonedDateTime timestamp;
     private Long workdayTimeId;
+    private Long workdayTimePairId;
+    private Long workdayTimeSetId;
 
-    public InstrumentWokrkdayTime() {
+    public WorkdayTimePair() {
     }
 
-    public String getInstrumentId() {
-        return instrumentId;
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
     }
 
-    public void setInstrumentId(String instrumentId) {
-        this.instrumentId = instrumentId;
-    }
-
-    public String getInstrumentWorkdayTimeId() {
-        return instrumentWorkdayTimeId;
-    }
-
-    public void setInstrumentWorkdayTimeId(String instrumentWorkdayTimeId) {
-        this.instrumentWorkdayTimeId = instrumentWorkdayTimeId;
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Long getWorkdayTimeId() {
@@ -54,4 +49,19 @@ public class InstrumentWokrkdayTime {
         this.workdayTimeId = workdayTimeId;
     }
 
+    public Long getWorkdayTimePairId() {
+        return workdayTimePairId;
+    }
+
+    public void setWorkdayTimePairId(Long workdayTimePairId) {
+        this.workdayTimePairId = workdayTimePairId;
+    }
+
+    public Long getWorkdayTimeSetId() {
+        return workdayTimeSetId;
+    }
+
+    public void setWorkdayTimeSetId(Long workdayTimeSetId) {
+        this.workdayTimeSetId = workdayTimeSetId;
+    }
 }
