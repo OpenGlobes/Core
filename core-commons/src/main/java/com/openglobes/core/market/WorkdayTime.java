@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.market;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -27,9 +27,9 @@ import java.time.ZonedDateTime;
 public class WorkdayTime {
 
     private Integer dayRank;
-    private LocalDateTime fromTime;
+    private LocalTime fromTime;
     private ZonedDateTime timestamp;
-    private LocalDateTime toTime;
+    private LocalTime toTime;
     private Integer type;
     private Long workdayTimeId;
 
@@ -44,11 +44,11 @@ public class WorkdayTime {
         this.dayRank = dayRank;
     }
 
-    public LocalDateTime getFromTime() {
+    public LocalTime getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(LocalDateTime fromTime) {
+    public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
     }
 
@@ -60,11 +60,11 @@ public class WorkdayTime {
         this.timestamp = timestamp;
     }
 
-    public LocalDateTime getToTime() {
+    public LocalTime getToTime() {
         return toTime;
     }
 
-    public void setToTime(LocalDateTime toTime) {
+    public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
     }
 

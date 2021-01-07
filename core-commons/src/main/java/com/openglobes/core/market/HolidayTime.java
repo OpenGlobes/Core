@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.market;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -27,10 +27,10 @@ import java.time.ZonedDateTime;
 public class HolidayTime {
 
     private Integer dayRank;
-    private LocalDateTime fromTime;
+    private LocalTime fromTime;
     private Long holidayTimeId;
     private ZonedDateTime timestamp;
-    private LocalDateTime toTime;
+    private LocalTime toTime;
     private Integer type;
 
     public HolidayTime() {
@@ -44,11 +44,11 @@ public class HolidayTime {
         this.dayRank = dayRank;
     }
 
-    public LocalDateTime getFromTime() {
+    public LocalTime getFromTime() {
         return fromTime;
     }
 
-    public void setFromTime(LocalDateTime fromTime) {
+    public void setFromTime(LocalTime fromTime) {
         this.fromTime = fromTime;
     }
 
@@ -68,11 +68,11 @@ public class HolidayTime {
         this.timestamp = timestamp;
     }
 
-    public LocalDateTime getToTime() {
+    public LocalTime getToTime() {
         return toTime;
     }
 
-    public void setToTime(LocalDateTime toTime) {
+    public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
     }
 

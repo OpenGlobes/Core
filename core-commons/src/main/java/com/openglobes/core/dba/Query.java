@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -159,6 +160,7 @@ class Query implements IQuery {
             case Types.DECIMAL:
                 return columnType == semanticType;
             case Types.DATE:
+            case Types.TIME:
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 return columnType == Types.CHAR;
         }
@@ -279,6 +281,9 @@ class Query implements IQuery {
             case Types.DATE:
                 var date = (LocalDate) f.getField().get(object);
                 return date != null ? sqlStringValue(date.toString()) : null;
+            case Types.TIME:
+                var time = (LocalTime) f.getField().get(object);
+                return time != null ? sqlStringValue(time.toString()) : null;
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 var timestamp = (ZonedDateTime) f.getField().get(object);
                 return timestamp != null ? sqlStringValue(timestamp.toString()) : null;
@@ -327,6 +332,10 @@ class Query implements IQuery {
                 case Types.DATE:
                     var ds = rs.getString(n);
                     f.set(object, ds != null ? LocalDate.parse(ds) : null);
+                    break;
+                case Types.TIME:
+                    var tm = rs.getString(n);
+                    f.set(object, tm != null ? LocalTime.parse(tm) : null);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
                     var ts = rs.getString(n);

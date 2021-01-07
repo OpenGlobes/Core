@@ -19,6 +19,7 @@ package com.openglobes.core.dba;
 import java.lang.reflect.Field;
 import java.sql.Types;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,6 +74,9 @@ public class DbaUtils {
         else if (clazz == LocalDate.class) {
             return Types.DATE;
         }
+        else if (clazz == LocalTime.class) {
+            return Types.TIME;
+        }
         else if (clazz == ZonedDateTime.class) {
             return Types.TIMESTAMP_WITH_TIMEZONE;
         }
@@ -94,7 +98,9 @@ public class DbaUtils {
             case Types.DECIMAL:
                 return "DECIMAL(38, 19)";
             case Types.DATE:
-                return "CHAR(10)";
+                return "CHAR(16)";
+            case Types.TIME:
+                return "CHAR(24)";
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 return "CHAR(64)";
             case Types.CHAR:

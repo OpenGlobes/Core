@@ -17,7 +17,7 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketData {
+public interface IMarketData extends AutoCloseable{
 
     Collection<WorkdayTime> getWorkdayTimes() throws MarketDataSourceException;
 
