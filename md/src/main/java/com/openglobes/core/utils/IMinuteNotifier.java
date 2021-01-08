@@ -14,24 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.utils;
 
-import com.openglobes.core.exceptions.ServiceStatus;
+import com.openglobes.core.event.IEventSource;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class MarketDataSourceException extends ServiceStatus {
+public interface IMinuteNotifier {
 
-    private static final long serialVersionUID = 3256398000718765L;
-    
-    public MarketDataSourceException(Integer code, String msg) {
-        super(code, msg);
-    }
-
-    public MarketDataSourceException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
+    IEventSource getEventSource();
     
 }

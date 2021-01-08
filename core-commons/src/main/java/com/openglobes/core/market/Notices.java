@@ -25,7 +25,7 @@ public class Notices {
 
     public static final int MARKET_INIT = 0x1;
     public static final int MARKET_SETTLE = 0x2;
-    public static final int INSTRUMENT_PRE_TRADE = 0x3;
+    public static final int INSTRUMENT_BEGIN_TRADE = 0x3;
     public static final int INSTRUMENT_TRADE = 0x4;
     public static final int INSTRUMENT_NO_TRADE = 0x5;
     public static final int INSTRUMENT_END_TRADE = 0x6;

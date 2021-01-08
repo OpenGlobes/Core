@@ -14,24 +14,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.utils;
 
-import com.openglobes.core.exceptions.ServiceStatus;
+import java.time.ZonedDateTime;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class MarketDataSourceException extends ServiceStatus {
+public class MinuteNotice {
 
-    private static final long serialVersionUID = 3256398000718765L;
-    
-    public MarketDataSourceException(Integer code, String msg) {
-        super(code, msg);
+    private final ZonedDateTime alignTime;
+    private final Long minuteNoticeId;
+    private final ZonedDateTime timestamp;
+
+    public MinuteNotice(Long minuteNoticeId,
+                        ZonedDateTime alignTime,
+                        ZonedDateTime timestamp) {
+        this.minuteNoticeId = minuteNoticeId;
+        this.alignTime = alignTime;
+        this.timestamp = timestamp;
     }
 
-    public MarketDataSourceException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public ZonedDateTime getAlignTime() {
+        return alignTime;
     }
-    
+
+    public Long getMinuteNoticeId() {
+        return minuteNoticeId;
+    }
+
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
 }
