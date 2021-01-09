@@ -193,6 +193,8 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
                                                 return new HashSet<>(12);
                                             });
                 set.add(time.getInstrumentId());
+                minCounters.put(time.getInstrumentId(),
+                                new AtomicInteger(0));
             }
             catch (MarketDataSourceException ex) {
                 Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
