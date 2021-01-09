@@ -76,24 +76,24 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
                                keeper);
                 instruments.forEach(instrumentId -> {
                     var pre = preTypes.getOrDefault(instrumentId,
-                                                Notices.INSTRUMENT_END_TRADE);
+                                                Notices.INSTRUMENT_NO_TRADE);
                     if (!Objects.equals(pre, type)) {
                         preTypes.put(instrumentId, type);
                         sendInstrumentNotice(instrumentId,
                                              type,
                                              min,
                                              day.getTradingDay());
-                        if (pre == Notices.INSTRUMENT_TRADE) {
+                        if (Notices.INSTRUMENT_TRADE == pre) {
                             sendInstrumentMinuteNotice(instrumentId,
                                                        min,
                                                        day.getTradingDay());
                         }
-                        if (type == Notices.INSTRUMENT_END_TRADE) {
+                        if (Notices.INSTRUMENT_END_TRADE == type) {
                             resetEndOfTrade();
                         }
                     }
                     else {
-                        if (type == Notices.INSTRUMENT_TRADE) {
+                        if (Notices.INSTRUMENT_TRADE == type) {
                             sendInstrumentMinuteNotice(instrumentId,
                                                        min,
                                                        day.getTradingDay());
