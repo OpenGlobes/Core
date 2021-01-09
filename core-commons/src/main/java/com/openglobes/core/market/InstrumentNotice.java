@@ -26,53 +26,48 @@ import java.time.ZonedDateTime;
  */
 public class InstrumentNotice {
 
-    private String instrumentId;
-    private Long instrumentNoticeId;
-    private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Integer type;
+    private final ZonedDateTime alignTime;
+    private final String instrumentId;
+    private final Long instrumentNoticeId;
+    private final ZonedDateTime timestamp;
+    private final LocalDate tradingDay;
+    private final Integer type;
 
-    public InstrumentNotice() {
+    public InstrumentNotice(Long instrumentNoticeId,
+                            String instrumentId,
+                            Integer type,
+                            ZonedDateTime alignTime,
+                            ZonedDateTime timestamp,
+                            LocalDate tradingDay) {
+        this.instrumentId = instrumentId;
+        this.instrumentNoticeId = instrumentNoticeId;
+        this.alignTime = alignTime;
+        this.timestamp = timestamp;
+        this.tradingDay = tradingDay;
+        this.type = type;
+    }
+
+    public ZonedDateTime getAlignTime() {
+        return alignTime;
     }
 
     public String getInstrumentId() {
         return instrumentId;
     }
 
-    public void setInstrumentId(String instrumentId) {
-        this.instrumentId = instrumentId;
-    }
-
     public Long getInstrumentNoticeId() {
         return instrumentNoticeId;
-    }
-
-    public void setInstrumentNoticeId(Long instrumentNoticeId) {
-        this.instrumentNoticeId = instrumentNoticeId;
     }
 
     public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(ZonedDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
     public LocalDate getTradingDay() {
         return tradingDay;
-    }
-
-    public void setTradingDay(LocalDate tradingDay) {
-        this.tradingDay = tradingDay;
     }
 
     public Integer getType() {
         return type;
     }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
 }

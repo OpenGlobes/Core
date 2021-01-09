@@ -19,11 +19,13 @@ package com.openglobes.core.market;
 import com.openglobes.core.data.IMarketData;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
+import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
+import com.openglobes.core.utils.Utils;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 /**
@@ -46,14 +49,16 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
 
     private final IMarketData conn;
     private final IEventSource evt;
-    private final Map<String, Integer> pretypes;
+    private final Map<String, AtomicInteger> minCounters;
+    private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
 
     private InstrumentNotifier(IMarketData connection) throws MarketDataSourceException {
         conn = connection;
         evt = new EventSource();
         times = new HashMap<>(512);
-        pretypes = new HashMap<>(512);
+        preTypes = new HashMap<>(512);
+        minCounters = new HashMap<>(512);
         setup();
     }
 
@@ -65,22 +70,35 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
     public void handle(IEvent<MinuteNotice> event) {
         try {
             var min = event.get();
-            var n = ZonedDateTime.now();
             var day = conn.getTradingDay();
             times.forEach((keeper, instruments) -> {
-                var type = getType(n, keeper);
-                instruments.forEach(i -> {
-                    var pre = pretypes.getOrDefault(i, Notices.INSTRUMENT_END_TRADE);
-                    processInstrumentNotice(i,
-                                            min,
-                                            pre,
-                                            type,
-                                            day.getTradingDay());
-
-                    // TODO reset minute counter and other internal data at the
-                    //      end of day.
-                    // TODO send instrument minute notice if it is trading or
-                    //      the end of a trading sector.
+                var type = getType(min.getAlignTime(),
+                               keeper);
+                instruments.forEach(instrumentId -> {
+                    var pre = preTypes.getOrDefault(instrumentId,
+                                                Notices.INSTRUMENT_END_TRADE);
+                    if (!Objects.equals(pre, type)) {
+                        preTypes.put(instrumentId, type);
+                        sendInstrumentNotice(instrumentId,
+                                             type,
+                                             min,
+                                             day.getTradingDay());
+                        if (pre == Notices.INSTRUMENT_TRADE) {
+                            sendInstrumentMinuteNotice(instrumentId,
+                                                       min,
+                                                       day.getTradingDay());
+                        }
+                        if (type == Notices.INSTRUMENT_END_TRADE) {
+                            resetEndOfTrade();
+                        }
+                    }
+                    else {
+                        if (type == Notices.INSTRUMENT_TRADE) {
+                            sendInstrumentMinuteNotice(instrumentId,
+                                                       min,
+                                                       day.getTradingDay());
+                        }
+                    }
                 });
             });
         }
@@ -89,6 +107,16 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
                                                                                ex.toString(),
                                                                                ex);
         }
+    }
+
+    private Integer getMinuteOfTradingDay(String instrumentId) {
+        synchronized (minCounters) {
+            return minCounters.get(instrumentId).incrementAndGet();
+        }
+    }
+
+    private Integer getMinutes() {
+        return 1;
     }
 
     private Integer getType(ZonedDateTime now,
@@ -107,25 +135,52 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
         }
     }
 
-    private void processInstrumentNotice(String instrument,
-                                         MinuteNotice min,
-                                         Integer pre,
-                                         Integer type,
-                                         LocalDate tradingDay) {
-        if (!Objects.equals(pre, type)) {
-            pretypes.put(instrument, type);
-            sendInstrumentNotice(instrument,
-                                 type,
-                                 min,
-                                 tradingDay);
+    private void resetEndOfTrade() {
+        synchronized (minCounters) {
+            minCounters.entrySet().forEach(entry -> {
+                entry.getValue().set(0);
+            });
         }
     }
 
-    private void sendInstrumentNotice(String instrument,
+    private void sendInstrumentMinuteNotice(String instrumentId,
+                                            MinuteNotice min,
+                                            LocalDate tradingDay) {
+        try {
+            evt.publish(InstrumentMinuteNotice.class,
+                        new InstrumentMinuteNotice(Utils.nextId(),
+                                                   instrumentId,
+                                                   getMinutes(),
+                                                   getMinuteOfTradingDay(instrumentId),
+                                                   min.getAlignTime(),
+                                                   ZonedDateTime.now(),
+                                                   tradingDay));
+        }
+        catch (EventSourceException ex) {
+            Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
+                                                                               ex.toString(),
+                                                                               ex);
+        }
+    }
+
+    private void sendInstrumentNotice(String instrumentId,
                                       Integer type,
                                       MinuteNotice notice,
                                       LocalDate tradingDay) {
-        // TODO send instrument notice
+        try {
+            evt.publish(InstrumentNotice.class,
+                        new InstrumentNotice(Utils.nextId(),
+                                             instrumentId,
+                                             type,
+                                             notice.getAlignTime(),
+                                             ZonedDateTime.now(),
+                                             tradingDay));
+        }
+        catch (EventSourceException ex) {
+            Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
+                                                                               ex.toString(),
+                                                                               ex);
+        }
     }
 
     private void setup() throws MarketDataSourceException {

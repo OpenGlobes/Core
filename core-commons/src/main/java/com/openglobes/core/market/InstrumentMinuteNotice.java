@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.market;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
@@ -25,62 +26,55 @@ import java.time.ZonedDateTime;
  */
 public class InstrumentMinuteNotice {
 
-    private ZonedDateTime alignTime;
-    private String instrumentId;
-    private Long instrumentMinuteNoticeId;
-    private Integer minuteOfTradingDay;
-    private Integer minutes;
-    private ZonedDateTime timestamp;
+    private final ZonedDateTime alignTime;
+    private final String instrumentId;
+    private final Long instrumentMinuteNoticeId;
+    private final Integer minuteOfTradingDay;
+    private final Integer minutes;
+    private final ZonedDateTime timestamp;
+    private final LocalDate tradingDay;
 
-    public InstrumentMinuteNotice() {
+    public InstrumentMinuteNotice(Long instrumentMinuteNoticeId,
+                                  String instrumentId,
+                                  Integer minutes,
+                                  Integer minuteOfTradingDay,
+                                  ZonedDateTime alignTime,
+                                  ZonedDateTime timestamp,
+                                  LocalDate tradingDay) {
+        this.alignTime = alignTime;
+        this.instrumentId = instrumentId;
+        this.instrumentMinuteNoticeId = instrumentMinuteNoticeId;
+        this.minuteOfTradingDay = minuteOfTradingDay;
+        this.minutes = minutes;
+        this.timestamp = timestamp;
+        this.tradingDay = tradingDay;
     }
 
     public ZonedDateTime getAlignTime() {
         return alignTime;
     }
 
-    public void setAlignTime(ZonedDateTime alignTime) {
-        this.alignTime = alignTime;
-    }
-
     public String getInstrumentId() {
         return instrumentId;
-    }
-
-    public void setInstrumentId(String instrumentId) {
-        this.instrumentId = instrumentId;
     }
 
     public Long getInstrumentMinuteNoticeId() {
         return instrumentMinuteNoticeId;
     }
 
-    public void setInstrumentMinuteNoticeId(Long instrumentMinuteNoticeId) {
-        this.instrumentMinuteNoticeId = instrumentMinuteNoticeId;
-    }
-
     public Integer getMinuteOfTradingDay() {
         return minuteOfTradingDay;
-    }
-
-    public void setMinuteOfTradingDay(Integer minuteOfTradingDay) {
-        this.minuteOfTradingDay = minuteOfTradingDay;
     }
 
     public Integer getMinutes() {
         return minutes;
     }
 
-    public void setMinutes(Integer minutes) {
-        this.minutes = minutes;
-    }
-
     public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(ZonedDateTime timestamp) {
-        this.timestamp = timestamp;
+    public LocalDate getTradingDay() {
+        return tradingDay;
     }
-
 }
