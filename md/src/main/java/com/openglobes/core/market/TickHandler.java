@@ -16,25 +16,27 @@
  */
 package com.openglobes.core.market;
 
-import com.openglobes.core.exceptions.GatewayException;
-import java.util.Properties;
+import com.openglobes.core.event.IEvent;
+import com.openglobes.core.event.IEventHandler;
+import java.util.Objects;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketGateway {
-
-    void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
-
-    void stop() throws GatewayException;
+public class TickHandler implements IEventHandler<Tick>{
     
-    void subscribe(String instrumentId) throws GatewayException;
-
-    int getStatus();
-
-    Properties getProperties();
-
-    MarketGatewayInfo getGatewayInfo();
+    private final IStickEngine gn;
+    
+    public TickHandler(IStickEngine generator) {
+        Objects.requireNonNull(generator);
+        gn = generator;
+    }
+    
+    @Override
+    public void handle(IEvent<Tick> event) {
+        gn.updateTick(event.get());
+    }
+    
 }

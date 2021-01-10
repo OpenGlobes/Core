@@ -31,26 +31,29 @@ import java.util.Objects;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TimeKeeper {
+public class TimeKeeper implements ITimeKeeper {
+
+    public static void assertTrue(Boolean x, Exceptions exp) throws MarketDataSourceException {
+        if (!x) {
+            throw new MarketDataSourceException(exp.code(),
+                                                exp.message());
+        }
+    }
 
     public static TimeKeeper create(Long holidayTimeSetId,
                                     Long workdayTimeSetId,
                                     IMarketData connection) throws MarketDataSourceException {
-        assertTrue(connection != null, Exceptions.DATASOURCE_NULL);
+        Objects.requireNonNull(connection);
         var wd = connection.getWorkdayTimesByTimeSetId(workdayTimeSetId);
+        Objects.requireNonNull(wd);
         assertTrue(!wd.isEmpty(), Exceptions.NO_WORKDAY_TIME);
         var hd = connection.getHolidayTimesByTimeSetId(holidayTimeSetId);
+        Objects.requireNonNull(hd);
         assertTrue(!hd.isEmpty(), Exceptions.NO_HOLIDAY_TIME);
         return new TimeKeeper(workdayTimeSetId,
                               wd,
                               holidayTimeSetId,
                               hd);
-    }
-
-    private static void assertTrue(Boolean x, Exceptions exp) throws MarketDataSourceException {
-        if (!x) {
-            throw new MarketDataSourceException(exp.code(), exp.message());
-        }
     }
 
     private final List<HolidayTime> holiday;
@@ -92,14 +95,17 @@ public class TimeKeeper {
         return super.hashCode();
     }
 
+    @Override
     public boolean isBegin(ZonedDateTime now) {
         return isWorkBegin(now) && (!inHoliday(now));
     }
 
+    @Override
     public boolean isEnd(ZonedDateTime now) {
         return isWorkEnd(now) && (!inHoliday(now));
     }
 
+    @Override
     public boolean isWorking(ZonedDateTime now) {
         return inWorkTime(now) && !inHoliday(now);
     }

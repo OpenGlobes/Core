@@ -88,4 +88,10 @@ public interface IMarketData extends AutoCloseable {
     TradingDay getTradingDay() throws MarketDataSourceException;
 
     void setTradingDay() throws MarketDataSourceException;
+    
+    Collection<String> getSubscribedInstrumentIds() throws MarketDataSourceException;
+    
+    void addSubscribedInstrumentId(String instrumentId) throws MarketDataSourceException;
+    
+    void removeSubscribedInstrumentId(String instrumentId) throws MarketDataSourceException;
 }

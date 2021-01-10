@@ -16,25 +16,19 @@
  */
 package com.openglobes.core.market;
 
-import com.openglobes.core.exceptions.GatewayException;
-import java.util.Properties;
+import java.time.ZonedDateTime;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketGateway {
+public interface ITimeKeeper {
 
-    void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
+    boolean isBegin(ZonedDateTime now);
 
-    void stop() throws GatewayException;
+    boolean isEnd(ZonedDateTime now);
+
+    boolean isWorking(ZonedDateTime now);
     
-    void subscribe(String instrumentId) throws GatewayException;
-
-    int getStatus();
-
-    Properties getProperties();
-
-    MarketGatewayInfo getGatewayInfo();
 }

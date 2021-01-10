@@ -582,15 +582,15 @@ public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
     }
 
     private void checkContractId(Long contractId) throws AlgorithmException {
-        requireNotNull(contractId, Exceptions.CONTRACT_ID_NULL);
+        Objects.requireNonNull(contractId);
     }
 
     private void checkInstrument(Instrument instrument) throws AlgorithmException {
-        requireNotNull(instrument, Exceptions.INSTRUMENT_NULL);
+        Objects.requireNonNull(instrument);
     }
 
     private void checkInstrumentId(String instrumentId) throws AlgorithmException {
-        requireNotNull(instrumentId, Exceptions.INSTRUMENT_ID_NULL);
+        Objects.requireNonNull(instrumentId);
         if (instrumentId.isBlank()) {
             throw new AlgorithmException(Exceptions.INVALID_INSTRUMENT_ID.code(),
                                          Exceptions.INVALID_INSTRUMENT_ID.message());
@@ -600,13 +600,13 @@ public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
     private void checkPositionFieldNotNull(Object... values) throws AlgorithmException {
         for (var v : values) {
             if (v == null) {
-                requireNotNull(v, Exceptions.POSITION_FIELD_NULL);
+                Objects.requireNonNull(v);
             }
         }
     }
 
     private void checkRatioType(Integer type) throws AlgorithmException {
-        requireNotNull(type, Exceptions.RATIO_TYPE_NULL);
+        Objects.requireNonNull(type);
     }
 
     private Collection<Commission> findCommission(
@@ -836,13 +836,6 @@ public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
         p0.setDirection(c.getDirection());
         p0.setVolumn(0L);
         return p0;
-    }
-
-    private <T> void requireNotNull(T object, Exceptions exp) throws AlgorithmException {
-        if (object == null) {
-            throw new AlgorithmException(exp.code(),
-                                         exp.message());
-        }
     }
 
     private void setContracts(Order order,

@@ -41,7 +41,7 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
+public class InstrumentNotifier implements IEventHandler<MinuteNotice>, IInstrumentNotifier {
 
     public static InstrumentNotifier create(IMarketData connection) throws MarketDataSourceException {
         return new InstrumentNotifier(connection);
@@ -62,6 +62,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice> {
         setup();
     }
 
+    @Override
     public IEventSource getEventSource() {
         return evt;
     }

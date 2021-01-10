@@ -358,8 +358,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void checkDataSourceAlgorithmNotNull() throws EngineException {
-        requireNotNull(ds, Exceptions.DATASOURCE_NULL);
-        requireNotNull(algo, Exceptions.ALGORITHM_NULL);
+        Objects.requireNonNull(ds);
+        Objects.requireNonNull(algo);
     }
 
     private void checkTraderContextNotNull(Integer key, TraderContext rt) throws EngineException {
@@ -371,7 +371,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void checkVolumn(Long v) throws EngineException {
-        requireNotNull(v, Exceptions.VOLUMN_NULL);
+        Objects.requireNonNull(v);
         if (v <= 0) {
             throw new EngineException(Exceptions.NONPOSITIVE_VOLUMN.code(),
                                       Exceptions.NONPOSITIVE_VOLUMN.message());
@@ -558,7 +558,7 @@ public class TraderEngine implements ITraderEngine {
                         Properties properties,
                         int requestId) throws EngineException {
         checkDataSourceAlgorithmNotNull();
-        requireNotNull(instrument, Exceptions.INSTRUMENT_NULL);
+        Objects.requireNonNull(instrument);
         /*
          * Remmeber the instrument it once operated.
          */
@@ -802,13 +802,6 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ex.getCode(),
                                       ex.getMessage(),
                                       ex);
-        }
-    }
-
-    private <T> void requireNotNull(T object, Exceptions exp) throws EngineException {
-        if (object == null) {
-            throw new EngineException(exp.code(),
-                                      exp.message());
         }
     }
 

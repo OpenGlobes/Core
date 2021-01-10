@@ -67,7 +67,7 @@ public class Utils {
     public static UUID nextUuid() {
         return UUID.randomUUID();
     }
-    
+
     public static ZonedDateTime getAlignByMinute() {
         ZonedDateTime n = ZonedDateTime.now();
         ZonedDateTime r = ZonedDateTime.of(n.getYear(),
