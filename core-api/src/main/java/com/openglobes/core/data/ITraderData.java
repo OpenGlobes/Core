@@ -37,7 +37,7 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderData extends AutoCloseable{
+public interface ITraderData {
 
     void addAccount(Account account) throws DataSourceException;
 
@@ -85,7 +85,7 @@ public interface ITraderData extends AutoCloseable{
 
     Collection<Contract> getContractsByTradeId(long tradeId) throws DataSourceException;
 
-    ITraderDataSource getDataSource();
+    ITraderDataSource getDataSource() throws DataSourceException;
 
     Collection<Deposit> getDeposits() throws DataSourceException;
 

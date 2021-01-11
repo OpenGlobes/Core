@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.AbstractData;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
@@ -46,7 +47,7 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderData extends AbstractTraderData {
+public class TraderData extends AbstractData implements ITraderData {
 
     private Boolean exAutoCommit;
     private final IQuery query;
@@ -322,8 +323,15 @@ public class TraderData extends AbstractTraderData {
     }
 
     @Override
-    public ITraderDataSource getDataSource() {
-        return source();
+    public ITraderDataSource getDataSource() throws DataSourceException {
+        var r = super.getSource();
+        if (r instanceof ITraderDataSource) {
+            return (ITraderDataSource) r;
+        }
+        else {
+            throw new DataSourceException(Exceptions.INVALID_DATASOURCE_TYPE.code(),
+                                          Exceptions.INVALID_DATASOURCE_TYPE.message());
+        }
     }
 
     @Override
@@ -911,7 +919,7 @@ public class TraderData extends AbstractTraderData {
                                   T object,
                                   DataChangeType type) throws DataSourceException {
         try {
-            source().getEventSource(type).publish(clazz, object);
+            getDataSource().getEventSource(type).publish(clazz, object);
         }
         catch (EventSourceException ex) {
             throw new DataSourceException(Exceptions.PUBLISH_EVENT_FAIL.code(),

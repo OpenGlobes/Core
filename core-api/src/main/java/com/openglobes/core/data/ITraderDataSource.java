@@ -38,7 +38,7 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderDataSource extends AutoCloseable {
+public interface ITraderDataSource {
 
     /**
      * Set properties for initialiazing data source and creating connection.

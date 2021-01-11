@@ -115,7 +115,8 @@ public enum Exceptions {
     PUBLISH_EVENT_FAIL(0x5E, "Publish events failed."),
     DATASOURCE_CONNECTION_NOT_CACHED(0x5F, "Connection not in pool cache."),
     DATASOURCE_DRIVER_CLASS_MISSING(0x60, "Driver class not found."),
-    DATASOURCE_EVENTSOURCE_NOT_FOUND(0x61, "No event source for the specified data change.");
+    DATASOURCE_EVENTSOURCE_NOT_FOUND(0x61, "No event source for the specified data change."),
+    INVALID_DATASOURCE_TYPE(0x62, "Invalid data source type.");
 
     private final int code;
     private final String message;

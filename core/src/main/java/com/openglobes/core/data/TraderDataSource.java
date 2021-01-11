@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.AbstractDataSource;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderDataSource extends AbstractTraderDataSource {
+public class TraderDataSource extends AbstractDataSource implements ITraderDataSource{
 
     private final Map<DataChangeType, EventSource> events;
 

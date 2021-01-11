@@ -14,9 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.dba;
 
-import com.openglobes.core.exceptions.Exceptions;
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -32,14 +31,14 @@ import java.util.logging.Logger;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractTraderDataSource implements ITraderDataSource {
+public abstract class AbstractDataSource implements AutoCloseable, IDataSource {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Map<Connection, Boolean> free = new HashMap<>(128);
     private final Properties props;
 
-    protected AbstractTraderDataSource() {
+    protected AbstractDataSource() {
         props = new Properties();
         cleanable = cleaner.register(this, new CleanAction(free));
     }
@@ -66,18 +65,25 @@ public abstract class AbstractTraderDataSource implements ITraderDataSource {
         return props().getProperty("DataSource.URL");
     }
 
-    private Properties getConnectionProperties() {
+    @Override
+    public Properties getConnectionProperties() {
         var r = new Properties(props);
         r.remove("DataSource.URL");
         r.remove("DataSource.DriverClass");
         return r;
+    }
+    
+    @Override
+    public Properties getProperties() {
+        return new Properties(props);
     }
 
     protected Properties props() {
         return props;
     }
 
-    Connection findConnection() throws ClassNotFoundException,
+    @Override
+    public Connection findConnection() throws ClassNotFoundException,
                                        SQLException {
         synchronized (free) {
             for (var c : free.entrySet()) {
@@ -92,11 +98,11 @@ public abstract class AbstractTraderDataSource implements ITraderDataSource {
         }
     }
 
-    void freeConnection(Connection connection) throws DataSourceException {
+    @Override
+    public void freeConnection(Connection connection) throws RuntimeException {
         synchronized (free) {
             if (!free.containsKey(connection)) {
-                throw new DataSourceException(Exceptions.DATASOURCE_CONNECTION_NOT_CACHED.code(),
-                                              Exceptions.DATASOURCE_CONNECTION_NOT_CACHED.message());
+                throw new RuntimeException("Unkown connection object.");
             }
             free.put(connection, Boolean.TRUE);
         }
@@ -118,7 +124,7 @@ public abstract class AbstractTraderDataSource implements ITraderDataSource {
                         c.close();
                     }
                     catch (SQLException ex) {
-                        Logger.getLogger(AbstractTraderDataSource.class.getName()).log(Level.SEVERE,
+                        Logger.getLogger(AbstractDataSource.class.getName()).log(Level.SEVERE,
                                                                                        ex.toString(),
                                                                                        ex);
                     }

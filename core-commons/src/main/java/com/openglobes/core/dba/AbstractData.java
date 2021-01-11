@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.dba;
 
-import com.openglobes.core.exceptions.Exceptions;
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,22 +27,16 @@ import java.util.logging.Logger;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractTraderData implements ITraderData {
+public abstract class AbstractData implements AutoCloseable, IDataConnection {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Connection conn;
-    private final AbstractTraderDataSource src;
+    private final IDataSource src;
 
-    public AbstractTraderData(Connection connection, AbstractTraderDataSource source) throws DataSourceException {
-        if (connection == null) {
-            throw new DataSourceException(Exceptions.DATA_CONNECTION_NULL.code(),
-                                          Exceptions.DATA_CONNECTION_NULL.message());
-        }
-        if (source == null) {
-            throw new DataSourceException(Exceptions.DATASOURCE_NULL.code(),
-                                          Exceptions.DATASOURCE_NULL.message());
-        }
+    public AbstractData(Connection connection, IDataSource source) {
+        Objects.requireNonNull(connection);
+        Objects.requireNonNull(source);
         conn = connection;
         src = source;
         cleanable = cleaner.register(this, new CleanAction(conn, src));
@@ -53,20 +47,21 @@ public abstract class AbstractTraderData implements ITraderData {
         cleanable.clean();
     }
 
-    protected Connection conn() {
-        return this.conn;
+    @Override
+    public IDataSource getSource() {
+        return this.src;
     }
 
-    protected ITraderDataSource source() {
-        return this.src;
+    protected Connection conn() {
+        return this.conn;
     }
 
     private static class CleanAction implements Runnable {
 
         private final Connection conn;
-        private final AbstractTraderDataSource src;
+        private final IDataSource src;
 
-        CleanAction(Connection connection, AbstractTraderDataSource source) {
+        CleanAction(Connection connection, IDataSource source) {
             conn = connection;
             src = source;
         }
@@ -76,10 +71,10 @@ public abstract class AbstractTraderData implements ITraderData {
             try {
                 src.freeConnection(conn);
             }
-            catch (DataSourceException ex) {
-                Logger.getLogger(AbstractTraderDataSource.class.getName()).log(Level.SEVERE, 
-                                                                               ex.toString(),
-                                                                               ex);
+            catch (Throwable th) {
+                Logger.getLogger(AbstractDataSource.class.getName()).log(Level.SEVERE,
+                                                                         th.getMessage(),
+                                                                         th);
             }
         }
 
