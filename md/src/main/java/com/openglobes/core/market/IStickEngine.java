@@ -29,4 +29,7 @@ public interface IStickEngine {
 
     void updateTick(Tick tick);
     
+    void onNotice(InstrumentMinuteNotice notice);
+    
+    void onNotice(InstrumentNotice notice);
 }

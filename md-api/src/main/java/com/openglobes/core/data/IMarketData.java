@@ -18,6 +18,7 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.market.HolidayTime;
 import com.openglobes.core.market.HolidayTimeSet;
+import com.openglobes.core.market.InstrumentStickSetting;
 import com.openglobes.core.market.InstrumentTime;
 import com.openglobes.core.market.WorkdayTime;
 import com.openglobes.core.market.WorkdayTimeSet;
@@ -89,9 +90,15 @@ public interface IMarketData extends AutoCloseable {
 
     void setTradingDay() throws MarketDataSourceException;
     
-    Collection<String> getSubscribedInstrumentIds() throws MarketDataSourceException;
+    Collection<InstrumentStickSetting> getInstrumentStickSettings() throws MarketDataSourceException;
     
-    void addSubscribedInstrumentId(String instrumentId) throws MarketDataSourceException;
+    Collection<InstrumentStickSetting> getInstrumentStickSettingByInstrumentId(String instrumentId) throws MarketDataSourceException;
     
-    void removeSubscribedInstrumentId(String instrumentId) throws MarketDataSourceException;
+    InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException;
+    
+    void addInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException;
+    
+    void updateInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException;
+    
+    void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException;
 }

@@ -27,16 +27,16 @@ import java.util.Objects;
  */
 public class TickHandler implements IEventHandler<Tick>{
     
-    private final IStickEngine gn;
+    private final IStickEngine eg;
     
     public TickHandler(IStickEngine generator) {
         Objects.requireNonNull(generator);
-        gn = generator;
+        eg = generator;
     }
     
     @Override
     public void handle(IEvent<Tick> event) {
-        gn.updateTick(event.get());
+        eg.updateTick(event.get());
     }
     
 }

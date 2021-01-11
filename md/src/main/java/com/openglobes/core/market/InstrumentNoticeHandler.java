@@ -16,32 +16,27 @@
  */
 package com.openglobes.core.market;
 
-import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.event.IEvent;
+import com.openglobes.core.event.IEventHandler;
+import java.util.Objects;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class StickEngine implements IStickEngine{
+public class InstrumentNoticeHandler implements IEventHandler<InstrumentNotice> {
 
-    @Override
-    public IEventSource getEventSource() {
-        return null;
-    }
+    private final IStickEngine eg;
 
-    @Override
-    public void onNotice(InstrumentMinuteNotice notice) {
-        //TODO on notice
+    public InstrumentNoticeHandler(IStickEngine engine) {
+        Objects.requireNonNull(engine);
+        eg = engine;
     }
 
     @Override
-    public void onNotice(InstrumentNotice notice) {
-        // TODO on notice
+    public void handle(IEvent<InstrumentNotice> event) {
+        eg.onNotice(event.get());
     }
-    
-    @Override
-    public void updateTick(Tick tick) {
-        // TODO on notice
-    }
+
 }
