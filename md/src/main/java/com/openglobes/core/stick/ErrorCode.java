@@ -32,7 +32,7 @@ public enum ErrorCode {
     INVALID_STICK_DAYS(0x2007, "Invalid stick days."),
     PUBLISH_STICK_FAIL(0x2008, "Publish stick failed."),
     WRONG_INSTRUMENT_TICK(0x2009, "Update tick with wrong instrument ID."),
-    WRONG_END_TRADE_ALIGNTIME(0x200A, "Wrong align time for end trade.");
+    WRONG_EOD_TIME(0x200A, "Wrong end-of-day time.");
     
     private final int code;
     private final String message;

@@ -58,8 +58,8 @@ public interface IStickBuilder {
      * Build sticks whose minutes can divide the specified minutes-of-day, or
      * days can divide the specified days of year.
      * <p>
-     * The condition is equally {@code minutes % minutes-of-day == 0} or
-     * {@code days % days-of-year == 0}.
+     * The condition is equally {@code minutes-of-day % minutes == 0} or
+     * {@code days-of-year % days == 0}.
      * <p>
      * The method is synchronized on {@code this} object.
      *
@@ -80,11 +80,10 @@ public interface IStickBuilder {
      * minute, no matter whether now is its corresponding minute.
      * <p>
      * If current time is before the specfied align time, no stick is built.
-     * When it is the specified time or after that time, call to
-     * {@code build(...)} will build all sticks including those refered by this
-     * method.
+     * When it is the specified time, call to {@code build(...)} will build all
+     * sticks including those refered by this method.
      * <p>
-     * If current time is the specified time, and the {@code build(...)} has
+     * If current time is the specified time, and the {@code build(...)} had
      * been called, call to the method builds sticks that are not-yet built by
      * calling {@code build(...)}. So sticks built by {@code build(...)} and
      * {@code tryBuild(...)} are all sticks that can be built in the end of
@@ -92,12 +91,13 @@ public interface IStickBuilder {
      * <p>
      * The method is synchronized on {@code this} object.
      *
-     * @param time time for building all sticks.
+     * @param endOfDayTime time for building all sticks at the end of trading
+     *                     day.
      *
      * @return collection of sticks that should be emitted at the specified
      *         time.
      *
      * @throws StickException thrown when fail building sticks.s
      */
-    Collection<Stick> tryBuild(ZonedDateTime time) throws StickException;
+    Collection<Stick> tryBuild(ZonedDateTime endOfDayTime) throws StickException;
 }

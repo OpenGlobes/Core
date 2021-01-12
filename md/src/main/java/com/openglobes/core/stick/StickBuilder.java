@@ -32,19 +32,20 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class StickBuilder implements IStickBuilder {
 
-    private ZonedDateTime align;
     private final Map<Integer, IStickContext> days;
     private Integer daysOfYr;
     private final IStickEngine eg;
+    private ZonedDateTime endOfDay;
     private String iid;
     private Integer minOfDay;
     private final Map<Integer, IStickContext> mins;
+    private ZonedDateTime preAlign;
 
     public StickBuilder(IStickEngine engine) {
         mins = new ConcurrentHashMap<>(512);
         days = new ConcurrentHashMap<>(8);
         eg = engine;
-        align = Utils.getAlignByMinute();
+        preAlign = Utils.getAlignByMinute();
     }
 
     @Override
@@ -99,7 +100,10 @@ public class StickBuilder implements IStickBuilder {
                 return r;
             }
             finally {
-                align = alignTime;
+                /*
+                 * Save pre-align time for try build.
+                 */
+                preAlign = alignTime;
             }
         }
     }
@@ -130,28 +134,31 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public Collection<Stick> tryBuild(ZonedDateTime alignTime) throws StickException {
+    public Collection<Stick> tryBuild(ZonedDateTime eodTime) throws StickException {
         synchronized (this) {
             try {
-                if (align.isEqual(alignTime)) {
+                if (preAlign.isEqual(eodTime)) {
                     /*
                      * Some sticks published, just publish the rest.
                      */
                     return buildRest();
                 }
-                else if (align.isAfter(alignTime)) {
+                else if (preAlign.isAfter(eodTime)) {
                     /*
                      * Wield thing happens.
                      */
-                    throw new StickException(ErrorCode.WRONG_END_TRADE_ALIGNTIME.code(),
-                                             ErrorCode.WRONG_END_TRADE_ALIGNTIME.message());
+                    throw new StickException(ErrorCode.WRONG_EOD_TIME.code(),
+                                             ErrorCode.WRONG_EOD_TIME.message());
                 }
                 else {
                     return new HashSet<>(1);
                 }
             }
             finally {
-                align = alignTime;
+                /*
+                 * Save EOD time for build.
+                 */
+                endOfDay = eodTime;
             }
         }
     }
@@ -180,9 +187,9 @@ public class StickBuilder implements IStickBuilder {
                                this.days,
                                true,
                                true));
-            if (align.isEqual(alignTime)) {
+            if (endOfDay != null && endOfDay.isEqual(alignTime)) {
                 /*
-                 * Time to build rest sticks.
+                 * Time to build rest sticks at the end of a day.
                  */
                 r.addAll(getSticks(daysOfYear,
                                    this.days,
@@ -192,6 +199,9 @@ public class StickBuilder implements IStickBuilder {
             return r;
         }
         finally {
+            /*
+             * Save days-of-year for building rest.
+             */
             daysOfYr = daysOfYear;
         }
     }
@@ -204,9 +214,9 @@ public class StickBuilder implements IStickBuilder {
                                mins,
                                false,
                                true));
-            if (align.isEqual(alignTime)) {
+            if (endOfDay != null && endOfDay.isEqual(alignTime)) {
                 /*
-                 * Time to build rest sticks.
+                 * Time to build rest sticks at the end of a day.
                  */
                 r.addAll(getSticks(minutesOfDay,
                                    mins,
@@ -217,6 +227,9 @@ public class StickBuilder implements IStickBuilder {
             return r;
         }
         finally {
+            /*
+             * Save minutes-of-day for building rest.
+             */
             minOfDay = minutesOfDay;
         }
     }
