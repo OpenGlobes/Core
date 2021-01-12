@@ -58,7 +58,7 @@ public interface IStickBuilder {
      * Build sticks whose minutes can divide the specified minutes-of-day, or
      * days can divide the specified days of year.
      * <p>
-     * The condition is equals to {@code minutes % minutes-of-day == 0} or
+     * The condition is equally {@code minutes % minutes-of-day == 0} or
      * {@code days % days-of-year == 0}.
      * <p>
      * The method is synchronized on {@code this} object.
@@ -77,12 +77,18 @@ public interface IStickBuilder {
 
     /**
      * Try the build all sticks by the specified time, which is aligned on
-     * minute.
+     * minute, no matter whether now is its corresponding minute.
      * <p>
      * If current time is before the specfied align time, no stick is built.
      * When it is the specified time or after that time, call to
-     * {@link build(...)} will build all sticks including those refered by this
+     * {@code build(...)} will build all sticks including those refered by this
      * method.
+     * <p>
+     * If current time is the specified time, and the {@code build(...)} has
+     * been called, call to the method builds sticks that are not-yet built by
+     * calling {@code build(...)}. So sticks built by {@code build(...)} and
+     * {@code tryBuild(...)} are all sticks that can be built in the end of
+     * trading day.
      * <p>
      * The method is synchronized on {@code this} object.
      *
