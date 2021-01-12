@@ -23,7 +23,7 @@ import com.openglobes.core.dba.IDefaultFactory;
 import com.openglobes.core.dba.IQuery;
 import com.openglobes.core.dba.Queries;
 import com.openglobes.core.event.EventSourceException;
-import com.openglobes.core.exceptions.Exceptions;
+import com.openglobes.core.trader.ErrorCode;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
@@ -123,8 +123,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             conn().commit();
         }
         catch (SQLException ex) {
-            throw new DataSourceException(Exceptions.TRANSACTION_COMMIT_FAILED.code(),
-                                          Exceptions.TRANSACTION_COMMIT_FAILED.message(),
+            throw new DataSourceException(ErrorCode.TRANSACTION_COMMIT_FAILED.code(),
+                                          ErrorCode.TRANSACTION_COMMIT_FAILED.message(),
                                           ex);
         }
         finally {
@@ -140,13 +140,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Account::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -159,13 +159,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -178,13 +178,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -197,13 +197,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -216,13 +216,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -235,13 +235,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -254,13 +254,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -273,13 +273,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -292,13 +292,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -311,13 +311,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -329,8 +329,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             return (ITraderDataSource) r;
         }
         else {
-            throw new DataSourceException(Exceptions.INVALID_DATASOURCE_TYPE.code(),
-                                          Exceptions.INVALID_DATASOURCE_TYPE.message());
+            throw new DataSourceException(ErrorCode.INVALID_DATASOURCE_TYPE.code(),
+                                          ErrorCode.INVALID_DATASOURCE_TYPE.message());
         }
     }
 
@@ -342,13 +342,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Deposit::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -361,13 +361,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Instrument::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -380,13 +380,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Instrument::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -399,13 +399,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -418,13 +418,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -437,13 +437,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -456,13 +456,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -475,13 +475,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Request::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -494,13 +494,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Request::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -513,13 +513,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -532,13 +532,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -551,13 +551,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -570,13 +570,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  SettlementPrice::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -594,13 +594,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -613,13 +613,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -632,13 +632,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -651,13 +651,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                  TradingDay::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -670,13 +670,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                                Withdraw::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
     }
@@ -743,8 +743,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             conn().rollback();
         }
         catch (SQLException ex) {
-            throw new DataSourceException(Exceptions.TRANSACTION_ROLLBACK_FAILED.code(),
-                                          Exceptions.TRANSACTION_ROLLBACK_FAILED.message(),
+            throw new DataSourceException(ErrorCode.TRANSACTION_ROLLBACK_FAILED.code(),
+                                          ErrorCode.TRANSACTION_ROLLBACK_FAILED.message(),
                                           ex);
         }
         finally {
@@ -760,8 +760,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
         }
         catch (SQLException ex) {
             restoreTransaction();
-            throw new DataSourceException(Exceptions.TRANSACTION_BEGIN_FAILED.code(),
-                                          Exceptions.TRANSACTION_BEGIN_FAILED.message(),
+            throw new DataSourceException(ErrorCode.TRANSACTION_BEGIN_FAILED.code(),
+                                          ErrorCode.TRANSACTION_BEGIN_FAILED.message(),
                                           ex);
         }
     }
@@ -774,8 +774,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        Account.class.getDeclaredField("accountId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -788,8 +788,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        Commission.class.getDeclaredField("commissionId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -802,8 +802,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        Contract.class.getDeclaredField("contractId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -816,8 +816,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        Instrument.class.getDeclaredField("instrumentId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -830,8 +830,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        Margin.class.getDeclaredField("marginId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -844,8 +844,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        SettlementPrice.class.getDeclaredField("instrumentId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -858,8 +858,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                        TradingDay.class.getDeclaredField("tradingDayId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -871,8 +871,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             return query.select(clazz, condition, factory);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.DBA_SELECT_FAIL.code(),
-                                          Exceptions.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
+            throw new DataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
+                                          ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
                                           ex);
         }
     }
@@ -884,19 +884,19 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             var c = query.select(clazz, condition, factory);
             if (c.size() > 1) {
                 throw new DataSourceException(
-                        Exceptions.MORE_ROWS_THAN_EXPECTED.code(),
-                        Exceptions.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+                        ErrorCode.MORE_ROWS_THAN_EXPECTED.code(),
+                        ErrorCode.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
             }
             if (c.isEmpty()) {
                 throw new DataSourceException(
-                        Exceptions.LESS_ROWS_THAN_EXPECTED.code(),
-                        Exceptions.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+                        ErrorCode.LESS_ROWS_THAN_EXPECTED.code(),
+                        ErrorCode.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
             }
             return c.iterator().next();
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.DBA_SELECT_FAIL.code(),
-                                          Exceptions.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
+            throw new DataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
+                                          ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
                                           ex);
         }
     }
@@ -909,8 +909,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                          DataChangeType.CREATE);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.DBA_INSERT_FAIL.code(),
-                                          Exceptions.DBA_INSERT_FAIL.message(),
+            throw new DataSourceException(ErrorCode.DBA_INSERT_FAIL.code(),
+                                          ErrorCode.DBA_INSERT_FAIL.message(),
                                           ex);
         }
     }
@@ -922,7 +922,7 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             getDataSource().getEventSource(type).publish(clazz, object);
         }
         catch (EventSourceException ex) {
-            throw new DataSourceException(Exceptions.PUBLISH_EVENT_FAIL.code(),
+            throw new DataSourceException(ErrorCode.PUBLISH_EVENT_FAIL.code(),
                                           ex.getMessage(),
                                           ex);
         }
@@ -942,13 +942,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                          Queries.equals(clazz.getField(fieldName), id));
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.OBTAIN_CONDITION_FAIL.code(),
-                                          Exceptions.OBTAIN_CONDITION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
+                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                           ex);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -963,13 +963,13 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
                          DataChangeType.UPDATE);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(Exceptions.DBA_UPDATE_FAIL.code(),
-                                          Exceptions.DBA_UPDATE_FAIL.message() + " " + clazz.getCanonicalName(),
+            throw new DataSourceException(ErrorCode.DBA_UPDATE_FAIL.code(),
+                                          ErrorCode.DBA_UPDATE_FAIL.message() + " " + clazz.getCanonicalName(),
                                           ex);
         }
         catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new DataSourceException(Exceptions.REFLECTION_FAIL.code(),
-                                          Exceptions.REFLECTION_FAIL.message(),
+            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
+                                          ErrorCode.REFLECTION_FAIL.message(),
                                           ex);
         }
     }
@@ -981,8 +981,8 @@ public class TraderDataConnection extends AbstractPooledConnection implements IT
             }
         }
         catch (SQLException ex) {
-            throw new DataSourceException(Exceptions.TRANSACTION_RESTORE_FAILED.code(),
-                                          Exceptions.TRANSACTION_RESTORE_FAILED.message(),
+            throw new DataSourceException(ErrorCode.TRANSACTION_RESTORE_FAILED.code(),
+                                          ErrorCode.TRANSACTION_RESTORE_FAILED.message(),
                                           ex);
         }
     }

@@ -14,17 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
-import com.openglobes.core.event.IEventSource;
+import java.time.ZonedDateTime;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IInstrumentNotifier {
+public interface ITimeKeeper {
 
-    IEventSource getEventSource();
+    boolean isBegin(ZonedDateTime now);
+
+    boolean isEnd(ZonedDateTime now);
+
+    boolean isWorking(ZonedDateTime now);
     
 }

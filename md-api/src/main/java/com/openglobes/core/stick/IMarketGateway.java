@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
-import com.openglobes.core.data.IMarketDataSource;
-import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.exceptions.EngineException;
+import com.openglobes.core.exceptions.GatewayException;
 import java.util.Properties;
 
 /**
@@ -26,19 +24,17 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketEngine {
+public interface IMarketGateway {
 
-    IEventSource getEventSource() throws EngineException;
+    void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
 
-    INoticeSource getNoticeSource() throws EngineException;
+    void stop() throws GatewayException;
+    
+    void subscribe(String instrumentId) throws GatewayException;
 
-    void setDataSource(IMarketDataSource dataSource) throws EngineException;
+    int getStatus();
 
-    void registerMarket(int marketId, IMarketGateway gateway) throws EngineException;
+    Properties getProperties();
 
-    void unregisterMarket(int marketId) throws EngineException;
-
-    void start(Properties properties) throws EngineException;
-
-    void stop() throws EngineException;
+    MarketGatewayInfo getGatewayInfo();
 }

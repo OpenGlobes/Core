@@ -21,7 +21,6 @@ import com.openglobes.core.data.ITraderData;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.EngineRuntimeException;
-import com.openglobes.core.exceptions.Exceptions;
 import com.openglobes.core.exceptions.GatewayException;
 import com.openglobes.core.exceptions.GatewayRuntimeException;
 import com.openglobes.core.exceptions.ServiceRuntimeStatus;
@@ -81,13 +80,13 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             callOnResponse(response);
         }
         catch (DataSourceException ex) {
-            callOnException(new EngineRuntimeException(Exceptions.DS_FAILURE_UNFIXABLE.code(),
+            callOnException(new EngineRuntimeException(ErrorCode.DS_FAILURE_UNFIXABLE.code(),
                                                        "Fail saving response to data source.",
                                                        ex));
         }
         catch (EngineException ex) {
-            callOnException(new EngineRuntimeException(Exceptions.PREPROCESS_RESPONSE_FAIL.code(),
-                                                       Exceptions.PREPROCESS_RESPONSE_FAIL.message(),
+            callOnException(new EngineRuntimeException(ErrorCode.PREPROCESS_RESPONSE_FAIL.code(),
+                                                       ErrorCode.PREPROCESS_RESPONSE_FAIL.message(),
                                                        ex));
         }
     }
@@ -107,8 +106,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             callOnTrade(trade);
         }
         catch (EngineException ex) {
-            callOnException(new EngineRuntimeException(Exceptions.PREPROCESS_TRADE_FAIL.code(),
-                                                       Exceptions.PREPROCESS_TRADE_FAIL.message(),
+            callOnException(new EngineRuntimeException(ErrorCode.PREPROCESS_TRADE_FAIL.code(),
+                                                       ErrorCode.PREPROCESS_TRADE_FAIL.message(),
                                                        ex));
         }
     }
@@ -133,45 +132,45 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private void checkCommissionsNull(Collection<Commission> cs) {
         if (cs == null) {
-            throw new GatewayRuntimeException(Exceptions.COMMISSION_NULL.code(),
-                                              Exceptions.COMMISSION_NULL.message());
+            throw new GatewayRuntimeException(ErrorCode.COMMISSION_NULL.code(),
+                                              ErrorCode.COMMISSION_NULL.message());
         }
     }
 
     private void checkContractIdNull(Long cid) {
         if (cid == null) {
-            throw new GatewayRuntimeException(Exceptions.CONTRACT_ID_NULL.code(),
-                                              Exceptions.CONTRACT_ID_NULL.message());
+            throw new GatewayRuntimeException(ErrorCode.CONTRACT_ID_NULL.code(),
+                                              ErrorCode.CONTRACT_ID_NULL.message());
         }
     }
 
     private void checkContractNull(Contract cc) {
         if (cc == null) {
-            throw new GatewayRuntimeException(Exceptions.CONTRACT_NULL.code(),
-                                              Exceptions.CONTRACT_NULL.message());
+            throw new GatewayRuntimeException(ErrorCode.CONTRACT_NULL.code(),
+                                              ErrorCode.CONTRACT_NULL.message());
         }
     }
 
     private void checkFrozenInfo(Collection<FrozenBundle> bs) {
         bs.forEach(v -> {
             if (v.getCommission() == null || v.getContract() == null || v.getMargin() == null) {
-                throw new GatewayRuntimeException(Exceptions.INCONSISTENT_FROZEN_INFO.code(),
-                                                  Exceptions.INCONSISTENT_FROZEN_INFO.message());
+                throw new GatewayRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
+                                                  ErrorCode.INCONSISTENT_FROZEN_INFO.message());
             }
         });
     }
 
     private void checkMarginNull(Margin n) {
         if (n == null) {
-            throw new GatewayRuntimeException(Exceptions.MARGIN_NULL.code(),
-                                              Exceptions.MARGIN_NULL.message());
+            throw new GatewayRuntimeException(ErrorCode.MARGIN_NULL.code(),
+                                              ErrorCode.MARGIN_NULL.message());
         }
     }
 
     private void checkMarginsNull(Collection<Margin> cs) {
         if (cs == null) {
-            throw new GatewayRuntimeException(Exceptions.MARGIN_NULL.code(),
-                                              Exceptions.MARGIN_NULL.message());
+            throw new GatewayRuntimeException(ErrorCode.MARGIN_NULL.code(),
+                                              ErrorCode.MARGIN_NULL.message());
         }
     }
 
@@ -206,8 +205,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             ++count;
         }
         if (count < trade.getQuantity()) {
-            throw new EngineRuntimeException(Exceptions.INCONSISTENT_FROZEN_INFO.code(),
-                                             Exceptions.INCONSISTENT_FROZEN_INFO.message());
+            throw new EngineRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
+                                             ErrorCode.INCONSISTENT_FROZEN_INFO.message());
         }
     }
 
@@ -254,13 +253,13 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.addResponse(response);
             var o = conn.getRequestByOrderId(response.getOrderId());
             if (o == null) {
-                throw new EngineRuntimeException(Exceptions.ORDER_ID_NOT_FOUND.code(),
-                                                 Exceptions.ORDER_ID_NOT_FOUND.message());
+                throw new EngineRuntimeException(ErrorCode.ORDER_ID_NOT_FOUND.code(),
+                                                 ErrorCode.ORDER_ID_NOT_FOUND.message());
             }
             var offset = o.getOffset();
             if (offset == null) {
-                throw new EngineRuntimeException(Exceptions.OFFSET_NULL.code(),
-                                                 Exceptions.OFFSET_NULL.message());
+                throw new EngineRuntimeException(ErrorCode.OFFSET_NULL.code(),
+                                                 ErrorCode.OFFSET_NULL.message());
             }
             if (offset == Offset.OPEN) {
                 openDelete(response, conn);
@@ -333,8 +332,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.addTrade(trade);
             var offset = trade.getOffset();
             if (offset == null) {
-                throw new GatewayRuntimeException(Exceptions.OFFSET_NULL.code(),
-                                                  Exceptions.OFFSET_NULL.message());
+                throw new GatewayRuntimeException(ErrorCode.OFFSET_NULL.code(),
+                                                  ErrorCode.OFFSET_NULL.message());
             }
             if (Offset.OPEN == offset) {
                 openTrade(trade, conn);
@@ -404,8 +403,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                requestId);
         }
         catch (Throwable th) {
-            callOnException(new EngineRuntimeException(Exceptions.USER_CODE_ERROR.code(),
-                                                       Exceptions.USER_CODE_ERROR.message(),
+            callOnException(new EngineRuntimeException(ErrorCode.USER_CODE_ERROR.code(),
+                                                       ErrorCode.USER_CODE_ERROR.message(),
                                                        th));
         }
     }
@@ -413,8 +412,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private ITraderDataSource getDataSource() throws GatewayException {
         var ds = ctx.getEngine().getDataSource();
         if (ds == null) {
-            throw new GatewayException(Exceptions.DATASOURCE_NULL.code(),
-                                       Exceptions.DATASOURCE_NULL.message());
+            throw new GatewayException(ErrorCode.DATASOURCE_NULL.code(),
+                                       ErrorCode.DATASOURCE_NULL.message());
         }
         return ds;
     }
@@ -442,8 +441,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         var instrument = ctx.getEngine().getRelatedInstrument(instrumentId);
         if (instrument == null) {
             throw new EngineException(
-                    Exceptions.INSTRUMENT_NULL.code(),
-                    Exceptions.INSTRUMENT_NULL.message() + "(Instrument ID:"
+                    ErrorCode.INSTRUMENT_NULL.code(),
+                    ErrorCode.INSTRUMENT_NULL.message() + "(Instrument ID:"
                     + instrumentId + ")");
         }
         return instrument;
@@ -515,8 +514,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             ++count;
         }
         if (count < trade.getQuantity()) {
-            throw new EngineRuntimeException(Exceptions.INCONSISTENT_FROZEN_INFO.code(),
-                                             Exceptions.INCONSISTENT_FROZEN_INFO.message());
+            throw new EngineRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
+                                             ErrorCode.INCONSISTENT_FROZEN_INFO.message());
         }
     }
 
@@ -530,8 +529,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             trade.setTraderId(ctx.getTraderId());
         }
         catch (Throwable th) {
-            throw new EngineException(Exceptions.PREPROC_RSPS_FAILED.code(),
-                                      Exceptions.PREPROC_RSPS_FAILED.message(),
+            throw new EngineException(ErrorCode.PREPROC_RSPS_FAILED.code(),
+                                      ErrorCode.PREPROC_RSPS_FAILED.message(),
                                       th);
         }
     }
@@ -550,8 +549,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             response.setTraderId(ctx.getTraderId());
         }
         catch (Throwable th) {
-            throw new EngineException(Exceptions.PREPROC_RSPS_FAILED.code(),
-                                      Exceptions.PREPROC_RSPS_FAILED.message(),
+            throw new EngineException(ErrorCode.PREPROC_RSPS_FAILED.code(),
+                                      ErrorCode.PREPROC_RSPS_FAILED.message(),
                                       th);
         }
     }
@@ -575,24 +574,24 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private void requireStatus(Contract c, Integer s) {
         if (!Objects.equals(c.getStatus(), s)) {
-            throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_CONTRACT_STATUS.code(),
-                                              Exceptions.INVALID_DELETING_CONTRACT_STATUS.message()
+            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_CONTRACT_STATUS.code(),
+                                              ErrorCode.INVALID_DELETING_CONTRACT_STATUS.message()
                                               + "(Contract ID:" + c.getContractId() + ")");
         }
     }
 
     private void requireStatus(Margin m, Integer s) {
         if (!Objects.equals(m.getStatus(), s)) {
-            throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_MARGIN_STATUS.code(),
-                                              Exceptions.INVALID_DELETING_MARGIN_STATUS.message()
+            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_MARGIN_STATUS.code(),
+                                              ErrorCode.INVALID_DELETING_MARGIN_STATUS.message()
                                               + "(Contract ID:" + m.getMarginId() + ")");
         }
     }
 
     private void requireStatus(Commission c, Integer s) {
         if (!Objects.equals(c.getStatus(), s)) {
-            throw new GatewayRuntimeException(Exceptions.INVALID_DELETING_COMMISSION_STATUS.code(),
-                                              Exceptions.INVALID_DELETING_COMMISSION_STATUS.message()
+            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_COMMISSION_STATUS.code(),
+                                              ErrorCode.INVALID_DELETING_COMMISSION_STATUS.message()
                                               + "(Contract ID:" + c.getCommissionId() + ")");
         }
     }
@@ -603,8 +602,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
         catch (DataSourceException ex) {
             callOnException(new EngineRuntimeException(
-                    Exceptions.DS_FAILURE_UNFIXABLE.code(),
-                    Exceptions.DS_FAILURE_UNFIXABLE.message(),
+                    ErrorCode.DS_FAILURE_UNFIXABLE.code(),
+                    ErrorCode.DS_FAILURE_UNFIXABLE.message(),
                     ex));
         }
     }

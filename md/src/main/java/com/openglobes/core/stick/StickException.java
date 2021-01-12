@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.exceptions.ServiceStatus;
 
@@ -23,15 +23,15 @@ import com.openglobes.core.exceptions.ServiceStatus;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class NoticeSourceException extends ServiceStatus{
+public class StickException extends ServiceStatus {
 
-    private static final long serialVersionUID = 326544872983L;
+    private static final long serialVersionUID = 3142873555422901L;
     
-    public NoticeSourceException(Integer code, String msg) {
+    public StickException(Integer code, String msg) {
         super(code, msg);
     }
 
-    public NoticeSourceException(Integer code, String message, Throwable cause) {
+    public StickException(Integer code, String message, Throwable cause) {
         super(code, message, cause);
     }
     

@@ -21,7 +21,7 @@ import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.exceptions.Exceptions;
+import com.openglobes.core.trader.ErrorCode;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
@@ -49,7 +49,7 @@ public class TraderDataSource extends AbstractPooledDataSource implements ITrade
             getEventSource(type).subscribe(clazz, handler);
         }
         catch (EventSourceException ex) {
-            throw new DataSourceException(Exceptions.SUBSCRIBE_EVENT_FAIL.code(),
+            throw new DataSourceException(ErrorCode.SUBSCRIBE_EVENT_FAIL.code(),
                                           ex.getMessage(),
                                           ex);
         }
@@ -61,8 +61,8 @@ public class TraderDataSource extends AbstractPooledDataSource implements ITrade
             return new TraderDataConnection(findConnection(), this);
         }
         catch (ClassNotFoundException ex) {
-            throw new DataSourceException(Exceptions.DATASOURCE_DRIVER_CLASS_MISSING.code(),
-                                          Exceptions.DATASOURCE_DRIVER_CLASS_MISSING.message(),
+            throw new DataSourceException(ErrorCode.DATASOURCE_DRIVER_CLASS_MISSING.code(),
+                                          ErrorCode.DATASOURCE_DRIVER_CLASS_MISSING.message(),
                                           ex);
         }
         catch (SQLException ex) {
@@ -75,8 +75,8 @@ public class TraderDataSource extends AbstractPooledDataSource implements ITrade
     @Override
     public IEventSource getEventSource(DataChangeType type) throws DataSourceException {
         if (!events.containsKey(type)) {
-            throw new DataSourceException(Exceptions.DATASOURCE_EVENTSOURCE_NOT_FOUND.code(),
-                                          Exceptions.DATASOURCE_EVENTSOURCE_NOT_FOUND.message());
+            throw new DataSourceException(ErrorCode.DATASOURCE_EVENTSOURCE_NOT_FOUND.code(),
+                                          ErrorCode.DATASOURCE_EVENTSOURCE_NOT_FOUND.message());
         }
         return events.get(type);
     }

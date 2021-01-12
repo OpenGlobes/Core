@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketData;
 import com.openglobes.core.data.MarketDataSourceException;
-import com.openglobes.core.exceptions.Exceptions;
+import com.openglobes.core.market.HolidayTime;
+import com.openglobes.core.market.WorkdayTime;
 import com.openglobes.core.utils.Utils;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -33,7 +34,7 @@ import java.util.Objects;
  */
 public class TimeKeeper implements ITimeKeeper {
 
-    public static void assertTrue(Boolean x, Exceptions exp) throws MarketDataSourceException {
+    public static void assertTrue(Boolean x, ErrorCode exp) throws MarketDataSourceException {
         if (!x) {
             throw new MarketDataSourceException(exp.code(),
                                                 exp.message());
@@ -46,10 +47,10 @@ public class TimeKeeper implements ITimeKeeper {
         Objects.requireNonNull(connection);
         var wd = connection.getWorkdayTimesByTimeSetId(workdayTimeSetId);
         Objects.requireNonNull(wd);
-        assertTrue(!wd.isEmpty(), Exceptions.NO_WORKDAY_TIME);
+        assertTrue(!wd.isEmpty(), ErrorCode.NO_WORKDAY_TIME);
         var hd = connection.getHolidayTimesByTimeSetId(holidayTimeSetId);
         Objects.requireNonNull(hd);
-        assertTrue(!hd.isEmpty(), Exceptions.NO_HOLIDAY_TIME);
+        assertTrue(!hd.isEmpty(), ErrorCode.NO_HOLIDAY_TIME);
         return new TimeKeeper(workdayTimeSetId,
                               wd,
                               holidayTimeSetId,

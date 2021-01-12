@@ -14,31 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.stick;
+
+import com.openglobes.core.data.IMarketDataSource;
+import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.exceptions.EngineException;
+import java.util.Properties;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public enum Exceptions {
-    DATASOURCE_NULL(0x2000, "Market data source null."),
-    NO_WORKDAY_TIME(0x2001, "No workday time."),
-    NO_HOLIDAY_TIME(0x2002, "No holiday time.");
-    
-    private final int code;
-    private final String message;
+public interface IMarketEngine {
 
-    private Exceptions(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
+    IEventSource getEventSource() throws EngineException;
 
-    public int code() {
-        return code;
-    }
+    INoticeSource getNoticeSource() throws EngineException;
 
-    public String message() {
-        return message;
-    }
+    void setDataSource(IMarketDataSource dataSource) throws EngineException;
+
+    void registerMarket(int marketId, IMarketGateway gateway) throws EngineException;
+
+    void unregisterMarket(int marketId) throws EngineException;
+
+    void start(Properties properties) throws EngineException;
+
+    void stop() throws EngineException;
 }

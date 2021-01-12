@@ -14,11 +14,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
+import com.openglobes.core.market.InstrumentNotice;
+import com.openglobes.core.utils.Loggers;
 import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  *
@@ -36,7 +39,14 @@ public class InstrumentNoticeHandler implements IEventHandler<InstrumentNotice> 
 
     @Override
     public void handle(IEvent<InstrumentNotice> event) {
-        eg.onNotice(event.get());
+        try {
+            eg.onNotice(event.get());
+        }
+        catch (StickException ex) {
+            Loggers.getLogger(InstrumentNoticeHandler.class.getCanonicalName()).log(Level.SEVERE,
+                                                                                    ex.toString(),
+                                                                                    ex);
+        }
     }
 
 }

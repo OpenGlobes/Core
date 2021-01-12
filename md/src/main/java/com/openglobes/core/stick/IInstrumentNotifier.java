@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.event.IEventSource;
 
@@ -23,13 +23,8 @@ import com.openglobes.core.event.IEventSource;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IStickEngine {
+public interface IInstrumentNotifier {
 
     IEventSource getEventSource();
-
-    void updateTick(Tick tick);
     
-    void onNotice(InstrumentMinuteNotice notice);
-    
-    void onNotice(InstrumentNotice notice);
 }

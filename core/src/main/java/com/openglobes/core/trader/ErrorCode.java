@@ -14,13 +14,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public enum Exceptions {
+public enum ErrorCode {
     TRADER_ID_NOT_FOUND(0x1, "No such trader ID in map."),
     TRADER_SELECT_TYPE_NULL(0x2, "Trader selection type null."),
     TRADER_ID_DUPLICATED(0x3, "Duplicated trader ID."),
@@ -121,7 +122,7 @@ public enum Exceptions {
     private final int code;
     private final String message;
 
-    private Exceptions(int code, String message) {
+    private ErrorCode(int code, String message) {
         this.code = code;
         this.message = message;
     }

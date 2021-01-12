@@ -17,7 +17,6 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.exceptions.EngineException;
-import com.openglobes.core.exceptions.Exceptions;
 import com.openglobes.core.exceptions.GatewayException;
 import java.util.Properties;
 
@@ -91,8 +90,8 @@ public class TraderContext extends IdTranslator {
     private void check0() throws EngineException {
         if (ctx.getTrader() == null) {
             throw new EngineException(
-                    Exceptions.TRADER_GATEWAY_NULL.code(),
-                    Exceptions.TRADER_GATEWAY_NULL.message() + "(Trader ID:" + ctx.getTraderId() + ")");
+                    ErrorCode.TRADER_GATEWAY_NULL.code(),
+                    ErrorCode.TRADER_GATEWAY_NULL.message() + "(Trader ID:" + ctx.getTraderId() + ")");
         }
     }
 }

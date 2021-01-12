@@ -14,21 +14,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
-import java.time.ZonedDateTime;
+import com.openglobes.core.market.Stick;
+import com.openglobes.core.market.Tick;
+import java.util.Collection;
 
 /**
  *
  * @author Hongbao Chen
- * @since 1.0
+ * @sicne 1.0
  */
-public interface ITimeKeeper {
+public interface IStickBuilder {
 
-    boolean isBegin(ZonedDateTime now);
+    void update(Tick tick) throws StickException;
 
-    boolean isEnd(ZonedDateTime now);
-
-    boolean isWorking(ZonedDateTime now);
+    void addMinutes(Integer minutes) throws StickException;
     
+    void removeMinutes(Integer minutes) throws StickException;
+
+    Collection<Integer> getMinutes() throws StickException;
+    
+    String getInstrumentId();
+    
+    Stick build() throws StickException;
 }

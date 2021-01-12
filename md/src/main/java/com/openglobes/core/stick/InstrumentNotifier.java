@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketData;
 import com.openglobes.core.data.MarketDataSourceException;
@@ -23,6 +23,9 @@ import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.market.InstrumentMinuteNotice;
+import com.openglobes.core.market.InstrumentNotice;
+import com.openglobes.core.market.Notices;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
 import com.openglobes.core.utils.Utils;

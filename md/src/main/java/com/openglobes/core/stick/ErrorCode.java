@@ -14,21 +14,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
-
-import com.openglobes.core.exceptions.GatewayRuntimeException;
-import com.openglobes.core.exceptions.ServiceRuntimeStatus;
+package com.openglobes.core.stick;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketGatewayHandler {
+public enum ErrorCode {
+    DATASOURCE_NULL(0x2000, "Market data source null."),
+    NO_WORKDAY_TIME(0x2001, "No workday time."),
+    NO_HOLIDAY_TIME(0x2002, "No holiday time."),
+    DATASOURCE_AUTOCLOSE_FAIL(0x2003, "Auto close failed."),
+    STICKBUILDER_NOT_FOUND(0x2004, "Stick builder not found.");
+    
+    private final int code;
+    private final String message;
 
-    void onTick(Tick tick);
+    private ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
-    void onException(GatewayRuntimeException exception);
+    public int code() {
+        return code;
+    }
 
-    void onStatusChange(ServiceRuntimeStatus status);
+    public String message() {
+        return message;
+    }
 }

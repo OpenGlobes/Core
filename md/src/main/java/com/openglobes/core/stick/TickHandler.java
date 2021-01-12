@@ -14,29 +14,39 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
+import com.openglobes.core.market.Tick;
+import com.openglobes.core.utils.Loggers;
 import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentMinuteNoticeHandler implements IEventHandler<InstrumentMinuteNotice> {
+public class TickHandler implements IEventHandler<Tick> {
 
     private final IStickEngine eg;
-    
-    public InstrumentMinuteNoticeHandler(IStickEngine engine) {
-        Objects.requireNonNull(engine);
-        eg = engine;
+
+    public TickHandler(IStickEngine generator) {
+        Objects.requireNonNull(generator);
+        eg = generator;
     }
-    
+
     @Override
-    public void handle(IEvent<InstrumentMinuteNotice> event) {
-        eg.onNotice(event.get());
+    public void handle(IEvent<Tick> event) {
+        try {
+            eg.updateTick(event.get());
+        }
+        catch (StickException ex) {
+            Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
+                                                                        ex.toString(),
+                                                                        ex);
+        }
     }
-    
+
 }

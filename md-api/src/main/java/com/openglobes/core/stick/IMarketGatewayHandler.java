@@ -14,27 +14,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.market;
+package com.openglobes.core.stick;
 
-import com.openglobes.core.exceptions.GatewayException;
-import java.util.Properties;
+import com.openglobes.core.exceptions.GatewayRuntimeException;
+import com.openglobes.core.exceptions.ServiceRuntimeStatus;
+import com.openglobes.core.market.Tick;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketGateway {
+public interface IMarketGatewayHandler {
 
-    void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
+    void onTick(Tick tick);
 
-    void stop() throws GatewayException;
-    
-    void subscribe(String instrumentId) throws GatewayException;
+    void onException(GatewayRuntimeException exception);
 
-    int getStatus();
-
-    Properties getProperties();
-
-    MarketGatewayInfo getGatewayInfo();
+    void onStatusChange(ServiceRuntimeStatus status);
 }
