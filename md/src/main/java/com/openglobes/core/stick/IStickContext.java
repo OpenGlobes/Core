@@ -16,9 +16,7 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.market.InstrumentMinuteNotice;
-import com.openglobes.core.market.InstrumentNotice;
+import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
 
 /**
@@ -26,15 +24,8 @@ import com.openglobes.core.market.Tick;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IStickEngine {
-
-    IEventSource getEventSource();
-
-    void updateTick(Tick tick) throws StickException;
+public interface IStickContext {
+    void update(Tick tick) throws StickException;
     
-    void onNotice(InstrumentMinuteNotice notice) throws StickException;
-    
-    void onNotice(InstrumentNotice notice) throws StickException;
-    
-    Long nextStickId();
+    Stick nextStick(Long stickId) throws StickException;
 }

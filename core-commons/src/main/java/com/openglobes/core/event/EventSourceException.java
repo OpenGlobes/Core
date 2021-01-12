@@ -25,12 +25,13 @@ public class EventSourceException extends Exception {
 
     private static final long serialVersionUID = 123654729875L;
 
-    public EventSourceException(String message) {
-        super(message);
+    public EventSourceException(String msg) {
+        super(msg);
     }
 
     public EventSourceException(String message, Throwable cause) {
         super(message, cause);
     }
+
 
 }

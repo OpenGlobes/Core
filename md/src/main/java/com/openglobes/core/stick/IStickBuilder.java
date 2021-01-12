@@ -18,6 +18,7 @@ package com.openglobes.core.stick;
 
 import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 
 /**
@@ -27,15 +28,70 @@ import java.util.Collection;
  */
 public interface IStickBuilder {
 
+    /**
+     * Update the specified {@link Tick} into corresponding stick context.
+     * <p>
+     * The method is synchronized on {@code this} object.
+     *
+     * @param tick tick.
+     *
+     * @throws StickException thrown when the specified tick doesn't belong to
+     *                        this builder.
+     */
     void update(Tick tick) throws StickException;
 
     void addMinutes(Integer minutes) throws StickException;
-    
+
+    void addDays(Integer days) throws StickException;
+
     void removeMinutes(Integer minutes) throws StickException;
 
+    void removeDays(Integer days) throws StickException;
+
     Collection<Integer> getMinutes() throws StickException;
-    
+
+    Collection<Integer> getDays() throws StickException;
+
     String getInstrumentId();
-    
-    Stick build() throws StickException;
+
+    /**
+     * Build sticks whose minutes can divide the specified minutes-of-day, or
+     * days can divide the specified days of year.
+     * <p>
+     * The condition is equals to {@code minutes % minutes-of-day == 0} or
+     * {@code days % days-of-year == 0}.
+     * <p>
+     * The method is synchronized on {@code this} object.
+     *
+     * @param minutesOfDay minute-of-trading day.
+     * @param daysOfyear   days-of-year.
+     * @param alignTime    current align time on minute.
+     *
+     * @return collection of sticks that should be emitted on the specifed
+     *         minutes-of-day of days-of-year.
+     *
+     * @throws StickException thrown when given parameters are invalid, or fail
+     *                        to create sticks.
+     */
+    Collection<Stick> build(Integer minutesOfDay, Integer daysOfyear, ZonedDateTime alignTime) throws StickException;
+
+    /**
+     * Try the build all sticks by the specified time, which is aligned on
+     * minute.
+     * <p>
+     * If current time is before the specfied align time, no stick is built.
+     * When it is the specified time or after that time, call to
+     * {@link build(...)} will build all sticks including those refered by this
+     * method.
+     * <p>
+     * The method is synchronized on {@code this} object.
+     *
+     * @param time time for building all sticks.
+     *
+     * @return collection of sticks that should be emitted at the specified
+     *         time.
+     *
+     * @throws StickException thrown when fail building sticks.s
+     */
+    Collection<Stick> tryBuild(ZonedDateTime time) throws StickException;
 }

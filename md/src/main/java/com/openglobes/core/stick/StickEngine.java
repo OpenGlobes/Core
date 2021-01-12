@@ -19,12 +19,20 @@ package com.openglobes.core.stick;
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
+import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.market.InstrumentMinuteNotice;
 import com.openglobes.core.market.InstrumentNotice;
+import com.openglobes.core.market.Notices;
+import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
+import com.openglobes.core.utils.Loggers;
+import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 
 /**
  *
@@ -39,6 +47,7 @@ public class StickEngine implements IStickEngine {
     }
     private final Map<String, IStickBuilder> builders;
     private final IEventSource evt;
+    private final AtomicLong sid;
     private final IMarketDataSource src;
 
     private StickEngine(IMarketDataSource source) throws StickException,
@@ -46,6 +55,7 @@ public class StickEngine implements IStickEngine {
         evt = new EventSource();
         src = source;
         builders = new ConcurrentHashMap<>(512);
+        sid = new AtomicLong(getInitStickId());
         setup();
     }
 
@@ -55,23 +65,78 @@ public class StickEngine implements IStickEngine {
     }
 
     @Override
+    public Long nextStickId() {
+        return sid.incrementAndGet();
+    }
+
+    @Override
     public void onNotice(InstrumentMinuteNotice notice) throws StickException {
-        //TODO on notice
+        buildAndPublish(notice.getInstrumentId(),
+                        notice.getAlignTime(),
+                        notice.getMinuteOfTradingDay(),
+                        null);
     }
 
     @Override
     public void onNotice(InstrumentNotice notice) throws StickException {
-        // TODO on notice
+        if (Notices.INSTRUMENT_END_TRADE == notice.getType()) {
+            /*
+             * Publish day sticks.
+             */
+            buildAndPublish(notice.getInstrumentId(),
+                            notice.getAlignTime(),
+                            null,
+                            1);
+            /*
+             * Publish sticks of other not-yet published minutes.
+             */
+            buildAndPublishOthers(notice);
+        }
     }
 
     @Override
     public void updateTick(Tick tick) throws StickException {
-        var b = builders.get(tick.getInstrumentId());
+        getBuilder(tick.getInstrumentId()).update(tick);
+    }
+
+    private void buildAndPublish(String instrumentId,
+                                 ZonedDateTime alignTime,
+                                 Integer minutes,
+                                 Integer days) throws StickException {
+        publishSticks(getBuilder(instrumentId).build(minutes,
+                                                     days,
+                                                     alignTime));
+    }
+
+    private void buildAndPublishOthers(InstrumentNotice notice) throws StickException {
+        publishSticks(getBuilder(notice.getInstrumentId()).tryBuild(notice.getAlignTime()));
+    }
+
+    private IStickBuilder getBuilder(String instrumentId) throws StickException {
+        var b = builders.get(instrumentId);
         if (b == null) {
             throw new StickException(ErrorCode.STICKBUILDER_NOT_FOUND.code(),
                                      ErrorCode.STICKBUILDER_NOT_FOUND.message());
         }
-        b.update(tick);
+        return b;
+    }
+
+    private long getInitStickId() {
+        var c = ZonedDateTime.now();
+        return (c.getYear() * 10000 + c.getMonthValue() * 100 + c.getDayOfMonth()) * 1000000;
+    }
+
+    private void publishSticks(Collection<Stick> ss) {
+        ss.forEach(s -> {
+            try {
+                evt.publish(Stick.class, s);
+            }
+            catch (EventSourceException ex) {
+                Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
+                                                                            ex.toString(),
+                                                                            ex);
+            }
+        });
     }
 
     private void setup() throws StickException,
@@ -80,7 +145,7 @@ public class StickEngine implements IStickEngine {
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
                                              k -> {
-                                                 return new StickBuilder();
+                                                 return new StickBuilder(this);
                                              });
                 b.addMinutes(setting.getMinutes());
             }
