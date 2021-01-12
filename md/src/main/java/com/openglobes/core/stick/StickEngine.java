@@ -149,6 +149,9 @@ public class StickEngine implements IStickEngine {
                                              });
                 b.addMinutes(setting.getMinutes());
             }
+            for (var b : builders.values()) {
+                b.addDays(1);
+            }
         }
         catch (Exception ex) {
             throw new MarketDataSourceException(ErrorCode.DATASOURCE_AUTOCLOSE_FAIL.code(),
