@@ -111,8 +111,9 @@ public class Utils {
      *
      * @param task     timer task.
      * @param duration duration between two tasks
+     * @return timer.
      */
-    public static void schedulePerDuration(TimerTask task, Duration duration) {
+    public static Timer schedulePerDuration(TimerTask task, Duration duration) {
         var now = ZonedDateTime.now();
         var calendar = Calendar.getInstance();
         /*
@@ -134,9 +135,11 @@ public class Utils {
                      s.getHour(),
                      s.getMinute(),
                      s.getSecond());
-        new Timer().schedule(task,
-                             calendar.getTime(),
-                             duration.toMillis());
+        var r = new Timer();
+        r.schedule(task,
+                   calendar.getTime(),
+                   duration.toMillis());
+        return r;
     }
 
     private Utils() {

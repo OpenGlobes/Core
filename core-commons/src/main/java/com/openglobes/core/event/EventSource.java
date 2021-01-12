@@ -85,7 +85,6 @@ public class EventSource implements IEventSource {
     }
 
     @Override
-
     public synchronized void stop() throws EventSourceException {
         if (!started) {
             throw new EventSourceException("Duplicated stop.");

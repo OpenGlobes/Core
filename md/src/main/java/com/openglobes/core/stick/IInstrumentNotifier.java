@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.stick;
 
+import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.IEventSource;
 
 /**
@@ -26,5 +27,7 @@ import com.openglobes.core.event.IEventSource;
 public interface IInstrumentNotifier {
 
     IEventSource getEventSource();
+    
+    void reload() throws MarketDataSourceException;
     
 }

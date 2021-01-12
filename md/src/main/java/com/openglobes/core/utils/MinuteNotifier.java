@@ -19,8 +19,10 @@ package com.openglobes.core.utils;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventSource;
+import java.lang.ref.Cleaner;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -30,16 +32,26 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class MinuteNotifier extends TimerTask implements IMinuteNotifier {
+public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCloseable {
 
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
     private final IEventSource evt;
     private final AtomicLong nid;
+    private final Timer tm;
 
     public MinuteNotifier() {
         evt = new EventSource();
         nid = new AtomicLong(0);
-        Utils.schedulePerDuration(this,
-                                  Duration.ofMinutes(1));
+        tm = Utils.schedulePerDuration(this,
+                                       Duration.ofMinutes(1));
+        cleanable = cleaner.register(this,
+                                     new CleanAction(evt, tm));
+    }
+
+    @Override
+    public void close() throws Exception {
+        cleanable.clean();
     }
 
     @Override
@@ -59,6 +71,31 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier {
             Loggers.getLogger(MinuteNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                            ex.toString(),
                                                                            ex);
+        }
+    }
+
+    private static class CleanAction implements Runnable {
+
+        private final IEventSource src;
+        private final Timer tm;
+
+        CleanAction(IEventSource source, Timer timer) {
+            src = source;
+            tm = timer;
+        }
+
+        @Override
+        public void run() {
+            try {
+                src.stop();
+                tm.cancel();
+                tm.purge();
+            }
+            catch (EventSourceException ex) {
+                Loggers.getLogger(MinuteNotifier.class.getCanonicalName()).log(Level.SEVERE,
+                                                                               ex.toString(),
+                                                                               ex);
+            }
         }
     }
 }

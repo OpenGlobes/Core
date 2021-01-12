@@ -27,6 +27,7 @@ import com.openglobes.core.market.Notices;
 import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
 import com.openglobes.core.utils.Loggers;
+import java.lang.ref.Cleaner;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Map;
@@ -39,13 +40,15 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class StickEngine implements IStickEngine {
+public class StickEngine implements IStickEngine, AutoCloseable {
 
     public static IStickEngine create(IMarketDataSource source) throws StickException,
                                                                        MarketDataSourceException {
         return new StickEngine(source);
     }
     private final Map<String, IStickBuilder> builders;
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
     private final IEventSource evt;
     private final AtomicLong sid;
     private final IMarketDataSource src;
@@ -56,7 +59,14 @@ public class StickEngine implements IStickEngine {
         src = source;
         builders = new ConcurrentHashMap<>(512);
         sid = new AtomicLong(getInitStickId());
+        cleanable = cleaner.register(this,
+                                     new CleanAction(evt));
         setup();
+    }
+
+    @Override
+    public void close() throws Exception {
+        cleanable.clean();
     }
 
     @Override
@@ -157,6 +167,27 @@ public class StickEngine implements IStickEngine {
             throw new MarketDataSourceException(ErrorCode.DATASOURCE_AUTOCLOSE_FAIL.code(),
                                                 ErrorCode.DATASOURCE_AUTOCLOSE_FAIL.message(),
                                                 ex);
+        }
+    }
+
+    private static class CleanAction implements Runnable {
+
+        private final IEventSource src;
+
+        CleanAction(IEventSource source) {
+            src = source;
+        }
+
+        @Override
+        public void run() {
+            try {
+                src.stop();
+            }
+            catch (EventSourceException ex) {
+                Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
+                                                                            ex.toString(),
+                                                                            ex);
+            }
         }
     }
 }
