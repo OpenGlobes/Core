@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.AbstractData;
+import com.openglobes.core.dba.AbstractPooledConnection;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
@@ -47,12 +47,12 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderData extends AbstractData implements ITraderData {
+public class TraderDataConnection extends AbstractPooledConnection implements ITraderData {
 
     private Boolean exAutoCommit;
     private final IQuery query;
 
-    public TraderData(Connection connection, TraderDataSource source) throws DataSourceException {
+    public TraderDataConnection(Connection connection, TraderDataSource source) throws DataSourceException {
         super(connection, source);
         query = Queries.createQuery(conn());
     }

@@ -31,14 +31,15 @@ import java.util.logging.Logger;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractDataSource implements AutoCloseable, IDataSource {
+public abstract class AbstractPooledDataSource implements AutoCloseable,
+                                                          IPooledDataSource {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Map<Connection, Boolean> free = new HashMap<>(128);
     private final Properties props;
 
-    protected AbstractDataSource() {
+    protected AbstractPooledDataSource() {
         props = new Properties();
         cleanable = cleaner.register(this, new CleanAction(free));
     }
@@ -72,7 +73,7 @@ public abstract class AbstractDataSource implements AutoCloseable, IDataSource {
         r.remove("DataSource.DriverClass");
         return r;
     }
-    
+
     @Override
     public Properties getProperties() {
         return new Properties(props);
@@ -84,7 +85,7 @@ public abstract class AbstractDataSource implements AutoCloseable, IDataSource {
 
     @Override
     public Connection findConnection() throws ClassNotFoundException,
-                                       SQLException {
+                                              SQLException {
         synchronized (free) {
             for (var c : free.entrySet()) {
                 if (c.getValue()) {
@@ -124,7 +125,7 @@ public abstract class AbstractDataSource implements AutoCloseable, IDataSource {
                         c.close();
                     }
                     catch (SQLException ex) {
-                        Logger.getLogger(AbstractDataSource.class.getName()).log(Level.SEVERE,
+                        Logger.getLogger(AbstractPooledDataSource.class.getName()).log(Level.SEVERE,
                                                                                        ex.toString(),
                                                                                        ex);
                     }

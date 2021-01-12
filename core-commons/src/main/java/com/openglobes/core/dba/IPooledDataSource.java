@@ -17,7 +17,6 @@
 package com.openglobes.core.dba;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -25,18 +24,17 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IDataSource {
+public interface IPooledDataSource {
 
     /**
      * Find next available SQL connection.
      *
      * @return SQL connection.
      *
-     * @throws ClassNotFoundException thrown by {@link Class#forName}.
-     * @throws SQLException           thrown by
-     *                                {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
+     * @throws Exception thrown by {@link Class#forName} or
+     *                   {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
      */
-    Connection findConnection() throws ClassNotFoundException, SQLException;
+    Connection findConnection() throws Exception;
 
     /**
      * Free the binding of the specified connection to the
@@ -44,10 +42,10 @@ public interface IDataSource {
      *
      * @param connection SQl connection.
      *
-     * @throws RuntimeException thrown when the specified connection is not
-     *                          created by the datasource.
+     * @throws Exception thrown when the specified connection is not created by
+     *                   the datasource.
      */
-    void freeConnection(Connection connection) throws RuntimeException;
+    void freeConnection(Connection connection) throws Exception;
 
     /**
      * Get properites used on obtaining connection by

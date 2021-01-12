@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.AbstractDataSource;
+import com.openglobes.core.dba.AbstractPooledDataSource;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderDataSource extends AbstractDataSource implements ITraderDataSource{
+public class TraderDataSource extends AbstractPooledDataSource implements ITraderDataSource{
 
     private final Map<DataChangeType, EventSource> events;
 
@@ -58,7 +58,7 @@ public class TraderDataSource extends AbstractDataSource implements ITraderDataS
     @Override
     public ITraderData getConnection() throws DataSourceException {
         try {
-            return new TraderData(findConnection(), this);
+            return new TraderDataConnection(findConnection(), this);
         }
         catch (ClassNotFoundException ex) {
             throw new DataSourceException(Exceptions.DATASOURCE_DRIVER_CLASS_MISSING.code(),

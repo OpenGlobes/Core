@@ -21,7 +21,7 @@ package com.openglobes.core.dba;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IDataConnection {
+public interface IPooledConnection {
 
     /**
      * Get the data source that created this data connection and manages the
@@ -29,6 +29,6 @@ public interface IDataConnection {
      *
      * @return data source that created this data connection.
      */
-    IDataSource getSource();
+    IPooledDataSource getSource();
 
 }

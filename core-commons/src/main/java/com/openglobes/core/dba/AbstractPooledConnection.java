@@ -27,14 +27,14 @@ import java.util.logging.Logger;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractData implements AutoCloseable, IDataConnection {
+public abstract class AbstractPooledConnection implements AutoCloseable, IPooledConnection {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Connection conn;
-    private final IDataSource src;
+    private final IPooledDataSource src;
 
-    public AbstractData(Connection connection, IDataSource source) {
+    public AbstractPooledConnection(Connection connection, IPooledDataSource source) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(source);
         conn = connection;
@@ -48,7 +48,7 @@ public abstract class AbstractData implements AutoCloseable, IDataConnection {
     }
 
     @Override
-    public IDataSource getSource() {
+    public IPooledDataSource getSource() {
         return this.src;
     }
 
@@ -59,9 +59,9 @@ public abstract class AbstractData implements AutoCloseable, IDataConnection {
     private static class CleanAction implements Runnable {
 
         private final Connection conn;
-        private final IDataSource src;
+        private final IPooledDataSource src;
 
-        CleanAction(Connection connection, IDataSource source) {
+        CleanAction(Connection connection, IPooledDataSource source) {
             conn = connection;
             src = source;
         }
@@ -72,7 +72,7 @@ public abstract class AbstractData implements AutoCloseable, IDataConnection {
                 src.freeConnection(conn);
             }
             catch (Throwable th) {
-                Logger.getLogger(AbstractDataSource.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(AbstractPooledDataSource.class.getName()).log(Level.SEVERE,
                                                                          th.getMessage(),
                                                                          th);
             }
