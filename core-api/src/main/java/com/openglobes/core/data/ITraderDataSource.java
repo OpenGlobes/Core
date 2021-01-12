@@ -16,9 +16,9 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.IPooledDataSource;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
-import java.util.Properties;
 
 /**
  * Data source provides basic data to higher level.
@@ -29,8 +29,8 @@ import java.util.Properties;
  * <p>
  * The URL in call
  * {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}
- * is specified in properties by the key {@code DataSource.URL} and the rest
- * of the properties are passed directly as second parameter.
+ * is specified in properties by the key {@code DataSource.URL} and the rest of
+ * the properties are passed directly as second parameter.
  * <p>
  * To usea JDBC driver, set class path to contain that driver when building the
  * application, or load that driver programatically.
@@ -38,29 +38,7 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderDataSource {
-
-    /**
-     * Set properties for initialiazing data source and creating connection.
-     * <p>
-     * Properties are in align with
-     * {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}
-     * except the following dedicated properties:
-     * <ul>
-     * <li><b>DataSource.URL</b>:URL of the connection.
-     * <li><b>DataSource.DriverClass</b>:Driver class canonical name used in {@link Class#forName(java.lang.String)
-     * }
-     * </ul>
-     * The dedicated properties are removed before being used for connection.
-     * and the rest of properties are directly passed to method.
-     *
-     * @param properties properties for JDBC connection including dedicated
-     *                   properies for URL and driver class.
-     *
-     * @throws DataSourceException thrown when fail loading driver class or
-     *                             getting new connection.
-     */
-    void open(Properties properties) throws DataSourceException;
+public interface ITraderDataSource extends IPooledDataSource {
 
     /**
      * Get {@link ITraderData} of the underlying data source with the given

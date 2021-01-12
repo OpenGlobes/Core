@@ -32,32 +32,34 @@ public class StickBuilder implements IStickBuilder{
 
     @Override
     public void addMinutes(Integer minutes) throws StickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO addMinutes
     }
     
     @Override
     public Stick build() throws StickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO build
+        return null;
     }
 
     @Override
     public String getInstrumentId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO getInstrumentId
+        return null;
     }
 
     @Override
     public Collection<Integer> getMinutes() throws StickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO getMinutes
+        return null;
     }
 
     @Override
     public void removeMinutes(Integer minutes) throws StickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO removeMinutes
     }
 
     @Override
     public void update(Tick tick) throws StickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+        // TODO update
+    }  
 }

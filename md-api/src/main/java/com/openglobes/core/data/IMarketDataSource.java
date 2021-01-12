@@ -16,15 +16,13 @@
  */
 package com.openglobes.core.data;
 
-import java.util.Properties;
+import com.openglobes.core.dba.IPooledDataSource;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketDataSource {
+public interface IMarketDataSource extends IPooledDataSource {
     IMarketData getConnection() throws MarketDataSourceException;
-    
-     void open(Properties properties) throws MarketDataSourceException;
 }

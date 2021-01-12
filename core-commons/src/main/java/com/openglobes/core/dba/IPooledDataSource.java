@@ -34,7 +34,7 @@ public interface IPooledDataSource {
      * @throws Exception thrown by {@link Class#forName} or
      *                   {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
      */
-    Connection findConnection() throws Exception;
+    Connection getSqlConnection() throws Exception;
 
     /**
      * Free the binding of the specified connection to the
@@ -45,7 +45,7 @@ public interface IPooledDataSource {
      * @throws Exception thrown when the specified connection is not created by
      *                   the datasource.
      */
-    void freeConnection(Connection connection) throws Exception;
+    void ungetSqlConnection(Connection connection) throws Exception;
 
     /**
      * Get properites used on obtaining connection by
@@ -61,5 +61,27 @@ public interface IPooledDataSource {
      * @return original properties for the data source.
      */
     Properties getProperties();
+
+    /**
+     * Set properties for initialiazing data source and creating connection.
+     * <p>
+     * Properties are in align with
+     * {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}
+     * except the following dedicated properties:
+     * <ul>
+     * <li><b>DataSource.URL</b>:URL of the connection.
+     * <li><b>DataSource.DriverClass</b>:Driver class canonical name used in {@link Class#forName(java.lang.String)
+     * }
+     * </ul>
+     * The dedicated properties are removed before being used for connection.
+     * and the rest of properties are directly passed to method.
+     *
+     * @param properties properties for JDBC connection including dedicated
+     *                   properies for URL and driver class.
+     *
+     * @throws Exception thrown when fail loading driver class or getting new
+     *                   connection.
+     */
+    void open(Properties properties) throws Exception;
 
 }

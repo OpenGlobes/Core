@@ -49,6 +49,51 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
         cleanable.clean();
     }
 
+    @Override
+    public Properties getConnectionProperties() {
+        var r = new Properties(props);
+        r.remove("DataSource.URL");
+        r.remove("DataSource.DriverClass");
+        return r;
+    }
+
+    @Override
+    public Properties getProperties() {
+        return new Properties(props);
+    }
+
+    @Override
+    public Connection getSqlConnection() throws ClassNotFoundException,
+                                                SQLException {
+        synchronized (free) {
+            for (var c : free.entrySet()) {
+                if (c.getValue()) {
+                    c.setValue(Boolean.FALSE);
+                    return c.getKey();
+                }
+            }
+            var c = allocateConnection();
+            free.put(c, Boolean.FALSE);
+            return c;
+        }
+    }
+
+    @Override
+    public void open(Properties properties) throws Exception {
+        props().clear();
+        props().putAll(properties);
+    }
+
+    @Override
+    public void ungetSqlConnection(Connection connection) throws RuntimeException {
+        synchronized (free) {
+            if (!free.containsKey(connection)) {
+                throw new RuntimeException("Unkown connection object.");
+            }
+            free.put(connection, Boolean.TRUE);
+        }
+    }
+
     private Connection allocateConnection() throws ClassNotFoundException,
                                                    SQLException {
         if (free.isEmpty()) {
@@ -66,47 +111,8 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
         return props().getProperty("DataSource.URL");
     }
 
-    @Override
-    public Properties getConnectionProperties() {
-        var r = new Properties(props);
-        r.remove("DataSource.URL");
-        r.remove("DataSource.DriverClass");
-        return r;
-    }
-
-    @Override
-    public Properties getProperties() {
-        return new Properties(props);
-    }
-
     protected Properties props() {
         return props;
-    }
-
-    @Override
-    public Connection findConnection() throws ClassNotFoundException,
-                                              SQLException {
-        synchronized (free) {
-            for (var c : free.entrySet()) {
-                if (c.getValue()) {
-                    c.setValue(Boolean.FALSE);
-                    return c.getKey();
-                }
-            }
-            var c = allocateConnection();
-            free.put(c, Boolean.FALSE);
-            return c;
-        }
-    }
-
-    @Override
-    public void freeConnection(Connection connection) throws RuntimeException {
-        synchronized (free) {
-            if (!free.containsKey(connection)) {
-                throw new RuntimeException("Unkown connection object.");
-            }
-            free.put(connection, Boolean.TRUE);
-        }
     }
 
     private static class CleanAction implements Runnable {

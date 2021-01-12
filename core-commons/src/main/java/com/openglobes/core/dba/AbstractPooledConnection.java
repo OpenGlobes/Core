@@ -69,7 +69,7 @@ public abstract class AbstractPooledConnection implements AutoCloseable, IPooled
         @Override
         public void run() {
             try {
-                src.freeConnection(conn);
+                src.ungetSqlConnection(conn);
             }
             catch (Throwable th) {
                 Logger.getLogger(AbstractPooledDataSource.class.getName()).log(Level.SEVERE,

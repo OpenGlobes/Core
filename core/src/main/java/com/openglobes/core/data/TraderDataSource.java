@@ -24,7 +24,6 @@ import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.trader.ErrorCode;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -58,7 +57,7 @@ public class TraderDataSource extends AbstractPooledDataSource implements ITrade
     @Override
     public ITraderData getConnection() throws DataSourceException {
         try {
-            return new TraderDataConnection(findConnection(), this);
+            return new TraderDataConnection(getSqlConnection(), this);
         }
         catch (ClassNotFoundException ex) {
             throw new DataSourceException(ErrorCode.DATASOURCE_DRIVER_CLASS_MISSING.code(),
@@ -79,12 +78,6 @@ public class TraderDataSource extends AbstractPooledDataSource implements ITrade
                                           ErrorCode.DATASOURCE_EVENTSOURCE_NOT_FOUND.message());
         }
         return events.get(type);
-    }
-
-    @Override
-    public void open(Properties properties) throws DataSourceException {
-        props().clear();
-        props().putAll(properties);
     }
 
     private void setupEvents() {
