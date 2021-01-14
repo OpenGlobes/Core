@@ -31,10 +31,10 @@ public interface IPooledDataSource {
      *
      * @return SQL connection.
      *
-     * @throws Exception thrown by {@link Class#forName} or
-     *                   {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
+     * @throws DbaException thrown by {@link Class#forName} or
+     *                      {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
      */
-    Connection getSqlConnection() throws Exception;
+    Connection getSqlConnection() throws DbaException;
 
     /**
      * Free the binding of the specified connection to the
@@ -42,10 +42,10 @@ public interface IPooledDataSource {
      *
      * @param connection SQl connection.
      *
-     * @throws Exception thrown when the specified connection is not created by
-     *                   the datasource.
+     * @throws DbaException thrown when the specified connection is not created
+     *                      by the datasource.
      */
-    void ungetSqlConnection(Connection connection) throws Exception;
+    void ungetSqlConnection(Connection connection) throws DbaException;
 
     /**
      * Get properites used on obtaining connection by

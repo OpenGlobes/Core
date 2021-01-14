@@ -16,11 +16,14 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.IPooledDataSource;
+
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketDataSource {
-    IMarketData getConnection() throws MarketDataSourceException;
+public interface IMarketDataSource extends AutoCloseable,
+                                           IPooledDataSource{
+    IMarketDataConnection getConnection() throws MarketDataSourceException;
 }

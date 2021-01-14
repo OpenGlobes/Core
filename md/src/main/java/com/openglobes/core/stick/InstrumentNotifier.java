@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.data.IMarketData;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
@@ -41,6 +40,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
+import com.openglobes.core.data.IMarketDataConnection;
 
 /**
  *
@@ -51,19 +51,19 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                            IInstrumentNotifier,
                                            AutoCloseable {
 
-    public static InstrumentNotifier create(IMarketData connection) throws MarketDataSourceException {
+    public static InstrumentNotifier create(IMarketDataConnection connection) throws MarketDataSourceException {
         return new InstrumentNotifier(connection);
     }
 
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
-    private final IMarketData conn;
+    private final IMarketDataConnection conn;
     private final IEventSource evt;
     private final Map<String, AtomicInteger> minCounters;
     private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
 
-    private InstrumentNotifier(IMarketData connection) throws MarketDataSourceException {
+    private InstrumentNotifier(IMarketDataConnection connection) throws MarketDataSourceException {
         conn = connection;
         evt = new EventSource();
         times = new HashMap<>(512);

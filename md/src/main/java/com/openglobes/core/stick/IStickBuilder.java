@@ -80,13 +80,13 @@ public interface IStickBuilder {
      * minute, no matter whether now is its corresponding minute.
      * <p>
      * If current time is before the specfied align time, no stick is built.
-     * When it is the specified time, call to {@code build(...)} will build all
+     * When it is the specified time, call to {@link build} method will build all
      * sticks including those refered by this method.
      * <p>
-     * If current time is the specified time, and the {@code build(...)} had
+     * If current time is the specified time, and the {@link build} method had
      * been called, call to the method builds sticks that are not-yet built by
-     * calling {@code build(...)}. So sticks built by {@code build(...)} and
-     * {@code tryBuild(...)} are all sticks that can be built in the end of
+     * calling {@link build}. So sticks built by {@link build} method and
+     * this method are all sticks that can be built in the end of
      * trading day.
      * <p>
      * The method is synchronized on {@code this} object.

@@ -63,18 +63,23 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
     }
 
     @Override
-    public Connection getSqlConnection() throws ClassNotFoundException,
-                                                SQLException {
+    public Connection getSqlConnection() throws DbaException {
         synchronized (free) {
-            for (var c : free.entrySet()) {
-                if (c.getValue()) {
-                    c.setValue(Boolean.FALSE);
-                    return c.getKey();
+            try {
+                for (var c : free.entrySet()) {
+                    if (c.getValue()) {
+                        c.setValue(Boolean.FALSE);
+                        return c.getKey();
+                    }
                 }
+                var c = allocateConnection();
+                free.put(c, Boolean.FALSE);
+                return c;
             }
-            var c = allocateConnection();
-            free.put(c, Boolean.FALSE);
-            return c;
+            catch (ClassNotFoundException | SQLException ex) {
+                throw new DbaException(ex.getMessage(),
+                                       ex);
+            }
         }
     }
 
@@ -85,10 +90,10 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
     }
 
     @Override
-    public void ungetSqlConnection(Connection connection) throws RuntimeException {
+    public void ungetSqlConnection(Connection connection) throws DbaException {
         synchronized (free) {
             if (!free.containsKey(connection)) {
-                throw new RuntimeException("Unkown connection object.");
+                throw new DbaException("Unkown connection object.");
             }
             free.put(connection, Boolean.TRUE);
         }

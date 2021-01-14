@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.data.IMarketData;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.market.HolidayTime;
 import com.openglobes.core.market.WorkdayTime;
@@ -26,6 +25,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import com.openglobes.core.data.IMarketDataConnection;
 
 /**
  *
@@ -43,7 +43,7 @@ public class TimeKeeper implements ITimeKeeper {
 
     public static TimeKeeper create(Long holidayTimeSetId,
                                     Long workdayTimeSetId,
-                                    IMarketData connection) throws MarketDataSourceException {
+                                    IMarketDataConnection connection) throws MarketDataSourceException {
         Objects.requireNonNull(connection);
         var wd = connection.getWorkdayTimesByTimeSetId(workdayTimeSetId);
         Objects.requireNonNull(wd);

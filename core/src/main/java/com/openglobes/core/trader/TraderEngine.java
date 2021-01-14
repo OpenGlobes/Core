@@ -19,6 +19,7 @@ package com.openglobes.core.trader;
 import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEvent;
@@ -774,15 +775,11 @@ public class TraderEngine implements ITraderEngine {
             changeStatus(TraderEngineStatuses.WORKING);
         }
         catch (DataSourceException e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            rollback(conn);
             throw e;
         }
         catch (Throwable th) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            rollback(conn);
             throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
                                       ErrorCode.UNEXPECTED_ERROR.message(),
                                       th);
@@ -806,6 +803,21 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ex.getCode(),
                                       ex.getMessage(),
                                       ex);
+        }
+    }
+
+    private void rollback(ITraderDataConnection conn) {
+        if (conn == null) {
+            return;
+        }
+        try {
+            conn.rollback();
+        }
+        catch (DbaException ex) {
+            callOnException(new EngineRuntimeException(
+                    ErrorCode.DS_FAILURE_UNFIXABLE.code(),
+                    ErrorCode.DS_FAILURE_UNFIXABLE.message(),
+                    ex));
         }
     }
 
@@ -837,14 +849,15 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (EngineException e) {
-            /*
-             * Rollback data source.
-             */
-            if (conn != null) {
-                conn.rollback();
-            }
+        catch (DataSourceException e) {
+            rollback(conn);
             throw e;
+        }
+        catch (DbaException ex) {
+            rollback(conn);
+            throw new EngineException(null,
+                                      ex.getMessage(),
+                                      ex);
         }
         finally {
             if (conn != null) {
@@ -902,13 +915,14 @@ public class TraderEngine implements ITraderEngine {
             conn.commit();
         }
         catch (DataSourceException e) {
-            /*
-             * Rollback on exception.
-             */
-            if (conn != null) {
-                conn.rollback();
-            }
+            rollback(conn);
             throw e;
+        }
+        catch (DbaException ex) {
+            rollback(conn);
+            throw new EngineException(null,
+                                      ex.getMessage(),
+                                      ex);
         }
         finally {
             if (conn != null) {
@@ -927,7 +941,7 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void settle(ITraderDataSource ds, 
+    private void settle(ITraderDataSource ds,
                         ITraderEngineAlgorithm algo) throws EngineException {
         try (var conn = ds.getConnection()) {
             var rs = conn.getRequests();
@@ -984,15 +998,11 @@ public class TraderEngine implements ITraderEngine {
             changeStatus(TraderEngineStatuses.WORKING);
         }
         catch (DataSourceException e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            rollback(conn);
             throw e;
         }
         catch (Throwable th) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            rollback(conn);
             throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
                                       ErrorCode.UNEXPECTED_ERROR.message(),
                                       th);

@@ -37,7 +37,6 @@ import com.openglobes.core.trader.TradingDay;
 import com.openglobes.core.trader.Withdraw;
 import java.lang.reflect.Field;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -46,12 +45,11 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class JdbcTraderDataConnection extends TraderDataConnection {
+public class DefaultTraderDataConnection extends TraderDataConnection {
 
-    private Boolean exAutoCommit;
     private final IQuery query;
 
-    public JdbcTraderDataConnection(Connection connection, JdbcTraderDataSource source) throws DataSourceException {
+    public DefaultTraderDataConnection(Connection connection, DefaultTraderDataSource source) throws DataSourceException {
         super(connection, source);
         query = Queries.createQuery(conn());
     }
@@ -114,21 +112,6 @@ public class JdbcTraderDataConnection extends TraderDataConnection {
     @Override
     public void addWithdraw(Withdraw withdraw) throws DataSourceException {
         callInsert(Withdraw.class, withdraw);
-    }
-
-    @Override
-    public void commit() throws DataSourceException {
-        try {
-            conn().commit();
-        }
-        catch (SQLException ex) {
-            throw new DataSourceException(ErrorCode.TRANSACTION_COMMIT_FAILED.code(),
-                                          ErrorCode.TRANSACTION_COMMIT_FAILED.message(),
-                                          ex);
-        }
-        finally {
-            restoreTransaction();
-        }
     }
 
     @Override
@@ -736,34 +719,7 @@ public class JdbcTraderDataConnection extends TraderDataConnection {
                    Withdraw::new);
     }
 
-    @Override
-    public void rollback() throws DataSourceException {
-        try {
-            conn().rollback();
-        }
-        catch (SQLException ex) {
-            throw new DataSourceException(ErrorCode.TRANSACTION_ROLLBACK_FAILED.code(),
-                                          ErrorCode.TRANSACTION_ROLLBACK_FAILED.message(),
-                                          ex);
-        }
-        finally {
-            restoreTransaction();
-        }
-    }
 
-    @Override
-    public void transaction() throws DataSourceException {
-        try {
-            exAutoCommit = conn().getAutoCommit();
-            conn().setAutoCommit(false);
-        }
-        catch (SQLException ex) {
-            restoreTransaction();
-            throw new DataSourceException(ErrorCode.TRANSACTION_BEGIN_FAILED.code(),
-                                          ErrorCode.TRANSACTION_BEGIN_FAILED.message(),
-                                          ex);
-        }
-    }
 
     @Override
     public void updateAccount(Account account) throws DataSourceException {
@@ -969,19 +925,6 @@ public class JdbcTraderDataConnection extends TraderDataConnection {
         catch (IllegalArgumentException | IllegalAccessException ex) {
             throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
                                           ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
-        }
-    }
-
-    private void restoreTransaction() throws DataSourceException {
-        try {
-            if (exAutoCommit != null) {
-                conn().setAutoCommit(exAutoCommit);
-            }
-        }
-        catch (SQLException ex) {
-            throw new DataSourceException(ErrorCode.TRANSACTION_RESTORE_FAILED.code(),
-                                          ErrorCode.TRANSACTION_RESTORE_FAILED.message(),
                                           ex);
         }
     }

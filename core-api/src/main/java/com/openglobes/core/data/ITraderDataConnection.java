@@ -68,8 +68,6 @@ public interface ITraderDataConnection extends AutoCloseable,
     @Override
     void close();
 
-    void commit() throws DataSourceException;
-
     Account getAccount() throws DataSourceException;
 
     Commission getCommissionById(Long commissionId) throws DataSourceException;
@@ -143,10 +141,6 @@ public interface ITraderDataConnection extends AutoCloseable,
     void removeSettlementPrice(String instrumentId) throws DataSourceException;
 
     void removeWithdraw(long withdrawId) throws DataSourceException;
-
-    void rollback() throws DataSourceException;
-
-    void transaction() throws DataSourceException;
 
     void updateAccount(Account account) throws DataSourceException;
 

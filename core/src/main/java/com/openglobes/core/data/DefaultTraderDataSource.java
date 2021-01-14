@@ -16,12 +16,12 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.trader.ErrorCode;
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,11 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class JdbcTraderDataSource extends TraderDataSource {
+public class DefaultTraderDataSource extends TraderDataSource {
 
     private final Map<DataChangeType, IEventSource> events;
 
-    public JdbcTraderDataSource() {
+    public DefaultTraderDataSource() {
         events = new ConcurrentHashMap<>(DataChangeType.values().length);
         setupEvents();
     }
@@ -56,16 +56,11 @@ public class JdbcTraderDataSource extends TraderDataSource {
     @Override
     public TraderDataConnection getConnection() throws DataSourceException {
         try {
-            return new JdbcTraderDataConnection(getSqlConnection(), this);
+            return new DefaultTraderDataConnection(getSqlConnection(), this);
         }
-        catch (ClassNotFoundException ex) {
-            throw new DataSourceException(ErrorCode.DATASOURCE_DRIVER_CLASS_MISSING.code(),
-                                          ErrorCode.DATASOURCE_DRIVER_CLASS_MISSING.message(),
-                                          ex);
-        }
-        catch (SQLException ex) {
-            throw new DataSourceException(ex.getErrorCode(),
-                                          ex.getMessage(),
+        catch (DbaException ex) {
+            throw new DataSourceException(ErrorCode.DATASOURCE_GET_CONNECTION_FAIL.code(),
+                                          ErrorCode.DATASOURCE_GET_CONNECTION_FAIL.message(),
                                           ex);
         }
     }

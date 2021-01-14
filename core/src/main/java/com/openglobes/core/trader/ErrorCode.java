@@ -117,7 +117,8 @@ public enum ErrorCode {
     DATASOURCE_CONNECTION_NOT_CACHED(0x5F, "Connection not in pool cache."),
     DATASOURCE_DRIVER_CLASS_MISSING(0x60, "Driver class not found."),
     DATASOURCE_EVENTSOURCE_NOT_FOUND(0x61, "No event source for the specified data change."),
-    INVALID_DATASOURCE_TYPE(0x62, "Invalid data source type.");
+    INVALID_DATASOURCE_TYPE(0x62, "Invalid data source type."),
+    DATASOURCE_GET_CONNECTION_FAIL(0x63, "Get connection failed.");
 
     private final int code;
     private final String message;

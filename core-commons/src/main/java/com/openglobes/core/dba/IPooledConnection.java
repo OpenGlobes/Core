@@ -31,4 +31,29 @@ public interface IPooledConnection {
      */
     IPooledDataSource getSource();
 
+    /**
+     * Commit all queries after calling {@link transaction()}.
+     *
+     * @throws DbaException thrown when failing to commit the underlying
+     *                      {@link java.sql.Connection}.
+     */
+    void commit() throws DbaException;
+
+    /**
+     * Rollback all queries after calling {@link transaction()}.
+     *
+     * @throws DbaException thrown when failing to rollback the underlying
+     *                      {@link java.sql.Connection}.
+     */
+    void rollback() throws DbaException;
+
+    /**
+     * Start a transaction then all queries set after this method need to be
+     * commited by calling {@link commit()}.
+     *
+     * @throws DbaException thrown when failing to start a transaction for the
+     *                      underlying {@link java.sql.Connection}.
+     */
+    void transaction() throws DbaException;
+
 }

@@ -19,6 +19,7 @@ package com.openglobes.core.trader;
 import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.EngineRuntimeException;
 import com.openglobes.core.exceptions.GatewayException;
@@ -270,18 +271,20 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.commit();
         }
         catch (GatewayException e) {
-            if (conn != null) {
-                rollback(conn);
-            }
-            callOnException(new EngineRuntimeException(e.getCode(),
-                                                       e.getMessage(),
-                                                       e));
+            rollbackAndCallHandler(conn,
+                                   e.getCode(),
+                                   e.getMessage(),
+                                   e);
         }
         catch (EngineRuntimeException e) {
-            if (conn != null) {
-                rollback(conn);
-            }
-            callOnException(e);
+            rollbackAndCallHandler(conn, 
+                                   e);
+        }
+        catch (DbaException e) {
+            rollbackAndCallHandler(conn,
+                                   null,
+                                   e.getMessage(),
+                                   e);
         }
         finally {
             if (conn != null) {
@@ -349,20 +352,22 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.commit();
         }
         catch (GatewayException e) {
-            if (conn != null) {
-                rollback(conn);
-            }
-            callOnException(new EngineRuntimeException(e.getCode(),
-                                                       e.getMessage(),
-                                                       e));
+            rollbackAndCallHandler(conn,
+                                   e.getCode(),
+                                   e.getMessage(),
+                                   e);
         }
         catch (GatewayRuntimeException e) {
-            if (conn != null) {
-                rollback(conn);
-            }
-            callOnException(new EngineRuntimeException(e.getCode(),
-                                                       e.getMessage(),
-                                                       e));
+            rollbackAndCallHandler(conn,
+                                   e.getCode(),
+                                   e.getMessage(),
+                                   e);
+        }
+        catch (DbaException e) {
+            rollbackAndCallHandler(conn,
+                                   null,
+                                   e.getMessage(),
+                                   e);
         }
         finally {
             if (conn != null) {
@@ -607,15 +612,34 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     private void rollback(ITraderDataConnection conn) {
+        if (conn == null) {
+            return;
+        }
         try {
             conn.rollback();
         }
-        catch (DataSourceException ex) {
+        catch (DbaException ex) {
             callOnException(new EngineRuntimeException(
                     ErrorCode.DS_FAILURE_UNFIXABLE.code(),
                     ErrorCode.DS_FAILURE_UNFIXABLE.message(),
                     ex));
         }
+    }
+
+    private void rollbackAndCallHandler(ITraderDataConnection conn,
+                                        Integer code,
+                                        String message,
+                                        Throwable th) {
+        rollback(conn);
+        callOnException(new EngineRuntimeException(code,
+                                                   message,
+                                                   th));
+    }
+
+    private void rollbackAndCallHandler(ITraderDataConnection conn,
+                                        EngineRuntimeException e) {
+        rollback(conn);
+        callOnException(e);
     }
 
     private class FrozenBundle {

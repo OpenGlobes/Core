@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.IPooledConnection;
 import com.openglobes.core.market.HolidayTime;
 import com.openglobes.core.market.HolidayTimeSet;
 import com.openglobes.core.market.InstrumentStickSetting;
@@ -30,7 +31,8 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketData {
+public interface IMarketDataConnection extends AutoCloseable,
+                                               IPooledConnection {
 
     void addHolidayTime(HolidayTime time) throws MarketDataSourceException;
 
@@ -43,8 +45,6 @@ public interface IMarketData {
     void addWorkdayTime(WorkdayTime time) throws MarketDataSourceException;
 
     void addWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException;
-
-    void commit() throws MarketDataSourceException;
 
     HolidayTime getHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException;
 
@@ -90,11 +90,7 @@ public interface IMarketData {
 
     void removeWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException;
 
-    void rollback() throws MarketDataSourceException;
-
     void setTradingDay() throws MarketDataSourceException;
-
-    void transaction() throws MarketDataSourceException;
 
     void updateHolidayTime(HolidayTime time) throws MarketDataSourceException;
 
