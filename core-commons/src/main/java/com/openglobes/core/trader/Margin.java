@@ -32,6 +32,7 @@ public class Margin {
     private Long marginId;
     private Long orderId;
     private Integer status;
+    private String tag;
     private ZonedDateTime timestamp;
     private LocalDate tradingDay;
 
@@ -76,6 +77,14 @@ public class Margin {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public ZonedDateTime getTimestamp() {

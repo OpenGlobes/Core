@@ -32,6 +32,7 @@ public class Commission {
     private Long contractId;
     private Long orderId;
     private Integer status;
+    private String tag;
     private ZonedDateTime timestamp;
     private LocalDate tradingDay;
 
@@ -76,6 +77,14 @@ public class Commission {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public ZonedDateTime getTimestamp() {

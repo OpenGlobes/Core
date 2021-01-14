@@ -899,6 +899,7 @@ public class TraderEngine implements ITraderEngine {
             cmn.setOrderId(request.getOrderId());
             cmn.setStatus(FeeStatus.FORZEN);
             cmn.setTradingDay(tradingDay);
+            cmn.setTag(request.getTag());
             conn.addCommission(cmn);
             /*
              * Add frozen commission.
@@ -910,6 +911,7 @@ public class TraderEngine implements ITraderEngine {
             mn.setOrderId(request.getOrderId());
             mn.setStatus(FeeStatus.FORZEN);
             mn.setTradingDay(tradingDay);
+            mn.setTag(request.getTag());
             conn.addMargin(mn);
             /*
              * Commit change.
