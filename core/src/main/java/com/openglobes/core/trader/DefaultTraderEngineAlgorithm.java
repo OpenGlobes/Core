@@ -32,11 +32,11 @@ import java.util.Set;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderEngineAlgorithm implements ITraderEngineAlgorithm {
+public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
     private final Properties props;
 
-    public TraderEngineAlgorithm() {
+    public DefaultTraderEngineAlgorithm() {
         props = new Properties();
     }
 
