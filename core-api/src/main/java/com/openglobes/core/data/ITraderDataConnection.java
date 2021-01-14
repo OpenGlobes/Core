@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.dba.IPooledConnection;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
@@ -37,7 +38,8 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderData {
+public interface ITraderDataConnection extends AutoCloseable,
+                                               IPooledConnection {
 
     void addAccount(Account account) throws DataSourceException;
 
@@ -62,6 +64,9 @@ public interface ITraderData {
     void addTradingDay(TradingDay day) throws DataSourceException;
 
     void addWithdraw(Withdraw withdraw) throws DataSourceException;
+
+    @Override
+    void close();
 
     void commit() throws DataSourceException;
 

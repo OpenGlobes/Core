@@ -58,7 +58,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
     private final IMarketData conn;
-    private final IEventSource evt;
+    private final EventSource evt;
     private final Map<String, AtomicInteger> minCounters;
     private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
@@ -241,16 +241,16 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
 
     private static class CleanAction implements Runnable {
 
-        private final IEventSource src;
+        private final EventSource src;
 
-        CleanAction(IEventSource source) {
+        CleanAction(EventSource source) {
             src = source;
         }
 
         @Override
         public void run() {
             try {
-                src.stop();
+                src.close();
             }
             catch (EventSourceException ex) {
                 Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,

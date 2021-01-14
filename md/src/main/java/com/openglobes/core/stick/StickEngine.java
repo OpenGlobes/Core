@@ -49,7 +49,7 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     private final Map<String, IStickBuilder> builders;
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
-    private final IEventSource evt;
+    private final EventSource evt;
     private final AtomicLong sid;
     private final IMarketDataSource src;
 
@@ -151,7 +151,8 @@ public class StickEngine implements IStickEngine, AutoCloseable {
 
     private void setup() throws StickException,
                                 MarketDataSourceException {
-        try (var conn = src.getConnection()) {
+        try {
+            var conn = src.getConnection();
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
                                              k -> {
@@ -172,16 +173,16 @@ public class StickEngine implements IStickEngine, AutoCloseable {
 
     private static class CleanAction implements Runnable {
 
-        private final IEventSource src;
+        private final EventSource src;
 
-        CleanAction(IEventSource source) {
+        CleanAction(EventSource source) {
             src = source;
         }
 
         @Override
         public void run() {
             try {
-                src.stop();
+                src.close();
             }
             catch (EventSourceException ex) {
                 Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,

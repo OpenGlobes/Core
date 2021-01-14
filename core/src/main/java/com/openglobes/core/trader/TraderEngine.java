@@ -17,7 +17,7 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.data.DataSourceException;
-import com.openglobes.core.data.ITraderData;
+import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
@@ -97,15 +97,6 @@ public class TraderEngine implements ITraderEngine {
     @Override
     public IEventSource getEventSource() throws EngineException {
         return es;
-    }
-
-    @Override
-    public void setEventSource(IEventSource eventSource) throws EngineException {
-        if (eventSource == null) {
-            throw new EngineException(ErrorCode.EVENTSOURCE_NULL.code(),
-                                      ErrorCode.EVENTSOURCE_NULL.message());
-        }
-        es = eventSource;
     }
 
     @Override
@@ -508,7 +499,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private Map<String, Instrument> findRelatedInstruments(Collection<String> instrumentIds,
-                                                           ITraderData conn) throws EngineException {
+                                                           ITraderDataConnection conn) throws EngineException {
         final var r = new HashMap<String, Instrument>(512);
         for (var i : instrumentIds) {
             var instrument = conn.getInstrumentById(i);
@@ -522,7 +513,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private Map<String, SettlementPrice> findRelatedTicks(Collection<String> instrumentIds,
-                                                          ITraderData conn) throws EngineException {
+                                                          ITraderDataConnection conn) throws EngineException {
         final var r = new HashMap<String, SettlementPrice>(512);
         for (var i : instrumentIds) {
             var price = conn.getSettlementPriceByInstrumentId(i);
@@ -593,24 +584,25 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private List<Contract> getAvailableContracts(Request request) throws EngineException {
-        final var conn = ds.getConnection();
-        final var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
-        if (cs == null) {
-            throw new EngineException(ErrorCode.CONTRACT_NULL.code(),
-                                      ErrorCode.CONTRACT_NULL.message());
-        }
-        var sorted = new LinkedList<Contract>(cs);
-        sorted.sort((Contract o1, Contract o2)
-                -> o1.getOpenTimestamp().compareTo(o2.getOpenTimestamp()));
-        // Scan from earlier to later.
-        var it = sorted.iterator();
-        while (it.hasNext()) {
-            var c = it.next();
-            if (!canClose(c, request)) {
-                it.remove();
+        try (var conn = ds.getConnection()) {
+            final var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
+            if (cs == null) {
+                throw new EngineException(ErrorCode.CONTRACT_NULL.code(),
+                                          ErrorCode.CONTRACT_NULL.message());
             }
+            var sorted = new LinkedList<Contract>(cs);
+            sorted.sort((Contract o1, Contract o2)
+                    -> o1.getOpenTimestamp().compareTo(o2.getOpenTimestamp()));
+            // Scan from earlier to later.
+            var it = sorted.iterator();
+            while (it.hasNext()) {
+                var c = it.next();
+                if (!canClose(c, request)) {
+                    it.remove();
+                }
+            }
+            return sorted;
         }
-        return sorted;
     }
 
     private double getAvailableMoney() throws EngineException {
@@ -620,17 +612,18 @@ public class TraderEngine implements ITraderEngine {
 
     private Collection<Contract> getContractsByOrderResponses(Collection<Trade> rsps) throws EngineException {
         final var cs = new HashSet<Contract>(128);
-        final var conn = ds.getConnection();
-        for (var r : rsps) {
-            var s = conn.getContractsByTradeId(r.getTradeId());
-            if (s == null) {
-                throw new EngineException(ErrorCode.NO_CONTRACT.code(),
-                                          ErrorCode.NO_CONTRACT.message()
-                                          + "(Trade ID:" + r.getTradeId() + ")");
+        try (var conn = ds.getConnection()) {
+            for (var r : rsps) {
+                var s = conn.getContractsByTradeId(r.getTradeId());
+                if (s == null) {
+                    throw new EngineException(ErrorCode.NO_CONTRACT.code(),
+                                              ErrorCode.NO_CONTRACT.message()
+                                              + "(Trade ID:" + r.getTradeId() + ")");
+                }
+                cs.addAll(s);
             }
-            cs.addAll(s);
+            return cs;
         }
-        return cs;
     }
 
     private TraderContext getProperTrader(Request request) throws EngineException {
@@ -655,62 +648,65 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private Account getSettledAccount() throws EngineException {
-        final var conn = ds.getConnection();
-        final var tradingDay = conn.getTradingDay().getTradingDay();
-        final var ids = getRalatedInstrumentIds();
-        return algo.getAccount(conn.getAccount(),
-                               conn.getDeposits(),
-                               conn.getWithdraws(),
-                               algo.getPositions(conn.getContracts(),
-                                                 conn.getCommissions(),
-                                                 conn.getMargins(),
-                                                 findRelatedTicks(ids, conn),
-                                                 findRelatedInstruments(ids, conn),
-                                                 tradingDay));
+        try (var conn = ds.getConnection()) {
+            final var tradingDay = conn.getTradingDay().getTradingDay();
+            final var ids = getRalatedInstrumentIds();
+            return algo.getAccount(conn.getAccount(),
+                                   conn.getDeposits(),
+                                   conn.getWithdraws(),
+                                   algo.getPositions(conn.getContracts(),
+                                                     conn.getCommissions(),
+                                                     conn.getMargins(),
+                                                     findRelatedTicks(ids, conn),
+                                                     findRelatedInstruments(ids, conn),
+                                                     tradingDay));
+        }
     }
 
     private Collection<Request> group(Collection<Contract> cs, Request request) throws EngineException {
         final var today = new HashMap<Integer, Request>(64);
         final var yd = new HashMap<Integer, Request>(64);
-        var tradingDay = ds.getConnection().getTradingDay().getTradingDay();
-        for (var c : cs) {
-            if (c.getOpenTradingDay().isBefore(tradingDay)) {
-                var o = yd.computeIfAbsent(c.getTraderId(), k -> {
-                                   var co = Utils.copy(request);
-                                   if (co == null) {
-                                       throw new EngineRuntimeException(
-                                               ErrorCode.OBJECT_COPY_FAILED.code(),
-                                               ErrorCode.OBJECT_COPY_FAILED.message());
-                                   }
-                                   co.setOffset(Offset.CLOSE);
-                                   co.setQuantity(0L);
-                                   co.setTraderId(k);
-                                   return co;
+        try (var conn = ds.getConnection()) {
+            var tradingDay = conn.getTradingDay().getTradingDay();
+            for (var c : cs) {
+                if (c.getOpenTradingDay().isBefore(tradingDay)) {
+                    var o = yd.computeIfAbsent(c.getTraderId(), k -> {
+                                       var co = Utils.copy(request);
+                                       if (co == null) {
+                                           throw new EngineRuntimeException(
+                                                   ErrorCode.OBJECT_COPY_FAILED.code(),
+                                                   ErrorCode.OBJECT_COPY_FAILED.message());
+                                       }
+                                       co.setOffset(Offset.CLOSE);
+                                       co.setQuantity(0L);
+                                       co.setTraderId(k);
+                                       return co;
 
-                               });
-                o.setQuantity(o.getQuantity() + 1);
-            }
-            else {
-                var o = today.computeIfAbsent(c.getTraderId(), k -> {
-                                      var co = Utils.copy(request);
-                                      if (co == null) {
-                                          throw new EngineRuntimeException(
-                                                  ErrorCode.OBJECT_COPY_FAILED.code(),
-                                                  ErrorCode.OBJECT_COPY_FAILED.message());
-                                      }
-                                      co.setOffset(Offset.CLOSE_TODAY);
-                                      co.setQuantity(0L);
-                                      co.setTraderId(k);
-                                      return co;
+                                   });
+                    o.setQuantity(o.getQuantity() + 1);
+                }
+                else {
+                    var o = today.computeIfAbsent(c.getTraderId(), k -> {
+                                          var co = Utils.copy(request);
+                                          if (co == null) {
+                                              throw new EngineRuntimeException(
+                                                      ErrorCode.OBJECT_COPY_FAILED.code(),
+                                                      ErrorCode.OBJECT_COPY_FAILED.message());
+                                          }
+                                          co.setOffset(Offset.CLOSE_TODAY);
+                                          co.setQuantity(0L);
+                                          co.setTraderId(k);
+                                          return co;
 
-                                  });
-                o.setQuantity(o.getQuantity() + 1);
+                                      });
+                    o.setQuantity(o.getQuantity() + 1);
+                }
             }
+
+            var r = new HashSet<Request>(today.values());
+            r.addAll(yd.values());
+            return r;
         }
-
-        var r = new HashSet<Request>(today.values());
-        r.addAll(yd.values());
-        return r;
     }
 
     private void initAccount(Account a) throws EngineException {
@@ -718,23 +714,24 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ErrorCode.ACCOUNT_NULL.code(),
                                       ErrorCode.ACCOUNT_NULL.message());
         }
-        final var conn = ds.getConnection();
-        final var tradingDay = conn.getTradingDay().getTradingDay();
+        try (var conn = ds.getConnection()) {
+            final var tradingDay = conn.getTradingDay().getTradingDay();
 
-        a.setPreBalance(a.getBalance());
-        a.setPreDeposit(a.getDeposit());
-        a.setPreMargin(a.getMargin());
-        a.setPreWithdraw(a.getWithdraw());
-        a.setBalance(0.0D);
-        a.setDeposit(0.0D);
-        a.setMargin(0.0D);
-        a.setWithdraw(0.0D);
-        a.setTradingDay(tradingDay);
+            a.setPreBalance(a.getBalance());
+            a.setPreDeposit(a.getDeposit());
+            a.setPreMargin(a.getMargin());
+            a.setPreWithdraw(a.getWithdraw());
+            a.setBalance(0.0D);
+            a.setDeposit(0.0D);
+            a.setMargin(0.0D);
+            a.setWithdraw(0.0D);
+            a.setTradingDay(tradingDay);
 
-        conn.updateAccount(a);
+            conn.updateAccount(a);
+        }
     }
 
-    private void initContracts(Collection<Contract> cs, ITraderData conn) throws EngineException {
+    private void initContracts(Collection<Contract> cs, ITraderDataConnection conn) throws EngineException {
         if (cs == null) {
             throw new EngineException(ErrorCode.CONTRACT_NULL.code(),
                                       ErrorCode.CONTRACT_NULL.message());
@@ -746,7 +743,7 @@ public class TraderEngine implements ITraderEngine {
 
     private void initWithdrawDeposit(Collection<Withdraw> ws,
                                      Collection<Deposit> ds,
-                                     ITraderData conn) throws EngineException {
+                                     ITraderDataConnection conn) throws EngineException {
         if (ws == null) {
             throw new EngineException(ErrorCode.WITHDRAW_NULL.code(),
                                       ErrorCode.WITHDRAW_NULL.message());
@@ -764,7 +761,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void initializeAccount() throws EngineException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
             conn.transaction();
@@ -783,9 +780,17 @@ public class TraderEngine implements ITraderEngine {
             throw e;
         }
         catch (Throwable th) {
+            if (conn != null) {
+                conn.rollback();
+            }
             throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
                                       ErrorCode.UNEXPECTED_ERROR.message(),
                                       th);
+        }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
         }
     }
 
@@ -806,7 +811,7 @@ public class TraderEngine implements ITraderEngine {
 
     private void setFrozenClose(double commission,
                                 Contract contract) throws EngineException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
             final var tradingDay = conn.getTradingDay().getTradingDay();
@@ -841,13 +846,18 @@ public class TraderEngine implements ITraderEngine {
             }
             throw e;
         }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     private void setFrozenOpen(double amount,
                                double margin,
                                double commission,
                                Request request) throws EngineException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
             final var tradingDay = conn.getTradingDay().getTradingDay();
@@ -891,7 +901,7 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (EngineException e) {
+        catch (DataSourceException e) {
             /*
              * Rollback on exception.
              */
@@ -900,6 +910,11 @@ public class TraderEngine implements ITraderEngine {
             }
             throw e;
         }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     private void setRequestHandler() {
@@ -907,56 +922,57 @@ public class TraderEngine implements ITraderEngine {
             es0.subscribe(RequestDetail.class, (IEvent<RequestDetail> event) -> {
                       dispatchRequest(event.get());
                   });
-            es0.start();
         }
         catch (EventSourceException ignored) {
         }
     }
 
-    private void settle(ITraderDataSource ds, ITraderEngineAlgorithm algo) throws EngineException {
-        final var conn = ds.getConnection();
-        var rs = conn.getRequests();
-        if (rs == null) {
-            throw new EngineException(ErrorCode.REQUEST_NULL.code(),
-                                      ErrorCode.REQUEST_NULL.message());
-        }
-        for (var r : rs) {
-            var orderId = r.getOrderId();
-            if (orderId == null) {
-                throw new EngineException(ErrorCode.ORDER_ID_NULL.code(),
-                                          ErrorCode.ORDER_ID_NULL.message());
+    private void settle(ITraderDataSource ds, 
+                        ITraderEngineAlgorithm algo) throws EngineException {
+        try (var conn = ds.getConnection()) {
+            var rs = conn.getRequests();
+            if (rs == null) {
+                throw new EngineException(ErrorCode.REQUEST_NULL.code(),
+                                          ErrorCode.REQUEST_NULL.message());
             }
-            var trades = conn.getTradesByOrderId(orderId);
-            if (trades == null) {
-                throw new EngineException(ErrorCode.NO_TRADE.code(),
-                                          ErrorCode.NO_TRADE.message());
-            }
-            var ctrs = getContractsByOrderResponses(trades);
-            if (ctrs == null) {
-                throw new EngineException(ErrorCode.NO_CONTRACT.code(),
-                                          ErrorCode.NO_CONTRACT.message());
+            for (var r : rs) {
+                var orderId = r.getOrderId();
+                if (orderId == null) {
+                    throw new EngineException(ErrorCode.ORDER_ID_NULL.code(),
+                                              ErrorCode.ORDER_ID_NULL.message());
+                }
+                var trades = conn.getTradesByOrderId(orderId);
+                if (trades == null) {
+                    throw new EngineException(ErrorCode.NO_TRADE.code(),
+                                              ErrorCode.NO_TRADE.message());
+                }
+                var ctrs = getContractsByOrderResponses(trades);
+                if (ctrs == null) {
+                    throw new EngineException(ErrorCode.NO_CONTRACT.code(),
+                                              ErrorCode.NO_CONTRACT.message());
 
-            }
-            var cals = conn.getResponseByOrderId(orderId);
-            if (cals == null) {
-                throw new EngineException(ErrorCode.NO_RESPONSE.code(),
-                                          ErrorCode.NO_RESPONSE.message());
+                }
+                var cals = conn.getResponseByOrderId(orderId);
+                if (cals == null) {
+                    throw new EngineException(ErrorCode.NO_RESPONSE.code(),
+                                              ErrorCode.NO_RESPONSE.message());
 
+                }
+                var o = algo.getOrder(r, ctrs, trades, cals);
+                var s = o.getStatus();
+                if (s == OrderStatus.ACCEPTED
+                    || s == OrderStatus.QUEUED
+                    || s == OrderStatus.UNQUEUED) {
+                    deleteOrderRequest(r);
+                }
             }
-            var o = algo.getOrder(r, ctrs, trades, cals);
-            var s = o.getStatus();
-            if (s == OrderStatus.ACCEPTED
-                || s == OrderStatus.QUEUED
-                || s == OrderStatus.UNQUEUED) {
-                deleteOrderRequest(r);
-            }
+            // Clear everyday to avoid mem leak.
+            clearInternals();
         }
-        // Clear everyday to avoid mem leak.
-        clearInternals();
     }
 
     private void settleAccount() throws EngineException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             /*
              * Update settlement into db.
@@ -974,9 +990,17 @@ public class TraderEngine implements ITraderEngine {
             throw e;
         }
         catch (Throwable th) {
+            if (conn != null) {
+                conn.rollback();
+            }
             throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
                                       ErrorCode.UNEXPECTED_ERROR.message(),
                                       th);
+        }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
         }
     }
 
@@ -1018,10 +1042,6 @@ public class TraderEngine implements ITraderEngine {
     <T> void publishEvent(Class<T> clazz, T object) {
         if (es == null || es.isEmpty()) {
             return;
-        }
-        if (!es.isStarted()) {
-            throw new EngineRuntimeException(ErrorCode.PUBLISH_TO_STOPPED_QUEUE.code(),
-                                             ErrorCode.PUBLISH_TO_STOPPED_QUEUE.message());
         }
         try {
             es.publish(clazz, object);

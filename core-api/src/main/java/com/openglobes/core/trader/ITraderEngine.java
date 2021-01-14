@@ -43,8 +43,6 @@ public interface ITraderEngine {
 
     IEventSource getEventSource() throws EngineException;
 
-    void setEventSource(IEventSource eventSource) throws EngineException;
-
     Instrument getRelatedInstrument(String instrumentId) throws EngineException;
 
     ServiceRuntimeStatus getStatus();

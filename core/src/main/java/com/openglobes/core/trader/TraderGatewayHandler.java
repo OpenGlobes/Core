@@ -17,7 +17,7 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.data.DataSourceException;
-import com.openglobes.core.data.ITraderData;
+import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.EngineRuntimeException;
@@ -69,10 +69,10 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     @Override
     public void onResponse(Response response) {
-        try {
+        try (var conn = ctx.getEngine().getDataSource().getConnection()) {
             preprocess(response);
             synchronized (ctx.getEngine()) {
-                ctx.getEngine().getDataSource().getConnection().addResponse(response);
+                conn.addResponse(response);
                 if (response.getAction() == ActionType.DELETE) {
                     dealDelete(response);
                 }
@@ -174,7 +174,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void closeDelete(Response response, ITraderData conn) throws DataSourceException {
+    private void closeDelete(Response response, ITraderDataConnection conn) throws DataSourceException {
         var bs = getFrozenBundles(response.getOrderId(), conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
@@ -187,7 +187,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void closeTrade(Trade trade, ITraderData conn) throws EngineException {
+    private void closeTrade(Trade trade, ITraderDataConnection conn) throws EngineException {
         var bs = getFrozenBundles(trade.getOrderId(), conn);
         int count = 0;
         var it = bs.iterator();
@@ -214,7 +214,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                            Margin margin,
                            Contract contract,
                            Trade response,
-                           ITraderData conn) throws EngineException {
+                           ITraderDataConnection conn) throws EngineException {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.DEALED);
         requireStatus(contract, ContractStatus.CLOSING);
@@ -240,7 +240,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     private void dealDelete(Response response) throws DataSourceException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             /*
              * Get data source and start transaction.
@@ -283,13 +283,18 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             }
             callOnException(e);
         }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     private void dealOpen(Commission commission,
                           Margin margin,
                           Contract contract,
                           Trade trade,
-                          ITraderData conn) throws EngineException {
+                          ITraderDataConnection conn) throws EngineException {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.FORZEN);
         requireStatus(contract, ContractStatus.OPENING);
@@ -318,7 +323,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     private void dealTrade(Trade trade) throws EngineException {
-        ITraderData conn = null;
+        ITraderDataConnection conn = null;
         try {
             /*
              * Get data source and start transaction.
@@ -359,11 +364,16 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                                        e.getMessage(),
                                                        e));
         }
+        finally {
+            if (conn != null) {
+                conn.close();
+            }
+        }
     }
 
     private void deleteClose(Commission commission,
                              Contract contract,
-                             ITraderData conn) throws DataSourceException {
+                             ITraderDataConnection conn) throws DataSourceException {
         requireStatus(contract, ContractStatus.CLOSING);
         contract.setStatus(ContractStatus.OPEN);
         conn.updateContract(contract);
@@ -373,7 +383,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private void deleteOpen(Commission commission,
                             Margin margin,
                             Contract contract,
-                            ITraderData conn) throws DataSourceException {
+                            ITraderDataConnection conn) throws DataSourceException {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.FORZEN);
         requireStatus(contract, ContractStatus.OPENING);
@@ -418,7 +428,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return ds;
     }
 
-    private Collection<FrozenBundle> getFrozenBundles(Long orderId, ITraderData conn) throws DataSourceException {
+    private Collection<FrozenBundle> getFrozenBundles(Long orderId, ITraderDataConnection conn) throws DataSourceException {
         final var map = new HashMap<Long, FrozenBundle>(128);
         var ms = conn.getMarginsByOrderId(orderId);
         checkMarginsNull(ms);
@@ -478,7 +488,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return r;
     }
 
-    private void openDelete(Response response, ITraderData conn) throws DataSourceException {
+    private void openDelete(Response response, ITraderDataConnection conn) throws DataSourceException {
         var bs = getFrozenBundles(response.getOrderId(), conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
@@ -492,7 +502,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void openTrade(Trade trade, ITraderData conn) throws EngineException {
+    private void openTrade(Trade trade, ITraderDataConnection conn) throws EngineException {
         /*
          * Deal opening order.
          */
@@ -596,7 +606,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void rollback(ITraderData conn) {
+    private void rollback(ITraderDataConnection conn) {
         try {
             conn.rollback();
         }

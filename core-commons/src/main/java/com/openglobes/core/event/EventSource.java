@@ -18,12 +18,17 @@ package com.openglobes.core.event;
 
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.EventTranslatorTwoArg;
+import com.lmax.disruptor.TimeoutException;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
+import com.openglobes.core.utils.Loggers;
+import java.lang.ref.Cleaner;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 /**
  *
@@ -32,14 +37,22 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class EventSource implements IEventSource {
 
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
     private final Map<Class<?>, Disruptor<?>> disruptors;
     private final Map<Class<?>, IEventHandler<?>> handlers;
-
-    private boolean started = false;
 
     public EventSource() {
         handlers = new ConcurrentHashMap<>(64);
         disruptors = new ConcurrentHashMap<>(64);
+        cleanable = cleaner.register(this,
+                                     new CleanAction(disruptors));
+    }
+
+    @Override
+    public synchronized void close() throws EventSourceException {
+        cleanable.clean();
+        handlers.clear();
     }
 
     @Override
@@ -58,11 +71,6 @@ public class EventSource implements IEventSource {
     }
 
     @Override
-    public boolean isStarted() {
-        return started;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T> void publish(Class<T> clazz, T object) throws EventSourceException {
         var c = findDisruptor(clazz, false);
@@ -71,30 +79,6 @@ public class EventSource implements IEventSource {
                                                    object,
                                                    clazz);
         }
-    }
-
-    @Override
-    public synchronized void start() throws EventSourceException {
-        if (started) {
-            throw new EventSourceException("Duplicated start.");
-        }
-        disruptors.values().forEach(d -> {
-            d.start();
-        });
-        started = true;
-    }
-
-    @Override
-    public synchronized void stop() throws EventSourceException {
-        if (!started) {
-            throw new EventSourceException("Duplicated stop.");
-        }
-        disruptors.values().forEach(d -> {
-            d.shutdown();
-        });
-        disruptors.clear();
-        handlers.clear();
-        started = false;
     }
 
     @Override
@@ -118,6 +102,7 @@ public class EventSource implements IEventSource {
                 v = new Disruptor<Event<T>>(new DefaultFactory<>(),
                                             1024,
                                             DaemonThreadFactory.INSTANCE);
+                v.start();
                 disruptors.put(clazz, v);
             }
             else {
@@ -125,6 +110,30 @@ public class EventSource implements IEventSource {
             }
         }
         return (Disruptor<T>) v;
+    }
+
+    private static class CleanAction implements Runnable {
+
+        private final Map<Class<?>, Disruptor<?>> x;
+
+        CleanAction(Map<Class<?>, Disruptor<?>> disruptors) {
+            x = disruptors;
+        }
+
+        @Override
+        public void run() {
+            x.values().forEach(d -> {
+                try {
+                    d.shutdown(1, TimeUnit.SECONDS);
+                }
+                catch (TimeoutException ex) {
+                    Loggers.getLogger(EventSource.class.getCanonicalName()).log(Level.SEVERE,
+                                                                                ex.getMessage(),
+                                                                                ex);
+                }
+            });
+            x.clear();
+        }
     }
 
     private class DefaultEventTranslator<T> implements EventTranslatorTwoArg<Event<T>, T, Class<T>> {

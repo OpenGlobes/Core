@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,25 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.event;
+package com.openglobes.core.data;
 
-import java.util.Collection;
-import java.util.Map;
+import com.openglobes.core.dba.AbstractPooledDataSource;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IEventSource extends AutoCloseable {
-
-    Collection<Class<?>> getSubscribedTypes();
-
-    <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
-
-    Map<Class<?>, IEventHandler<?>> handlers();
-
-    boolean isEmpty();
-
-    <T> void publish(Class<T> clazz, T object) throws EventSourceException;
+public abstract class TraderDataSource extends AbstractPooledDataSource 
+        implements ITraderDataSource{
+    @Override
+    abstract public TraderDataConnection getConnection() throws DataSourceException;
 }

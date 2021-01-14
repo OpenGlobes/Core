@@ -27,14 +27,16 @@ import java.util.logging.Logger;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractPooledConnection implements AutoCloseable, IPooledConnection {
+public abstract class AbstractPooledConnection implements AutoCloseable, 
+                                                          IPooledConnection {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Connection conn;
     private final IPooledDataSource src;
 
-    public AbstractPooledConnection(Connection connection, IPooledDataSource source) {
+    public AbstractPooledConnection(Connection connection, 
+                                    IPooledDataSource source) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(source);
         conn = connection;
@@ -43,7 +45,7 @@ public abstract class AbstractPooledConnection implements AutoCloseable, IPooled
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         cleanable.clean();
     }
 

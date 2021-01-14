@@ -38,21 +38,28 @@ import com.openglobes.core.event.IEventSource;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderDataSource extends IPooledDataSource {
+public interface ITraderDataSource extends AutoCloseable, 
+                                           IPooledDataSource {
 
     /**
-     * Get {@link ITraderData} of the underlying data source with the given
+     * Get {@link ITraderDataConnection} of the underlying data source with the given
      * properties.
      * <p>
      * The return Object could be retieved from internal pool or newed object if
      * the pool is all used.
      *
-     * @return {@link ITraderData}
+     * @return {@link ITraderDataConnection}
      *
      * @throws DataSourceException thrown when failing to creating
-     *                             {@link ITraderData}.
+     *                             {@link ITraderDataConnection}.
      */
-    ITraderData getConnection() throws DataSourceException;
+    ITraderDataConnection getConnection() throws DataSourceException;
+    
+    /**
+     * Don't throw exception.
+     */
+    @Override
+    void close();
 
     /**
      * Add {@link IEventHandler<T>} for the specified class on the specified

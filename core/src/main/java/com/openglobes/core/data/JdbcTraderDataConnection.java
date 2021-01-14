@@ -16,18 +16,17 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.AbstractPooledConnection;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
 import com.openglobes.core.dba.IQuery;
 import com.openglobes.core.dba.Queries;
 import com.openglobes.core.event.EventSourceException;
-import com.openglobes.core.trader.ErrorCode;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
 import com.openglobes.core.trader.Deposit;
+import com.openglobes.core.trader.ErrorCode;
 import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Margin;
 import com.openglobes.core.trader.Request;
@@ -47,12 +46,12 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderDataConnection extends AbstractPooledConnection implements ITraderData {
+public class JdbcTraderDataConnection extends TraderDataConnection {
 
     private Boolean exAutoCommit;
     private final IQuery query;
 
-    public TraderDataConnection(Connection connection, TraderDataSource source) throws DataSourceException {
+    public JdbcTraderDataConnection(Connection connection, JdbcTraderDataSource source) throws DataSourceException {
         super(connection, source);
         query = Queries.createQuery(conn());
     }
