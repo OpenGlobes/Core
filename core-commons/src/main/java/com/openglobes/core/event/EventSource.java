@@ -50,7 +50,7 @@ public class EventSource implements IEventSource {
     }
 
     @Override
-    public synchronized void close() throws EventSourceException {
+    public synchronized void close() {
         cleanable.clean();
         handlers.clear();
     }

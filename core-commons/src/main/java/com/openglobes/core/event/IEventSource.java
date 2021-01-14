@@ -31,6 +31,9 @@ public interface IEventSource extends AutoCloseable {
     <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
 
     Map<Class<?>, IEventHandler<?>> handlers();
+    
+    @Override
+    void close();
 
     boolean isEmpty();
 

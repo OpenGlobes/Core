@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JdbcTraderDataSource extends TraderDataSource {
 
-    private final Map<DataChangeType, EventSource> events;
+    private final Map<DataChangeType, IEventSource> events;
 
     public JdbcTraderDataSource() {
         events = new ConcurrentHashMap<>(DataChangeType.values().length);

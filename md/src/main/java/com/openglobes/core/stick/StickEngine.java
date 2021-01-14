@@ -49,7 +49,7 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     private final Map<String, IStickBuilder> builders;
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
-    private final EventSource evt;
+    private final IEventSource evt;
     private final AtomicLong sid;
     private final IMarketDataSource src;
 
@@ -173,22 +173,15 @@ public class StickEngine implements IStickEngine, AutoCloseable {
 
     private static class CleanAction implements Runnable {
 
-        private final EventSource src;
+        private final IEventSource src;
 
-        CleanAction(EventSource source) {
+        CleanAction(IEventSource source) {
             src = source;
         }
 
         @Override
         public void run() {
-            try {
-                src.close();
-            }
-            catch (EventSourceException ex) {
-                Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
-                                                                            ex.toString(),
-                                                                            ex);
-            }
+            src.close();
         }
     }
 }

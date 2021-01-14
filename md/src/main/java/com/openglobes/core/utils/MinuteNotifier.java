@@ -36,7 +36,7 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
 
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
-    private final EventSource evt;
+    private final IEventSource evt;
     private final AtomicLong nid;
     private final Timer tm;
 
@@ -76,26 +76,19 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
 
     private static class CleanAction implements Runnable {
 
-        private final EventSource src;
+        private final IEventSource src;
         private final Timer tm;
 
-        CleanAction(EventSource source, Timer timer) {
+        CleanAction(IEventSource source, Timer timer) {
             src = source;
             tm = timer;
         }
 
         @Override
         public void run() {
-            try {
-                src.close();
-                tm.cancel();
-                tm.purge();
-            }
-            catch (EventSourceException ex) {
-                Loggers.getLogger(MinuteNotifier.class.getCanonicalName()).log(Level.SEVERE,
-                                                                               ex.toString(),
-                                                                               ex);
-            }
+            src.close();
+            tm.cancel();
+            tm.purge();
         }
     }
 }
