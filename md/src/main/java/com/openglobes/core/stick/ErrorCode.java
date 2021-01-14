@@ -32,8 +32,17 @@ public enum ErrorCode {
     INVALID_STICK_DAYS(0x2007, "Invalid stick days."),
     PUBLISH_STICK_FAIL(0x2008, "Publish stick failed."),
     WRONG_INSTRUMENT_TICK(0x2009, "Update tick with wrong instrument ID."),
-    WRONG_EOD_TIME(0x200A, "Wrong end-of-day time.");
-    
+    WRONG_EOD_TIME(0x200A, "Wrong end-of-day time."),
+    DBA_INSERT_FAIL(0x200B, "Database insertion failed."),
+    DBA_SELECT_FAIL(0x200C, "Database selection failed."),
+    DBA_UPDATE_FAIL(0x200D, "Database update failed."),
+    DBA_DELETE_FAIL(0x200E, "Database deletion failed."),
+    REFLECTION_FAIL(0x200F, "Reflection failed."),
+    MORE_ROWS_THAN_EXPECTED(0x2010, "More rows than expected."),
+    LESS_ROWS_THAN_EXPECTED(0x2011, "Less rows than expected."),
+    OBTAIN_CONDITION_FAIL(0x2012, "Obtaining condition failed."),
+    DATASOURCE_GET_CONNECTION_FAIL(0x2013, "Get connection failed.");
+
     private final int code;
     private final String message;
 

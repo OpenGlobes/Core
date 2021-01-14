@@ -49,7 +49,8 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
 
     private final IQuery query;
 
-    public DefaultTraderDataConnection(Connection connection, DefaultTraderDataSource source) throws DataSourceException {
+    public DefaultTraderDataConnection(Connection connection, 
+                                       DefaultTraderDataSource source) throws DataSourceException {
         super(connection, source);
         query = Queries.createQuery(conn());
     }
@@ -835,25 +836,18 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     private <T> T callGetSingle(Class<T> clazz,
                                 ICondition<?> condition,
                                 IDefaultFactory<T> factory) throws DataSourceException {
-        try {
-            var c = query.select(clazz, condition, factory);
-            if (c.size() > 1) {
-                throw new DataSourceException(
-                        ErrorCode.MORE_ROWS_THAN_EXPECTED.code(),
-                        ErrorCode.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
-            }
-            if (c.isEmpty()) {
-                throw new DataSourceException(
-                        ErrorCode.LESS_ROWS_THAN_EXPECTED.code(),
-                        ErrorCode.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
-            }
-            return c.iterator().next();
+        var c = callGetMany(clazz, condition, factory);
+        if (c.size() > 1) {
+            throw new DataSourceException(
+                    ErrorCode.MORE_ROWS_THAN_EXPECTED.code(),
+                    ErrorCode.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
-                                          ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
-                                          ex);
+        if (c.isEmpty()) {
+            throw new DataSourceException(
+                    ErrorCode.LESS_ROWS_THAN_EXPECTED.code(),
+                    ErrorCode.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
         }
+        return c.iterator().next();
     }
 
     private <T> void callInsert(Class<T> clazz, T object) throws DataSourceException {
@@ -908,7 +902,9 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         }
     }
 
-    private <T> void callUpdate(Class<T> clazz, T object, Field field) throws DataSourceException {
+    private <T> void callUpdate(Class<T> clazz, 
+                                T object,
+                                Field field) throws DataSourceException {
         try {
             query.update(clazz,
                          object,

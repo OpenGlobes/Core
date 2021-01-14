@@ -84,13 +84,13 @@ public interface IMarketDataConnection extends AutoCloseable,
 
     void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException;
 
-    void removeInstrumentTimeById(Long instrumntTimeId) throws MarketDataSourceException;
+    void removeInstrumentTimeById(Long instrumentTimeId) throws MarketDataSourceException;
 
     void removeWorkdayTimeById(Long workdayTimeId) throws MarketDataSourceException;
 
     void removeWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException;
 
-    void setTradingDay() throws MarketDataSourceException;
+    void updateTradingDay(TradingDay tradingDay) throws MarketDataSourceException;
 
     void updateHolidayTime(HolidayTime time) throws MarketDataSourceException;
 

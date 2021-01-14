@@ -16,8 +16,8 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.event.IEvent;
-import com.openglobes.core.event.IEventHandler;
+import com.openglobes.core.exceptions.GatewayRuntimeException;
+import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 import com.openglobes.core.market.Tick;
 import com.openglobes.core.utils.Loggers;
 import java.util.Objects;
@@ -28,7 +28,7 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TickHandler implements IEventHandler<Tick> {
+public class TickHandler implements IMarketGatewayHandler {
 
     private final IStickEngine eg;
 
@@ -38,9 +38,23 @@ public class TickHandler implements IEventHandler<Tick> {
     }
 
     @Override
-    public void handle(IEvent<Tick> event) {
+    public void onException(GatewayRuntimeException ex) {
+        Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
+                                                                    ex.toString(),
+                                                                    ex);
+    }
+
+    @Override
+    public void onStatusChange(ServiceRuntimeStatus status) {
+        Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.INFO,
+                                                                    status.toString(),
+                                                                    status);
+    }
+
+    @Override
+    public void onTick(Tick tick) {
         try {
-            eg.updateTick(event.get());
+            eg.updateTick(tick);
         }
         catch (StickException ex) {
             Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,

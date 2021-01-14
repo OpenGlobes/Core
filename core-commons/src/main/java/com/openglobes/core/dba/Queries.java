@@ -38,6 +38,22 @@ public class Queries {
         return new Condition<>(field, value, ConditionType.EQUALS);
     }
 
+    public static ICondition<ICondition<?>> isNotNull(Field field) throws DbaException {
+        return new Condition<>(field, ConditionType.IS_NOT_NULL);
+    }
+
+    public static ICondition<ICondition<?>> isNull(Field field) throws DbaException {
+        return new Condition<>(field, ConditionType.IS_NULL);
+    }
+
+    public static <T> ICondition<T> largerThan(Field field, T value) throws DbaException {
+        return new Condition<>(field, value, ConditionType.LARGER_THAN);
+    }
+
+    public static <T> ICondition<T> lessThan(Field field, T value) throws DbaException {
+        return new Condition<>(field, value, ConditionType.LESS_THAN);
+    }
+
     public static ICondition<String> like(Field field, String pattern) throws DbaException {
         return new Condition<>(field, pattern, ConditionType.LIKE);
     }
@@ -46,24 +62,8 @@ public class Queries {
         return new Condition<>(condition, ConditionType.NOT);
     }
 
-    public static ICondition<ICondition<?>> isNull(Field field) throws DbaException {
-        return new Condition<>(field, ConditionType.IS_NULL);
-    }
-
-    public static ICondition<ICondition<?>> isNotNull(Field field) throws DbaException {
-        return new Condition<>(field, ConditionType.IS_NOT_NULL);
-    }
-
     public static ICondition<ICondition<?>> or(ICondition<?> c0, ICondition<?> c1) throws DbaException {
         return new Condition<>(c0, c1, ConditionType.OR);
-    }
-
-    public static <T> ICondition<T> lessThan(Field field, T value) throws DbaException {
-        return new Condition<>(field, value, ConditionType.LESS_THAN);
-    }
-
-    public static <T> ICondition<T> largerThan(Field field, T value) throws DbaException {
-        return new Condition<>(field, value, ConditionType.LARGER_THAN);
     }
 
     private Queries() {
