@@ -28,9 +28,12 @@ import java.sql.Connection;
 public abstract class TraderDataConnection extends AbstractPooledConnection
         implements ITraderDataConnection {
 
+        /*
+     * This class provides an unified abstraction for trader data connection
+     * implementation.
+     */
     public TraderDataConnection(Connection connection, 
                                 IPooledDataSource source) {
         super(connection, source);
     }
-
 }

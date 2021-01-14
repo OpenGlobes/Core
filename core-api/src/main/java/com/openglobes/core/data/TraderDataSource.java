@@ -23,8 +23,10 @@ import com.openglobes.core.dba.AbstractPooledDataSource;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class TraderDataSource extends AbstractPooledDataSource 
-        implements ITraderDataSource{
-    @Override
-    abstract public TraderDataConnection getConnection() throws DataSourceException;
+public abstract class TraderDataSource extends AbstractPooledDataSource
+        implements ITraderDataSource {
+    /*
+     * This class provides an unified abstraction for trader data source
+     * implementation.
+     */
 }
