@@ -36,6 +36,7 @@ public class Contract {
     private ZonedDateTime openTimestamp;
     private LocalDate openTradingDay;
     private Integer status;
+    private String tag;
     private ZonedDateTime timestamp;
     private Long tradeId;
     private Integer traderId;
@@ -113,6 +114,14 @@ public class Contract {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public ZonedDateTime getTimestamp() {

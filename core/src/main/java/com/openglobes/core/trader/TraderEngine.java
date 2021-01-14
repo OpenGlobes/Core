@@ -450,7 +450,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void dispatchRequest(RequestDetail ctx) {
-        try {
+        try (var conn = ds.getConnection()) {
             if (null == ctx.getRequest().getAction()) {
                 throw new EngineException(ErrorCode.ACTION_NULL.code(),
                                           ErrorCode.ACTION_NULL.message());
@@ -469,6 +469,7 @@ public class TraderEngine implements ITraderEngine {
                            ctx.getRequestId());
                 }
             }
+            conn.addRequest(ctx.getRequest());
         }
         catch (EngineException ex) {
             callOnException(new EngineRuntimeException(ex.getCode(),
@@ -886,6 +887,7 @@ public class TraderEngine implements ITraderEngine {
             ctr.setOpenTradingDay(tradingDay);
             ctr.setDirection(request.getDirection());
             ctr.setStatus(ContractStatus.OPENING);
+            ctr.setTag(request.getTag());
             conn.addContract(ctr);
             /*
              * Add frozen margin.

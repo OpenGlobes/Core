@@ -32,6 +32,7 @@ public class Request {
     private Double price;
     private Long quantity;
     private String signature;
+    private String tag;
     private Integer traderId;
 
     public Request() {
@@ -99,6 +100,14 @@ public class Request {
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public Integer getTraderId() {
