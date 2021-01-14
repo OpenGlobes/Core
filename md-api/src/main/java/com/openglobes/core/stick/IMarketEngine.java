@@ -30,8 +30,6 @@ public interface IMarketEngine {
 
     IEventSource getEventSource() throws EngineException;
 
-    INoticeSource getNoticeSource() throws EngineException;
-
     void setDataSource(IMarketDataSource dataSource) throws EngineException;
 
     void registerMarket(int marketId, IMarketGateway gateway) throws EngineException;

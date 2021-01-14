@@ -40,12 +40,6 @@ public class MarketEngine implements IMarketEngine {
     }
 
     @Override
-    public INoticeSource getNoticeSource() throws EngineException {
-        // TODO getNoticeSource
-        return null;
-    }
-
-    @Override
     public void registerMarket(int marketId, IMarketGateway gateway) throws EngineException {
         // TODO registerMarket
     }
