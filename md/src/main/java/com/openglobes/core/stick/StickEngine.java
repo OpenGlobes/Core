@@ -81,6 +81,8 @@ public class StickEngine implements IStickEngine, AutoCloseable {
 
     @Override
     public void onNotice(InstrumentMinuteNotice notice) throws StickException {
+        publishNotice(InstrumentMinuteNotice.class,
+                      notice);
         buildAndPublish(notice.getInstrumentId(),
                         notice.getAlignTime(),
                         notice.getMinuteOfTradingDay(),
@@ -89,6 +91,8 @@ public class StickEngine implements IStickEngine, AutoCloseable {
 
     @Override
     public void onNotice(InstrumentNotice notice) throws StickException {
+        publishNotice(InstrumentNotice.class,
+                      notice);
         if (Notices.INSTRUMENT_END_TRADE == notice.getType()) {
             /*
              * Publish day sticks.
@@ -134,6 +138,17 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     private long getInitStickId() {
         var c = ZonedDateTime.now();
         return (c.getYear() * 10000 + c.getMonthValue() * 100 + c.getDayOfMonth()) * 1000000;
+    }
+
+    private <T> void publishNotice(Class<T> clazz, T notice) {
+        try {
+            evt.publish(clazz, notice);
+        }
+        catch (EventSourceException ex) {
+            Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
+                                                                        ex.toString(),
+                                                                        ex);
+        }
     }
 
     private void publishSticks(Collection<Stick> ss) {

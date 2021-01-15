@@ -41,7 +41,9 @@ public enum ErrorCode {
     MORE_ROWS_THAN_EXPECTED(0x2010, "More rows than expected."),
     LESS_ROWS_THAN_EXPECTED(0x2011, "Less rows than expected."),
     OBTAIN_CONDITION_FAIL(0x2012, "Obtaining condition failed."),
-    DATASOURCE_GET_CONNECTION_FAIL(0x2013, "Get connection failed.");
+    DATASOURCE_GET_CONNECTION_FAIL(0x2013, "Get connection failed."),
+    GATEWAY_DUPLICATED_ID(0x2014, "Duplicated market gateway ID."),
+    GATEWAY_ID_NOT_FOUND(0x2015, "Gateway ID not found.");
 
     private final int code;
     private final String message;

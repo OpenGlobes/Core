@@ -46,6 +46,9 @@ public interface IMarketDataConnection extends AutoCloseable,
 
     void addWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException;
 
+    @Override
+    void close();
+
     HolidayTime getHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException;
 
     HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws MarketDataSourceException;
@@ -90,8 +93,6 @@ public interface IMarketDataConnection extends AutoCloseable,
 
     void removeWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException;
 
-    void updateTradingDay(TradingDay tradingDay) throws MarketDataSourceException;
-
     void updateHolidayTime(HolidayTime time) throws MarketDataSourceException;
 
     void updateHolidayTimeSet(HolidayTimeSet set) throws MarketDataSourceException;
@@ -99,6 +100,8 @@ public interface IMarketDataConnection extends AutoCloseable,
     void updateInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException;
 
     void updateInstrumentTime(InstrumentTime time) throws MarketDataSourceException;
+
+    void updateTradingDay(TradingDay tradingDay) throws MarketDataSourceException;
 
     void updateWorkdayTime(WorkdayTime time) throws MarketDataSourceException;
 

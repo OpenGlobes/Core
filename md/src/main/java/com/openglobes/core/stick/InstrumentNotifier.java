@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.stick;
 
+import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
@@ -40,7 +41,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-import com.openglobes.core.data.IMarketDataConnection;
 
 /**
  *
@@ -51,20 +51,20 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                            IInstrumentNotifier,
                                            AutoCloseable {
 
-    public static InstrumentNotifier create(IMarketDataConnection connection) throws MarketDataSourceException {
-        return new InstrumentNotifier(connection);
+    public static InstrumentNotifier create(IMarketDataSource source) throws MarketDataSourceException {
+        return new InstrumentNotifier(source);
     }
 
     private final Cleaner.Cleanable cleanable;
     private final Cleaner cleaner = Cleaner.create();
-    private final IMarketDataConnection conn;
+    private final IMarketDataSource ds;
     private final IEventSource evt;
     private final Map<String, AtomicInteger> minCounters;
     private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
 
-    private InstrumentNotifier(IMarketDataConnection connection) throws MarketDataSourceException {
-        conn = connection;
+    private InstrumentNotifier(IMarketDataSource source) throws MarketDataSourceException {
+        ds = source;
         evt = new EventSource();
         times = new HashMap<>(512);
         preTypes = new HashMap<>(512);
@@ -86,7 +86,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
 
     @Override
     public void handle(IEvent<MinuteNotice> event) {
-        try {
+        try (var conn = ds.getConnection()) {
             var min = event.get();
             var day = conn.getTradingDay();
             times.forEach((keeper, instruments) -> {
@@ -130,7 +130,9 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     @Override
     public void reload() throws MarketDataSourceException {
         times.clear();
-        setupTimes(conn.getInstrumentTimes());
+        try (var conn = ds.getConnection()) {
+            setupTimes(conn.getInstrumentTimes());
+        }
     }
 
     private Integer getMinuteOfTradingDay(String instrumentId) {
@@ -168,7 +170,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
 
     private void setupTimes(Collection<InstrumentTime> instruments) {
         instruments.forEach(time -> {
-            try {
+            try (var conn = ds.getConnection()) {
                 var set = times.computeIfAbsent(TimeKeeper.create(time.getWorkdayTimeSetId(),
                                                               time.getHolidayTimeSetId(),
                                                               conn),
@@ -234,7 +236,10 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     }
 
     private void setup() throws MarketDataSourceException {
-        var instruments = conn.getInstrumentTimes();
+        Collection<InstrumentTime> instruments = new HashSet<>(1);
+        try (var conn = ds.getConnection()) {
+            instruments = conn.getInstrumentTimes();
+        }
         setupTimes(instruments);
         setupCounters(instruments);
     }
