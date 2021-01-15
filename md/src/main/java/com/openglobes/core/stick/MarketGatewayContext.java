@@ -16,9 +16,6 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.data.IMarketDataSource;
-import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.exceptions.EngineException;
 import java.util.Properties;
 
 /**
@@ -26,17 +23,28 @@ import java.util.Properties;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IMarketEngine {
+public class MarketGatewayContext {
+    private final IMarketGateway gateway;
+    private final Integer marketId;
+    private final Properties props;
 
-    IEventSource getEventSource() throws EngineException;
+    public MarketGatewayContext(Integer marketId, 
+                                IMarketGateway gateway, 
+                                Properties properties) {
+        this.props = properties;
+        this.gateway = gateway;
+        this.marketId = marketId;
+    }
 
-    void setDataSource(IMarketDataSource dataSource) throws EngineException;
+    public IMarketGateway getGateway() {
+        return gateway;
+    }
 
-    void registerMarket(int marketId, IMarketGateway gateway, Properties properties) throws EngineException;
+    public Integer getMarketId() {
+        return marketId;
+    }
 
-    void unregisterMarket(int marketId) throws EngineException;
-
-    void start(Properties properties) throws EngineException;
-
-    void stop() throws EngineException;
+    public Properties getProperties() {
+        return new Properties(props);
+    }
 }

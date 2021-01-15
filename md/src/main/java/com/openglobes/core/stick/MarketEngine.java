@@ -25,6 +25,7 @@ import com.openglobes.core.exceptions.GatewayException;
 import com.openglobes.core.market.InstrumentMinuteNotice;
 import com.openglobes.core.market.InstrumentNotice;
 import com.openglobes.core.utils.IMinuteNotifier;
+import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
 import com.openglobes.core.utils.MinuteNotifier;
 import java.util.Map;
@@ -32,7 +33,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +44,7 @@ public class MarketEngine implements IMarketEngine {
     private IMarketDataSource ds;
     private IStickEngine eg;
     private TickHandler gateHandler;
-    private final Map<Integer, IMarketGateway> gates;
+    private final Map<Integer, MarketGatewayContext> gates;
     private InstrumentNotifier instNotifier;
     private final IMinuteNotifier minNotifier;
 
@@ -65,18 +65,50 @@ public class MarketEngine implements IMarketEngine {
     }
 
     @Override
-    public void registerMarket(int marketId, IMarketGateway gateway) throws EngineException {
+    public void registerMarket(int marketId,
+                               IMarketGateway gateway,
+                               Properties properties) throws EngineException {
         Objects.requireNonNull(gateway);
         if (gates.containsKey(marketId)) {
             throw new EngineException(ErrorCode.GATEWAY_DUPLICATED_ID.code(),
                                       ErrorCode.GATEWAY_DUPLICATED_ID.message() + "(Market ID: " + marketId + ")");
         }
-        gates.put(marketId, gateway);
+        gates.put(marketId, new MarketGatewayContext(marketId,
+                                                     gateway,
+                                                     properties));
     }
 
     @Override
     public void start(Properties properties) throws EngineException {
         Objects.requireNonNull(ds);
+        startFacilities();
+        startGateways(properties);
+    }
+
+    @Override
+    public void stop() throws EngineException {
+        for (var g : gates.values()) {
+            try {
+                g.getGateway().stop();
+            }
+            catch (GatewayException e) {
+                throw new EngineException(e.getCode(),
+                                          e.getMessage(),
+                                          e);
+            }
+        }
+    }
+
+    @Override
+    public void unregisterMarket(int marketId) throws EngineException {
+        if (!gates.containsKey(marketId)) {
+            throw new EngineException(ErrorCode.GATEWAY_ID_NOT_FOUND.code(),
+                                      ErrorCode.GATEWAY_ID_NOT_FOUND.message() + "(Market ID: " + marketId + ")");
+        }
+        gates.remove(marketId);
+    }
+
+    private void startFacilities() throws EngineException {
         try {
             /*
              * Connect stick engine to ticks.
@@ -96,16 +128,6 @@ public class MarketEngine implements IMarketEngine {
              */
             minNotifier.getEventSource().subscribe(MinuteNotice.class,
                                                    instNotifier);
-            for (var g : gates.values()) {
-                try {
-                    g.start(properties, gateHandler);
-                }
-                catch (GatewayException e) {
-                    throw new EngineException(e.getCode(),
-                                              e.getMessage(),
-                                              e);
-                }
-            }
         }
         catch (StickException | MarketDataSourceException ex) {
             throw new EngineException(ex.getCode(),
@@ -113,15 +135,18 @@ public class MarketEngine implements IMarketEngine {
                                       ex);
         }
         catch (EventSourceException ex) {
-            Logger.getLogger(MarketEngine.class.getName()).log(Level.SEVERE, null, ex);
+            Loggers.getLogger(MarketEngine.class.getCanonicalName()).log(Level.SEVERE,
+                                                                         ex.getMessage(),
+                                                                         ex);
         }
     }
 
-    @Override
-    public void stop() throws EngineException {
+    private void startGateways(Properties properties) throws EngineException {
         for (var g : gates.values()) {
             try {
-                g.stop();
+                var p = new Properties(properties);
+                p.putAll(g.getProperties());
+                g.getGateway().start(p, gateHandler);
             }
             catch (GatewayException e) {
                 throw new EngineException(e.getCode(),
@@ -129,15 +154,6 @@ public class MarketEngine implements IMarketEngine {
                                           e);
             }
         }
-    }
-
-    @Override
-    public void unregisterMarket(int marketId) throws EngineException {
-        if (!gates.containsKey(marketId)) {
-            throw new EngineException(ErrorCode.GATEWAY_ID_NOT_FOUND.code(),
-                                      ErrorCode.GATEWAY_ID_NOT_FOUND.message() + "(Market ID: " + marketId + ")");
-        }
-        gates.remove(marketId);
     }
 
 }
