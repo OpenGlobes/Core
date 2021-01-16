@@ -67,7 +67,7 @@ public interface ITraderEngine {
 
     void start(Properties properties) throws EngineException;
 
-    void stop() throws EngineException;
+    void dispose() throws EngineException;
 
     void unregisterTrader(int traderId) throws EngineException;
 

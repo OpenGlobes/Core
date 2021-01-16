@@ -228,7 +228,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void stop() throws EngineException {
+    public void dispose() throws EngineException {
         changeStatus(TraderEngineStatuses.STOPPING);
         try {
             for (var p : traders.entrySet()) {

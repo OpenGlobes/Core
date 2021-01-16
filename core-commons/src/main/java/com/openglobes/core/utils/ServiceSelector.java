@@ -64,7 +64,7 @@ public class ServiceSelector {
                 files.add(f);
             }
             else {
-                files.addAll(Arrays.asList(getJars(f)));
+                files.addAll(Arrays.asList(getJarsInDirectory(f)));
             }
         });
         File[] jars = new File[files.size()];
@@ -72,7 +72,7 @@ public class ServiceSelector {
         return jars;
     }
 
-    private static File[] getJars(File root) {
+    private static File[] getJarsInDirectory(File root) {
         Objects.requireNonNull(root);
         var files = root.listFiles((File file) -> {
             var suffix = file.getName().substring(file.getName().lastIndexOf('.') + 1);
