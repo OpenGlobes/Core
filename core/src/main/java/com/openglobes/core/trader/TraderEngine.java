@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.trader;
 
+import com.openglobes.core.ErrorCode;
 import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;

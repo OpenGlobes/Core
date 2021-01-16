@@ -16,12 +16,12 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.ErrorCode;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.trader.ErrorCode;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

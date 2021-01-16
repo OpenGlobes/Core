@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.data;
 
+import com.openglobes.core.ErrorCode;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
@@ -26,7 +27,6 @@ import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
 import com.openglobes.core.trader.Deposit;
-import com.openglobes.core.trader.ErrorCode;
 import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Margin;
 import com.openglobes.core.trader.Request;
@@ -49,7 +49,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
 
     private final IQuery query;
 
-    public DefaultTraderDataConnection(Connection connection, 
+    public DefaultTraderDataConnection(Connection connection,
                                        DefaultTraderDataSource source) throws DataSourceException {
         super(connection, source);
         query = Queries.createQuery(conn());
@@ -720,8 +720,6 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                    Withdraw::new);
     }
 
-
-
     @Override
     public void updateAccount(Account account) throws DataSourceException {
         try {
@@ -902,7 +900,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         }
     }
 
-    private <T> void callUpdate(Class<T> clazz, 
+    private <T> void callUpdate(Class<T> clazz,
                                 T object,
                                 Field field) throws DataSourceException {
         try {

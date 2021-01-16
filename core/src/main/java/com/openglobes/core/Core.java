@@ -16,12 +16,32 @@
  */
 package com.openglobes.core;
 
+import com.openglobes.core.configuration.ConfigurationException;
+import com.openglobes.core.configuration.ConnectorConfiguration;
+import com.openglobes.core.configuration.CoreConfiguration;
+import com.openglobes.core.configuration.DataSourceConfiguration;
+import com.openglobes.core.configuration.GatewayConfiguration;
+import com.openglobes.core.configuration.PluginConfiguration;
+import com.openglobes.core.configuration.XmlConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
+import com.openglobes.core.context.ConnectorContext;
+import com.openglobes.core.context.DataSourceContext;
+import com.openglobes.core.context.GatewayContext;
+import com.openglobes.core.context.IDataSourceContext;
+import com.openglobes.core.context.IGatewayContext;
+import com.openglobes.core.context.PluginContext;
+import com.openglobes.core.context.RequestContext;
+import com.openglobes.core.context.SharedContext;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.interceptor.InterceptorException;
+import com.openglobes.core.interceptor.LastRequestErrorInterceptor;
+import com.openglobes.core.interceptor.LastRequestInterceptor;
+import com.openglobes.core.interceptor.LastResponseInterceptor;
+import com.openglobes.core.interceptor.LastTradeInterceptor;
+import com.openglobes.core.interceptor.RequestInterceptingContext;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
@@ -35,26 +55,6 @@ import com.openglobes.core.trader.Trade;
 import com.openglobes.core.trader.TraderEngine;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.ServiceSelector;
-import com.openglobes.core.configuration.ConfigurationException;
-import com.openglobes.core.configuration.ConnectorConfiguration;
-import com.openglobes.core.configuration.CoreConfiguration;
-import com.openglobes.core.configuration.DataSourceConfiguration;
-import com.openglobes.core.configuration.GatewayConfiguration;
-import com.openglobes.core.configuration.PluginConfiguration;
-import com.openglobes.core.configuration.XmlConfiguration;
-import com.openglobes.core.context.ConnectorContext;
-import com.openglobes.core.context.DataSourceContext;
-import com.openglobes.core.context.GatewayContext;
-import com.openglobes.core.context.PluginContext;
-import com.openglobes.core.context.RequestContext;
-import com.openglobes.core.context.SharedContext;
-import com.openglobes.core.interceptor.LastRequestErrorInterceptor;
-import com.openglobes.core.interceptor.LastRequestInterceptor;
-import com.openglobes.core.interceptor.LastResponseInterceptor;
-import com.openglobes.core.interceptor.LastTradeInterceptor;
-import com.openglobes.core.interceptor.RequestInterceptingContext;
-import com.openglobes.core.context.IDataSourceContext;
-import com.openglobes.core.context.IGatewayContext;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -280,8 +280,8 @@ public class Core implements ICore {
                                                       reqCtx));
             }
             catch (ServiceNotFoundException ex) {
-                throw new CoreException(ErrorCode.PLAYER_CONNECTOR_NOT_FOUND.code(),
-                                        ErrorCode.PLAYER_CONNECTOR_NOT_FOUND.message(),
+                throw new CoreException(ErrorCode.CORE_CONNECTOR_NOT_FOUND.code(),
+                                        ErrorCode.CORE_CONNECTOR_NOT_FOUND.message(),
                                         ex);
             }
         }
@@ -299,8 +299,8 @@ public class Core implements ICore {
                 break;
             }
             catch (ServiceNotFoundException ex) {
-                throw new CoreException(ErrorCode.PLAYER_DATASOURCE_NOT_FOUND.code(),
-                                        ErrorCode.PLAYER_DATASOURCE_NOT_FOUND.message(),
+                throw new CoreException(ErrorCode.CORE_DATASOURCE_NOT_FOUND.code(),
+                                        ErrorCode.CORE_DATASOURCE_NOT_FOUND.message(),
                                         ex);
             }
         }
@@ -317,8 +317,8 @@ public class Core implements ICore {
                                                   gate));
             }
             catch (ServiceNotFoundException ex) {
-                throw new CoreException(ErrorCode.PLAYER_GATEWAY_NOT_FOUND.code(),
-                                        ErrorCode.PLAYER_GATEWAY_NOT_FOUND.message(),
+                throw new CoreException(ErrorCode.CORE_GATEWAY_NOT_FOUND.code(),
+                                        ErrorCode.CORE_GATEWAY_NOT_FOUND.message(),
                                         ex);
             }
         }
@@ -357,8 +357,8 @@ public class Core implements ICore {
                                                 this));
             }
             catch (ServiceNotFoundException ex) {
-                throw new CoreException(ErrorCode.PLAYER_PLUGIN_NOT_FOUND.code(),
-                                        ErrorCode.PLAYER_PLUGIN_NOT_FOUND.message(),
+                throw new CoreException(ErrorCode.CORE_PLUGIN_NOT_FOUND.code(),
+                                        ErrorCode.CORE_PLUGIN_NOT_FOUND.message(),
                                         ex);
             }
         }

@@ -36,8 +36,8 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(reader));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.PLAYER_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.PLAYER_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
+                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
                                              ex);
         }
     }
@@ -48,8 +48,8 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(stream));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.PLAYER_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.PLAYER_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
+                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
                                              ex);
         }
     }
@@ -60,8 +60,8 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(new ByteArrayInputStream(xml.getBytes())));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.PLAYER_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.PLAYER_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
+                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
                                              ex);
         }
     }
