@@ -17,7 +17,7 @@
 package com.openglobes.core.utils;
 
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventSource;
 import java.lang.ref.Cleaner;
 import java.time.Duration;
@@ -67,7 +67,7 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
                                          Utils.getAlignByMinute(),
                                          ZonedDateTime.now()));
         }
-        catch (EventSourceException ex) {
+        catch (EventException ex) {
             Loggers.getLogger(MinuteNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                            ex.toString(),
                                                                            ex);

@@ -16,23 +16,37 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class CoreException extends ServiceStatus{
+public class CoreException extends Exception {
 
     private static final long serialVersionUID = 2156481766921192L;
-    
-    public CoreException(Integer code, String msg) {
-        super(code, msg);
+
+    public CoreException(String message) {
+        super(message);
     }
 
-    public CoreException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public CoreException(String message,
+                         Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public CoreException(Throwable cause) {
+        super(cause);
+    }
+
+    public CoreException(String message,
+                         Throwable cause,
+                         boolean enableSuppression,
+                         boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

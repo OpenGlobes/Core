@@ -72,7 +72,7 @@ public class EventSource implements IEventSource {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> void publish(Class<T> clazz, T object) throws EventSourceException {
+    public <T> void publish(Class<T> clazz, T object) {
         var c = findDisruptor(clazz, false);
         if (c != null) {
             ((Disruptor<Event<T>>) c).publishEvent(new DefaultEventTranslator<>(),
@@ -82,9 +82,9 @@ public class EventSource implements IEventSource {
     }
 
     @Override
-    public <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException {
+    public <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws InvalidSubscriptionException {
         if (handlers.containsKey(clazz)) {
-            throw new EventSourceException("Duplicated subscription, " + clazz.getCanonicalName());
+            throw new InvalidSubscriptionException(clazz.getCanonicalName());
         }
         handlers.put(clazz, handler);
         @SuppressWarnings("unchecked")

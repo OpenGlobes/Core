@@ -20,16 +20,36 @@ import com.openglobes.core.exceptions.EngineException;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
 public class AccountInitializationException extends EngineException{
+
+    private static final long serialVersionUID = 1L;
     
-    public AccountInitializationException(Integer code, String msg) {
-        super(code, msg);
+    public AccountInitializationException(String message) {
+        super(message);
     }
 
-    public AccountInitializationException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public AccountInitializationException(String message,
+                                          Throwable cause) {
+        super(message, 
+              cause);
+    }
+
+    public AccountInitializationException(Throwable cause) {
+        super(cause);
+    }
+
+    public AccountInitializationException(String message, 
+                                          Throwable cause, 
+                                          boolean enableSuppression, 
+                                          boolean writableStackTrace) {
+        super(message, 
+              cause, 
+              enableSuppression,
+              writableStackTrace);
     }
     
+
 }

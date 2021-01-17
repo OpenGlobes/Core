@@ -24,13 +24,24 @@ import com.openglobes.core.exceptions.EngineException;
  * @since 1.0
  */
 public class ContractGroupingException extends EngineException{
+
+    private static final long serialVersionUID = 1L;
     
-    public ContractGroupingException(Integer code, String msg) {
-        super(code, msg);
+    public ContractGroupingException(String message) {
+        super(message);
     }
 
-    public ContractGroupingException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public ContractGroupingException(String message, Throwable cause) {
+        super(message, cause);
     }
+
+    public ContractGroupingException(Throwable cause) {
+        super(cause);
+    }
+
+    public ContractGroupingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    
     
 }

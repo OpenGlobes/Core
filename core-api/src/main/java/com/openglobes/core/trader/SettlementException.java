@@ -22,16 +22,32 @@ import com.openglobes.core.exceptions.EngineException;
  *
  * @author chenh
  */
-public class SettlementException extends EngineException{
+public class SettlementException extends EngineException {
 
     private static final long serialVersionUID = 26539049091L;
-    
-    public SettlementException(Integer code, String msg) {
-        super(code, msg);
+
+    public SettlementException(String message) {
+        super(message);
     }
 
-    public SettlementException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public SettlementException(String message,
+                               Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public SettlementException(Throwable cause) {
+        super(cause);
+    }
+
+    public SettlementException(String message,
+                               Throwable cause,
+                               boolean enableSuppression,
+                               boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

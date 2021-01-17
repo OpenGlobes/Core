@@ -19,7 +19,7 @@ package com.openglobes.core.stick;
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
@@ -208,7 +208,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                                    ZonedDateTime.now(),
                                                    tradingDay));
         }
-        catch (EventSourceException ex) {
+        catch (EventException ex) {
             Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                                ex.toString(),
                                                                                ex);
@@ -228,7 +228,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                              ZonedDateTime.now(),
                                              tradingDay));
         }
-        catch (EventSourceException ex) {
+        catch (EventException ex) {
             Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                                ex.toString(),
                                                                                ex);

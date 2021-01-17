@@ -27,12 +27,28 @@ public class AlgorithmException extends EngineException {
 
     private static final long serialVersionUID = 32556476342283L;
 
-    public AlgorithmException(int code, String message) {
-        super(code, message);
+    public AlgorithmException(String message) {
+        super(message);
     }
 
-    public AlgorithmException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+    public AlgorithmException(String message,
+                              Throwable cause) {
+        super(message,
+              cause);
+    }
+
+    public AlgorithmException(Throwable cause) {
+        super(cause);
+    }
+
+    public AlgorithmException(String message,
+                              Throwable cause,
+                              boolean enableSuppression,
+                              boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
     }
 
 }

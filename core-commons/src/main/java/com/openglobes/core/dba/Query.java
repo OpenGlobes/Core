@@ -50,7 +50,7 @@ class Query implements IQuery {
     public <T> int insert(Class<T> clazz,
                           T object) throws SQLException,
                                            IllegalFieldCharacterException,
-                                           UnsupportedTypeException,
+                                           UnsupportedFieldTypeException,
                                            FieldAccessException,
                                            NoFieldException,
                                            MissingFieldException,
@@ -63,7 +63,7 @@ class Query implements IQuery {
     public <T> int remove(Class<T> clazz,
                           ICondition<?> condition) throws SQLException,
                                                           IllegalFieldCharacterException,
-                                                          UnsupportedTypeException,
+                                                          UnsupportedFieldTypeException,
                                                           MissingFieldException,
                                                           IllegalFieldTypeException,
                                                           NoPrimaryKeyException,
@@ -78,7 +78,7 @@ class Query implements IQuery {
                                     IDefaultFactory<T> factory) throws SQLException,
                                                                        FieldAccessException,
                                                                        FieldInjectionException,
-                                                                       UnsupportedTypeException,
+                                                                       UnsupportedFieldTypeException,
                                                                        IllegalFieldCharacterException {
         try {
             var m = findMeta(clazz);
@@ -97,7 +97,7 @@ class Query implements IQuery {
                           T object,
                           ICondition<?> condition) throws SQLException,
                                                           IllegalFieldCharacterException,
-                                                          UnsupportedTypeException,
+                                                          UnsupportedFieldTypeException,
                                                           NoFieldException,
                                                           FieldAccessException,
                                                           MissingFieldException,
@@ -108,12 +108,12 @@ class Query implements IQuery {
                                     condition));
     }
 
-    private String buildFieldPair(MetaField f) throws UnsupportedTypeException {
+    private String buildFieldPair(MetaField f) throws UnsupportedFieldTypeException {
         return f.getName() + " " + DbaUtils.convertSqlType(f.getType());
     }
 
     private <T> String buildFieldPairs(MetaTable<T> meta) throws NoFieldException,
-                                                                 UnsupportedTypeException,
+                                                                 UnsupportedFieldTypeException,
                                                                  NoPrimaryKeyException {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
@@ -137,7 +137,7 @@ class Query implements IQuery {
     }
 
     private <T> String buildFieldWithKey(MetaField f,
-                                         MetaTable<T> meta) throws UnsupportedTypeException {
+                                         MetaTable<T> meta) throws UnsupportedFieldTypeException {
         String sql = buildFieldPair(f);
         boolean priKey = isPrimaryKey(f,
                                       meta);
@@ -163,7 +163,7 @@ class Query implements IQuery {
 
     private <T> void createTable(MetaTable<T> meta) throws SQLException,
                                                            NoPrimaryKeyException,
-                                                           UnsupportedTypeException,
+                                                           UnsupportedFieldTypeException,
                                                            NoFieldException {
         String sql = "CREATE TABLE " + meta.getName() + "(";
         sql += buildFieldPairs(meta);
@@ -176,7 +176,7 @@ class Query implements IQuery {
                                                            IllegalFieldTypeException,
                                                            NoPrimaryKeyException,
                                                            NoFieldException,
-                                                           UnsupportedTypeException {
+                                                           UnsupportedFieldTypeException {
         var dbm = conn.getMetaData();
         boolean has = hasTableName(meta,
                                    dbm);
@@ -190,7 +190,7 @@ class Query implements IQuery {
     }
 
     private boolean equalsType(int columnType,
-                               int semanticType) throws UnsupportedTypeException {
+                               int semanticType) throws UnsupportedFieldTypeException {
         switch (semanticType) {
             case Types.CHAR:
             case Types.BIGINT:
@@ -202,7 +202,7 @@ class Query implements IQuery {
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 return columnType == Types.CHAR;
         }
-        throw new UnsupportedTypeException("Sql Type " + semanticType + " is not supported.");
+        throw new UnsupportedFieldTypeException("Sql Type " + semanticType + " is not supported.");
     }
 
     private int execute(String sql) throws SQLException {
@@ -228,7 +228,7 @@ class Query implements IQuery {
 
     @SuppressWarnings("unchecked")
     private <T> MetaTable<T> findMeta(Class<T> clazz) throws IllegalFieldCharacterException,
-                                                             UnsupportedTypeException {
+                                                             UnsupportedFieldTypeException {
         var r = (MetaTable<T>) meta.get(clazz.getCanonicalName());
         if (r == null) {
             r = MetaTable.create(clazz);
@@ -240,7 +240,7 @@ class Query implements IQuery {
     private <T> String getInsertSql(MetaTable<T> meta,
                                     Object object) throws SQLException,
                                                           FieldAccessException,
-                                                          UnsupportedTypeException,
+                                                          UnsupportedFieldTypeException,
                                                           NoFieldException,
                                                           MissingFieldException,
                                                           IllegalFieldTypeException,
@@ -276,7 +276,7 @@ class Query implements IQuery {
                                                                     IllegalFieldTypeException,
                                                                     NoPrimaryKeyException,
                                                                     NoFieldException,
-                                                                    UnsupportedTypeException {
+                                                                    UnsupportedFieldTypeException {
         ensureTable(meta);
         return "DELETE FROM " + meta.getName() + " WHERE " + ((Condition<?>) condition).getSql();
     }
@@ -304,7 +304,7 @@ class Query implements IQuery {
                                     Object object,
                                     ICondition<?> condition) throws SQLException,
                                                                     NoFieldException,
-                                                                    UnsupportedTypeException,
+                                                                    UnsupportedFieldTypeException,
                                                                     FieldAccessException,
                                                                     MissingFieldException,
                                                                     IllegalFieldTypeException,
@@ -332,7 +332,7 @@ class Query implements IQuery {
 
     private String getValue(MetaField f, Object object) throws IllegalArgumentException,
                                                                IllegalAccessException,
-                                                               UnsupportedTypeException {
+                                                               UnsupportedFieldTypeException {
         switch (f.getType()) {
             case Types.BIGINT:
                 return Long.toString(f.getField().getLong(object));
@@ -353,7 +353,7 @@ class Query implements IQuery {
                 var str = (String) f.getField().get(object);
                 return str != null ? sqlStringValue(str) : null;
             default:
-                throw new UnsupportedTypeException("Sql type " + f.getType() + " is not supported.");
+                throw new UnsupportedFieldTypeException("Sql type " + f.getType() + " is not supported.");
         }
     }
 
@@ -435,7 +435,7 @@ class Query implements IQuery {
                                         DatabaseMetaData dbMeta) throws SQLException,
                                                                         MissingFieldException,
                                                                         IllegalFieldTypeException,
-                                                                        UnsupportedTypeException {
+                                                                        UnsupportedFieldTypeException {
         var m = getTableColumns(meta.getName(), dbMeta);
         for (var f : meta.fields()) {
             var type = m.get(f.getName());

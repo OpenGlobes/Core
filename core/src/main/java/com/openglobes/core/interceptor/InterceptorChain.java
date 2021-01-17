@@ -20,7 +20,6 @@ import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Loggers;
-import com.openglobes.core.ErrorCode;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,9 +118,7 @@ public class InterceptorChain implements IInterceptorChain {
             addError((EngineRequestError) request);
         }
         else {
-            throw new InterceptorException(ErrorCode.INTERCEPTOR_REQUEST_TYPE_NOT_SUPPORTED.code(),
-                                           ErrorCode.INTERCEPTOR_REQUEST_TYPE_NOT_SUPPORTED.message()
-                                           + " " + clazz.getCanonicalName());
+            throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
 
@@ -137,9 +134,7 @@ public class InterceptorChain implements IInterceptorChain {
             addResponse((Response) response);
         }
         else {
-            throw new InterceptorException(ErrorCode.INTERCEPTOR_RESPONSE_TYPE_NOT_SUPPORTED.code(),
-                                           ErrorCode.INTERCEPTOR_RESPONSE_TYPE_NOT_SUPPORTED.message()
-                                           + " " + clazz.getCanonicalName());
+            throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
 
@@ -194,8 +189,7 @@ public class InterceptorChain implements IInterceptorChain {
             }
         }
         else {
-            throw new InterceptorException(ErrorCode.INTERCEPTOR_TYPE_NOT_SUPPORTED.code(),
-                                           ErrorCode.INTERCEPTOR_TYPE_NOT_SUPPORTED.message() + " " + clazz.getCanonicalName());
+            throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
 
@@ -316,8 +310,7 @@ public class InterceptorChain implements IInterceptorChain {
                                unit);
             }
             else {
-                throw new InterceptorException(ErrorCode.INTERCEPTOR_TYPE_NOT_SUPPORTED.code(),
-                                               ErrorCode.INTERCEPTOR_TYPE_NOT_SUPPORTED.message() + " " + clazz.getCanonicalName());
+                throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
             }
         }
 

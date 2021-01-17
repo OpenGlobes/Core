@@ -16,9 +16,8 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.RequestException;
-import com.openglobes.core.trader.ITraderEngine;
 import com.openglobes.core.session.ISessionCorrelator;
+import com.openglobes.core.trader.ITraderEngine;
 
 /**
  *

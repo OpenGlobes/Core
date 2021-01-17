@@ -15,5 +15,5 @@ import com.openglobes.core.session.ISessionFactory;
  */
 public interface IConnectorContext extends IConfiguredContext<IConnector> {
 
-    ISessionFactory getSessionFactory() throws ConnectorException;
+    ISessionFactory getSessionFactory();
 }

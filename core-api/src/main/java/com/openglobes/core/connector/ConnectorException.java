@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,23 +16,32 @@
  */
 package com.openglobes.core.connector;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ConnectorException extends ServiceStatus{
+public class ConnectorException extends Exception{
 
-    private static final long serialVersionUID = 2435664827115322L;
+    private static final long serialVersionUID = 12343542365L;
     
-    public ConnectorException(Integer code, String msg) {
-        super(code, msg);
+    public ConnectorException() {
     }
 
-    public ConnectorException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public ConnectorException(String message) {
+        super(message);
+    }
+
+    public ConnectorException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ConnectorException(Throwable cause) {
+        super(cause);
+    }
+
+    public ConnectorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
     
 }

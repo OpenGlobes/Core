@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.session;
 
-import com.openglobes.core.session.SessionException;
 import java.util.Properties;
 
 /**
@@ -25,11 +24,15 @@ import java.util.Properties;
  * @since 1.0
  */
 public interface ISession {
-    <T> void request(Class<T> clazz, T object, Properties properties) throws SessionException;
-    
-    <T> void respond(T object) throws SessionException;
-    
+
+    <T> void request(Class<T> clazz, T object, Properties properties) throws AcquireInformationException,
+                                                                             ForwardRequestException;
+
+    <T> void respond(T object) throws ForwardResponseException,
+                                      InvalidSessionResponseException,
+                                      UnsupportedSessionResponseException;
+
     void dispose() throws SessionException;
-    
+
     boolean isDisposed();
 }

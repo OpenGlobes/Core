@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,23 +16,40 @@
  */
 package com.openglobes.core.plugin;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class PluginException extends ServiceStatus{
+public class PluginException extends Exception {
 
-    private static final long serialVersionUID = 352144629842L;
-    
-    public PluginException(Integer code, String msg) {
-        super(code, msg);
+    private static final long serialVersionUID = 3287059209373L;
+
+    public PluginException() {
     }
 
-    public PluginException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public PluginException(String message) {
+        super(message);
     }
-    
+
+    public PluginException(String message,
+                           Throwable cause) {
+        super(message,
+              cause);
+    }
+
+    public PluginException(Throwable cause) {
+        super(cause);
+    }
+
+    public PluginException(String message,
+                           Throwable cause,
+                           boolean enableSuppression,
+                           boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

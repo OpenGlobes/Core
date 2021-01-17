@@ -27,12 +27,21 @@ public class DataSourceException extends EngineException {
 
     private static final long serialVersionUID = 154638779982L;
 
-    public DataSourceException(int code, String message) {
-        super(code, message);
+    public DataSourceException(String message) {
+        super(message);
     }
 
-    public DataSourceException(int code, String message, Throwable cause) {
-        super(code, message, cause);
+    public DataSourceException(String message, Throwable cause) {
+        super(message, cause);
     }
+
+    public DataSourceException(Throwable cause) {
+        super(cause);
+    }
+
+    public DataSourceException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
 
 }

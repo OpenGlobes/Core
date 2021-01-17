@@ -16,8 +16,6 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.ErrorCode;
-import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.GatewayException;
 import java.util.Properties;
 
@@ -38,8 +36,8 @@ public class TraderContext extends IdTranslator {
         return ctx.getEngine();
     }
 
-    TraderGatewayContext getTraderGatewayContext() {
-        return ctx;
+    TraderGatewayInfo getGatewayInfo() {
+        return ctx.getTrader().getGatewayInfo();
     }
 
     ITraderGatewayHandler getHandler() {
@@ -50,16 +48,23 @@ public class TraderContext extends IdTranslator {
         ctx.setHandler(handler);
     }
 
-    boolean isEnabled() {
-        return ctx.isEnabled();
+    TraderGatewayContext getTraderGatewayContext() {
+        return ctx;
     }
 
     Integer getTraderId() {
         return ctx.getTraderId();
     }
 
-    void start(Properties globalProperties) throws GatewayException,
-                                                   EngineException {
+    void insert(Request request, int requestId) throws GatewayException {
+        ctx.getTrader().insert(request, requestId);
+    }
+
+    boolean isEnabled() {
+        return ctx.isEnabled();
+    }
+
+    void start(Properties globalProperties) throws GatewayException {
         var properties = new Properties();
         if (ctx.getStartProperties() != null) {
             properties.putAll(ctx.getStartProperties());
@@ -67,32 +72,11 @@ public class TraderContext extends IdTranslator {
         if (globalProperties != null) {
             properties.putAll(globalProperties);
         }
-        check0();
         ctx.getTrader().start(properties, ctx.getHandler());
     }
 
-    void stop() throws GatewayException,
-                       EngineException {
-        check0();
+    void stop() throws GatewayException {
         ctx.getTrader().stop();
     }
 
-    void insert(Request request, int requestId) throws GatewayException,
-                                                       EngineException {
-        check0();
-        ctx.getTrader().insert(request, requestId);
-    }
-
-    TraderGatewayInfo getGatewayInfo() throws EngineException {
-        check0();
-        return ctx.getTrader().getGatewayInfo();
-    }
-
-    private void check0() throws EngineException {
-        if (ctx.getTrader() == null) {
-            throw new EngineException(
-                    ErrorCode.TRADER_GATEWAY_NULL.code(),
-                    ErrorCode.TRADER_GATEWAY_NULL.message() + "(Trader ID:" + ctx.getTraderId() + ")");
-        }
-    }
 }

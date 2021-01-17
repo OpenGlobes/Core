@@ -21,7 +21,7 @@ import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
 import com.openglobes.core.dba.IQuery;
 import com.openglobes.core.dba.Queries;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.trader.Account;
 import com.openglobes.core.trader.Commission;
 import com.openglobes.core.trader.Contract;
@@ -60,7 +60,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Account.class, account);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -71,7 +71,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Commission.class, commission);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -82,7 +82,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Contract.class, contract);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -93,7 +93,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Deposit.class, deposit);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -104,7 +104,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Instrument.class, instrument);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -115,7 +115,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Margin.class, margin);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -126,7 +126,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Request.class, request);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -137,7 +137,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Response.class, response);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -148,7 +148,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(SettlementPrice.class, price);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -159,7 +159,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Trade.class, trade);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -170,7 +170,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(TradingDay.class, day);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -181,7 +181,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
         try {
             callInsert(Withdraw.class, withdraw);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -685,7 +685,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Commission.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -703,7 +703,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Contract.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -721,7 +721,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Deposit.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -739,7 +739,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Instrument.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -757,7 +757,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Margin.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -775,7 +775,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(SettlementPrice.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -793,7 +793,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataRemovalException(Withdraw.class.getCanonicalName(),
                                            ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -810,7 +810,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(Account.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -827,7 +827,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(Commission.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -844,7 +844,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(Contract.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -861,7 +861,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(Instrument.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -878,7 +878,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(Margin.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -895,7 +895,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(SettlementPrice.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -912,7 +912,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             throw new DataUpdateException(TradingDay.class.getCanonicalName(),
                                           ex);
         }
-        catch (EventSourceException | SQLException | DataException ex) {
+        catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -952,7 +952,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     private <T> void callInsert(Class<T> clazz,
                                 T object) throws DataQueryException,
                                                  SQLException,
-                                                 EventSourceException,
+                                                 EventException,
                                                  UnknownDataChangeException {
         try {
             query.insert(clazz, object);
@@ -968,7 +968,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
 
     private <T> void callOnChange(Class<T> clazz,
                                   T object,
-                                  DataChangeType type) throws EventSourceException,
+                                  DataChangeType type) throws EventException,
                                                               UnknownDataChangeException {
         getDataSource().getEventSource(type).publish(clazz,
                                                      object);
@@ -978,7 +978,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                                    String fieldName,
                                    V id,
                                    IDefaultFactory<T> factory) throws SQLException,
-                                                                      EventSourceException,
+                                                                      EventException,
                                                                       NoSuchFieldException,
                                                                       DataQueryException,
                                                                       UnknownDataChangeException,
@@ -1002,7 +1002,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                                 T object,
                                 Field field) throws DataQueryException,
                                                     SQLException,
-                                                    EventSourceException,
+                                                    EventException,
                                                     UnknownDataChangeException {
         try {
             query.update(clazz,

@@ -28,7 +28,7 @@ public interface IEventSource extends AutoCloseable {
 
     Collection<Class<?>> getSubscribedTypes();
 
-    <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws EventSourceException;
+    <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws InvalidSubscriptionException;
 
     Map<Class<?>, IEventHandler<?>> handlers();
     
@@ -37,5 +37,5 @@ public interface IEventSource extends AutoCloseable {
 
     boolean isEmpty();
 
-    <T> void publish(Class<T> clazz, T object) throws EventSourceException;
+    <T> void publish(Class<T> clazz, T object);
 }

@@ -21,25 +21,25 @@ package com.openglobes.core.dba;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class UnsupportedTypeException extends DbaException {
+public class UnsupportedFieldTypeException extends DbaException {
 
     private static final long serialVersionUID = 2763981630989173L;
     
-    public UnsupportedTypeException(String message) {
+    public UnsupportedFieldTypeException(String message) {
         super(message);
     }
 
-    public UnsupportedTypeException(String message, 
+    public UnsupportedFieldTypeException(String message, 
                                     Throwable cause) {
         super(message,
               cause);
     }
 
-    public UnsupportedTypeException(Throwable cause) {
+    public UnsupportedFieldTypeException(Throwable cause) {
         super(cause);
     }
 
-    public UnsupportedTypeException(String message, 
+    public UnsupportedFieldTypeException(String message, 
                                     Throwable cause, 
                                     boolean enableSuppression, 
                                     boolean writableStackTrace) {

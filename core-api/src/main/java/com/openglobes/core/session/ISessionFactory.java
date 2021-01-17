@@ -17,7 +17,6 @@
 package com.openglobes.core.session;
 
 import com.openglobes.core.connector.IConnector;
-import com.openglobes.core.session.SessionException;
 
 /**
  *
@@ -26,5 +25,5 @@ import com.openglobes.core.session.SessionException;
  */
 public interface ISessionFactory {
     
-    ISession createSession(IConnector connector) throws SessionException;
+    ISession createSession(IConnector connector) throws AcquireInformationException;
 }

@@ -17,7 +17,7 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.dba.IPooledDataSource;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import java.sql.SQLException;
@@ -77,13 +77,13 @@ public interface ITraderDataSource extends AutoCloseable,
      *
      * @throws UnknownDataChangeException thrown when the specified data change
      *                                    type has no associated event source.
-     * @throws EventSourceException       thrown on failing subscribing to event
+     * @throws EventException       thrown on failing subscribing to event
      *                                    source.
      */
     <T> void addListener(Class<T> clazz,
                          IEventHandler<T> handler,
                          DataChangeType type) throws UnknownDataChangeException,
-                                                     EventSourceException;
+                                                     EventException;
 
     /**
      * Get the event source associated with the specified data change type.

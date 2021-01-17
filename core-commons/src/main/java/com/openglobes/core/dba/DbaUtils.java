@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class DbaUtils {
 
-    public static String convertSqlType(int semanticType) throws UnsupportedTypeException {
+    public static String convertSqlType(int semanticType) throws UnsupportedFieldTypeException {
         switch (semanticType) {
             case Types.BIGINT:
                 return "BIGINT";
@@ -48,11 +48,11 @@ public class DbaUtils {
             case Types.CHAR:
                 return "CHAR(128)";
         }
-        throw new UnsupportedTypeException("Sql type" + semanticType + " is not supported.");
+        throw new UnsupportedFieldTypeException("Sql type" + semanticType + " is not supported.");
     }
 
     public static MetaField inspectField(Field f) throws IllegalFieldCharacterException, 
-                                                         UnsupportedTypeException {
+                                                         UnsupportedFieldTypeException {
         com.openglobes.core.dba.MetaField info = new MetaField();
         var names = split(f.getName());
         if (names.size() == 1) {
@@ -71,7 +71,7 @@ public class DbaUtils {
     }
 
     public static List<MetaField> inspectFields(Class<?> clazz) throws IllegalFieldCharacterException,
-                                                                       UnsupportedTypeException {
+                                                                       UnsupportedFieldTypeException {
         var fs = clazz.getDeclaredFields();
         var r = new LinkedList<MetaField>();
         for (var f : fs) {
@@ -83,7 +83,7 @@ public class DbaUtils {
         return r;
     }
 
-    private static int inspectType(Class<?> clazz) throws UnsupportedTypeException  {
+    private static int inspectType(Class<?> clazz) throws UnsupportedFieldTypeException  {
         if (clazz == Long.class || clazz == long.class) {
             return Types.BIGINT;
         }
@@ -106,7 +106,7 @@ public class DbaUtils {
             return Types.CHAR;
         }
         else {
-            throw new UnsupportedTypeException(clazz.getCanonicalName() + " is not supported.");
+            throw new UnsupportedFieldTypeException(clazz.getCanonicalName() + " is not supported.");
         }
     }
 

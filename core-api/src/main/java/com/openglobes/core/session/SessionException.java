@@ -16,23 +16,37 @@
  */
 package com.openglobes.core.session;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class SessionException extends ServiceStatus {
+public class SessionException extends Exception {
 
     private static final long serialVersionUID = 342163498702L;
-    
-    public SessionException(Integer code, String msg) {
-        super(code, msg);
+
+    public SessionException(String message) {
+        super(message);
     }
 
-    public SessionException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public SessionException(String message, 
+                            Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public SessionException(Throwable cause) {
+        super(cause);
+    }
+
+    public SessionException(String message, 
+                            Throwable cause,
+                            boolean enableSuppression,
+                            boolean writableStackTrace) {
+        super(message, 
+              cause, 
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

@@ -16,23 +16,37 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InterceptorException extends ServiceStatus {
+public class InterceptorException extends Exception {
 
     private static final long serialVersionUID = 247266390917L;
 
-    public InterceptorException(Integer code, String msg) {
-        super(code, msg);
+    public InterceptorException(String message) {
+        super(message);
     }
 
-    public InterceptorException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public InterceptorException(String message,
+                                Throwable cause) {
+        super(message,
+              cause);
+    }
+
+    public InterceptorException(Throwable cause) {
+        super(cause);
+    }
+
+    public InterceptorException(String message,
+                                Throwable cause,
+                                boolean enableSuppression,
+                                boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
     }
 
 }

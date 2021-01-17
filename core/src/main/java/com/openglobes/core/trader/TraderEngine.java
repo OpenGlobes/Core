@@ -27,8 +27,8 @@ import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.DataUpdateException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.exceptions.EngineException;
@@ -83,11 +83,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void setAlgorithm(ITraderEngineAlgorithm algo) throws EngineException {
-        if (algo == null) {
-            throw new EngineException(ErrorCode.ALGORITHM_NULL.code(),
-                                      ErrorCode.ALGORITHM_NULL.message());
-        }
+    public void setAlgorithm(ITraderEngineAlgorithm algo) {
+        Objects.requireNonNull(algo);
         this.algo = algo;
     }
 
@@ -97,16 +94,13 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void setDataSource(ITraderDataSource dataSource) throws EngineException {
-        if (dataSource == null) {
-            throw new EngineException(ErrorCode.DATASOURCE_NULL.code(),
-                                      ErrorCode.DATASOURCE_NULL.message());
-        }
+    public void setDataSource(ITraderDataSource dataSource) {
+        Objects.requireNonNull(ds);
         ds = dataSource;
     }
 
     @Override
-    public IEventSource getEventSource() throws EngineException {
+    public IEventSource getEventSource() {
         return es;
     }
 
@@ -121,7 +115,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public TraderGatewayContext getTraderGatewayContext(int traderId) throws EngineException {
+    public TraderGatewayContext getTraderGatewayContext(int traderId) throws UnknownTraderIdException {
         return findContextByTraderId(traderId).getTraderGatewayContext();
     }
 
@@ -149,14 +143,10 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void registerTrader(int traderId, ITraderGateway trader) throws EngineException {
-        if (trader == null) {
-            throw new EngineException(ErrorCode.TRADER_GATEWAY_NULL.code(),
-                                      ErrorCode.TRADER_GATEWAY_NULL.message());
-        }
+    public void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException {
+        Objects.requireNonNull(trader);
         if (traders.containsKey(traderId)) {
-            throw new EngineException(ErrorCode.TRADER_ID_DUPLICATED.code(),
-                                      ErrorCode.TRADER_ID_DUPLICATED.message());
+            throw new DuplicatedTraderIdException(Integer.toString(traderId));
         }
         addTrader(traderId, trader);
     }
@@ -178,42 +168,32 @@ public class TraderEngine implements ITraderEngine {
     public void request(Request request,
                         Instrument instrument,
                         Properties properties,
-                        int requestId) throws EngineException {
-        if (request == null) {
-            throw new EngineException(ErrorCode.REQUEST_NULL.code(),
-                                      ErrorCode.REQUEST_NULL.message());
-        }
-        try {
-            es0.publish(RequestDetail.class,
-                        new RequestDetail(request,
-                                          instrument,
-                                          properties,
-                                          requestId));
-        }
-        catch (EventSourceException ex) {
-            throw new EngineException(ErrorCode.PUBLISH_EVENT_FAIL.code(),
-                                      ex.getMessage(),
-                                      ex);
-        }
+                        int requestId) {
+        Objects.requireNonNull(request);
+        es0.publish(RequestDetail.class,
+                    new RequestDetail(request,
+                                      instrument,
+                                      properties,
+                                      requestId));
     }
 
     @Override
-    public void setInitProperties(int traderId, Properties properties) throws EngineException {
+    public void setInitProperties(int traderId, Properties properties) throws UnknownTraderIdException {
         getTraderGatewayContext(traderId).setInitProperties(properties);
     }
 
     @Override
-    public void setSettleProperties(int traderId, Properties properties) throws EngineException {
+    public void setSettleProperties(int traderId, Properties properties) throws UnknownTraderIdException {
         getTraderGatewayContext(traderId).setSettleProperties(properties);
     }
 
     @Override
-    public void setStartProperties(int traderId, Properties properties) throws EngineException {
+    public void setStartProperties(int traderId, Properties properties) throws UnknownTraderIdException {
         getTraderGatewayContext(traderId).setStartProperties(properties);
     }
 
     @Override
-    public void start(Properties properties) throws EngineException {
+    public void start(Properties properties) throws TraderStartException {
         changeStatus(TraderEngineStatuses.STARTING);
         try {
             globalStartProps.clear();
@@ -225,20 +205,20 @@ public class TraderEngine implements ITraderEngine {
             }
             changeStatus(TraderEngineStatuses.WORKING);
         }
-        catch (EngineException e) {
+        catch (EngineException ex) {
             changeStatus(TraderEngineStatuses.START_FAILED);
-            throw e;
+            throw new TraderStartException(ex.getMessage(),
+                                           ex);
         }
         catch (Throwable th) {
             changeStatus(TraderEngineStatuses.START_FAILED);
-            throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
-                                      ErrorCode.UNEXPECTED_ERROR.message(),
-                                      th);
+            throw new TraderStartException(th.getMessage(),
+                                           th);
         }
     }
 
     @Override
-    public void dispose() throws EngineException {
+    public void dispose() throws TraderDisposeException {
         changeStatus(TraderEngineStatuses.STOPPING);
         try {
             for (var p : traders.entrySet()) {
@@ -246,15 +226,15 @@ public class TraderEngine implements ITraderEngine {
             }
             changeStatus(TraderEngineStatuses.STOPPED);
         }
-        catch (EngineException e) {
+        catch (EngineException ex) {
             changeStatus(TraderEngineStatuses.STOP_FAILED);
-            throw e;
+            throw new TraderDisposeException(ex.getMessage(),
+                                             ex);
         }
         catch (Throwable th) {
             changeStatus(TraderEngineStatuses.STOP_FAILED);
-            throw new EngineException(ErrorCode.UNEXPECTED_ERROR.code(),
-                                      ErrorCode.UNEXPECTED_ERROR.message(),
-                                      th);
+            throw new TraderDisposeException(th.getMessage(),
+                                             th);
         }
     }
 
@@ -292,19 +272,18 @@ public class TraderEngine implements ITraderEngine {
         publishEvent(ServiceRuntimeStatus.class, s);
     }
 
-    private boolean canClose(Contract c, Request request) throws EngineException {
+    private boolean canClose(Contract c, Request request) throws InvalidRequestOffsetException,
+                                                                 InvalidRequestDirectionException {
         if (c.getStatus() != ContractStatus.OPEN) {
             return false;
         }
         var offset = request.getOffset();
         var direction = request.getDirection();
         if (null == offset) {
-            throw new EngineException(ErrorCode.OFFSET_NULL.code(),
-                                      ErrorCode.OFFSET_NULL.message());
+            throw new InvalidRequestOffsetException("Offset null ptr.");
         }
         if (null == direction) {
-            throw new EngineException(ErrorCode.DIRECTION_NULL.code(),
-                                      ErrorCode.DIRECTION_NULL.message());
+            throw new InvalidRequestDirectionException("Direction null ptr.");
         }
         if (direction == Direction.BUY) {
             return c.getDirection() == Direction.SELL;
@@ -319,12 +298,19 @@ public class TraderEngine implements ITraderEngine {
         callOnStatusChange(this.status);
     }
 
-    private Collection<Contract> checkAssetsClose(Request request, Instrument instrument) throws EngineException {
-        checkVolumn(request.getQuantity());
+    private Collection<Contract> checkAssetsClose(Request request, Instrument instrument) throws IllegalQuantityException,
+                                                                                                 QuantityOverflowException,
+                                                                                                 ContractNotFoundException,
+                                                                                                 InvalidRequestOffsetException,
+                                                                                                 InvalidRequestDirectionException,
+                                                                                                 DataAccessException,
+                                                                                                 AlgorithmException {
+        if (request.getQuantity() < 0) {
+            throw new IllegalQuantityException("Illegal request quantity.");
+        }
         var cs = getAvailableContracts(request);
         if (cs.size() < request.getQuantity()) {
-            throw new EngineException(ErrorCode.INSUFFICIENT_POSITION.code(),
-                                      ErrorCode.INSUFFICIENT_POSITION.message());
+            throw new QuantityOverflowException(request.getQuantity() + ">" + cs.size());
         }
         var r = new HashSet<Contract>(32);
         var c = algo.getCommission(request.getPrice(),
@@ -339,8 +325,13 @@ public class TraderEngine implements ITraderEngine {
         return r;
     }
 
-    private void checkAssetsOpen(Request request, Instrument instrument) throws EngineException {
-        checkVolumn(request.getQuantity());
+    private void checkAssetsOpen(Request request, Instrument instrument) throws IllegalQuantityException,
+                                                                                AlgorithmException,
+                                                                                DataAccessException,
+                                                                                MoneyOverflowException {
+        if (request.getQuantity() < 0) {
+            throw new IllegalQuantityException("Illegal request quantity.");
+        }
         var a = algo.getAmount(request.getPrice(), instrument);
         var m = algo.getMargin(request.getPrice(), instrument);
         var c = algo.getCommission(request.getPrice(),
@@ -350,8 +341,7 @@ public class TraderEngine implements ITraderEngine {
         var total = request.getQuantity() * (m + c);
         var available = getAvailableMoney();
         if (available < total) {
-            throw new EngineException(ErrorCode.INSUFFICIENT_MONEY.code(),
-                                      ErrorCode.INSUFFICIENT_MONEY.message());
+            throw new MoneyOverflowException(total + ">" + available);
         }
         for (int i = 0; i < request.getQuantity(); ++i) {
             setFrozenOpen(a, m, c, request);
@@ -361,22 +351,6 @@ public class TraderEngine implements ITraderEngine {
     private void checkDataSourceAlgorithmNotNull() throws EngineException {
         Objects.requireNonNull(ds);
         Objects.requireNonNull(algo);
-    }
-
-    private void checkTraderContextNotNull(Integer key, TraderContext rt) throws EngineException {
-        if (rt == null) {
-            throw new EngineException(
-                    ErrorCode.TRADER_ID_NOT_FOUND.code(),
-                    ErrorCode.TRADER_ID_NOT_FOUND.message() + "(Trader ID:" + key.toString() + ")");
-        }
-    }
-
-    private void checkVolumn(Long v) throws EngineException {
-        Objects.requireNonNull(v);
-        if (v <= 0) {
-            throw new EngineException(ErrorCode.NONPOSITIVE_VOLUMN.code(),
-                                      ErrorCode.NONPOSITIVE_VOLUMN.message());
-        }
     }
 
     private void clearInternals() {
@@ -394,15 +368,16 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void deleteOrderRequest(Request request) throws EngineException {
+    private void deleteOrderRequest(Request request) throws UnknownTraderIdException, 
+                                                            UnknownOrderIdException {
         var orderId = request.getOrderId();
         var traderId = findTraderIdByOrderId(orderId);
         var ctx = findContextByTraderId(traderId);
         var h = ctx.getHandler();
-        if (h == null) {
-            throw new EngineException(ErrorCode.TRADER_GW_HANDLER_NULL.code(),
-                                      ErrorCode.TRADER_GW_HANDLER_NULL.message());
-        }
+        Objects.requireNonNull(h);
+        /*
+         * Mock DELETE response.
+         */
         var r = new Response();
         r.setInstrumentId(request.getInstrumentId());
         r.setOrderId(orderId);
@@ -418,20 +393,18 @@ public class TraderEngine implements ITraderEngine {
             h.onResponse(r);
         }
         catch (Throwable th) {
-            callOnException(new EngineRuntimeException(ErrorCode.DELETE_ORDER_FAILED.code(),
-                                                       ErrorCode.DELETE_ORDER_FAILED.message(),
+            callOnException(new EngineRuntimeException(th.getMessage(),
                                                        th));
         }
     }
 
     private void deleteRequest(Request request,
                                TraderContext context,
-                               int requestId) throws EngineException {
+                               int requestId) throws EngineException,
+                                                     GatewayException {
         var ids = context.getDestinatedIds(request.getOrderId());
         if (ids == null) {
-            throw new EngineException(ErrorCode.DEST_ID_NOT_FOUND.code(),
-                                      ErrorCode.DEST_ID_NOT_FOUND.message()
-                                      + "(Source order ID:" + request.getOrderId() + ")");
+            throw new DestinatedIdNotFoundException("Source ID: " + request.getOrderId() + ".");
         }
         for (var i : ids) {
             /*
@@ -439,31 +412,21 @@ public class TraderEngine implements ITraderEngine {
              */
             var cd = context.getDownCountByDestId(i);
             if (cd == null) {
-                throw new EngineException(
-                        ErrorCode.COUNTDOWN_NOT_FOUND.code(),
-                        ErrorCode.COUNTDOWN_NOT_FOUND.message() + "(Destinated ID: " + i + ")");
+                throw new CountDownNotFoundException("Destinated ID: " + i + ").");
             }
             if (cd <= 0) {
                 continue;
             }
             var c = Utils.copy(request);
             c.setOrderId(i);
-            try {
-                context.insert(c, requestId);
-            }
-            catch (GatewayException ex) {
-                throw new EngineException(ex.getCode(),
-                                          ex.getMessage(),
-                                          ex);
-            }
+            context.insert(c, requestId);
         }
     }
 
     private void dispatchRequest(RequestDetail ctx) {
         try (var conn = ds.getConnection()) {
             if (null == ctx.getRequest().getAction()) {
-                throw new EngineException(ErrorCode.ACTION_NULL.code(),
-                                          ErrorCode.ACTION_NULL.message());
+                throw new InvalidRequestActionException("Action null ptr.");
             }
             if (ctx.getRequest().getAction() == ActionType.DELETE) {
                 synchronized (this) {
@@ -482,8 +445,7 @@ public class TraderEngine implements ITraderEngine {
             conn.addRequest(ctx.getRequest());
         }
         catch (EngineException ex) {
-            callOnException(new EngineRuntimeException(ex.getCode(),
-                                                       ex.getMessage(),
+            callOnException(new EngineRuntimeException(ex.getMessage(),
                                                        ex));
         }
         catch (DataInsertionException | SQLException | ClassNotFoundException ex) {
@@ -491,13 +453,14 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private TraderContext findContextByTraderId(int traderId) throws EngineException {
-        var rt = traders.get(traderId);
-        checkTraderContextNotNull(traderId, rt);
-        return rt;
+    private TraderContext findContextByTraderId(int traderId) throws UnknownTraderIdException {
+        if (!traders.containsKey(traderId)) {
+            throw new UnknownTraderIdException(Integer.toString(traderId));
+        }
+        return traders.get(traderId);
     }
 
-    private TraderContext findContextRandomly(Request request) throws EngineException {
+    private TraderContext findContextRandomly(Request request) throws NoTraderException {
         var a = new ArrayList<>(traders.keySet());
         traders.forEach((k, v) -> {
             if (v.isEnabled()) {
@@ -505,8 +468,7 @@ public class TraderEngine implements ITraderEngine {
             }
         });
         if (a.isEmpty()) {
-            throw new EngineException(ErrorCode.NO_TRADER.code(),
-                                      ErrorCode.NO_TRADER.message());
+            throw new NoTraderException("No existing trader.");
         }
         var traderId = a.get(new Random().nextInt(a.size()));
         orderTraders.put(request.getOrderId(), traderId);
@@ -520,42 +482,41 @@ public class TraderEngine implements ITraderEngine {
             for (var i : instrumentIds) {
                 var instrument = conn.getInstrumentById(i);
                 if (instrument == null) {
-                    throw new EngineException(ErrorCode.INSTRUMENT_NULL.code(),
-                                              ErrorCode.INSTRUMENT_NULL.message() + "(" + i + ")");
+                    throw new InstrumentNotFoundException(i);
                 }
                 r.put(i, instrument);
             }
             return r;
         }
         catch (DataQueryException ex) {
-            throw new EngineException(1, "");
+            throw new InstrumentNotFoundException("Fail acquiring instrument information.");
         }
     }
 
     private Map<String, SettlementPrice> findRelatedTicks(Collection<String> instrumentIds,
-                                                          ITraderDataConnection conn) throws EngineException {
+                                                          ITraderDataConnection conn) throws SettlementNotFoundException,
+                                                                                             DataAccessException {
         final var r = new HashMap<String, SettlementPrice>(512);
         try {
             for (var i : instrumentIds) {
                 var price = conn.getSettlementPriceByInstrumentId(i);
                 if (price == null) {
-                    throw new EngineException(ErrorCode.TICK_NULL.code(),
-                                              ErrorCode.TICK_NULL.message() + "(" + i + ")");
+                    throw new SettlementNotFoundException(i);
                 }
                 r.put(i, price);
             }
             return r;
         }
         catch (DataQueryException ex) {
-            throw new EngineException(0, "");
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
     }
 
-    private Integer findTraderIdByOrderId(long orderId) throws EngineException {
+    private Integer findTraderIdByOrderId(long orderId) throws UnknownOrderIdException {
         var traderId = orderTraders.get(orderId);
         if (traderId == null) {
-            throw new EngineException(ErrorCode.ORDER_ID_NOT_FOUND.code(),
-                                      ErrorCode.ORDER_ID_NOT_FOUND.message() + "(Order ID:" + orderId + ")");
+            throw new UnknownOrderIdException(Long.toString(orderId));
         }
         return traderId;
     }
@@ -608,12 +569,14 @@ public class TraderEngine implements ITraderEngine {
         newRequest(request, ctx, requestId);
     }
 
-    private List<Contract> getAvailableContracts(Request request) throws EngineException {
+    private List<Contract> getAvailableContracts(Request request) throws ContractNotFoundException,
+                                                                         InvalidRequestOffsetException,
+                                                                         InvalidRequestDirectionException,
+                                                                         DataAccessException {
         try (var conn = ds.getConnection()) {
             final var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
             if (cs == null) {
-                throw new EngineException(ErrorCode.CONTRACT_NULL.code(),
-                                          ErrorCode.CONTRACT_NULL.message());
+                throw new ContractNotFoundException(request.getInstrumentId());
             }
             var sorted = new LinkedList<Contract>(cs);
             sorted.sort((Contract o1, Contract o2)
@@ -629,11 +592,13 @@ public class TraderEngine implements ITraderEngine {
             return sorted;
         }
         catch (SQLException | ClassNotFoundException | DataQueryException ex) {
-            throw new EngineException(1, "");
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
     }
 
-    private double getAvailableMoney() throws EngineException {
+    private double getAvailableMoney() throws DataAccessException,
+                                              AlgorithmException {
         var a = getSettledAccount();
         return (a.getBalance() - a.getMargin() - a.getFrozenMargin() - a.getFrozenCommission());
     }
@@ -678,7 +643,8 @@ public class TraderEngine implements ITraderEngine {
         return null;
     }
 
-    private Account getSettledAccount() throws EngineException {
+    private Account getSettledAccount() throws DataAccessException,
+                                               AlgorithmException {
         try (var conn = ds.getConnection()) {
             final var tradingDay = conn.getTradingDay().getTradingDay();
             final var ids = getRalatedInstrumentIds();
@@ -693,7 +659,8 @@ public class TraderEngine implements ITraderEngine {
                                                      tradingDay));
         }
         catch (DataQueryException | SQLException | ClassNotFoundException ex) {
-            throw new SettlementException(1, "");
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
     }
 
@@ -869,7 +836,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void setFrozenClose(double commission,
-                                Contract contract) throws EngineException {
+                                Contract contract) throws AssetFreezingException {
         ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
@@ -896,10 +863,10 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (ClassNotFoundException | SQLException | DataException e) {
+        catch (ClassNotFoundException | SQLException | DataException ex) {
             rollback(conn);
-            throw new AssetFreezingException(1,
-                                             e.getMessage());
+            throw new AssetFreezingException(ex.getMessage(),
+                                             ex);
         }
         finally {
             if (conn != null) {
@@ -911,7 +878,7 @@ public class TraderEngine implements ITraderEngine {
     private void setFrozenOpen(double amount,
                                double margin,
                                double commission,
-                               Request request) throws EngineException {
+                               Request request) throws DataAccessException {
         ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
@@ -959,10 +926,10 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (ClassNotFoundException | SQLException | DataException e) {
+        catch (ClassNotFoundException | SQLException | DataException ex) {
             rollback(conn);
-            throw new AssetFreezingException(1,
-                                             e.getMessage());
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
         finally {
             if (conn != null) {
@@ -977,7 +944,7 @@ public class TraderEngine implements ITraderEngine {
                       dispatchRequest(event.get());
                   });
         }
-        catch (EventSourceException ignored) {
+        catch (EventException ignored) {
         }
     }
 
@@ -1098,14 +1065,7 @@ public class TraderEngine implements ITraderEngine {
         if (es == null || es.isEmpty()) {
             return;
         }
-        try {
-            es.publish(clazz, object);
-        }
-        catch (EventSourceException ex) {
-            throw new EngineRuntimeException(ErrorCode.PUBLISH_EVENT_FAIL.code(),
-                                             ex.getMessage(),
-                                             ex);
-        }
+        es.publish(clazz, object);
     }
 
 }

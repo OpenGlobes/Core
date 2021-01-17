@@ -17,11 +17,11 @@
 package com.openglobes.core.context;
 
 import com.openglobes.core.IRequestContext;
-import com.openglobes.core.session.ISessionFactory;
 import com.openglobes.core.configuration.ConnectorConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
+import com.openglobes.core.session.ISessionFactory;
 import com.openglobes.core.session.SessionFactory;
 import java.util.Objects;
 import java.util.Properties;
@@ -69,7 +69,7 @@ public class ConnectorContext implements IConnectorContext {
     }
 
     @Override
-    public synchronized ISessionFactory getSessionFactory() throws ConnectorException {
+    public synchronized ISessionFactory getSessionFactory() {
         if (factory == null) {
             factory = new SessionFactory(ctx);
         }

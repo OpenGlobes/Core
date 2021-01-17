@@ -39,7 +39,7 @@ public class SharedContext implements ISharedContext {
     }
 
     @Override
-    public IInterceptorChain getIInterceptorStack() {
+    public IInterceptorChain getInterceptorStack() {
         return interceptors;
     }
 

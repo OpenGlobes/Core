@@ -53,7 +53,7 @@ public class PluginContext implements IPluginContext {
     }
 
     @Override
-    public ICore getCore() throws PluginException {
+    public ICore getCore() {
         return core;
     }
 

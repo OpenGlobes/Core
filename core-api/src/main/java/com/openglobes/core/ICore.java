@@ -16,9 +16,6 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.CoreException;
-import com.openglobes.core.IRequestContext;
-import com.openglobes.core.ISharedContext;
 import com.openglobes.core.connector.IConnectorContext;
 import com.openglobes.core.context.IDataSourceContext;
 import com.openglobes.core.context.IGatewayContext;
@@ -36,23 +33,23 @@ import java.util.Collection;
  */
 public interface ICore {
 
-    void start() throws CoreException;
+    void start() throws CoreStartException;
 
-    void dispose() throws CoreException;
+    void dispose() throws CoreDisposeException;
 
-    void installPlugin(IPluginContext pluginContext) throws CoreException;
+    void installPlugin(IPluginContext pluginContext) throws CoreInstallException;
     
-    void installConnector(IConnectorContext connectorContext) throws CoreException;
+    void installConnector(IConnectorContext connectorContext) throws CoreInstallException;
     
-    void installGateway(IGatewayContext gatewayContext) throws CoreException;
+    void installGateway(IGatewayContext gatewayContext) throws CoreInstallException;
     
-    void installDataSource(IDataSourceContext dataSourceContext) throws CoreException;
+    void installDataSource(IDataSourceContext dataSourceContext) throws CoreInstallException;
 
-    void install(String xml, File... jars) throws CoreException;
+    void install(String xml, File... jars) throws CoreInstallException;
 
-    void install(InputStream stream, File... jars) throws CoreException;
+    void install(InputStream stream, File... jars) throws CoreInstallException;
 
-    void install(FileReader reader, File... jars) throws CoreException;
+    void install(FileReader reader, File... jars) throws CoreInstallException;
     
     Collection<IConnectorContext> connectors();
     

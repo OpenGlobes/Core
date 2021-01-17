@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,24 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.event;
+package com.openglobes.core.trader;
+
+import com.openglobes.core.exceptions.EngineException;
 
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class EventSourceException extends Exception {
-
-    private static final long serialVersionUID = 123654729875L;
-
-    public EventSourceException(String msg) {
-        super(msg);
+public class TraderDisposeException extends EngineException{
+    
+    public TraderDisposeException(String message) {
+        super(message);
     }
 
-    public EventSourceException(String message, Throwable cause) {
+    public TraderDisposeException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    public TraderDisposeException(Throwable cause) {
+        super(cause);
+    }
 
+    public TraderDisposeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    
 }

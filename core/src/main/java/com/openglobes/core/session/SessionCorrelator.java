@@ -36,7 +36,7 @@ public class SessionCorrelator implements ISessionCorrelator {
     }
 
     @Override
-    public ISession getSessionByOrderId(Long orderId) throws SessionException {
+    public ISession getSessionByOrderId(Long orderId) {
         Objects.requireNonNull(orderId);
         var r = map.get(orderId);
         Objects.requireNonNull(r);
@@ -44,7 +44,7 @@ public class SessionCorrelator implements ISessionCorrelator {
     }
 
     @Override
-    public Long registerRequest(Request request, ISession session) throws SessionException {
+    public Long registerRequest(Request request, ISession session) {
         Objects.requireNonNull(request);
         Objects.requireNonNull(session);
         var oldId = request.getOrderId();

@@ -16,8 +16,8 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.configuration.DataSourceConfiguration;
+import com.openglobes.core.data.ITraderDataSource;
 import java.util.Properties;
 
 /**

@@ -26,5 +26,5 @@ import com.openglobes.core.ICore;
  */
 public interface IPluginContext extends IConfiguredContext<IPlugin> {
 
-    ICore getCore() throws PluginException;
+    ICore getCore();
 }

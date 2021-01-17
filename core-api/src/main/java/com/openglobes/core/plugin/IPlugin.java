@@ -22,7 +22,8 @@ package com.openglobes.core.plugin;
  * @since 1.0
  */
 public interface IPlugin {
+
     void initialize(IPluginContext context) throws PluginException;
-    
+
     void dispose() throws PluginException;
 }

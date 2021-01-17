@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.session;
 
-import com.openglobes.core.ErrorCode;
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.IResponseContext;
 import com.openglobes.core.RequestException;
@@ -70,14 +69,17 @@ class Session implements ISession {
     }
 
     @Override
-    public <T> void request(Class<T> clazz, T object, Properties properties) throws SessionException {
+    public <T> void request(Class<T> clazz, T object, Properties properties) throws AcquireInformationException,
+                                                                                    ForwardRequestException {
         Objects.requireNonNull(clazz);
         Objects.requireNonNull(object);
         doRequest(clazz, object, properties);
     }
 
     @Override
-    public <T> void respond(T object) throws SessionException {
+    public <T> void respond(T object) throws ForwardResponseException,
+                                             InvalidSessionResponseException,
+                                             UnsupportedSessionResponseException {
         try {
             Objects.requireNonNull(object);
             adjustSrcId(object);
@@ -91,25 +93,20 @@ class Session implements ISession {
                 rsp.getConnector().write((EngineRequestError) object);
             }
             else {
-                throw new ResponseException(ErrorCode.SESSION_RESPOND_TYPE_NOT_SUPPORTED.code(),
-                                            ErrorCode.SESSION_RESPOND_TYPE_NOT_SUPPORTED.message()
-                                            + object.getClass().getCanonicalName());
+                throw new InvalidSessionResponseException(object.getClass().getCanonicalName());
             }
         }
         catch (ConnectorException | ResponseException ex) {
-            throw new SessionException(ex.getCode(),
-                                       ex.getMessage(),
-                                       ex);
+            throw new ForwardResponseException(ex.getMessage(),
+                                               ex);
         }
         catch (NullPointerException ex) {
-            throw new SessionException(ErrorCode.SESSION_RESPOND_OBJECT_NULL.code(),
-                                       ErrorCode.SESSION_RESPOND_OBJECT_NULL.message(),
-                                       ex);
+            throw new InvalidSessionResponseException("Response null ptr.",
+                                                      ex);
         }
     }
 
-    private void adjuestDestId(Request r) throws RequestException,
-                                                 SessionException {
+    private void adjuestDestId(Request r) throws RequestException {
         if (r.getAction() == ActionType.NEW) {
             /*
              * Foe NEW action, register for a new destinated Id and set into
@@ -127,7 +124,7 @@ class Session implements ISession {
         }
     }
 
-    private <T> void adjustSrcId(T object) throws SessionException {
+    private <T> void adjustSrcId(T object) throws UnsupportedSessionResponseException {
         if (object instanceof Trade) {
             var r = (Trade) object;
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
@@ -143,19 +140,17 @@ class Session implements ISession {
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
         }
         else {
-            throw new SessionException(ErrorCode.SESSION_RESPOND_TYPE_NOT_SUPPORTED.code(),
-                                       ErrorCode.SESSION_RESPOND_TYPE_NOT_SUPPORTED.message());
+            throw new UnsupportedSessionResponseException(object.getClass().getCanonicalName());
         }
     }
 
     private void check() throws SessionException {
         if (isDisposed()) {
-            throw new SessionException(ErrorCode.SESSION_DISPOSED.code(),
-                                       ErrorCode.SESSION_DISPOSED.message());
+            throw new SessionException("Sesion has been disposed.");
         }
     }
 
-    private void checkRemoveMapping(Response response) throws SessionException {
+    private void checkRemoveMapping(Response response) {
         switch (response.getStatus()) {
             case OrderStatus.ALL_TRADED:
             case OrderStatus.DELETED:
@@ -167,16 +162,18 @@ class Session implements ISession {
         }
     }
 
-    private <T> void doRequest(Class<T> clazz, T request, Properties properties) throws SessionException {
+    private <T> void doRequest(Class<T> clazz, T request, Properties properties) throws AcquireInformationException,
+                                                                                        ForwardRequestException {
         if (clazz == Request.class) {
             doRequest((Request) request, properties);
         }
     }
 
-    private void doRequest(Request request, Properties properties) throws SessionException {
+    private void doRequest(Request request, Properties properties) throws AcquireInformationException,
+                                                                          ForwardRequestException {
         try {
             adjuestDestId(request);
-            req.getSharedContext().getIInterceptorStack()
+            req.getSharedContext().getInterceptorStack()
                     .request(RequestInterceptingContext.class,
                              new RequestInterceptingContext(request,
                                                             getInstrument(request.getInstrumentId()),
@@ -184,22 +181,20 @@ class Session implements ISession {
                                                             Utils.nextId().intValue()));
         }
         catch (RequestException | InterceptorException ex) {
-            throw new SessionException(ex.getCode(),
-                                       ex.getMessage(),
-                                       ex);
+            throw new ForwardRequestException(ex.getMessage(),
+                                              ex);
         }
     }
 
     private Instrument getInstrument(String instrumentId) throws RequestException,
-                                                                 SessionException {
+                                                                 AcquireInformationException {
         var ds = req.getTraderEngine().getDataSource();
         try (var conn = ds.getConnection()) {
             return conn.getInstrumentById(instrumentId);
         }
         catch (DataQueryException | SQLException | ClassNotFoundException ex) {
-            throw new SessionException(0,
-                                       ex.getMessage(),
-                                       ex);
+            throw new AcquireInformationException(ex.getMessage(),
+                                                  ex);
         }
     }
 
@@ -218,20 +213,20 @@ class Session implements ISession {
             toSrc.put(destId, srcId);
         }
 
-        public void eraseByDestId(Long destId) throws SessionException {
+        public void eraseByDestId(Long destId) {
             var srcId = getSrcIdByDest(destId);
             toDest.remove(srcId);
             toSrc.remove(destId);
         }
 
-        public Long getDestIdBySrc(Long srcId) throws SessionException {
+        public Long getDestIdBySrc(Long srcId) {
             Objects.requireNonNull(srcId);
             var r = toDest.get(srcId);
             Objects.requireNonNull(r);
             return r;
         }
 
-        public Long getSrcIdByDest(Long destId) throws SessionException {
+        public Long getSrcIdByDest(Long destId) {
             Objects.requireNonNull(destId);
             var r = toSrc.get(destId);
             Objects.requireNonNull(r);

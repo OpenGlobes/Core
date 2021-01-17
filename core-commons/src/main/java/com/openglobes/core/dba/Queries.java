@@ -40,7 +40,7 @@ public class Queries {
 
     public static <T> ICondition<T> equals(Field field,
                                            T value) throws IllegalFieldCharacterException,
-                                                           UnsupportedTypeException {
+                                                           UnsupportedFieldTypeException {
         return new Condition<>(field,
                                value,
                                ConditionType.EQUALS);
@@ -48,21 +48,21 @@ public class Queries {
 
     public static ICondition<ICondition<?>> isNotNull(Field field) throws IllegalConditionTypeException, 
                                                                           IllegalFieldCharacterException,
-                                                                          UnsupportedTypeException    {
+                                                                          UnsupportedFieldTypeException    {
         return new Condition<>(field,
                                ConditionType.IS_NOT_NULL);
     }
 
     public static ICondition<ICondition<?>> isNull(Field field) throws IllegalConditionTypeException,
                                                                        IllegalFieldCharacterException,
-                                                                       UnsupportedTypeException  {
+                                                                       UnsupportedFieldTypeException  {
         return new Condition<>(field,
                                ConditionType.IS_NULL);
     }
 
     public static <T> ICondition<T> largerThan(Field field,
                                                T value) throws IllegalFieldCharacterException,
-                                                               UnsupportedTypeException {
+                                                               UnsupportedFieldTypeException {
         return new Condition<>(field,
                                value,
                                ConditionType.LARGER_THAN);
@@ -70,7 +70,7 @@ public class Queries {
 
     public static <T> ICondition<T> lessThan(Field field,
                                              T value) throws IllegalFieldCharacterException,
-                                                             UnsupportedTypeException {
+                                                             UnsupportedFieldTypeException {
         return new Condition<>(field,
                                value,
                                ConditionType.LESS_THAN);
@@ -78,7 +78,7 @@ public class Queries {
 
     public static ICondition<String> like(Field field,
                                           String pattern) throws IllegalFieldCharacterException,
-                                                                 UnsupportedTypeException {
+                                                                 UnsupportedFieldTypeException {
         return new Condition<>(field,
                                pattern,
                                ConditionType.LIKE);
@@ -86,7 +86,7 @@ public class Queries {
 
     public static ICondition<ICondition<?>> not(ICondition<?> condition) throws IllegalConditionTypeException,
                                                                                 IllegalConditonOperandException,
-                                                                                UnsupportedTypeException {
+                                                                                UnsupportedFieldTypeException {
         return new Condition<>(condition,
                                ConditionType.NOT);
     }

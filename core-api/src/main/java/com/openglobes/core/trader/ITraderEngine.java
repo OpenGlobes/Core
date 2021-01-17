@@ -35,13 +35,13 @@ public interface ITraderEngine {
 
     ITraderEngineAlgorithm getAlgorithm();
 
-    void setAlgorithm(ITraderEngineAlgorithm algo) throws EngineException;
+    void setAlgorithm(ITraderEngineAlgorithm algo);
 
     ITraderDataSource getDataSource();
 
-    void setDataSource(ITraderDataSource dataSource) throws EngineException;
+    void setDataSource(ITraderDataSource dataSource);
 
-    IEventSource getEventSource() throws EngineException;
+    IEventSource getEventSource();
 
     Instrument getRelatedInstrument(String instrumentId) throws EngineException;
 
@@ -55,19 +55,19 @@ public interface ITraderEngine {
 
     void renew(Properties properties) throws EngineException;
 
-    void registerTrader(int traderId, ITraderGateway trader) throws EngineException;
+    void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException;
 
-    void request(Request request, Instrument instrument, Properties properties, int requestId) throws EngineException;
+    void request(Request request, Instrument instrument, Properties properties, int requestId) ;
 
-    void setInitProperties(int traderId, Properties properties) throws EngineException;
+    void setInitProperties(int traderId, Properties properties) throws UnknownTraderIdException;
 
-    void setSettleProperties(int traderId, Properties properties) throws EngineException;
+    void setSettleProperties(int traderId, Properties properties) throws UnknownTraderIdException;
 
-    void setStartProperties(int traderId, Properties properties) throws EngineException;
+    void setStartProperties(int traderId, Properties properties) throws UnknownTraderIdException;
 
-    void start(Properties properties) throws EngineException;
+    void start(Properties properties) throws TraderStartException;
 
-    void dispose() throws EngineException;
+    void dispose() throws TraderDisposeException;
 
     void unregisterTrader(int traderId) throws EngineException;
 

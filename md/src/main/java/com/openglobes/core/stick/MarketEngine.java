@@ -18,7 +18,7 @@ package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.MarketDataSourceException;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.GatewayException;
@@ -134,7 +134,7 @@ public class MarketEngine implements IMarketEngine {
                                       ex.getMessage(),
                                       ex);
         }
-        catch (EventSourceException ex) {
+        catch (EventException ex) {
             Loggers.getLogger(MarketEngine.class.getCanonicalName()).log(Level.SEVERE,
                                                                          ex.getMessage(),
                                                                          ex);

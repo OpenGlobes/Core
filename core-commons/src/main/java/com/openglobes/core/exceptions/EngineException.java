@@ -18,18 +18,35 @@ package com.openglobes.core.exceptions;
 
 /**
  *
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
-public class EngineException extends ServiceStatus {
+public class EngineException extends Exception {
 
     private static final long serialVersionUID = 3421665487930276L;
 
-    public EngineException(Integer code, String msg) {
-        super(code, msg);
+    public EngineException(String message) {
+        super(message);
     }
 
-    public EngineException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public EngineException(String message,
+                           Throwable cause) {
+        super(message,
+              cause);
+    }
+
+    public EngineException(Throwable cause) {
+        super(cause);
+    }
+
+    public EngineException(String message,
+                           Throwable cause,
+                           boolean enableSuppression,
+                           boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
     }
 
 }

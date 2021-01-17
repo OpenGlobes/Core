@@ -17,7 +17,7 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventSourceException;
+import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import java.sql.SQLException;
@@ -42,7 +42,7 @@ public class DefaultTraderDataSource extends TraderDataSource {
     public <T> void addListener(Class<T> clazz,
                                 IEventHandler<T> handler,
                                 DataChangeType type) throws UnknownDataChangeException,
-                                                            EventSourceException {
+                                                            EventException {
         getEventSource(type).subscribe(clazz, handler);
     }
 

@@ -16,23 +16,37 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ResponseException extends ServiceStatus {
+public class ResponseException extends Exception {
 
     private static final long serialVersionUID = 213176400093L;
-    
-    public ResponseException(Integer code, String msg) {
-        super(code, msg);
+
+    public ResponseException(String message) {
+        super(message);
     }
 
-    public ResponseException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public ResponseException(String message,
+                             Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public ResponseException(Throwable cause) {
+        super(cause);
+    }
+
+    public ResponseException(String message,
+                             Throwable cause,
+                             boolean enableSuppression,
+                             boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

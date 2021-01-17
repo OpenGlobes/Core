@@ -21,16 +21,24 @@ package com.openglobes.core.exceptions;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class EngineRuntimeException extends ServiceRuntimeStatus {
+public class EngineRuntimeException extends RuntimeException {
 
     private static final long serialVersionUID = 4756298443210193L;
 
-    public EngineRuntimeException(Integer code, String msg) {
-        super(code, msg);
+    public EngineRuntimeException(String message) {
+        super(message);
     }
 
-    public EngineRuntimeException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public EngineRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public EngineRuntimeException(Throwable cause) {
+        super(cause);
+    }
+
+    public EngineRuntimeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

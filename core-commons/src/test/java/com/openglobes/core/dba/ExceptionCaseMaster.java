@@ -101,7 +101,7 @@ public class ExceptionCaseMaster {
                          r);
             Assertions.fail("IQuery::insert should throw exception on data object with supported field types.");
         }
-        catch (UnsupportedTypeException ignored) {
+        catch (UnsupportedFieldTypeException ignored) {
         }
         catch (Throwable th) {
             Assertions.fail("Unexpected exception: " + th.getMessage());

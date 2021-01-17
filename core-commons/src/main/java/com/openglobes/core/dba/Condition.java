@@ -23,7 +23,7 @@ class Condition<T> implements ICondition<T> {
 
     Condition(T value, ConditionType type) throws IllegalConditionTypeException,
                                                           IllegalConditonOperandException,
-                                                          UnsupportedTypeException {
+                                                          UnsupportedFieldTypeException {
         if (type != ConditionType.NOT) {
             throw new IllegalConditionTypeException("Expect NOT but found " + type + ".");
         }
@@ -38,7 +38,7 @@ class Condition<T> implements ICondition<T> {
 
     Condition(Field field, ConditionType type) throws IllegalConditionTypeException, 
                                                       IllegalFieldCharacterException,
-                                                      UnsupportedTypeException {
+                                                      UnsupportedFieldTypeException {
         if (type != ConditionType.IS_NULL && 
             type != ConditionType.IS_NOT_NULL) {
             throw new IllegalConditionTypeException("Expect IS_NULL/IS_NOT_NULL but found " + type + ".");
@@ -49,7 +49,7 @@ class Condition<T> implements ICondition<T> {
     }
 
     Condition(Field field, T value, ConditionType type) throws IllegalFieldCharacterException,
-                                                                       UnsupportedTypeException {
+                                                                       UnsupportedFieldTypeException {
         meta = DbaUtils.inspectField(field);
         v0 = value;
         t = type;
@@ -88,7 +88,7 @@ class Condition<T> implements ICondition<T> {
         return v1;
     }
 
-    private String stringValue(T v) throws UnsupportedTypeException {
+    private String stringValue(T v) throws UnsupportedFieldTypeException {
         Objects.requireNonNull(v);
         if (v instanceof Number) {
             return "" + v;
@@ -99,7 +99,7 @@ class Condition<T> implements ICondition<T> {
         else if (v instanceof Condition) {
             return ((Condition) v).getSql();
         }
-        throw new UnsupportedTypeException(v.getClass().getCanonicalName());
+        throw new UnsupportedFieldTypeException(v.getClass().getCanonicalName());
     }
 
     private String stringValue(T v0, T v1) throws IllegalConditionTypeException,
