@@ -31,7 +31,28 @@ import java.util.List;
  */
 public class DbaUtils {
 
-    public static MetaField inspectField(Field f) {
+    public static String convertSqlType(int semanticType) throws UnsupportedTypeException {
+        switch (semanticType) {
+            case Types.BIGINT:
+                return "BIGINT";
+            case Types.INTEGER:
+                return "INT";
+            case Types.DECIMAL:
+                return "DECIMAL(38, 19)";
+            case Types.DATE:
+                return "CHAR(16)";
+            case Types.TIME:
+                return "CHAR(24)";
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+                return "CHAR(64)";
+            case Types.CHAR:
+                return "CHAR(128)";
+        }
+        throw new UnsupportedTypeException("Sql type" + semanticType + " is not supported.");
+    }
+
+    public static MetaField inspectField(Field f) throws IllegalFieldCharacterException, 
+                                                         UnsupportedTypeException {
         com.openglobes.core.dba.MetaField info = new MetaField();
         var names = split(f.getName());
         if (names.size() == 1) {
@@ -49,7 +70,8 @@ public class DbaUtils {
         return info;
     }
 
-    public static List<MetaField> inspectFields(Class<?> clazz) {
+    public static List<MetaField> inspectFields(Class<?> clazz) throws IllegalFieldCharacterException,
+                                                                       UnsupportedTypeException {
         var fs = clazz.getDeclaredFields();
         var r = new LinkedList<MetaField>();
         for (var f : fs) {
@@ -61,7 +83,7 @@ public class DbaUtils {
         return r;
     }
 
-    private static int inspectType(Class<?> clazz) {
+    private static int inspectType(Class<?> clazz) throws UnsupportedTypeException  {
         if (clazz == Long.class || clazz == long.class) {
             return Types.BIGINT;
         }
@@ -84,33 +106,11 @@ public class DbaUtils {
             return Types.CHAR;
         }
         else {
-            throw new UnsupportedOperationException(
-                    "Field type " + clazz.getCanonicalName() + " is not supported.");
+            throw new UnsupportedTypeException(clazz.getCanonicalName() + " is not supported.");
         }
     }
 
-    public static String convertSqlType(int semanticType) {
-        switch (semanticType) {
-            case Types.BIGINT:
-                return "BIGINT";
-            case Types.INTEGER:
-                return "INT";
-            case Types.DECIMAL:
-                return "DECIMAL(38, 19)";
-            case Types.DATE:
-                return "CHAR(16)";
-            case Types.TIME:
-                return "CHAR(24)";
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-                return "CHAR(64)";
-            case Types.CHAR:
-                return "CHAR(128)";
-        }
-        throw new UnsupportedOperationException(
-                "Semantic field type " + semanticType + " is not supported.");
-    }
-
-    private static List<String> split(String name) {
+    private static List<String> split(String name) throws IllegalFieldCharacterException {
         var r = new LinkedList<String>();
         if (name.isBlank()) {
             return r;
@@ -119,7 +119,7 @@ public class DbaUtils {
         for (int i = 0; i < name.length(); ++i) {
             var c = name.charAt(i);
             if (c == '_') {
-                throw new RuntimeException("Illegal character \'" + c + "\'.");
+                throw new IllegalFieldCharacterException("Illegal character \'" + c + "\'.");
             }
             else if (Character.isUpperCase(c)) {
                 var str = buffer.toString();

@@ -16,7 +16,15 @@
  */
 package com.openglobes.core.session;
 
-import com.openglobes.core.data.DataSourceException;
+import com.openglobes.core.ErrorCode;
+import com.openglobes.core.IRequestContext;
+import com.openglobes.core.IResponseContext;
+import com.openglobes.core.RequestException;
+import com.openglobes.core.ResponseException;
+import com.openglobes.core.connector.ConnectorException;
+import com.openglobes.core.data.DataQueryException;
+import com.openglobes.core.interceptor.InterceptorException;
+import com.openglobes.core.interceptor.RequestInterceptingContext;
 import com.openglobes.core.trader.ActionType;
 import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Instrument;
@@ -25,14 +33,7 @@ import com.openglobes.core.trader.Request;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Utils;
-import com.openglobes.core.ErrorCode;
-import com.openglobes.core.IRequestContext;
-import com.openglobes.core.IResponseContext;
-import com.openglobes.core.RequestException;
-import com.openglobes.core.ResponseException;
-import com.openglobes.core.connector.ConnectorException;
-import com.openglobes.core.interceptor.InterceptorException;
-import com.openglobes.core.interceptor.RequestInterceptingContext;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -195,8 +196,8 @@ class Session implements ISession {
         try (var conn = ds.getConnection()) {
             return conn.getInstrumentById(instrumentId);
         }
-        catch (DataSourceException ex) {
-            throw new SessionException(ex.getCode(),
+        catch (DataQueryException | SQLException | ClassNotFoundException ex) {
+            throw new SessionException(0,
                                        ex.getMessage(),
                                        ex);
         }

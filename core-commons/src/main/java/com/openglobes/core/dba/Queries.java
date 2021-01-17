@@ -26,44 +26,76 @@ import java.sql.Connection;
  */
 public class Queries {
 
-    public static ICondition<ICondition<?>> and(ICondition<?> c0, ICondition<?> c1) throws DbaException {
-        return new Condition<>(c0, c1, ConditionType.AND);
+    public static ICondition<ICondition<?>> and(ICondition<?> c0,
+                                                ICondition<?> c1) throws IllegalConditionTypeException,
+                                                                         IllegalConditonOperandException {
+        return new Condition<>(c0,
+                               c1,
+                               ConditionType.AND);
     }
 
     public static IQuery createQuery(Connection dbConnection) {
         return new Query(dbConnection);
     }
 
-    public static <T> ICondition<T> equals(Field field, T value) throws DbaException {
-        return new Condition<>(field, value, ConditionType.EQUALS);
+    public static <T> ICondition<T> equals(Field field,
+                                           T value) throws IllegalFieldCharacterException,
+                                                           UnsupportedTypeException {
+        return new Condition<>(field,
+                               value,
+                               ConditionType.EQUALS);
     }
 
-    public static ICondition<ICondition<?>> isNotNull(Field field) throws DbaException {
-        return new Condition<>(field, ConditionType.IS_NOT_NULL);
+    public static ICondition<ICondition<?>> isNotNull(Field field) throws IllegalConditionTypeException, 
+                                                                          IllegalFieldCharacterException,
+                                                                          UnsupportedTypeException    {
+        return new Condition<>(field,
+                               ConditionType.IS_NOT_NULL);
     }
 
-    public static ICondition<ICondition<?>> isNull(Field field) throws DbaException {
-        return new Condition<>(field, ConditionType.IS_NULL);
+    public static ICondition<ICondition<?>> isNull(Field field) throws IllegalConditionTypeException,
+                                                                       IllegalFieldCharacterException,
+                                                                       UnsupportedTypeException  {
+        return new Condition<>(field,
+                               ConditionType.IS_NULL);
     }
 
-    public static <T> ICondition<T> largerThan(Field field, T value) throws DbaException {
-        return new Condition<>(field, value, ConditionType.LARGER_THAN);
+    public static <T> ICondition<T> largerThan(Field field,
+                                               T value) throws IllegalFieldCharacterException,
+                                                               UnsupportedTypeException {
+        return new Condition<>(field,
+                               value,
+                               ConditionType.LARGER_THAN);
     }
 
-    public static <T> ICondition<T> lessThan(Field field, T value) throws DbaException {
-        return new Condition<>(field, value, ConditionType.LESS_THAN);
+    public static <T> ICondition<T> lessThan(Field field,
+                                             T value) throws IllegalFieldCharacterException,
+                                                             UnsupportedTypeException {
+        return new Condition<>(field,
+                               value,
+                               ConditionType.LESS_THAN);
     }
 
-    public static ICondition<String> like(Field field, String pattern) throws DbaException {
-        return new Condition<>(field, pattern, ConditionType.LIKE);
+    public static ICondition<String> like(Field field,
+                                          String pattern) throws IllegalFieldCharacterException,
+                                                                 UnsupportedTypeException {
+        return new Condition<>(field,
+                               pattern,
+                               ConditionType.LIKE);
     }
 
-    public static ICondition<ICondition<?>> not(ICondition<?> condition) throws DbaException {
-        return new Condition<>(condition, ConditionType.NOT);
+    public static ICondition<ICondition<?>> not(ICondition<?> condition) throws IllegalConditionTypeException,
+                                                                                IllegalConditonOperandException,
+                                                                                UnsupportedTypeException {
+        return new Condition<>(condition,
+                               ConditionType.NOT);
     }
 
-    public static ICondition<ICondition<?>> or(ICondition<?> c0, ICondition<?> c1) throws DbaException {
-        return new Condition<>(c0, c1, ConditionType.OR);
+    public static ICondition<ICondition<?>> or(ICondition<?> c0, ICondition<?> c1) throws IllegalConditionTypeException,
+                                                                                          IllegalConditonOperandException {
+        return new Condition<>(c0,
+                               c1,
+                               ConditionType.OR);
     }
 
     private Queries() {

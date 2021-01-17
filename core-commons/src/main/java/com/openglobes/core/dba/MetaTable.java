@@ -22,15 +22,23 @@ import java.util.List;
 /**
  *
  * @author Hongbao Chen
+ * @param <T>
+ *
  * @since 1.0
  */
 public class MetaTable<T> {
+
+    public static <T> MetaTable<T> create(Class<T> clazz) throws IllegalFieldCharacterException,
+                                                                 UnsupportedTypeException {
+        return new MetaTable<>(clazz);
+    }
 
     private final List<MetaField> fields;
     private final String name;
     private final Class<T> type;
 
-    public MetaTable(Class<T> clazz) {
+    private MetaTable(Class<T> clazz) throws IllegalFieldCharacterException,
+                                             UnsupportedTypeException {
         type = clazz;
         fields = new LinkedList<>();
         name = clazz.getSimpleName();
@@ -49,7 +57,8 @@ public class MetaTable<T> {
         return type;
     }
 
-    private void parseFields(Class<T> clazz) {
+    private void parseFields(Class<T> clazz) throws IllegalFieldCharacterException,
+                                                    UnsupportedTypeException {
         DbaUtils.inspectFields(clazz).forEach(f -> {
             fields.add(f);
         });

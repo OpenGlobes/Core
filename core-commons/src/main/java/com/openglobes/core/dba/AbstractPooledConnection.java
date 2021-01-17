@@ -16,12 +16,12 @@
  */
 package com.openglobes.core.dba;
 
+import com.openglobes.core.utils.Loggers;
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -52,13 +52,9 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
     }
 
     @Override
-    public void commit() throws DbaException {
+    public void commit() throws SQLException {
         try {
             conn().commit();
-        }
-        catch (SQLException ex) {
-            throw new DbaException(ex.getMessage(),
-                                   ex);
         }
         finally {
             restoreTransaction();
@@ -71,13 +67,9 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
     }
 
     @Override
-    public void rollback() throws DbaException {
+    public void rollback() throws SQLException {
         try {
             conn().rollback();
-        }
-        catch (SQLException ex) {
-            throw new DbaException(ex.getMessage(),
-                                   ex);
         }
         finally {
             restoreTransaction();
@@ -85,27 +77,20 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
     }
 
     @Override
-    public void transaction() throws DbaException {
+    public void transaction() throws SQLException {
         try {
             exAutoCommit = conn().getAutoCommit();
             conn().setAutoCommit(false);
         }
         catch (SQLException ex) {
             restoreTransaction();
-            throw new DbaException(ex.getMessage(),
-                                   ex);
+            throw ex;
         }
     }
 
-    private void restoreTransaction() throws DbaException {
-        try {
-            if (exAutoCommit != null) {
-                conn().setAutoCommit(exAutoCommit);
-            }
-        }
-        catch (SQLException ex) {
-            throw new DbaException(ex.getMessage(),
-                                   ex);
+    private void restoreTransaction() throws SQLException {
+        if (exAutoCommit != null) {
+            conn().setAutoCommit(exAutoCommit);
         }
     }
 
@@ -129,9 +114,9 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
                 src.ungetSqlConnection(conn);
             }
             catch (Throwable th) {
-                Logger.getLogger(AbstractPooledDataSource.class.getName()).log(Level.SEVERE,
-                                                                               th.getMessage(),
-                                                                               th);
+                Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName()).log(Level.SEVERE,
+                                                                                         th.getMessage(),
+                                                                                         th);
             }
         }
 

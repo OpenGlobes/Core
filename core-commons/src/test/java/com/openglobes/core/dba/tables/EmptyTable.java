@@ -14,25 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
-
-import java.sql.SQLException;
+package com.openglobes.core.dba.tables;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultMarketDataSource extends MarketDataSource {
-
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
-        try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
-        }
+public class EmptyTable {
+    /*
+     * No field in this table.
+     * See what the library would do to this table.
+     */
+    public EmptyTable() {
     }
-
+    
 }

@@ -14,25 +14,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
-
-import java.sql.SQLException;
+package com.openglobes.core.dba;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultMarketDataSource extends MarketDataSource {
+public class FieldAccessException extends DbaException {
 
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
-        try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
-        }
+    private static final long serialVersionUID = 4378098098461211L;
+    
+    public FieldAccessException(String message) {
+        super(message);
     }
 
+    public FieldAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public FieldAccessException(Throwable cause) {
+        super(cause);
+    }
+
+    public FieldAccessException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    
 }

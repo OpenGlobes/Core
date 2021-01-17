@@ -16,23 +16,37 @@
  */
 package com.openglobes.core.data;
 
-import java.sql.SQLException;
-
 /**
  *
  * @author Hongbao Chen
- * @since 1.0
+ * @since  1.0
  */
-public class DefaultMarketDataSource extends MarketDataSource {
+public class DataRemovalException extends DataException{
 
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
-        try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
-        }
+    private static final long serialVersionUID = 1138700198200311L;
+    
+    public DataRemovalException(String message) {
+        super(message);
     }
 
+    public DataRemovalException(String message, 
+                                Throwable cause) {
+        super(message, 
+              cause);
+    }
+
+    public DataRemovalException(Throwable cause) {
+        super(cause);
+    }
+
+    public DataRemovalException(String message, 
+                                Throwable cause, 
+                                boolean enableSuppression,
+                                boolean writableStackTrace) {
+        super(message,
+              cause, 
+              enableSuppression,
+              writableStackTrace);
+    }
+    
 }

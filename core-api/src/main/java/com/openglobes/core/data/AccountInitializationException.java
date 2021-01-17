@@ -16,23 +16,20 @@
  */
 package com.openglobes.core.data;
 
-import java.sql.SQLException;
+import com.openglobes.core.exceptions.EngineException;
 
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class DefaultMarketDataSource extends MarketDataSource {
-
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
-        try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
-        }
+public class AccountInitializationException extends EngineException{
+    
+    public AccountInitializationException(Integer code, String msg) {
+        super(code, msg);
     }
 
+    public AccountInitializationException(Integer code, String message, Throwable cause) {
+        super(code, message, cause);
+    }
+    
 }

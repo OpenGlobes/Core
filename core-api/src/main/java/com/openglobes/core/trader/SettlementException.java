@@ -14,25 +14,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.trader;
 
-import java.sql.SQLException;
+import com.openglobes.core.exceptions.EngineException;
 
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class DefaultMarketDataSource extends MarketDataSource {
+public class SettlementException extends EngineException{
 
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
-        try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
-        }
+    private static final long serialVersionUID = 26539049091L;
+    
+    public SettlementException(Integer code, String msg) {
+        super(code, msg);
     }
 
+    public SettlementException(Integer code, String message, Throwable cause) {
+        super(code, message, cause);
+    }
+    
 }

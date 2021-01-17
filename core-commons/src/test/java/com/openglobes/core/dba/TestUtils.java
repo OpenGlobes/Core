@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
+package com.openglobes.core.dba;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
@@ -23,16 +25,18 @@ import java.sql.SQLException;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultMarketDataSource extends MarketDataSource {
+public class TestUtils {
 
-    @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
+    public static Connection getDefaultConnection() {
         try {
-            return new DefaultMarketDataConnection(getSqlConnection(), this);
+            Class.forName("org.h2.Driver");
+            return DriverManager.getConnection("jdbc:h2:./default-db", "sa", "");
         }
         catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
+            return null;
         }
     }
 
+    private TestUtils() {
+    }
 }

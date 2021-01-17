@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.dba;
 
+import com.openglobes.core.utils.Loggers;
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -63,37 +63,32 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
     }
 
     @Override
-    public Connection getSqlConnection() throws DbaException {
+    public Connection getSqlConnection() throws SQLException,
+                                                ClassNotFoundException {
         synchronized (free) {
-            try {
-                for (var c : free.entrySet()) {
-                    if (c.getValue()) {
-                        c.setValue(Boolean.FALSE);
-                        return c.getKey();
-                    }
+            for (var c : free.entrySet()) {
+                if (c.getValue()) {
+                    c.setValue(Boolean.FALSE);
+                    return c.getKey();
                 }
-                var c = allocateConnection();
-                free.put(c, Boolean.FALSE);
-                return c;
             }
-            catch (ClassNotFoundException | SQLException ex) {
-                throw new DbaException(ex.getMessage(),
-                                       ex);
-            }
+            var c = allocateConnection();
+            free.put(c, Boolean.FALSE);
+            return c;
         }
     }
 
     @Override
-    public void open(Properties properties) throws Exception {
+    public void open(Properties properties) {
         props().clear();
         props().putAll(properties);
     }
 
     @Override
-    public void ungetSqlConnection(Connection connection) throws DbaException {
+    public void ungetSqlConnection(Connection connection) throws UnknownConnectionException {
         synchronized (free) {
             if (!free.containsKey(connection)) {
-                throw new DbaException("Unkown connection object.");
+                throw new UnknownConnectionException("Connection not found in cache.");
             }
             free.put(connection, Boolean.TRUE);
         }
@@ -136,9 +131,9 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
                         c.close();
                     }
                     catch (SQLException ex) {
-                        Logger.getLogger(AbstractPooledDataSource.class.getName()).log(Level.SEVERE,
-                                                                                       ex.toString(),
-                                                                                       ex);
+                        Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName()).log(Level.SEVERE,
+                                                                                                 ex.toString(),
+                                                                                                 ex);
                     }
                 });
                 m.clear();

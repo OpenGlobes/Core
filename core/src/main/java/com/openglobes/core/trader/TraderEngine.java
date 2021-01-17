@@ -17,10 +17,16 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.ErrorCode;
+import com.openglobes.core.data.AccountInitializationException;
+import com.openglobes.core.data.ContractGroupingException;
+import com.openglobes.core.data.DataException;
+import com.openglobes.core.data.DataInsertionException;
+import com.openglobes.core.data.DataQueryException;
+import com.openglobes.core.data.DataRemovalException;
 import com.openglobes.core.data.DataSourceException;
+import com.openglobes.core.data.DataUpdateException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
-import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEvent;
@@ -30,6 +36,7 @@ import com.openglobes.core.exceptions.EngineRuntimeException;
 import com.openglobes.core.exceptions.GatewayException;
 import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 import com.openglobes.core.utils.Utils;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,6 +47,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TraderEngine implements ITraderEngine {
 
@@ -477,6 +486,9 @@ public class TraderEngine implements ITraderEngine {
                                                        ex.getMessage(),
                                                        ex));
         }
+        catch (DataInsertionException | SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(TraderEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private TraderContext findContextByTraderId(int traderId) throws EngineException {
@@ -504,29 +516,39 @@ public class TraderEngine implements ITraderEngine {
     private Map<String, Instrument> findRelatedInstruments(Collection<String> instrumentIds,
                                                            ITraderDataConnection conn) throws EngineException {
         final var r = new HashMap<String, Instrument>(512);
-        for (var i : instrumentIds) {
-            var instrument = conn.getInstrumentById(i);
-            if (instrument == null) {
-                throw new EngineException(ErrorCode.INSTRUMENT_NULL.code(),
-                                          ErrorCode.INSTRUMENT_NULL.message() + "(" + i + ")");
+        try {
+            for (var i : instrumentIds) {
+                var instrument = conn.getInstrumentById(i);
+                if (instrument == null) {
+                    throw new EngineException(ErrorCode.INSTRUMENT_NULL.code(),
+                                              ErrorCode.INSTRUMENT_NULL.message() + "(" + i + ")");
+                }
+                r.put(i, instrument);
             }
-            r.put(i, instrument);
+            return r;
         }
-        return r;
+        catch (DataQueryException ex) {
+            throw new EngineException(1, "");
+        }
     }
 
     private Map<String, SettlementPrice> findRelatedTicks(Collection<String> instrumentIds,
                                                           ITraderDataConnection conn) throws EngineException {
         final var r = new HashMap<String, SettlementPrice>(512);
-        for (var i : instrumentIds) {
-            var price = conn.getSettlementPriceByInstrumentId(i);
-            if (price == null) {
-                throw new EngineException(ErrorCode.TICK_NULL.code(),
-                                          ErrorCode.TICK_NULL.message() + "(" + i + ")");
+        try {
+            for (var i : instrumentIds) {
+                var price = conn.getSettlementPriceByInstrumentId(i);
+                if (price == null) {
+                    throw new EngineException(ErrorCode.TICK_NULL.code(),
+                                              ErrorCode.TICK_NULL.message() + "(" + i + ")");
+                }
+                r.put(i, price);
             }
-            r.put(i, price);
+            return r;
         }
-        return r;
+        catch (DataQueryException ex) {
+            throw new EngineException(0, "");
+        }
     }
 
     private Integer findTraderIdByOrderId(long orderId) throws EngineException {
@@ -606,6 +628,9 @@ public class TraderEngine implements ITraderEngine {
             }
             return sorted;
         }
+        catch (SQLException | ClassNotFoundException | DataQueryException ex) {
+            throw new EngineException(1, "");
+        }
     }
 
     private double getAvailableMoney() throws EngineException {
@@ -626,6 +651,9 @@ public class TraderEngine implements ITraderEngine {
                 cs.addAll(s);
             }
             return cs;
+        }
+        catch (DataQueryException | SQLException | ClassNotFoundException ex) {
+            throw new EngineException(1, "");
         }
     }
 
@@ -663,6 +691,9 @@ public class TraderEngine implements ITraderEngine {
                                                      findRelatedTicks(ids, conn),
                                                      findRelatedInstruments(ids, conn),
                                                      tradingDay));
+        }
+        catch (DataQueryException | SQLException | ClassNotFoundException ex) {
+            throw new SettlementException(1, "");
         }
     }
 
@@ -710,6 +741,9 @@ public class TraderEngine implements ITraderEngine {
             r.addAll(yd.values());
             return r;
         }
+        catch (DataQueryException | SQLException | ClassNotFoundException ex) {
+            throw new ContractGroupingException(0, "");
+        }
     }
 
     private void initAccount(Account a) throws EngineException {
@@ -732,6 +766,9 @@ public class TraderEngine implements ITraderEngine {
 
             conn.updateAccount(a);
         }
+        catch (SQLException | ClassNotFoundException | DataUpdateException | DataQueryException ex) {
+            Logger.getLogger(TraderEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void initContracts(Collection<Contract> cs, ITraderDataConnection conn) throws EngineException {
@@ -739,14 +776,18 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ErrorCode.CONTRACT_NULL.code(),
                                       ErrorCode.CONTRACT_NULL.message());
         }
-        for (var c : cs) {
-            conn.removeContract(c.getContractId());
+        try {
+            for (var c : cs) {
+                conn.removeContract(c.getContractId());
+            }
+        }
+        catch (DataRemovalException ex) {
         }
     }
 
-    private void initWithdrawDeposit(Collection<Withdraw> ws,
-                                     Collection<Deposit> ds,
-                                     ITraderDataConnection conn) throws EngineException {
+    private void clearWithdrawDeposit(Collection<Withdraw> ws,
+                                      Collection<Deposit> ds,
+                                      ITraderDataConnection conn) throws EngineException {
         if (ws == null) {
             throw new EngineException(ErrorCode.WITHDRAW_NULL.code(),
                                       ErrorCode.WITHDRAW_NULL.message());
@@ -755,11 +796,15 @@ public class TraderEngine implements ITraderEngine {
             throw new EngineException(ErrorCode.DEPOSIT_NULL.code(),
                                       ErrorCode.DEPOSIT_NULL.message());
         }
-        for (var w : ws) {
-            conn.removeMargin(w.getWithdrawId());
+        try {
+            for (var w : ws) {
+                conn.removeMargin(w.getWithdrawId());
+            }
+            for (var d : ds) {
+                conn.removeDeposit(d.getDepositId());
+            }
         }
-        for (var d : ds) {
-            conn.removeDeposit(d.getDepositId());
+        catch (DataRemovalException ex) {
         }
     }
 
@@ -770,15 +815,15 @@ public class TraderEngine implements ITraderEngine {
             conn.transaction();
             initAccount(conn.getAccount());
             initContracts(conn.getContractsByStatus(ContractStatus.CLOSED), conn);
-            initWithdrawDeposit(conn.getWithdraws(),
-                                conn.getDeposits(),
-                                conn);
+            clearWithdrawDeposit(conn.getWithdraws(),
+                                 conn.getDeposits(),
+                                 conn);
             conn.commit();
             changeStatus(TraderEngineStatuses.WORKING);
         }
-        catch (DataSourceException e) {
+        catch (DataQueryException e) {
             rollback(conn);
-            throw e;
+            throw new AccountInitializationException(0, e.getMessage());
         }
         catch (Throwable th) {
             rollback(conn);
@@ -815,7 +860,7 @@ public class TraderEngine implements ITraderEngine {
         try {
             conn.rollback();
         }
-        catch (DbaException ex) {
+        catch (SQLException ex) {
             callOnException(new EngineRuntimeException(
                     ErrorCode.DS_FAILURE_UNFIXABLE.code(),
                     ErrorCode.DS_FAILURE_UNFIXABLE.message(),
@@ -851,15 +896,10 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (DataSourceException e) {
+        catch (ClassNotFoundException | SQLException | DataException e) {
             rollback(conn);
-            throw e;
-        }
-        catch (DbaException ex) {
-            rollback(conn);
-            throw new EngineException(null,
-                                      ex.getMessage(),
-                                      ex);
+            throw new AssetFreezingException(1,
+                                             e.getMessage());
         }
         finally {
             if (conn != null) {
@@ -919,15 +959,10 @@ public class TraderEngine implements ITraderEngine {
              */
             conn.commit();
         }
-        catch (DataSourceException e) {
+        catch (ClassNotFoundException | SQLException | DataException e) {
             rollback(conn);
-            throw e;
-        }
-        catch (DbaException ex) {
-            rollback(conn);
-            throw new EngineException(null,
-                                      ex.getMessage(),
-                                      ex);
+            throw new AssetFreezingException(1,
+                                             e.getMessage());
         }
         finally {
             if (conn != null) {
@@ -987,6 +1022,11 @@ public class TraderEngine implements ITraderEngine {
             }
             // Clear everyday to avoid mem leak.
             clearInternals();
+        }
+        catch (DataQueryException | ClassNotFoundException | SQLException ex) {
+            throw new SettlementException(0,
+                                          ex.getMessage(),
+                                          ex);
         }
     }
 

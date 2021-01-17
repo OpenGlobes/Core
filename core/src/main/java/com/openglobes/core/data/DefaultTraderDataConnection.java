@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.ErrorCode;
 import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
@@ -37,6 +36,7 @@ import com.openglobes.core.trader.TradingDay;
 import com.openglobes.core.trader.Withdraw;
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -50,805 +50,910 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     private final IQuery query;
 
     public DefaultTraderDataConnection(Connection connection,
-                                       DefaultTraderDataSource source) throws DataSourceException {
+                                       DefaultTraderDataSource source) {
         super(connection, source);
         query = Queries.createQuery(conn());
     }
 
     @Override
-    public void addAccount(Account account) throws DataSourceException {
-        callInsert(Account.class, account);
+    public void addAccount(Account account) throws DataInsertionException {
+        try {
+            callInsert(Account.class, account);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addCommission(Commission commission) throws DataSourceException {
-        callInsert(Commission.class, commission);
+    public void addCommission(Commission commission) throws DataInsertionException {
+        try {
+            callInsert(Commission.class, commission);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addContract(Contract contract) throws DataSourceException {
-        callInsert(Contract.class, contract);
+    public void addContract(Contract contract) throws DataInsertionException {
+        try {
+            callInsert(Contract.class, contract);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addDeposit(Deposit deposit) throws DataSourceException {
-        callInsert(Deposit.class, deposit);
+    public void addDeposit(Deposit deposit) throws DataInsertionException {
+        try {
+            callInsert(Deposit.class, deposit);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addInstrument(Instrument instrument) throws DataSourceException {
-        callInsert(Instrument.class, instrument);
+    public void addInstrument(Instrument instrument) throws DataInsertionException {
+        try {
+            callInsert(Instrument.class, instrument);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addMargin(Margin margin) throws DataSourceException {
-        callInsert(Margin.class, margin);
+    public void addMargin(Margin margin) throws DataInsertionException {
+        try {
+            callInsert(Margin.class, margin);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addRequest(Request request) throws DataSourceException {
-        callInsert(Request.class, request);
+    public void addRequest(Request request) throws DataInsertionException {
+        try {
+            callInsert(Request.class, request);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addResponse(Response response) throws DataSourceException {
-        callInsert(Response.class, response);
+    public void addResponse(Response response) throws DataInsertionException {
+        try {
+            callInsert(Response.class, response);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addSettlementPrice(SettlementPrice price) throws DataSourceException {
-        callInsert(SettlementPrice.class, price);
+    public void addSettlementPrice(SettlementPrice price) throws DataInsertionException {
+        try {
+            callInsert(SettlementPrice.class, price);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addTrade(Trade trade) throws DataSourceException {
-        callInsert(Trade.class, trade);
+    public void addTrade(Trade trade) throws DataInsertionException {
+        try {
+            callInsert(Trade.class, trade);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addTradingDay(TradingDay day) throws DataSourceException {
-        callInsert(TradingDay.class, day);
+    public void addTradingDay(TradingDay day) throws DataInsertionException {
+        try {
+            callInsert(TradingDay.class, day);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public void addWithdraw(Withdraw withdraw) throws DataSourceException {
-        callInsert(Withdraw.class, withdraw);
+    public void addWithdraw(Withdraw withdraw) throws DataInsertionException {
+        try {
+            callInsert(Withdraw.class, withdraw);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataInsertionException(ex.getMessage(),
+                                             ex);
+        }
     }
 
     @Override
-    public Account getAccount() throws DataSourceException {
+    public Account getAccount() throws DataQueryException {
         try {
             return callGetSingle(Account.class,
                                  Queries.isNotNull(Account.class.getDeclaredField("accountId")),
                                  Account::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Account.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Commission getCommissionById(Long commissionId) throws DataSourceException {
+    public Commission getCommissionById(Long commissionId) throws DataQueryException {
         try {
             return callGetSingle(Commission.class,
                                  Queries.equals(Commission.class.getDeclaredField("commissionId"), commissionId),
                                  Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Commission.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Commission> getCommissions() throws DataSourceException {
+    public Collection<Commission> getCommissions() throws DataQueryException {
         try {
             return callGetMany(Commission.class,
                                Queries.isNotNull(Commission.class.getDeclaredField("commissionId")),
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Commission.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Commission> getCommissionsByOrderId(long orderId) throws DataSourceException {
+    public Collection<Commission> getCommissionsByOrderId(long orderId) throws DataQueryException {
         try {
             return callGetMany(Commission.class,
                                Queries.equals(Commission.class.getDeclaredField("orderId"), orderId),
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Commission.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Commission> getCommissionsByStatus(Integer status) throws DataSourceException {
+    public Collection<Commission> getCommissionsByStatus(Integer status) throws DataQueryException {
         try {
             return callGetMany(Commission.class,
                                Queries.equals(Commission.class.getDeclaredField("status"), status),
                                Commission::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Commission.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Contract getContractById(Long contractId) throws DataSourceException {
+    public Contract getContractById(Long contractId) throws DataQueryException {
         try {
             return callGetSingle(Contract.class,
                                  Queries.equals(Contract.class.getDeclaredField("contractId"), contractId),
                                  Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Contract.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Contract> getContracts() throws DataSourceException {
+    public Collection<Contract> getContracts() throws DataQueryException {
         try {
             return callGetMany(Contract.class,
                                Queries.isNotNull(Contract.class.getDeclaredField("contractId")),
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Contract.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Contract> getContractsByInstrumentId(String instrumentId) throws DataSourceException {
+    public Collection<Contract> getContractsByInstrumentId(String instrumentId) throws DataQueryException {
         try {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("instrumentId"), instrumentId),
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Contract.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Contract> getContractsByStatus(Integer status) throws DataSourceException {
+    public Collection<Contract> getContractsByStatus(Integer status) throws DataQueryException {
         try {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("status"), status),
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Contract.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Contract> getContractsByTradeId(long tradeId) throws DataSourceException {
+    public Collection<Contract> getContractsByTradeId(long tradeId) throws DataQueryException {
         try {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("tradeId"), tradeId),
                                Contract::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Contract.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public ITraderDataSource getDataSource() throws DataSourceException {
-        var r = super.getSource();
-        if (r instanceof ITraderDataSource) {
-            return (ITraderDataSource) r;
-        }
-        else {
-            throw new DataSourceException(ErrorCode.INVALID_DATASOURCE_TYPE.code(),
-                                          ErrorCode.INVALID_DATASOURCE_TYPE.message());
-        }
+    public ITraderDataSource getDataSource() {
+        return (ITraderDataSource) super.getSource();
     }
 
     @Override
-    public Collection<Deposit> getDeposits() throws DataSourceException {
+    public Collection<Deposit> getDeposits() throws DataQueryException {
         try {
             return callGetMany(Deposit.class,
                                Queries.isNotNull(Deposit.class.getDeclaredField("depositId")),
                                Deposit::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Deposit.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Instrument getInstrumentById(String instrumentId) throws DataSourceException {
+    public Instrument getInstrumentById(String instrumentId) throws DataQueryException {
         try {
             return callGetSingle(Instrument.class,
                                  Queries.equals(Instrument.class.getDeclaredField("instrumentId"), instrumentId),
                                  Instrument::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Instrument.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Instrument> getInstrumentsByExchangeId(String exchangeId) throws DataSourceException {
+    public Collection<Instrument> getInstrumentsByExchangeId(String exchangeId) throws DataQueryException {
         try {
             return callGetMany(Instrument.class,
                                Queries.equals(Instrument.class.getDeclaredField("exchangeId"), exchangeId),
                                Instrument::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Instrument.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Margin getMarginById(Long marginId) throws DataSourceException {
+    public Margin getMarginById(Long marginId) throws DataQueryException {
         try {
             return callGetSingle(Margin.class,
                                  Queries.equals(Margin.class.getDeclaredField("marginId"), marginId),
                                  Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Margin.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Margin> getMargins() throws DataSourceException {
+    public Collection<Margin> getMargins() throws DataQueryException {
         try {
             return callGetMany(Margin.class,
                                Queries.isNotNull(Margin.class.getDeclaredField("marginId")),
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Margin.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Margin> getMarginsByOrderId(long orderId) throws DataSourceException {
+    public Collection<Margin> getMarginsByOrderId(long orderId) throws DataQueryException {
         try {
             return callGetMany(Margin.class,
                                Queries.equals(Margin.class.getDeclaredField("orderId"), orderId),
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Margin.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Margin> getMarginsByStatus(Integer status) throws DataSourceException {
+    public Collection<Margin> getMarginsByStatus(Integer status) throws DataQueryException {
         try {
             return callGetMany(Margin.class,
                                Queries.equals(Margin.class.getDeclaredField("status"), status),
                                Margin::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Margin.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Request getRequestByOrderId(long orderId) throws DataSourceException {
+    public Request getRequestByOrderId(long orderId) throws DataQueryException {
         try {
             return callGetSingle(Request.class,
                                  Queries.equals(Request.class.getDeclaredField("orderId"), orderId),
                                  Request::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Request.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Request> getRequests() throws DataSourceException {
+    public Collection<Request> getRequests() throws DataQueryException {
         try {
             return callGetMany(Request.class,
                                Queries.isNotNull(Request.class.getDeclaredField("orderId")),
                                Request::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Request.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Response getResponseById(long responseId) throws DataSourceException {
+    public Response getResponseById(long responseId) throws DataQueryException {
         try {
             return callGetSingle(Response.class,
                                  Queries.equals(Response.class.getDeclaredField("responseId"), responseId),
                                  Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Response.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Response> getResponseByOrderId(long orderId) throws DataSourceException {
+    public Collection<Response> getResponseByOrderId(long orderId) throws DataQueryException {
         try {
             return callGetMany(Response.class,
                                Queries.equals(Response.class.getDeclaredField("orderId"), orderId),
                                Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Response.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Response> getResponses() throws DataSourceException {
+    public Collection<Response> getResponses() throws DataQueryException {
         try {
             return callGetMany(Response.class,
                                Queries.isNotNull(Response.class.getDeclaredField("responseId")),
                                Response::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Response.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public SettlementPrice getSettlementPriceByInstrumentId(String instrumentId) throws DataSourceException {
+    public SettlementPrice getSettlementPriceByInstrumentId(String instrumentId) throws DataQueryException {
         try {
             return callGetSingle(SettlementPrice.class,
                                  Queries.equals(SettlementPrice.class.getDeclaredField("instrumentId"), instrumentId),
                                  SettlementPrice::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(SettlementPrice.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Connection getSqlConnection() throws DataSourceException {
+    public Connection getSqlConnection() {
         return conn();
     }
 
     @Override
-    public Trade getTradeById(Long tradeId) throws DataSourceException {
+    public Trade getTradeById(Long tradeId) throws DataQueryException {
         try {
             return callGetSingle(Trade.class,
                                  Queries.equals(Trade.class.getDeclaredField("tradeId"), tradeId),
                                  Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Trade.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Trade> getTrades() throws DataSourceException {
+    public Collection<Trade> getTrades() throws DataQueryException {
         try {
             return callGetMany(Trade.class,
                                Queries.isNotNull(Trade.class.getDeclaredField("tradeId")),
                                Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Trade.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Trade> getTradesByOrderId(long orderId) throws DataSourceException {
+    public Collection<Trade> getTradesByOrderId(long orderId) throws DataQueryException {
         try {
             return callGetMany(Trade.class,
                                Queries.equals(Trade.class.getDeclaredField("orderId"), orderId),
                                Trade::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Trade.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public TradingDay getTradingDay() throws DataSourceException {
+    public TradingDay getTradingDay() throws DataQueryException {
         try {
             return callGetSingle(TradingDay.class,
                                  Queries.isNotNull(TradingDay.class.getDeclaredField("tradingDayId")),
                                  TradingDay::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(TradingDay.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<Withdraw> getWithdraws() throws DataSourceException {
+    public Collection<Withdraw> getWithdraws() throws DataQueryException {
         try {
             return callGetMany(Withdraw.class,
                                Queries.isNotNull(Withdraw.class.getDeclaredField("withdrawId")),
                                Withdraw::new);
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(Withdraw.class.getCanonicalName(),
+                                         ex);
         }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
+        catch (DbaException | SQLException | DataException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public void removeCommission(long commissionId) throws DataSourceException {
-        callRemove(Commission.class,
-                   "commissionId",
-                   commissionId,
-                   Commission::new);
+    public void removeCommission(long commissionId) throws DataRemovalException {
+        try {
+            callRemove(Commission.class,
+                       "commissionId",
+                       commissionId,
+                       Commission::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Commission.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeContract(long contractId) throws DataSourceException {
-        callRemove(Contract.class,
-                   "contractId",
-                   contractId,
-                   Contract::new);
+    public void removeContract(long contractId) throws DataRemovalException {
+        try {
+            callRemove(Contract.class,
+                       "contractId",
+                       contractId,
+                       Contract::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Contract.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeDeposit(long depositId) throws DataSourceException {
-        callRemove(Deposit.class,
-                   "depositId",
-                   depositId,
-                   Deposit::new);
+    public void removeDeposit(long depositId) throws DataRemovalException {
+        try {
+            callRemove(Deposit.class,
+                       "depositId",
+                       depositId,
+                       Deposit::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Deposit.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeInstrument(String instrumentId) throws DataSourceException {
-        callRemove(Instrument.class,
-                   "instrumentId",
-                   instrumentId,
-                   Instrument::new);
+    public void removeInstrument(String instrumentId) throws DataRemovalException {
+        try {
+            callRemove(Instrument.class,
+                       "instrumentId",
+                       instrumentId,
+                       Instrument::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Instrument.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeMargin(long marginId) throws DataSourceException {
-        callRemove(Margin.class,
-                   "marginId",
-                   marginId,
-                   Margin::new);
+    public void removeMargin(long marginId) throws DataRemovalException {
+        try {
+            callRemove(Margin.class,
+                       "marginId",
+                       marginId,
+                       Margin::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Margin.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeSettlementPrice(String instrumentId) throws DataSourceException {
-        callRemove(SettlementPrice.class,
-                   "instrumentId",
-                   instrumentId,
-                   SettlementPrice::new);
+    public void removeSettlementPrice(String instrumentId) throws DataRemovalException {
+        try {
+            callRemove(SettlementPrice.class,
+                       "instrumentId",
+                       instrumentId,
+                       SettlementPrice::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(SettlementPrice.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void removeWithdraw(long withdrawId) throws DataSourceException {
-        callRemove(Withdraw.class,
-                   "withdrawId",
-                   withdrawId,
-                   Withdraw::new);
+    public void removeWithdraw(long withdrawId) throws DataRemovalException {
+        try {
+            callRemove(Withdraw.class,
+                       "withdrawId",
+                       withdrawId,
+                       Withdraw::new);
+        }
+        catch (NoSuchFieldException | SecurityException ex) {
+            throw new DataRemovalException(Withdraw.class.getCanonicalName(),
+                                           ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataRemovalException(ex.getMessage(),
+                                           ex);
+        }
     }
 
     @Override
-    public void updateAccount(Account account) throws DataSourceException {
+    public void updateAccount(Account account) throws DataUpdateException {
         try {
             callUpdate(Account.class,
                        account,
                        Account.class.getDeclaredField("accountId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(Account.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateCommission(Commission commission) throws DataSourceException {
+    public void updateCommission(Commission commission) throws DataUpdateException {
         try {
             callUpdate(Commission.class,
                        commission,
                        Commission.class.getDeclaredField("commissionId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(Commission.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateContract(Contract contract) throws DataSourceException {
+    public void updateContract(Contract contract) throws DataUpdateException {
         try {
             callUpdate(Contract.class,
                        contract,
                        Contract.class.getDeclaredField("contractId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(Contract.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateInstrument(Instrument instrument) throws DataSourceException {
+    public void updateInstrument(Instrument instrument) throws DataUpdateException {
         try {
             callUpdate(Instrument.class,
                        instrument,
                        Instrument.class.getDeclaredField("instrumentId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(Instrument.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateMargin(Margin margin) throws DataSourceException {
+    public void updateMargin(Margin margin) throws DataUpdateException {
         try {
             callUpdate(Margin.class,
                        margin,
                        Margin.class.getDeclaredField("marginId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(Margin.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateSettlementPrice(SettlementPrice price) throws DataSourceException {
+    public void updateSettlementPrice(SettlementPrice price) throws DataUpdateException {
         try {
             callUpdate(SettlementPrice.class,
                        price,
                        SettlementPrice.class.getDeclaredField("instrumentId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(SettlementPrice.class.getCanonicalName(),
+                                          ex);
+        }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
     }
 
     @Override
-    public void updateTradingDay(TradingDay day) throws DataSourceException {
+    public void updateTradingDay(TradingDay day) throws DataUpdateException {
         try {
             callUpdate(TradingDay.class,
                        day,
                        TradingDay.class.getDeclaredField("tradingDayId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
+            throw new DataUpdateException(TradingDay.class.getCanonicalName(),
                                           ex);
         }
+        catch (EventSourceException | SQLException | DataException ex) {
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
+        }
+
     }
 
     private <T> Collection<T> callGetMany(Class<T> clazz,
                                           ICondition<?> condition,
-                                          IDefaultFactory<T> factory) throws DataSourceException {
+                                          IDefaultFactory<T> factory) throws SQLException,
+                                                                             DataQueryException {
         try {
             return query.select(clazz, condition, factory);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
-                                          ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
-                                          ex);
+            throw new DataQueryException(clazz.getCanonicalName(),
+                                         ex);
         }
     }
 
     private <T> T callGetSingle(Class<T> clazz,
                                 ICondition<?> condition,
-                                IDefaultFactory<T> factory) throws DataSourceException {
-        var c = callGetMany(clazz, condition, factory);
+                                IDefaultFactory<T> factory) throws SQLException,
+                                                                   InvalidQueryResultException,
+                                                                   DataQueryException {
+        Collection<T> c = callGetMany(clazz,
+                                      condition,
+                                      factory);
         if (c.size() > 1) {
-            throw new DataSourceException(
-                    ErrorCode.MORE_ROWS_THAN_EXPECTED.code(),
-                    ErrorCode.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+            throw new InvalidQueryResultException("Result not single.");
         }
         if (c.isEmpty()) {
-            throw new DataSourceException(
-                    ErrorCode.LESS_ROWS_THAN_EXPECTED.code(),
-                    ErrorCode.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+            throw new InvalidQueryResultException("Empty result.");
         }
         return c.iterator().next();
     }
 
-    private <T> void callInsert(Class<T> clazz, T object) throws DataSourceException {
+    private <T> void callInsert(Class<T> clazz,
+                                T object) throws DataQueryException,
+                                                 SQLException,
+                                                 EventSourceException,
+                                                 UnknownDataChangeException {
         try {
             query.insert(clazz, object);
             callOnChange(clazz,
@@ -856,29 +961,28 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                          DataChangeType.CREATE);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.DBA_INSERT_FAIL.code(),
-                                          ErrorCode.DBA_INSERT_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(clazz.getCanonicalName(),
+                                         ex);
         }
     }
 
     private <T> void callOnChange(Class<T> clazz,
                                   T object,
-                                  DataChangeType type) throws DataSourceException {
-        try {
-            getDataSource().getEventSource(type).publish(clazz, object);
-        }
-        catch (EventSourceException ex) {
-            throw new DataSourceException(ErrorCode.PUBLISH_EVENT_FAIL.code(),
-                                          ex.getMessage(),
-                                          ex);
-        }
+                                  DataChangeType type) throws EventSourceException,
+                                                              UnknownDataChangeException {
+        getDataSource().getEventSource(type).publish(clazz,
+                                                     object);
     }
 
     private <T, V> void callRemove(Class<T> clazz,
                                    String fieldName,
                                    V id,
-                                   IDefaultFactory<T> factory) throws DataSourceException {
+                                   IDefaultFactory<T> factory) throws SQLException,
+                                                                      EventSourceException,
+                                                                      NoSuchFieldException,
+                                                                      DataQueryException,
+                                                                      UnknownDataChangeException,
+                                                                      InvalidQueryResultException {
         try {
             callOnChange(clazz,
                          callGetSingle(clazz,
@@ -889,20 +993,17 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                          Queries.equals(clazz.getField(fieldName), id));
         }
         catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                          ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                          ex);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(clazz.getCanonicalName(),
+                                         ex);
         }
     }
 
     private <T> void callUpdate(Class<T> clazz,
                                 T object,
-                                Field field) throws DataSourceException {
+                                Field field) throws DataQueryException,
+                                                    SQLException,
+                                                    EventSourceException,
+                                                    UnknownDataChangeException {
         try {
             query.update(clazz,
                          object,
@@ -912,14 +1013,11 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                          DataChangeType.UPDATE);
         }
         catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.DBA_UPDATE_FAIL.code(),
-                                          ErrorCode.DBA_UPDATE_FAIL.message() + " " + clazz.getCanonicalName(),
-                                          ex);
+            throw new DataQueryException(clazz.getCanonicalName(),
+                                         ex);
         }
         catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new DataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                          ErrorCode.REFLECTION_FAIL.message(),
-                                          ex);
+            throw new DataQueryException(ex);
         }
     }
 }

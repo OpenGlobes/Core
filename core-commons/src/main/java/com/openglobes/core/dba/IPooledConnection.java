@@ -16,6 +16,8 @@
  */
 package com.openglobes.core.dba;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author Hongbao Chen
@@ -34,26 +36,26 @@ public interface IPooledConnection {
     /**
      * Commit all queries after calling {@link transaction()}.
      *
-     * @throws DbaException thrown when failing to commit the underlying
+     * @throws SQLException thrown when failing to commit the underlying
      *                      {@link java.sql.Connection}.
      */
-    void commit() throws DbaException;
+    void commit() throws SQLException;
 
     /**
      * Rollback all queries after calling {@link transaction()}.
      *
-     * @throws DbaException thrown when failing to rollback the underlying
+     * @throws SQLException thrown when failing to rollback the underlying
      *                      {@link java.sql.Connection}.
      */
-    void rollback() throws DbaException;
+    void rollback() throws SQLException;
 
     /**
      * Start a transaction then all queries set after this method need to be
      * commited by calling {@link commit()}.
      *
-     * @throws DbaException thrown when failing to start a transaction for the
+     * @throws SQLException thrown when failing to start a transaction for the
      *                      underlying {@link java.sql.Connection}.
      */
-    void transaction() throws DbaException;
+    void transaction() throws SQLException;
 
 }

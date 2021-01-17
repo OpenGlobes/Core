@@ -17,8 +17,10 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.dba.IPooledDataSource;
+import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import java.sql.SQLException;
 
 /**
  * Data source provides basic data to higher level.
@@ -38,23 +40,26 @@ import com.openglobes.core.event.IEventSource;
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ITraderDataSource extends AutoCloseable, 
+public interface ITraderDataSource extends AutoCloseable,
                                            IPooledDataSource {
 
     /**
-     * Get {@link ITraderDataConnection} of the underlying data source with the given
-     * properties.
+     * Get {@link ITraderDataConnection} of the underlying data source with the
+     * given properties.
      * <p>
      * The return Object could be retieved from internal pool or newed object if
      * the pool is all used.
      *
      * @return {@link ITraderDataConnection}
      *
-     * @throws DataSourceException thrown when failing to creating
-     *                             {@link ITraderDataConnection}.
+     * @throws java.sql.SQLException            thrown on failing getting
+     *                                          connection from driver manager.
+     * @throws java.lang.ClassNotFoundException thrown on failing loading driver
+     *                                          class.
      */
-    ITraderDataConnection getConnection() throws DataSourceException;
-    
+    ITraderDataConnection getConnection() throws SQLException,
+                                                 ClassNotFoundException;
+
     /**
      * Don't throw exception.
      */
@@ -70,12 +75,15 @@ public interface ITraderDataSource extends AutoCloseable,
      * @param handler Event handler.
      * @param type    Data change type.
      *
-     * @throws DataSourceException thrown if given parameters are invalid, fail
-     *                             subscribing the specified event type, or no
-     *                             event source for the specified data change
-     *                             type.
+     * @throws UnknownDataChangeException thrown when the specified data change
+     *                                    type has no associated event source.
+     * @throws EventSourceException       thrown on failing subscribing to event
+     *                                    source.
      */
-    <T> void addListener(Class<T> clazz, IEventHandler<T> handler, DataChangeType type) throws DataSourceException;
+    <T> void addListener(Class<T> clazz,
+                         IEventHandler<T> handler,
+                         DataChangeType type) throws UnknownDataChangeException,
+                                                     EventSourceException;
 
     /**
      * Get the event source associated with the specified data change type.
@@ -85,8 +93,8 @@ public interface ITraderDataSource extends AutoCloseable,
      * @return {@link  IEventSource} associated with the specified data change
      *         type.
      *
-     * @throws DataSourceException thrown when no event source for the specifed
-     *                             data change type.
+     * @throws UnknownDataChangeException thrown when no event source for the
+     *                                    specifed data change type.
      */
-    IEventSource getEventSource(DataChangeType type) throws DataSourceException;
+    IEventSource getEventSource(DataChangeType type) throws UnknownDataChangeException;
 }

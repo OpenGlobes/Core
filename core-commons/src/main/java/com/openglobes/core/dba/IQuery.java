@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.dba;
 
+import java.sql.SQLException;
 import java.util.Collection;
 
 /**
@@ -25,11 +26,41 @@ import java.util.Collection;
  */
 public interface IQuery {
 
-    <T> Collection<T> select(Class<T> clazz, ICondition<?> condition, IDefaultFactory<T> factory) throws DbaException;
+    <T> Collection<T> select(Class<T> clazz,
+                             ICondition<?> condition,
+                             IDefaultFactory<T> factory) throws SQLException,
+                                                                FieldAccessException,
+                                                                FieldInjectionException,
+                                                                UnsupportedTypeException,
+                                                                IllegalFieldCharacterException;
 
-    <T> int update(Class<T> clazz, T object, ICondition<?> condition) throws DbaException;
+    <T> int update(Class<T> clazz,
+                   T object,
+                   ICondition<?> condition) throws SQLException,
+                                                   IllegalFieldCharacterException,
+                                                   UnsupportedTypeException,
+                                                   NoFieldException,
+                                                   FieldAccessException,
+                                                   MissingFieldException,
+                                                   IllegalFieldTypeException,
+                                                   NoPrimaryKeyException;
 
-    <T> int insert(Class<T> clazz, T object) throws DbaException;
+    <T> int insert(Class<T> clazz,
+                   T object) throws SQLException,
+                                    IllegalFieldCharacterException,
+                                    UnsupportedTypeException,
+                                    FieldAccessException,
+                                    NoFieldException,
+                                    MissingFieldException,
+                                    IllegalFieldTypeException,
+                                    NoPrimaryKeyException;
 
-    <T> int remove(Class<T> clazz, ICondition<?> condition) throws DbaException;
+    <T> int remove(Class<T> clazz,
+                   ICondition<?> condition) throws SQLException,
+                                                   IllegalFieldCharacterException,
+                                                   UnsupportedTypeException,
+                                                   MissingFieldException,
+                                                   IllegalFieldTypeException,
+                                                   NoPrimaryKeyException,
+                                                   NoFieldException;
 }

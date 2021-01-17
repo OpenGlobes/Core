@@ -18,8 +18,25 @@ public class DbaException extends Exception {
         super(message);
     }
 
-    public DbaException(String message, Throwable cause) {
-        super(message, cause);
+    public DbaException(String message,
+                        Throwable cause) {
+        super(message, 
+              cause);
     }
+
+    public DbaException(Throwable cause) {
+        super(cause);
+    }
+
+    public DbaException(String message,
+                        Throwable cause, 
+                        boolean enableSuppression, 
+                        boolean writableStackTrace) {
+        super(message, 
+              cause, 
+              enableSuppression, 
+              writableStackTrace);
+    }
+
 
 }

@@ -17,19 +17,26 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.ErrorCode;
+import com.openglobes.core.data.DataException;
+import com.openglobes.core.data.DataInsertionException;
+import com.openglobes.core.data.DataQueryException;
+import com.openglobes.core.data.DataRemovalException;
 import com.openglobes.core.data.DataSourceException;
+import com.openglobes.core.data.DataUpdateException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
-import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.exceptions.EngineException;
 import com.openglobes.core.exceptions.EngineRuntimeException;
 import com.openglobes.core.exceptions.GatewayException;
 import com.openglobes.core.exceptions.GatewayRuntimeException;
 import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 import com.openglobes.core.utils.Utils;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of service handler to process responses.
@@ -90,6 +97,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             callOnException(new EngineRuntimeException(ErrorCode.PREPROCESS_RESPONSE_FAIL.code(),
                                                        ErrorCode.PREPROCESS_RESPONSE_FAIL.message(),
                                                        ex));
+        }
+        catch (SQLException | ClassNotFoundException | DataInsertionException ex) {
+            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -176,7 +186,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void closeDelete(Response response, ITraderDataConnection conn) throws DataSourceException {
+    private void closeDelete(Response response, ITraderDataConnection conn) throws DataQueryException,
+                                                                                   DataUpdateException,
+                                                                                   DataRemovalException {
         var bs = getFrozenBundles(response.getOrderId(), conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
@@ -190,7 +202,13 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     private void closeTrade(Trade trade, ITraderDataConnection conn) throws EngineException {
-        var bs = getFrozenBundles(trade.getOrderId(), conn);
+        Collection<FrozenBundle> bs;
+        try {
+            bs = getFrozenBundles(trade.getOrderId(), conn);
+        }
+        catch (DataQueryException ex) {
+            throw new EngineException(1, "");
+        }
         int count = 0;
         var it = bs.iterator();
         while (count < trade.getQuantity() && it.hasNext()) {
@@ -220,25 +238,30 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.DEALED);
         requireStatus(contract, ContractStatus.CLOSING);
-        /*
-         * Update commission.
-         */
-        commission.setStatus(FeeStatus.DEALED);
-        conn.updateCommission(commission);
-        /*
-         * Update margin.
-         */
-        margin.setStatus(FeeStatus.REMOVED);
-        conn.updateMargin(margin);
-        /*
-         * Update contract.
-         */
-        var price = response.getPrice();
-        var instrument = getInstrument(response.getInstrumentId());
-        var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
-        contract.setCloseAmount(amount);
-        contract.setStatus(ContractStatus.CLOSED);
-        conn.updateContract(contract);
+        try {
+            /*
+             * Update commission.
+             */
+            commission.setStatus(FeeStatus.DEALED);
+            conn.updateCommission(commission);
+            /*
+             * Update margin.
+             */
+            margin.setStatus(FeeStatus.REMOVED);
+            conn.updateMargin(margin);
+            /*
+             * Update contract.
+             */
+            var price = response.getPrice();
+            var instrument = getInstrument(response.getInstrumentId());
+            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            contract.setCloseAmount(amount);
+            contract.setStatus(ContractStatus.CLOSED);
+            conn.updateContract(contract);
+        }
+        catch (DataUpdateException ex) {
+
+        }
     }
 
     private void dealDelete(Response response) throws DataSourceException {
@@ -278,14 +301,11 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                    e);
         }
         catch (EngineRuntimeException e) {
-            rollbackAndCallHandler(conn, 
+            rollbackAndCallHandler(conn,
                                    e);
         }
-        catch (DbaException e) {
-            rollbackAndCallHandler(conn,
-                                   null,
-                                   e.getMessage(),
-                                   e);
+        catch (DataException | SQLException | ClassNotFoundException ex) {
+            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally {
             if (conn != null) {
@@ -302,28 +322,33 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.FORZEN);
         requireStatus(contract, ContractStatus.OPENING);
-        /*
-         * Update commission.
-         */
-        commission.setStatus(FeeStatus.DEALED);
-        conn.updateCommission(commission);
-        /*
-         * Update margin.
-         */
-        margin.setStatus(FeeStatus.DEALED);
-        conn.updateMargin(margin);
-        /*
-         * Update contract.
-         */
-        var price = trade.getPrice();
-        var instrument = getInstrument(trade.getInstrumentId());
-        var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
-        contract.setOpenAmount(amount);
-        contract.setStatus(ContractStatus.OPEN);
-        contract.setTradeId(trade.getTradeId());
-        contract.setOpenTimestamp(trade.getTimestamp());
-        contract.setOpenTradingDay(trade.getTradingDay());
-        conn.updateCommission(commission);
+        try {
+            /*
+             * Update commission.
+             */
+            commission.setStatus(FeeStatus.DEALED);
+            conn.updateCommission(commission);
+            /*
+             * Update margin.
+             */
+            margin.setStatus(FeeStatus.DEALED);
+            conn.updateMargin(margin);
+            /*
+             * Update contract.
+             */
+            var price = trade.getPrice();
+            var instrument = getInstrument(trade.getInstrumentId());
+            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            contract.setOpenAmount(amount);
+            contract.setStatus(ContractStatus.OPEN);
+            contract.setTradeId(trade.getTradeId());
+            contract.setOpenTimestamp(trade.getTimestamp());
+            contract.setOpenTradingDay(trade.getTradingDay());
+            conn.updateCommission(commission);
+        }
+        catch (DataUpdateException ex) {
+            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void dealTrade(Trade trade) throws EngineException {
@@ -364,11 +389,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                    e.getMessage(),
                                    e);
         }
-        catch (DbaException e) {
-            rollbackAndCallHandler(conn,
-                                   null,
-                                   e.getMessage(),
-                                   e);
+        catch (SQLException | DataInsertionException | DataQueryException | ClassNotFoundException ex) {
+            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         finally {
             if (conn != null) {
@@ -379,7 +401,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private void deleteClose(Commission commission,
                              Contract contract,
-                             ITraderDataConnection conn) throws DataSourceException {
+                             ITraderDataConnection conn) throws DataUpdateException,
+                                                                DataRemovalException,
+                                                                DataQueryException {
         requireStatus(contract, ContractStatus.CLOSING);
         contract.setStatus(ContractStatus.OPEN);
         conn.updateContract(contract);
@@ -389,7 +413,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private void deleteOpen(Commission commission,
                             Margin margin,
                             Contract contract,
-                            ITraderDataConnection conn) throws DataSourceException {
+                            ITraderDataConnection conn) throws DataRemovalException {
         requireStatus(commission, FeeStatus.FORZEN);
         requireStatus(margin, FeeStatus.FORZEN);
         requireStatus(contract, ContractStatus.OPENING);
@@ -434,7 +458,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return ds;
     }
 
-    private Collection<FrozenBundle> getFrozenBundles(Long orderId, ITraderDataConnection conn) throws DataSourceException {
+    private Collection<FrozenBundle> getFrozenBundles(Long orderId, ITraderDataConnection conn) throws DataQueryException {
         final var map = new HashMap<Long, FrozenBundle>(128);
         var ms = conn.getMarginsByOrderId(orderId);
         checkMarginsNull(ms);
@@ -494,7 +518,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return r;
     }
 
-    private void openDelete(Response response, ITraderDataConnection conn) throws DataSourceException {
+    private void openDelete(Response response, ITraderDataConnection conn) throws DataQueryException,
+                                                                                  DataRemovalException {
         var bs = getFrozenBundles(response.getOrderId(), conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
@@ -508,7 +533,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void openTrade(Trade trade, ITraderDataConnection conn) throws EngineException {
+    private void openTrade(Trade trade, ITraderDataConnection conn) throws EngineException, DataQueryException {
         /*
          * Deal opening order.
          */
@@ -619,7 +644,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         try {
             conn.rollback();
         }
-        catch (DbaException ex) {
+        catch (SQLException ex) {
             callOnException(new EngineRuntimeException(
                     ErrorCode.DS_FAILURE_UNFIXABLE.code(),
                     ErrorCode.DS_FAILURE_UNFIXABLE.message(),

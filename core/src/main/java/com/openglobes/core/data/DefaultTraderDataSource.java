@@ -16,12 +16,11 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.ErrorCode;
-import com.openglobes.core.dba.DbaException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventSourceException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,34 +41,21 @@ public class DefaultTraderDataSource extends TraderDataSource {
     @Override
     public <T> void addListener(Class<T> clazz,
                                 IEventHandler<T> handler,
-                                DataChangeType type) throws DataSourceException {
-        try {
-            getEventSource(type).subscribe(clazz, handler);
-        }
-        catch (EventSourceException ex) {
-            throw new DataSourceException(ErrorCode.SUBSCRIBE_EVENT_FAIL.code(),
-                                          ex.getMessage(),
-                                          ex);
-        }
+                                DataChangeType type) throws UnknownDataChangeException,
+                                                            EventSourceException {
+        getEventSource(type).subscribe(clazz, handler);
     }
 
     @Override
-    public TraderDataConnection getConnection() throws DataSourceException {
-        try {
-            return new DefaultTraderDataConnection(getSqlConnection(), this);
-        }
-        catch (DbaException ex) {
-            throw new DataSourceException(ErrorCode.DATASOURCE_GET_CONNECTION_FAIL.code(),
-                                          ErrorCode.DATASOURCE_GET_CONNECTION_FAIL.message(),
-                                          ex);
-        }
+    public TraderDataConnection getConnection() throws SQLException,
+                                                       ClassNotFoundException {
+        return new DefaultTraderDataConnection(getSqlConnection(), this);
     }
 
     @Override
-    public IEventSource getEventSource(DataChangeType type) throws DataSourceException {
+    public IEventSource getEventSource(DataChangeType type) throws UnknownDataChangeException {
         if (!events.containsKey(type)) {
-            throw new DataSourceException(ErrorCode.DATASOURCE_EVENTSOURCE_NOT_FOUND.code(),
-                                          ErrorCode.DATASOURCE_EVENTSOURCE_NOT_FOUND.message());
+            throw new UnknownDataChangeException(type.name());
         }
         return events.get(type);
     }

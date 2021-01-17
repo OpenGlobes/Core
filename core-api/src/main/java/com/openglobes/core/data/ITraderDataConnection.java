@@ -41,118 +41,118 @@ import java.util.Collection;
 public interface ITraderDataConnection extends AutoCloseable,
                                                IPooledConnection {
 
-    void addAccount(Account account) throws DataSourceException;
+    void addAccount(Account account) throws DataInsertionException;
 
-    void addCommission(Commission commission) throws DataSourceException;
+    void addCommission(Commission commission) throws DataInsertionException;
 
-    void addContract(Contract contract) throws DataSourceException;
+    void addContract(Contract contract) throws DataInsertionException;
 
-    void addDeposit(Deposit deposit) throws DataSourceException;
+    void addDeposit(Deposit deposit) throws DataInsertionException;
 
-    void addInstrument(Instrument instrument) throws DataSourceException;
+    void addInstrument(Instrument instrument) throws DataInsertionException;
 
-    void addMargin(Margin margin) throws DataSourceException;
+    void addMargin(Margin margin) throws DataInsertionException;
 
-    void addRequest(Request request) throws DataSourceException;
+    void addRequest(Request request) throws DataInsertionException;
 
-    void addResponse(Response response) throws DataSourceException;
+    void addResponse(Response response) throws DataInsertionException;
 
-    void addSettlementPrice(SettlementPrice price) throws DataSourceException;
+    void addSettlementPrice(SettlementPrice price) throws DataInsertionException;
 
-    void addTrade(Trade trade) throws DataSourceException;
+    void addTrade(Trade trade) throws DataInsertionException;
 
-    void addTradingDay(TradingDay day) throws DataSourceException;
+    void addTradingDay(TradingDay day) throws DataInsertionException;
 
-    void addWithdraw(Withdraw withdraw) throws DataSourceException;
+    void addWithdraw(Withdraw withdraw) throws DataInsertionException;
 
     @Override
     void close();
 
-    Account getAccount() throws DataSourceException;
+    Account getAccount() throws DataQueryException;
 
-    Commission getCommissionById(Long commissionId) throws DataSourceException;
+    Commission getCommissionById(Long commissionId) throws DataQueryException;
 
-    Collection<Commission> getCommissions() throws DataSourceException;
+    Collection<Commission> getCommissions() throws DataQueryException;
 
-    Collection<Commission> getCommissionsByOrderId(long orderId) throws DataSourceException;
+    Collection<Commission> getCommissionsByOrderId(long orderId) throws DataQueryException;
 
-    Collection<Commission> getCommissionsByStatus(Integer status) throws DataSourceException;
+    Collection<Commission> getCommissionsByStatus(Integer status) throws DataQueryException;
 
-    Contract getContractById(Long contractId) throws DataSourceException;
+    Contract getContractById(Long contractId) throws DataQueryException;
 
-    Collection<Contract> getContracts() throws DataSourceException;
+    Collection<Contract> getContracts() throws DataQueryException;
 
-    Collection<Contract> getContractsByInstrumentId(String instrumentId) throws DataSourceException;
+    Collection<Contract> getContractsByInstrumentId(String instrumentId) throws DataQueryException;
 
-    Collection<Contract> getContractsByStatus(Integer status) throws DataSourceException;
+    Collection<Contract> getContractsByStatus(Integer status) throws DataQueryException;
 
-    Collection<Contract> getContractsByTradeId(long tradeId) throws DataSourceException;
+    Collection<Contract> getContractsByTradeId(long tradeId) throws DataQueryException;
 
-    ITraderDataSource getDataSource() throws DataSourceException;
+    ITraderDataSource getDataSource();
 
-    Collection<Deposit> getDeposits() throws DataSourceException;
+    Collection<Deposit> getDeposits() throws DataQueryException;
 
-    Instrument getInstrumentById(String instrumentId) throws DataSourceException;
+    Instrument getInstrumentById(String instrumentId) throws DataQueryException;
 
-    Collection<Instrument> getInstrumentsByExchangeId(String exchangeId) throws DataSourceException;
+    Collection<Instrument> getInstrumentsByExchangeId(String exchangeId) throws DataQueryException;
 
-    Margin getMarginById(Long marginId) throws DataSourceException;
+    Margin getMarginById(Long marginId) throws DataQueryException;
 
-    Collection<Margin> getMargins() throws DataSourceException;
+    Collection<Margin> getMargins() throws DataQueryException;
 
-    Collection<Margin> getMarginsByOrderId(long orderId) throws DataSourceException;
+    Collection<Margin> getMarginsByOrderId(long orderId) throws DataQueryException;
 
-    Collection<Margin> getMarginsByStatus(Integer status) throws DataSourceException;
+    Collection<Margin> getMarginsByStatus(Integer status) throws DataQueryException;
 
-    Request getRequestByOrderId(long orderId) throws DataSourceException;
+    Request getRequestByOrderId(long orderId) throws DataQueryException;
 
-    Collection<Request> getRequests() throws DataSourceException;
+    Collection<Request> getRequests() throws DataQueryException;
 
-    Response getResponseById(long responseId) throws DataSourceException;
+    Response getResponseById(long responseId) throws DataQueryException;
 
-    Collection<Response> getResponseByOrderId(long orderId) throws DataSourceException;
+    Collection<Response> getResponseByOrderId(long orderId) throws DataQueryException;
 
-    Collection<Response> getResponses() throws DataSourceException;
+    Collection<Response> getResponses() throws DataQueryException;
 
-    SettlementPrice getSettlementPriceByInstrumentId(String instrumentId) throws DataSourceException;
+    SettlementPrice getSettlementPriceByInstrumentId(String instrumentId) throws DataQueryException;
 
-    Connection getSqlConnection() throws DataSourceException;
+    Connection getSqlConnection();
 
-    Trade getTradeById(Long tradeId) throws DataSourceException;
+    Trade getTradeById(Long tradeId) throws DataQueryException;
 
-    Collection<Trade> getTrades() throws DataSourceException;
+    Collection<Trade> getTrades() throws DataQueryException;
 
-    Collection<Trade> getTradesByOrderId(long orderId) throws DataSourceException;
+    Collection<Trade> getTradesByOrderId(long orderId) throws DataQueryException;
 
-    TradingDay getTradingDay() throws DataSourceException;
+    TradingDay getTradingDay() throws DataQueryException;
 
-    Collection<Withdraw> getWithdraws() throws DataSourceException;
+    Collection<Withdraw> getWithdraws() throws DataQueryException;
 
-    void removeCommission(long commissionId) throws DataSourceException;
+    void removeCommission(long commissionId) throws DataRemovalException;
 
-    void removeContract(long contractId) throws DataSourceException;
+    void removeContract(long contractId) throws DataRemovalException;
 
-    void removeDeposit(long depositId) throws DataSourceException;
+    void removeDeposit(long depositId) throws DataRemovalException;
 
-    void removeInstrument(String instrumentId) throws DataSourceException;
+    void removeInstrument(String instrumentId) throws DataRemovalException;
 
-    void removeMargin(long marginId) throws DataSourceException;
+    void removeMargin(long marginId) throws DataRemovalException;
 
-    void removeSettlementPrice(String instrumentId) throws DataSourceException;
+    void removeSettlementPrice(String instrumentId) throws DataRemovalException;
 
-    void removeWithdraw(long withdrawId) throws DataSourceException;
+    void removeWithdraw(long withdrawId) throws DataRemovalException;
 
-    void updateAccount(Account account) throws DataSourceException;
+    void updateAccount(Account account) throws DataUpdateException;
 
-    void updateCommission(Commission commission) throws DataSourceException;
+    void updateCommission(Commission commission) throws DataUpdateException;
 
-    void updateContract(Contract contract) throws DataSourceException;
+    void updateContract(Contract contract) throws DataUpdateException;
 
-    void updateInstrument(Instrument instrument) throws DataSourceException;
+    void updateInstrument(Instrument instrument) throws DataUpdateException;
 
-    void updateMargin(Margin margin) throws DataSourceException;
+    void updateMargin(Margin margin) throws DataUpdateException;
 
-    void updateSettlementPrice(SettlementPrice price) throws DataSourceException;
+    void updateSettlementPrice(SettlementPrice price) throws DataUpdateException;
 
-    void updateTradingDay(TradingDay day) throws DataSourceException;
+    void updateTradingDay(TradingDay day) throws DataUpdateException;
 }

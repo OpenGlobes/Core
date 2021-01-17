@@ -47,77 +47,101 @@ class Query implements IQuery {
     }
 
     @Override
-    public <T> int insert(Class<T> clazz, T object) throws DbaException {
-        try {
-            return execute(getInsertSql(findMeta(clazz), object));
-        }
-        catch (SQLException ex) {
-            throw new DbaException("Fail executing insertion.", ex);
-        }
+    public <T> int insert(Class<T> clazz,
+                          T object) throws SQLException,
+                                           IllegalFieldCharacterException,
+                                           UnsupportedTypeException,
+                                           FieldAccessException,
+                                           NoFieldException,
+                                           MissingFieldException,
+                                           IllegalFieldTypeException,
+                                           NoPrimaryKeyException {
+        return execute(getInsertSql(findMeta(clazz), object));
     }
 
     @Override
-    public <T> int remove(Class<T> clazz, ICondition<?> condition) throws DbaException {
-        try {
-            return execute(getRemoveSql(findMeta(clazz), condition));
-        }
-        catch (SQLException ex) {
-            throw new DbaException("Fail executing removal.", ex);
-        }
+    public <T> int remove(Class<T> clazz,
+                          ICondition<?> condition) throws SQLException,
+                                                          IllegalFieldCharacterException,
+                                                          UnsupportedTypeException,
+                                                          MissingFieldException,
+                                                          IllegalFieldTypeException,
+                                                          NoPrimaryKeyException,
+                                                          NoFieldException {
+        return execute(getRemoveSql(findMeta(clazz),
+                                    condition));
     }
 
     @Override
     public <T> Collection<T> select(Class<T> clazz,
                                     ICondition<?> condition,
-                                    IDefaultFactory<T> factory) throws DbaException {
+                                    IDefaultFactory<T> factory) throws SQLException,
+                                                                       FieldAccessException,
+                                                                       FieldInjectionException,
+                                                                       UnsupportedTypeException,
+                                                                       IllegalFieldCharacterException {
         try {
             var m = findMeta(clazz);
-            return executeSelect(m, getSelectSql(m, condition), factory);
+            return executeSelect(m,
+                                 getSelectSql(m,
+                                              condition),
+                                 factory);
         }
-        catch (SQLException | ReflectiveOperationException ex) {
-            throw new DbaException("Fail executing selection.", ex);
+        catch (ReflectiveOperationException ex) {
+            throw new FieldAccessException("Fail executing selection.", ex);
         }
     }
 
     @Override
     public <T> int update(Class<T> clazz,
                           T object,
-                          ICondition<?> condition) throws DbaException {
-        try {
-            return execute(getUpdateSql(findMeta(clazz), object, condition));
-        }
-        catch (SQLException ex) {
-            throw new DbaException("Fail executing update.", ex);
-        }
+                          ICondition<?> condition) throws SQLException,
+                                                          IllegalFieldCharacterException,
+                                                          UnsupportedTypeException,
+                                                          NoFieldException,
+                                                          FieldAccessException,
+                                                          MissingFieldException,
+                                                          IllegalFieldTypeException,
+                                                          NoPrimaryKeyException {
+        return execute(getUpdateSql(findMeta(clazz),
+                                    object,
+                                    condition));
     }
 
-    private String buildFieldPair(MetaField f) {
+    private String buildFieldPair(MetaField f) throws UnsupportedTypeException {
         return f.getName() + " " + DbaUtils.convertSqlType(f.getType());
     }
 
-    private <T> String buildFieldPairs(MetaTable<T> meta) throws DbaException {
+    private <T> String buildFieldPairs(MetaTable<T> meta) throws NoFieldException,
+                                                                 UnsupportedTypeException,
+                                                                 NoPrimaryKeyException {
         if (meta.fields().isEmpty()) {
-            throw new DbaException("No field.");
+            throw new NoFieldException(meta.getName());
         }
         else {
             String sql = "";
             int i = 0;
             while (i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
-                sql += buildFieldWithKey(f, meta) + ",";
+                String sqlField = buildFieldWithKey(f,
+                                                    meta);
+                sql += sqlField + ",";
                 ++i;
             }
             sql += buildFieldWithKey(meta.fields().get(i), meta);
             if (!sql.contains(PRIMARY_KEY)) {
-                throw new DbaException("Table '" + meta.getName() + "' has no primary key.");
+                throw new NoPrimaryKeyException(meta.getName());
             }
             return sql;
         }
     }
 
-    private <T> String buildFieldWithKey(MetaField f, MetaTable<T> meta) {
+    private <T> String buildFieldWithKey(MetaField f,
+                                         MetaTable<T> meta) throws UnsupportedTypeException {
         String sql = buildFieldPair(f);
-        if (isPrimaryKey(f, meta)) {
+        boolean priKey = isPrimaryKey(f,
+                                      meta);
+        if (priKey) {
             sql += " " + PRIMARY_KEY;
         }
         return sql;
@@ -126,15 +150,21 @@ class Query implements IQuery {
     private <T> Collection<T> convert(MetaTable<T> meta,
                                       ResultSet rs,
                                       IDefaultFactory<T> factory) throws ReflectiveOperationException,
-                                                                         SQLException {
+                                                                         SQLException,
+                                                                         FieldInjectionException {
         Collection<T> c = new LinkedList<>();
         while (rs.next()) {
-            c.add(rowT(meta, rs, factory));
+            c.add(rowT(meta,
+                       rs,
+                       factory));
         }
         return c;
     }
 
-    private <T> void createTable(MetaTable<T> meta) throws DbaException, SQLException {
+    private <T> void createTable(MetaTable<T> meta) throws SQLException,
+                                                           NoPrimaryKeyException,
+                                                           UnsupportedTypeException,
+                                                           NoFieldException {
         String sql = "CREATE TABLE " + meta.getName() + "(";
         sql += buildFieldPairs(meta);
         sql += ")";
@@ -142,17 +172,25 @@ class Query implements IQuery {
     }
 
     private <T> void ensureTable(MetaTable<T> meta) throws SQLException,
-                                                           DbaException {
+                                                           MissingFieldException,
+                                                           IllegalFieldTypeException,
+                                                           NoPrimaryKeyException,
+                                                           NoFieldException,
+                                                           UnsupportedTypeException {
         var dbm = conn.getMetaData();
-        if (!hasTableName(meta, dbm)) {
+        boolean has = hasTableName(meta,
+                                   dbm);
+        if (!has) {
             createTable(meta);
         }
         else {
-            verifyTableColumns(meta, dbm);
+            verifyTableColumns(meta,
+                               dbm);
         }
     }
 
-    private boolean equalsType(int columnType, int semanticType) throws DbaException {
+    private boolean equalsType(int columnType,
+                               int semanticType) throws UnsupportedTypeException {
         switch (semanticType) {
             case Types.CHAR:
             case Types.BIGINT:
@@ -164,7 +202,7 @@ class Query implements IQuery {
             case Types.TIMESTAMP_WITH_TIMEZONE:
                 return columnType == Types.CHAR;
         }
-        throw new DbaException("Invalid field type in table metadata.");
+        throw new UnsupportedTypeException("Sql Type " + semanticType + " is not supported.");
     }
 
     private int execute(String sql) throws SQLException {
@@ -177,24 +215,38 @@ class Query implements IQuery {
     private <T> Collection<T> executeSelect(MetaTable<T> meta,
                                             String sql,
                                             IDefaultFactory<T> factory) throws SQLException,
-                                                                               ReflectiveOperationException {
+                                                                               ReflectiveOperationException,
+                                                                               FieldInjectionException {
         ResultSet rs;
         try (Statement stat = conn.createStatement()) {
             rs = stat.executeQuery(sql);
-            return convert(meta, rs, factory);
+            return convert(meta,
+                           rs,
+                           factory);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private <T> MetaTable<T> findMeta(Class<T> clazz) {
-        return (MetaTable<T>) meta.computeIfAbsent(clazz.getCanonicalName(), k -> new MetaTable<T>(clazz));
+    private <T> MetaTable<T> findMeta(Class<T> clazz) throws IllegalFieldCharacterException,
+                                                             UnsupportedTypeException {
+        var r = (MetaTable<T>) meta.get(clazz.getCanonicalName());
+        if (r == null) {
+            r = MetaTable.create(clazz);
+            meta.put(clazz.getCanonicalName(), r);
+        }
+        return r;
     }
 
     private <T> String getInsertSql(MetaTable<T> meta,
                                     Object object) throws SQLException,
-                                                          DbaException {
+                                                          FieldAccessException,
+                                                          UnsupportedTypeException,
+                                                          NoFieldException,
+                                                          MissingFieldException,
+                                                          IllegalFieldTypeException,
+                                                          NoPrimaryKeyException {
         if (meta.fields().isEmpty()) {
-            throw new DbaException("No column in table '" + meta.getName() + "'.");
+            throw new NoFieldException(meta.getName());
         }
         ensureTable(meta);
         var sql = "INSERT INTO " + meta.getName();
@@ -213,31 +265,37 @@ class Query implements IQuery {
             return sql + "(" + fields + ") VALUES (" + values + ")";
         }
         catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new DbaException(
-                    "Access field '" + meta.fields().get(i).getName() + "' failed.",
-                    ex);
+            throw new FieldAccessException("Access field '" + meta.fields().get(i).getName() + "' failed.",
+                                           ex);
         }
     }
 
     private <T> String getRemoveSql(MetaTable<T> meta,
                                     ICondition<?> condition) throws SQLException,
-                                                                    DbaException {
+                                                                    MissingFieldException,
+                                                                    IllegalFieldTypeException,
+                                                                    NoPrimaryKeyException,
+                                                                    NoFieldException,
+                                                                    UnsupportedTypeException {
         ensureTable(meta);
         return "DELETE FROM " + meta.getName() + " WHERE " + ((Condition<?>) condition).getSql();
     }
 
     private <T> String getSelectSql(MetaTable<T> meta,
-                                    ICondition<?> condition) throws SQLException,
-                                                                    DbaException {
-        ensureTable(meta);
+                                    ICondition<?> condition) throws SQLException {
         return "SELECT * FROM " + meta.getName() + " WHERE " + ((Condition<?>) condition).getSql();
     }
 
-    private Map<String, Integer> getTableColumns(String name, DatabaseMetaData dbMeta) throws SQLException {
+    private Map<String, Integer> getTableColumns(String name,
+                                                 DatabaseMetaData dbMeta) throws SQLException {
         var t = new HashMap<String, Integer>(128);
-        var cs = dbMeta.getColumns("", "", name, "%");
+        var cs = dbMeta.getColumns("",
+                               "",
+                               name,
+                               "%");
         while (cs.next()) {
-            t.put(cs.getString("COLUMN_NAME"), cs.getInt("DATA_TYPE"));
+            t.put(cs.getString("COLUMN_NAME"),
+                  cs.getInt("DATA_TYPE"));
         }
         return t;
     }
@@ -245,9 +303,14 @@ class Query implements IQuery {
     private <T> String getUpdateSql(MetaTable<T> meta,
                                     Object object,
                                     ICondition<?> condition) throws SQLException,
-                                                                    DbaException {
+                                                                    NoFieldException,
+                                                                    UnsupportedTypeException,
+                                                                    FieldAccessException,
+                                                                    MissingFieldException,
+                                                                    IllegalFieldTypeException,
+                                                                    NoPrimaryKeyException {
         if (meta.fields().isEmpty()) {
-            throw new DbaException("No column in table '" + meta.getName() + "'.");
+            throw new NoFieldException(meta.getName());
         }
         ensureTable(meta);
         var sql = "UPDATE " + meta.getName() + " SET ";
@@ -262,15 +325,14 @@ class Query implements IQuery {
             return sql + " WHERE " + ((Condition<?>) condition).getSql();
         }
         catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new DbaException(
-                    "Access field '" + meta.fields().get(i).getName() + "' failed.",
-                    ex);
+            throw new FieldAccessException(meta.fields().get(i).getName(),
+                                           ex);
         }
     }
 
     private String getValue(MetaField f, Object object) throws IllegalArgumentException,
                                                                IllegalAccessException,
-                                                               DbaException {
+                                                               UnsupportedTypeException {
         switch (f.getType()) {
             case Types.BIGINT:
                 return Long.toString(f.getField().getLong(object));
@@ -291,43 +353,54 @@ class Query implements IQuery {
                 var str = (String) f.getField().get(object);
                 return str != null ? sqlStringValue(str) : null;
             default:
-                throw new DbaException("Unsupported SQL types: " + f.getType() + ".");
+                throw new UnsupportedTypeException("Sql type " + f.getType() + " is not supported.");
         }
     }
 
-    private <T> boolean hasTableName(MetaTable<T> meta, DatabaseMetaData dbMeta) throws SQLException {
+    private <T> boolean hasTableName(MetaTable<T> meta,
+                                     DatabaseMetaData dbMeta) throws SQLException {
         try (var rs = dbMeta.getTables("", "", meta.getName(), null)) {
             return rs.next();
         }
     }
 
-    private <T> boolean isPrimaryKey(MetaField f, MetaTable<T> table) {
+    private <T> boolean isPrimaryKey(MetaField f,
+                                     MetaTable<T> table) {
         var pkn = table.getName().toLowerCase() + "id";
         return f.getField().getName().compareToIgnoreCase(pkn) == 0;
     }
 
-    private <T> T rowT(MetaTable<T> meta, ResultSet rs, IDefaultFactory<T> factory) throws SQLException {
+    private <T> T rowT(MetaTable<T> meta, ResultSet rs, IDefaultFactory<T> factory) throws SQLException,
+                                                                                           FieldInjectionException {
         @SuppressWarnings("unchecked")
         T r = factory.contruct();
         for (var f : meta.fields()) {
-            setField(f, r, rs);
+            setField(f,
+                     r,
+                     rs);
         }
         return r;
     }
 
-    private void setField(MetaField field, Object object, ResultSet rs) throws SQLException {
+    private void setField(MetaField field,
+                          Object object,
+                          ResultSet rs) throws SQLException,
+                                               FieldInjectionException {
         var f = field.getField();
         var n = field.getName();
         try {
             switch (field.getType()) {
                 case Types.BIGINT:
-                    f.setLong(object, rs.getLong(n));
+                    f.setLong(object,
+                              rs.getLong(n));
                     break;
                 case Types.INTEGER:
-                    f.setInt(object, rs.getInt(n));
+                    f.setInt(object,
+                             rs.getInt(n));
                     break;
                 case Types.DECIMAL:
-                    f.setDouble(object, rs.getDouble(n));
+                    f.setDouble(object,
+                                rs.getDouble(n));
                     break;
                 case Types.DATE:
                     var ds = rs.getString(n);
@@ -335,18 +408,22 @@ class Query implements IQuery {
                     break;
                 case Types.TIME:
                     var tm = rs.getString(n);
-                    f.set(object, tm != null ? LocalTime.parse(tm) : null);
+                    f.set(object,
+                          tm != null ? LocalTime.parse(tm) : null);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
                     var ts = rs.getString(n);
-                    f.set(object, ts != null ? ZonedDateTime.parse(ts) : null);
+                    f.set(object,
+                          ts != null ? ZonedDateTime.parse(ts) : null);
                     break;
                 case Types.CHAR:
-                    f.set(object, rs.getString(n));
+                    f.set(object,
+                          rs.getString(n));
             }
         }
-        catch (IllegalAccessException | IllegalArgumentException e) {
-            throw new NoSuchFieldError("Fail setting field '" + f.getName() + "'.");
+        catch (IllegalAccessException | IllegalArgumentException ex) {
+            throw new FieldInjectionException(f.getName(),
+                                              ex);
         }
     }
 
@@ -354,16 +431,19 @@ class Query implements IQuery {
         return "'" + raw + "'";
     }
 
-    private <T> void verifyTableColumns(MetaTable<T> meta, DatabaseMetaData dbMeta) throws SQLException,
-                                                                                           DbaException {
+    private <T> void verifyTableColumns(MetaTable<T> meta,
+                                        DatabaseMetaData dbMeta) throws SQLException,
+                                                                        MissingFieldException,
+                                                                        IllegalFieldTypeException,
+                                                                        UnsupportedTypeException {
         var m = getTableColumns(meta.getName(), dbMeta);
         for (var f : meta.fields()) {
             var type = m.get(f.getName());
             if (type == null) {
-                throw new DbaException("Field " + f.getName() + " not found in table.");
+                throw new MissingFieldException(f.getName() + " not found in table.");
             }
             else if (!equalsType(type, f.getType())) {
-                throw new DbaException("Field " + f.getName() + " has wrong type.");
+                throw new IllegalFieldTypeException(f.getName() + " has wrong type.");
             }
         }
     }

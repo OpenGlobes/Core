@@ -34,6 +34,7 @@ import com.openglobes.core.stick.ErrorCode;
 import com.openglobes.core.trader.TradingDay;
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -556,7 +557,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
         try {
             return query.select(clazz, condition, factory);
         }
-        catch (DbaException ex) {
+        catch (SQLException | DbaException ex) {
             throw new MarketDataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
                                                 ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
                                                 ex);
@@ -586,7 +587,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             query.insert(clazz,
                          object);
         }
-        catch (DbaException ex) {
+        catch (SQLException | DbaException ex) {
             throw new MarketDataSourceException(ErrorCode.DBA_INSERT_FAIL.code(),
                                                 ErrorCode.DBA_INSERT_FAIL.message(),
                                                 ex);
@@ -600,7 +601,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             query.remove(clazz,
                          Queries.equals(clazz.getField(fieldName), id));
         }
-        catch (DbaException ex) {
+        catch (SQLException | DbaException ex) {
             throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
                                                 ErrorCode.OBTAIN_CONDITION_FAIL.message(),
                                                 ex);
@@ -620,7 +621,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                          object,
                          Queries.equals(field, field.getLong(object)));
         }
-        catch (DbaException ex) {
+        catch (SQLException | DbaException ex) {
             throw new MarketDataSourceException(ErrorCode.DBA_UPDATE_FAIL.code(),
                                                 ErrorCode.DBA_UPDATE_FAIL.message() + " " + clazz.getCanonicalName(),
                                                 ex);
