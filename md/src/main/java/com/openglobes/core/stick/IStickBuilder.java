@@ -35,22 +35,22 @@ public interface IStickBuilder {
      *
      * @param tick tick.
      *
-     * @throws StickException thrown when the specified tick doesn't belong to
-     *                        this builder.
+     * @throws IllegalInstrumentIdException thrown when the specified tick
+     *                                      doesn't belong to this builder.
      */
-    void update(Tick tick) throws StickException;
+    void update(Tick tick) throws IllegalInstrumentIdException;
 
-    void addMinutes(Integer minutes) throws StickException;
+    void addMinutes(Integer minutes) throws IllegalMinutesException;
 
-    void addDays(Integer days) throws StickException;
+    void addDays(Integer days) throws IllegalDaysException;
 
-    void removeMinutes(Integer minutes) throws StickException;
+    void removeMinutes(Integer minutes) ;
 
-    void removeDays(Integer days) throws StickException;
+    void removeDays(Integer days);
 
-    Collection<Integer> getMinutes() throws StickException;
+    Collection<Integer> getMinutes();
 
-    Collection<Integer> getDays() throws StickException;
+    Collection<Integer> getDays();
 
     String getInstrumentId();
 
@@ -70,24 +70,27 @@ public interface IStickBuilder {
      * @return collection of sticks that should be emitted on the specifed
      *         minutes-of-day of days-of-year.
      *
-     * @throws StickException thrown when given parameters are invalid, or fail
-     *                        to create sticks.
+     * @throws com.openglobes.core.stick.IllegalMinutesException
+     * @throws com.openglobes.core.stick.IllegalDaysException
+     *
      */
-    Collection<Stick> build(Integer minutesOfDay, Integer daysOfyear, ZonedDateTime alignTime) throws StickException;
+    Collection<Stick> build(Integer minutesOfDay,
+                            Integer daysOfyear,
+                            ZonedDateTime alignTime) throws IllegalMinutesException,
+                                                            IllegalDaysException;
 
     /**
      * Try the build all sticks by the specified time, which is aligned on
      * minute, no matter whether now is its corresponding minute.
      * <p>
      * If current time is before the specfied align time, no stick is built.
-     * When it is the specified time, call to {@link build} method will build all
-     * sticks including those refered by this method.
+     * When it is the specified time, call to {@link build} method will build
+     * all sticks including those refered by this method.
      * <p>
      * If current time is the specified time, and the {@link build} method had
      * been called, call to the method builds sticks that are not-yet built by
-     * calling {@link build}. So sticks built by {@link build} method and
-     * this method are all sticks that can be built in the end of
-     * trading day.
+     * calling {@link build}. So sticks built by {@link build} method and this
+     * method are all sticks that can be built in the end of trading day.
      * <p>
      * The method is synchronized on {@code this} object.
      *
@@ -97,7 +100,7 @@ public interface IStickBuilder {
      * @return collection of sticks that should be emitted at the specified
      *         time.
      *
-     * @throws StickException thrown when fail building sticks.s
+     * @throws IllegalEodException thrown when fail building sticks.s
      */
-    Collection<Stick> tryBuild(ZonedDateTime endOfDayTime) throws StickException;
+    Collection<Stick> tryBuild(ZonedDateTime endOfDayTime) throws IllegalEodException;
 }

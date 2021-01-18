@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class IllegalQuantityException extends EngineException {
+public class IllegalQuantityException extends TraderException {
     
     public IllegalQuantityException(String message) {
         super(message);

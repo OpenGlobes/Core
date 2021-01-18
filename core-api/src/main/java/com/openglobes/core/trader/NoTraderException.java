@@ -16,14 +16,12 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class NoTraderException extends EngineException{
+public class NoTraderException extends TraderException{
 
     private static final long serialVersionUID = 1L;
     

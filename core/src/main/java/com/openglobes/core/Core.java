@@ -35,7 +35,7 @@ import com.openglobes.core.context.PluginContext;
 import com.openglobes.core.context.RequestContext;
 import com.openglobes.core.context.SharedContext;
 import com.openglobes.core.data.ITraderDataSource;
-import com.openglobes.core.exceptions.EngineException;
+import com.openglobes.core.trader.TraderException;
 import com.openglobes.core.interceptor.InterceptorException;
 import com.openglobes.core.interceptor.LastRequestErrorInterceptor;
 import com.openglobes.core.interceptor.LastRequestInterceptor;
@@ -108,7 +108,7 @@ public class Core implements ICore {
             while (sharedCtx.getInterceptorStack().removeInterceptor() != null) {
             }
         }
-        catch (EngineException | ConnectorException | PluginException | InterceptorException ex) {
+        catch (TraderException | ConnectorException | PluginException | InterceptorException ex) {
             throw new CoreDisposeException(ex.getMessage(),
                                            ex);
         }
@@ -204,7 +204,7 @@ public class Core implements ICore {
             engine.registerTrader(gates.size(),
                                   gatewayContext.get());
         }
-        catch (EngineException ex) {
+        catch (TraderException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -234,7 +234,7 @@ public class Core implements ICore {
             installInterceptors();
             engine.start(new Properties());
         }
-        catch (EngineException ex) {
+        catch (TraderException ex) {
             throw new CoreStartException(ex.getMessage(),
                                          ex);
         }

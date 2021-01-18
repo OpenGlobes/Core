@@ -16,8 +16,6 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineRuntimeException;
-
 /**
  *
  * @author Hongbao Chen
@@ -25,18 +23,18 @@ import com.openglobes.core.exceptions.EngineRuntimeException;
  */
 public class EngineRequestError {
 
-    private EngineRuntimeException exception;
+    private Throwable exception;
     private Request request;
     private int requestId;
 
     public EngineRequestError() {
     }
 
-    public EngineRuntimeException getException() {
+    public Throwable getException() {
         return exception;
     }
 
-    public void setException(EngineRuntimeException exception) {
+    public void setException(Throwable exception) {
         this.exception = exception;
     }
 

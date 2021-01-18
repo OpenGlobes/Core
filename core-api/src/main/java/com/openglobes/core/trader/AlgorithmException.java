@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,39 +16,26 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class AlgorithmException extends EngineException {
-
-    private static final long serialVersionUID = 32556476342283L;
-
+public class AlgorithmException extends TraderException {
+    
     public AlgorithmException(String message) {
         super(message);
     }
 
-    public AlgorithmException(String message,
-                              Throwable cause) {
-        super(message,
-              cause);
+    public AlgorithmException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public AlgorithmException(Throwable cause) {
         super(cause);
     }
 
-    public AlgorithmException(String message,
-                              Throwable cause,
-                              boolean enableSuppression,
-                              boolean writableStackTrace) {
-        super(message,
-              cause,
-              enableSuppression,
-              writableStackTrace);
+    public AlgorithmException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
-
+    
 }

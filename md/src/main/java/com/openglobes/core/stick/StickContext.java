@@ -34,7 +34,7 @@ public class StickContext extends Stick implements IStickContext {
     }
 
     @Override
-    public Stick nextStick(Long stickId) throws StickException {
+    public Stick nextStick(Long stickId) {
         try {
             var r = get(stickId, curVol -preVol);
             preVol = curVol;
@@ -46,7 +46,7 @@ public class StickContext extends Stick implements IStickContext {
     }
 
     @Override
-    public void update(Tick tick) throws StickException {
+    public void update(Tick tick)  {
         setClosePrice(tick.getPrice());
         if (getClosePrice() > getHighPrice()) {
             setHighPrice(getClosePrice());

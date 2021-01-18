@@ -16,10 +16,9 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.exceptions.EngineException;
-import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.RequestException;
+import com.openglobes.core.utils.Loggers;
 import java.util.logging.Level;
 
 /**
@@ -42,7 +41,7 @@ public class LastRequestInterceptor extends AbstractRequestInterceptor<RequestIn
                                           context.getProperties(),
                                           context.getRequestId());
         }
-        catch (EngineException | RequestException ex) {
+        catch (RequestException ex) {
             Loggers.getLogger(LastRequestInterceptor.class.getCanonicalName()).log(Level.SEVERE,
                                                                                    ex.toString(),
                                                                                    ex);

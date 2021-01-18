@@ -16,14 +16,12 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DuplicatedTraderIdException extends EngineException{
+public class DuplicatedTraderIdException extends TraderException{
     
     public DuplicatedTraderIdException(String message) {
         super(message);

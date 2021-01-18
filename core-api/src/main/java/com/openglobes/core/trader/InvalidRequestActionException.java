@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author Hongbao Chen
  */
-public class InvalidRequestActionException extends EngineException{
+public class InvalidRequestActionException extends TraderException{
     
     public InvalidRequestActionException(String message) {
         super(message);

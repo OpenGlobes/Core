@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.exceptions.ServiceStatus;
+import com.openglobes.core.ServiceStatus;
 
 /**
  *

@@ -14,34 +14,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
-
-import com.openglobes.core.exceptions.EngineException;
+package com.openglobes.core.trader;
 
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class ContractGroupingException extends EngineException{
+public class InvalidFrozenBundleException extends TraderException {
 
-    private static final long serialVersionUID = 1L;
-    
-    public ContractGroupingException(String message) {
+    public InvalidFrozenBundleException(String message) {
         super(message);
     }
 
-    public ContractGroupingException(String message, Throwable cause) {
-        super(message, cause);
+    public InvalidFrozenBundleException(String message,
+                                        Throwable cause) {
+        super(message,
+              cause);
     }
 
-    public ContractGroupingException(Throwable cause) {
+    public InvalidFrozenBundleException(Throwable cause) {
         super(cause);
     }
 
-    public ContractGroupingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public InvalidFrozenBundleException(String message,
+                                        Throwable cause,
+                                        boolean enableSuppression,
+                                        boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
     }
-    
-    
+
 }

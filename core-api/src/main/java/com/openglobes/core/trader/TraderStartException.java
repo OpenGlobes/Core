@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class TraderStartException extends EngineException{
+public class TraderStartException extends TraderException{
     
     public TraderStartException(String message) {
         super(message);

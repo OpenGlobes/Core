@@ -30,11 +30,12 @@ public interface IStickEngine {
 
     IEventSource getEventSource();
 
-    void updateTick(Tick tick) throws StickException;
-    
-    void onNotice(InstrumentMinuteNotice notice) throws StickException;
-    
-    void onNotice(InstrumentNotice notice) throws StickException;
-    
+    void updateTick(Tick tick) throws StickBuilderNotFoundException,
+                                      IllegalInstrumentIdException;
+
+    void onNotice(InstrumentMinuteNotice notice) throws PublishException;
+
+    void onNotice(InstrumentNotice notice) throws PublishException;
+
     Long nextStickId();
 }

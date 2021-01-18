@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class CountDownNotFoundException extends EngineException{
+public class CountDownNotFoundException extends TraderException{
     
     public CountDownNotFoundException(String message) {
         super(message);

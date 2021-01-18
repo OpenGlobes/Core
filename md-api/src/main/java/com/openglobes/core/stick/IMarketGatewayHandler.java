@@ -16,8 +16,8 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.exceptions.GatewayRuntimeException;
-import com.openglobes.core.exceptions.ServiceRuntimeStatus;
+import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.market.Tick;
 
 /**

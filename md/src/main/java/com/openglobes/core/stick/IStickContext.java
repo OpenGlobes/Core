@@ -25,7 +25,8 @@ import com.openglobes.core.market.Tick;
  * @since 1.0
  */
 public interface IStickContext {
-    void update(Tick tick) throws StickException;
-    
-    Stick nextStick(Long stickId) throws StickException;
+
+    void update(Tick tick);
+
+    Stick nextStick(Long stickId);
 }

@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class UnknownOrderIdException extends EngineException {
+public class UnknownOrderIdException extends TraderException {
     
     public UnknownOrderIdException(String message) {
         super(message);

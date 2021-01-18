@@ -18,7 +18,6 @@ package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.exceptions.EngineException;
 import java.util.Properties;
 
 /**
@@ -28,15 +27,17 @@ import java.util.Properties;
  */
 public interface IMarketEngine {
 
-    IEventSource getEventSource() throws EngineException;
+    IEventSource getEventSource();
 
-    void setDataSource(IMarketDataSource dataSource) throws EngineException;
+    void setDataSource(IMarketDataSource dataSource);
 
-    void registerMarket(int marketId, IMarketGateway gateway, Properties properties) throws EngineException;
+    void registerMarket(int marketId,
+                        IMarketGateway gateway,
+                        Properties properties) throws UnknownMarketIdException;
 
-    void unregisterMarket(int marketId) throws EngineException;
+    void unregisterMarket(int marketId) throws UnknownMarketIdException;
 
-    void start(Properties properties) throws EngineException;
+    void start(Properties properties) throws MarketStartException;
 
-    void stop() throws EngineException;
+    void dispose() throws MarketDisposeException;
 }

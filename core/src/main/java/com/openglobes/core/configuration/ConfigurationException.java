@@ -16,23 +16,37 @@
  */
 package com.openglobes.core.configuration;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ConfigurationException extends ServiceStatus{
+public class ConfigurationException extends Exception {
 
     private static final long serialVersionUID = 325474601128L;
-    
-    public ConfigurationException(Integer code, String msg) {
-        super(code, msg);
+
+    public ConfigurationException(String message) {
+        super(message);
     }
 
-    public ConfigurationException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public ConfigurationException(String message,
+                                  Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public ConfigurationException(Throwable cause) {
+        super(cause);
+    }
+
+    public ConfigurationException(String message,
+                                  Throwable cause,
+                                  boolean enableSuppression,
+                                  boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

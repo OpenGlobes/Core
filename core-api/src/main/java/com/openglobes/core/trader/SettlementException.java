@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class SettlementException extends EngineException {
+public class SettlementException extends TraderException {
 
     private static final long serialVersionUID = 26539049091L;
 

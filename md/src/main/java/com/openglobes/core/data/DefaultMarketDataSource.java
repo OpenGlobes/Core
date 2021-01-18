@@ -26,12 +26,13 @@ import java.sql.SQLException;
 public class DefaultMarketDataSource extends MarketDataSource {
 
     @Override
-    public IMarketDataConnection getConnection() throws MarketDataSourceException {
+    public IMarketDataConnection getConnection() throws DataException {
         try {
             return new DefaultMarketDataConnection(getSqlConnection(), this);
         }
         catch (SQLException | ClassNotFoundException ex) {
-            throw new MarketDataSourceException(1, "");
+            throw new DataException(ex.getMessage(),
+                                    ex);
         }
     }
 

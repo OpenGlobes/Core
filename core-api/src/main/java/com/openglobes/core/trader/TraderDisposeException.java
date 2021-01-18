@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class TraderDisposeException extends EngineException{
+public class TraderDisposeException extends TraderException{
     
     public TraderDisposeException(String message) {
         super(message);

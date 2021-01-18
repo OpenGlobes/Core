@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class MoneyOverflowException extends EngineException {
+public class MoneyOverflowException extends TraderException {
     
     public MoneyOverflowException(String message) {
         super(message);

@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.configuration;
 
-import com.openglobes.core.ErrorCode;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
@@ -36,8 +35,7 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(reader));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
     }
@@ -48,8 +46,7 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(stream));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
     }
@@ -60,8 +57,7 @@ public class XmlConfiguration {
             return clazz.cast(content.createUnmarshaller().unmarshal(new ByteArrayInputStream(xml.getBytes())));
         }
         catch (JAXBException ex) {
-            throw new ConfigurationException(ErrorCode.CORE_CONFIG_PARSE_FAIL.code(),
-                                             ErrorCode.CORE_CONFIG_PARSE_FAIL.message(),
+            throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
     }

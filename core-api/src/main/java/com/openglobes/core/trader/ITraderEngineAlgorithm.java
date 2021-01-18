@@ -28,18 +28,46 @@ import java.util.Properties;
  * @since 1.0
  */
 public interface ITraderEngineAlgorithm {
-    
-    void setProperties(Properties properties) throws AlgorithmException;
 
-    Account getAccount(Account pre, Collection<Deposit> deposits, Collection<Withdraw> withdraws, Collection<Position> positions) throws AlgorithmException;
+    void setProperties(Properties properties);
 
-    Collection<Position> getPositions(Collection<Contract> contracts, Collection<Commission> commissions, Collection<Margin> margins, Map<String, SettlementPrice> prices, Map<String, Instrument> instruments, LocalDate tradingDay) throws AlgorithmException;
+    Account getAccount(Account pre,
+                       Collection<Deposit> deposits,
+                       Collection<Withdraw> withdraws,
+                       Collection<Position> positions) throws InvalidAmountException;
 
-    Order getOrder(Request request, Collection<Contract> contracts, Collection<Trade> trades, Collection<Response> responses) throws AlgorithmException;
+    Collection<Position> getPositions(Collection<Contract> contracts,
+                                      Collection<Commission> commissions,
+                                      Collection<Margin> margins,
+                                      Map<String, SettlementPrice> prices,
+                                      Map<String, Instrument> instruments,
+                                      LocalDate tradingDay) throws InvalidContractDirectionException,
+                                                                   IllegalInstrumentIdException,
+                                                                   InvalidContractIdException,
+                                                                   MarginNotFoundException,
+                                                                   CommissionNotFoundException,
+                                                                   SettlementNotFoundException,
+                                                                   InvalidSettlementPriceException,
+                                                                   InstrumentNotFoundException,
+                                                                   InvalidContractStatusException,
+                                                                   IllegalContractStatusException,
+                                                                   IllegalFeeStatusException,
+                                                                   InvalidCommissionException;
 
-    double getAmount(double price, Instrument instrument) throws AlgorithmException;
+    Order getOrder(Request request,
+                   Collection<Contract> contracts,
+                   Collection<Trade> trades,
+                   Collection<Response> responses) throws IllegalContractException,
+                                                          QuantityOverflowException;
 
-    double getMargin(double price, Instrument instrument) throws AlgorithmException;
+    double getAmount(double price,
+                     Instrument instrument);
 
-    double getCommission(double price, Instrument instrument, Integer direction, Integer offset) throws AlgorithmException;
+    double getMargin(double price,
+                     Instrument instrument);
+
+    double getCommission(double price,
+                         Instrument instrument,
+                         Integer direction,
+                         Integer offset);
 }

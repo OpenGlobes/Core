@@ -1,6 +1,6 @@
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.GatewayException;
+import com.openglobes.core.GatewayException;
 import java.util.Properties;
 
 /**

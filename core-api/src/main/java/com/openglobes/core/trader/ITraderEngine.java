@@ -16,10 +16,9 @@
  */
 package com.openglobes.core.trader;
 
+import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.exceptions.EngineException;
-import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -31,7 +30,7 @@ import java.util.Properties;
  */
 public interface ITraderEngine {
 
-    void enableTrader(int traderId, boolean enabled) throws EngineException;
+    void enableTrader(int traderId, boolean enabled) throws UnknownTraderIdException;
 
     ITraderEngineAlgorithm getAlgorithm();
 
@@ -43,17 +42,17 @@ public interface ITraderEngine {
 
     IEventSource getEventSource();
 
-    Instrument getRelatedInstrument(String instrumentId) throws EngineException;
+    Instrument getRelatedInstrument(String instrumentId);
 
     ServiceRuntimeStatus getStatus();
 
-    TraderGatewayContext getTraderGatewayContext(int traderId) throws EngineException;
+    TraderGatewayContext getTraderGatewayContext(int traderId) throws UnknownTraderIdException;
 
-    Collection<TraderGatewayContext> getTraderGatewayContexts() throws EngineException;
+    Collection<TraderGatewayContext> getTraderGatewayContexts();
 
-    void settle(Properties properties) throws EngineException;
+    void settle(Properties properties) throws SettlementException;
 
-    void renew(Properties properties) throws EngineException;
+    void renew(Properties properties) throws TraderRenewException;
 
     void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException;
 
@@ -69,6 +68,6 @@ public interface ITraderEngine {
 
     void dispose() throws TraderDisposeException;
 
-    void unregisterTrader(int traderId) throws EngineException;
+    void unregisterTrader(int traderId) throws TraderException;
 
 }

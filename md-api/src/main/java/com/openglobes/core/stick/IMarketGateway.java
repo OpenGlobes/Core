@@ -16,7 +16,7 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.exceptions.GatewayException;
+import com.openglobes.core.GatewayException;
 import java.util.Properties;
 
 /**
@@ -29,7 +29,7 @@ public interface IMarketGateway {
     void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
 
     void stop() throws GatewayException;
-    
+
     void subscribe(String instrumentId) throws GatewayException;
 
     int getStatus();

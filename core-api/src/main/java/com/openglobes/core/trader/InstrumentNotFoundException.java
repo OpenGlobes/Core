@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author Hongbao Chen
  */
-public class InstrumentNotFoundException extends EngineException{
+public class InstrumentNotFoundException extends TraderException{
     
     public InstrumentNotFoundException(String message) {
         super(message);

@@ -14,42 +14,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.data;
-
-import com.openglobes.core.exceptions.EngineException;
+package com.openglobes.core.trader;
 
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class AccountInitializationException extends EngineException{
+public class InvalidDataSourceException extends TraderException {
 
-    private static final long serialVersionUID = 1L;
-    
-    public AccountInitializationException(String message) {
+    public InvalidDataSourceException(String message) {
         super(message);
     }
 
-    public AccountInitializationException(String message,
-                                          Throwable cause) {
-        super(message, 
+    public InvalidDataSourceException(String message,
+                                      Throwable cause) {
+        super(message,
               cause);
     }
 
-    public AccountInitializationException(Throwable cause) {
+    public InvalidDataSourceException(Throwable cause) {
         super(cause);
     }
 
-    public AccountInitializationException(String message, 
-                                          Throwable cause, 
-                                          boolean enableSuppression, 
-                                          boolean writableStackTrace) {
-        super(message, 
-              cause, 
+    public InvalidDataSourceException(String message,
+                                      Throwable cause,
+                                      boolean enableSuppression,
+                                      boolean writableStackTrace) {
+        super(message,
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
 
 }

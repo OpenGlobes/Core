@@ -30,7 +30,6 @@ import com.openglobes.core.market.InstrumentTime;
 import com.openglobes.core.market.WorkdayTime;
 import com.openglobes.core.market.WorkdayTimePair;
 import com.openglobes.core.market.WorkdayTimeSet;
-import com.openglobes.core.stick.ErrorCode;
 import com.openglobes.core.trader.TradingDay;
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -54,115 +53,91 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     }
 
     @Override
-    public void addHolidayTime(HolidayTime time) throws MarketDataSourceException {
+    public void addHolidayTime(HolidayTime time) throws DataInsertionException {
         callInsert(HolidayTime.class, time);
     }
 
     @Override
-    public void addHolidayTimeSet(HolidayTimeSet set) throws MarketDataSourceException {
+    public void addHolidayTimeSet(HolidayTimeSet set) throws DataInsertionException {
         callInsert(HolidayTimeSet.class, set);
     }
 
     @Override
-    public void addInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException {
+    public void addInstrumentStickSetting(InstrumentStickSetting setting) throws DataInsertionException {
         callInsert(InstrumentStickSetting.class, setting);
     }
 
     @Override
-    public void addInstrumentTime(InstrumentTime time) throws MarketDataSourceException {
+    public void addInstrumentTime(InstrumentTime time) throws DataInsertionException {
         callInsert(InstrumentTime.class, time);
     }
 
     @Override
-    public void addWorkdayTime(WorkdayTime time) throws MarketDataSourceException {
+    public void addWorkdayTime(WorkdayTime time) throws DataInsertionException {
         callInsert(WorkdayTime.class, time);
     }
 
     @Override
-    public void addWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException {
+    public void addWorkdayTimeSet(WorkdayTimeSet set) throws DataInsertionException {
         callInsert(WorkdayTimeSet.class, set);
     }
 
     @Override
-    public HolidayTime getHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException {
+    public HolidayTime getHolidayTimeById(Long holidayTimeId) throws DataQueryException {
         try {
             return callGetSingle(HolidayTime.class,
                                  Queries.equals(HolidayTime.class.getField("holidayTimeId"),
                                                 holidayTimeId),
                                  HolidayTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws MarketDataSourceException {
+    public HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws DataQueryException {
         try {
             return callGetSingle(HolidayTimeSet.class,
                                  Queries.equals(HolidayTimeSet.class.getField("holidayTimeSetId"),
                                                 holidayTimeSetId),
                                  HolidayTimeSet::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<HolidayTimeSet> getHolidayTimeSets() throws MarketDataSourceException {
+    public Collection<HolidayTimeSet> getHolidayTimeSets() throws DataQueryException {
         try {
             return callGetMany(HolidayTimeSet.class,
                                Queries.isNotNull(HolidayTimeSet.class.getDeclaredField("holidayTimeSetId")),
                                HolidayTimeSet::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<HolidayTime> getHolidayTimes() throws MarketDataSourceException {
+    public Collection<HolidayTime> getHolidayTimes() throws DataQueryException {
         try {
             return callGetMany(HolidayTime.class,
                                Queries.isNotNull(HolidayTime.class.getDeclaredField("holidayTimeId")),
                                HolidayTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws MarketDataSourceException {
+    public Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(HolidayTimePair.class,
                                 Queries.equals(HolidayTimePair.class.getField("holidayTimeSetId"),
@@ -177,215 +152,149 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             }
             return r;
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException {
+    public InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws DataQueryException {
         try {
             return callGetSingle(InstrumentStickSetting.class,
                                  Queries.equals(InstrumentStickSetting.class.getField("instrumentStickSettingId"),
                                                 instrumentStickSettingId),
                                  InstrumentStickSetting::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<InstrumentStickSetting> getInstrumentStickSettingByInstrumentId(String instrumentId) throws MarketDataSourceException {
+    public Collection<InstrumentStickSetting> getInstrumentStickSettingByInstrumentId(String instrumentId) throws DataQueryException {
         try {
             return callGetMany(InstrumentStickSetting.class,
                                Queries.equals(InstrumentStickSetting.class.getDeclaredField("instrumentId"),
                                               instrumentId),
                                InstrumentStickSetting::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<InstrumentStickSetting> getInstrumentStickSettings() throws MarketDataSourceException {
+    public Collection<InstrumentStickSetting> getInstrumentStickSettings() throws DataQueryException {
         try {
             return callGetMany(InstrumentStickSetting.class,
                                Queries.isNotNull(InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId")),
                                InstrumentStickSetting::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public InstrumentTime getInstrumentTimeByInstrumentId(String instrumentId) throws MarketDataSourceException {
+    public InstrumentTime getInstrumentTimeByInstrumentId(String instrumentId) throws DataQueryException {
         try {
             return callGetSingle(InstrumentTime.class,
                                  Queries.equals(InstrumentTime.class.getField("instrumentId"),
                                                 instrumentId),
                                  InstrumentTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<InstrumentTime> getInstrumentTimes() throws MarketDataSourceException {
+    public Collection<InstrumentTime> getInstrumentTimes() throws DataQueryException {
         try {
             return callGetMany(InstrumentTime.class,
                                Queries.isNotNull(InstrumentTime.class.getDeclaredField("instrumentTimeId")),
                                InstrumentTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public TradingDay getTradingDay() throws MarketDataSourceException {
+    public TradingDay getTradingDay() throws DataQueryException {
         try {
             return callGetSingle(TradingDay.class,
                                  Queries.isNotNull(TradingDay.class.getDeclaredField("tradingDayId")),
                                  TradingDay::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public WorkdayTime getWorkdayTimeById(Long workdayTimeId) throws MarketDataSourceException {
+    public WorkdayTime getWorkdayTimeById(Long workdayTimeId) throws DataQueryException {
         try {
             return callGetSingle(WorkdayTime.class,
                                  Queries.equals(WorkdayTime.class.getDeclaredField("workdayTimeId"),
                                                 workdayTimeId),
                                  WorkdayTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public WorkdayTimeSet getWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException {
+    public WorkdayTimeSet getWorkdayTimeSetById(Long workdayTimeSetId) throws DataQueryException {
         try {
             return callGetSingle(WorkdayTimeSet.class,
                                  Queries.equals(WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId"),
                                                 workdayTimeSetId),
                                  WorkdayTimeSet::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<WorkdayTimeSet> getWorkdayTimeSets() throws MarketDataSourceException {
+    public Collection<WorkdayTimeSet> getWorkdayTimeSets() throws DataQueryException {
         try {
             return callGetMany(WorkdayTimeSet.class,
                                Queries.isNotNull(WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId")),
                                WorkdayTimeSet::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<WorkdayTime> getWorkdayTimes() throws MarketDataSourceException {
+    public Collection<WorkdayTime> getWorkdayTimes() throws DataQueryException {
         try {
             return callGetMany(WorkdayTime.class,
                                Queries.isNotNull(WorkdayTime.class.getDeclaredField("workdayTimeId")),
                                WorkdayTime::new);
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws MarketDataSourceException {
+    public Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(WorkdayTimePair.class,
                                 Queries.equals(WorkdayTimePair.class.getField("workdayTimeSetId"),
@@ -394,242 +303,217 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             var r = new HashSet<WorkdayTime>(16);
             for (var p : pairs) {
                 r.add(callGetSingle(WorkdayTime.class,
-                                    Queries.equals(WorkdayTime.class.getDeclaredField("workdayTimeId"), p.getWorkdayTimeId()),
+                                    Queries.equals(WorkdayTime.class.getDeclaredField("workdayTimeId"),
+                                                   p.getWorkdayTimeId()),
                                     WorkdayTime::new));
             }
             return r;
         }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
-        }
-        catch (DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
+        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+            throw new DataQueryException(ex.getMessage(),
+                                         ex);
         }
     }
 
     @Override
-    public void removeHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException {
+    public void removeHolidayTimeById(Long holidayTimeId) throws DataRemovalException {
         callRemove(HolidayTime.class,
                    "holidayTimeId",
                    holidayTimeId);
     }
 
     @Override
-    public void removeHolidayTimeSetById(Long holidayTimeSetId) throws MarketDataSourceException {
+    public void removeHolidayTimeSetById(Long holidayTimeSetId) throws DataRemovalException {
         callRemove(HolidayTimeSet.class,
                    "holidayTimeSetId",
                    holidayTimeSetId);
     }
 
     @Override
-    public void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException {
+    public void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws DataRemovalException {
         callRemove(InstrumentStickSetting.class,
                    "instrumentStickSettingId",
                    instrumentStickSettingId);
     }
 
     @Override
-    public void removeInstrumentTimeById(Long instrumentTimeId) throws MarketDataSourceException {
+    public void removeInstrumentTimeById(Long instrumentTimeId) throws DataRemovalException {
         callRemove(InstrumentTime.class,
                    "instrumentTimeId",
                    instrumentTimeId);
     }
 
     @Override
-    public void removeWorkdayTimeById(Long workdayTimeId) throws MarketDataSourceException {
+    public void removeWorkdayTimeById(Long workdayTimeId) throws DataRemovalException {
         callRemove(WorkdayTime.class,
                    "workdayTimeId",
                    workdayTimeId);
     }
 
     @Override
-    public void removeWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException {
+    public void removeWorkdayTimeSetById(Long workdayTimeSetId) throws DataRemovalException {
         callRemove(WorkdayTimeSet.class,
                    "workdayTimeSetId",
                    workdayTimeSetId);
     }
 
     @Override
-    public void updateHolidayTime(HolidayTime time) throws MarketDataSourceException {
+    public void updateHolidayTime(HolidayTime time) throws DataUpdateException {
         try {
             callUpdate(HolidayTime.class,
                        time,
                        HolidayTime.class.getDeclaredField("holidayTimeId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateHolidayTimeSet(HolidayTimeSet set) throws MarketDataSourceException {
+    public void updateHolidayTimeSet(HolidayTimeSet set) throws DataUpdateException {
         try {
             callUpdate(HolidayTimeSet.class,
                        set,
                        HolidayTimeSet.class.getDeclaredField("holidayTimeSetId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException {
+    public void updateInstrumentStickSetting(InstrumentStickSetting setting) throws DataUpdateException {
         try {
             callUpdate(InstrumentStickSetting.class,
                        setting,
                        InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateInstrumentTime(InstrumentTime time) throws MarketDataSourceException {
+    public void updateInstrumentTime(InstrumentTime time) throws DataUpdateException {
         try {
             callUpdate(InstrumentTime.class,
                        time,
                        InstrumentTime.class.getDeclaredField("instrumentTimeId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateTradingDay(TradingDay tradingDay) throws MarketDataSourceException {
+    public void updateTradingDay(TradingDay tradingDay) throws DataUpdateException {
         try {
             callUpdate(TradingDay.class,
                        tradingDay,
                        TradingDay.class.getDeclaredField("tradingDayId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateWorkdayTime(WorkdayTime time) throws MarketDataSourceException {
+    public void updateWorkdayTime(WorkdayTime time) throws DataUpdateException {
         try {
             callUpdate(WorkdayTime.class,
                        time,
                        WorkdayTime.class.getDeclaredField("workdayTimeId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     @Override
-    public void updateWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException {
+    public void updateWorkdayTimeSet(WorkdayTimeSet set) throws DataUpdateException {
         try {
             callUpdate(WorkdayTimeSet.class,
                        set,
                        WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId"));
         }
         catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+            throw new DataUpdateException(ex.getMessage(),
+                                          ex);
         }
     }
 
     private <T> Collection<T> callGetMany(Class<T> clazz,
                                           ICondition<?> condition,
-                                          IDefaultFactory<T> factory) throws MarketDataSourceException {
+                                          IDefaultFactory<T> factory) throws DataQueryException {
         try {
-            return query.select(clazz, condition, factory);
+            return query.select(clazz,
+                                condition,
+                                factory);
         }
         catch (SQLException | DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.DBA_SELECT_FAIL.code(),
-                                                ErrorCode.DBA_SELECT_FAIL.message() + " " + clazz.getCanonicalName(),
-                                                ex);
+            throw new DataQueryException(clazz.getCanonicalName(),
+                                         ex);
         }
     }
 
     private <T> T callGetSingle(Class<T> clazz,
                                 ICondition<?> condition,
-                                IDefaultFactory<T> factory) throws MarketDataSourceException {
-        var c = callGetMany(clazz, condition, factory);
+                                IDefaultFactory<T> factory) throws InvalidQueryResultException,
+                                                                   DataQueryException {
+        Collection<T> c = callGetMany(clazz,
+                                      condition,
+                                      factory);
         if (c.size() > 1) {
-            throw new MarketDataSourceException(
-                    ErrorCode.MORE_ROWS_THAN_EXPECTED.code(),
-                    ErrorCode.MORE_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+            throw new InvalidQueryResultException(clazz.getCanonicalName());
         }
         if (c.isEmpty()) {
-            throw new MarketDataSourceException(
-                    ErrorCode.LESS_ROWS_THAN_EXPECTED.code(),
-                    ErrorCode.LESS_ROWS_THAN_EXPECTED.message() + " " + clazz.getCanonicalName());
+            throw new InvalidQueryResultException(clazz.getCanonicalName() + " has empty query result.");
         }
         return c.iterator().next();
     }
 
     private <T> void callInsert(Class<T> clazz,
-                                T object) throws MarketDataSourceException {
+                                T object) throws DataInsertionException {
         try {
             query.insert(clazz,
                          object);
         }
         catch (SQLException | DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.DBA_INSERT_FAIL.code(),
-                                                ErrorCode.DBA_INSERT_FAIL.message(),
-                                                ex);
+            throw new DataInsertionException(clazz.getCanonicalName(),
+                                             ex);
         }
     }
 
     private <T, V> void callRemove(Class<T> clazz,
                                    String fieldName,
-                                   V id) throws MarketDataSourceException {
+                                   V id) throws DataRemovalException {
         try {
             query.remove(clazz,
                          Queries.equals(clazz.getField(fieldName), id));
         }
-        catch (SQLException | DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.OBTAIN_CONDITION_FAIL.code(),
-                                                ErrorCode.OBTAIN_CONDITION_FAIL.message(),
-                                                ex);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+        catch (NoSuchFieldException | SecurityException | SQLException | DbaException ex) {
+            throw new DataRemovalException(clazz.getCanonicalName(),
+                                           ex);
         }
     }
 
     private <T> void callUpdate(Class<T> clazz,
                                 T object,
-                                Field field) throws MarketDataSourceException {
+                                Field field) throws DataUpdateException {
         try {
             query.update(clazz,
                          object,
                          Queries.equals(field, field.getLong(object)));
         }
-        catch (SQLException | DbaException ex) {
-            throw new MarketDataSourceException(ErrorCode.DBA_UPDATE_FAIL.code(),
-                                                ErrorCode.DBA_UPDATE_FAIL.message() + " " + clazz.getCanonicalName(),
-                                                ex);
-        }
-        catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new MarketDataSourceException(ErrorCode.REFLECTION_FAIL.code(),
-                                                ErrorCode.REFLECTION_FAIL.message(),
-                                                ex);
+        catch (IllegalArgumentException | IllegalAccessException | SQLException | DbaException ex) {
+            throw new DataUpdateException(clazz.getCanonicalName(),
+                                          ex);
         }
     }
 

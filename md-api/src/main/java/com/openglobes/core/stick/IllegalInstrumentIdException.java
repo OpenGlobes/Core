@@ -16,23 +16,34 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class StickException extends ServiceStatus {
+public class IllegalInstrumentIdException extends StickException {
 
-    private static final long serialVersionUID = 3142873555422901L;
-    
-    public StickException(Integer code, String msg) {
-        super(code, msg);
+    public IllegalInstrumentIdException(String message) {
+        super(message);
     }
 
-    public StickException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public IllegalInstrumentIdException(String message,
+                                        Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public IllegalInstrumentIdException(Throwable cause) {
+        super(cause);
+    }
+
+    public IllegalInstrumentIdException(String message,
+                                        Throwable cause,
+                                        boolean enableSuppression,
+                                        boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

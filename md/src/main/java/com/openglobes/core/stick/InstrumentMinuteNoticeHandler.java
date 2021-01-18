@@ -42,7 +42,7 @@ public class InstrumentMinuteNoticeHandler implements IEventHandler<InstrumentMi
         try {
             eg.onNotice(event.get());
         }
-        catch (StickException ex) {
+        catch (PublishException ex) {
             Loggers.getLogger(InstrumentMinuteNoticeHandler.class.getCanonicalName()).log(Level.SEVERE, 
                                                                                           ex.toString(),
                                                                                           ex);

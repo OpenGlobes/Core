@@ -16,20 +16,16 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.ErrorCode;
+import com.openglobes.core.GatewayException;
+import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.DataException;
 import com.openglobes.core.data.DataInsertionException;
 import com.openglobes.core.data.DataQueryException;
 import com.openglobes.core.data.DataRemovalException;
-import com.openglobes.core.data.DataSourceException;
 import com.openglobes.core.data.DataUpdateException;
 import com.openglobes.core.data.ITraderDataConnection;
 import com.openglobes.core.data.ITraderDataSource;
-import com.openglobes.core.exceptions.EngineException;
-import com.openglobes.core.exceptions.EngineRuntimeException;
-import com.openglobes.core.exceptions.GatewayException;
-import com.openglobes.core.exceptions.GatewayRuntimeException;
-import com.openglobes.core.exceptions.ServiceRuntimeStatus;
 import com.openglobes.core.utils.Utils;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -88,18 +84,13 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             }
             callOnResponse(response);
         }
-        catch (DataSourceException ex) {
-            callOnException(new EngineRuntimeException(ErrorCode.DS_FAILURE_UNFIXABLE.code(),
-                                                       "Fail saving response to data source.",
+        catch (DataException ex) {
+            callOnException(new TraderRuntimeException("Fail saving response to data source.",
                                                        ex));
         }
-        catch (EngineException ex) {
-            callOnException(new EngineRuntimeException(ErrorCode.PREPROCESS_RESPONSE_FAIL.code(),
-                                                       ErrorCode.PREPROCESS_RESPONSE_FAIL.message(),
+        catch (SQLException | ClassNotFoundException | TraderException ex) {
+            callOnException(new TraderRuntimeException(ex.getMessage(),
                                                        ex));
-        }
-        catch (SQLException | ClassNotFoundException | DataInsertionException ex) {
-            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -117,16 +108,15 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             }
             callOnTrade(trade);
         }
-        catch (EngineException ex) {
-            callOnException(new EngineRuntimeException(ErrorCode.PREPROCESS_TRADE_FAIL.code(),
-                                                       ErrorCode.PREPROCESS_TRADE_FAIL.message(),
+        catch (TraderException ex) {
+            callOnException(new TraderRuntimeException(ex.getMessage(),
                                                        ex));
         }
     }
 
-    private void callOnException(EngineRuntimeException e) {
+    private void callOnException(TraderRuntimeException e) {
         try {
-            onException(new GatewayRuntimeException(e.getCode(),
+            onException(new GatewayRuntimeException(0,
                                                     e.getMessage(),
                                                     e));
         }
@@ -142,54 +132,22 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         publishEvent(Trade.class, trade);
     }
 
-    private void checkCommissionsNull(Collection<Commission> cs) {
-        if (cs == null) {
-            throw new GatewayRuntimeException(ErrorCode.COMMISSION_NULL.code(),
-                                              ErrorCode.COMMISSION_NULL.message());
-        }
-    }
-
-    private void checkContractIdNull(Long cid) {
-        if (cid == null) {
-            throw new GatewayRuntimeException(ErrorCode.CONTRACT_ID_NULL.code(),
-                                              ErrorCode.CONTRACT_ID_NULL.message());
-        }
-    }
-
-    private void checkContractNull(Contract cc) {
-        if (cc == null) {
-            throw new GatewayRuntimeException(ErrorCode.CONTRACT_NULL.code(),
-                                              ErrorCode.CONTRACT_NULL.message());
-        }
-    }
-
-    private void checkFrozenInfo(Collection<FrozenBundle> bs) {
-        bs.forEach(v -> {
+    private void checkFrozenInfo(Collection<FrozenBundle> bs) throws InvalidFrozenBundleException {
+        for (var v : bs) {
             if (v.getCommission() == null || v.getContract() == null || v.getMargin() == null) {
-                throw new GatewayRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
-                                                  ErrorCode.INCONSISTENT_FROZEN_INFO.message());
+                throw new InvalidFrozenBundleException("Invalid frozen bundle and its fields.");
             }
-        });
-    }
-
-    private void checkMarginNull(Margin n) {
-        if (n == null) {
-            throw new GatewayRuntimeException(ErrorCode.MARGIN_NULL.code(),
-                                              ErrorCode.MARGIN_NULL.message());
         }
     }
 
-    private void checkMarginsNull(Collection<Margin> cs) {
-        if (cs == null) {
-            throw new GatewayRuntimeException(ErrorCode.MARGIN_NULL.code(),
-                                              ErrorCode.MARGIN_NULL.message());
-        }
-    }
-
-    private void closeDelete(Response response, ITraderDataConnection conn) throws DataQueryException,
-                                                                                   DataUpdateException,
-                                                                                   DataRemovalException {
-        var bs = getFrozenBundles(response.getOrderId(), conn);
+    private void closeDelete(Response response,
+                             ITraderDataConnection conn) throws DataQueryException,
+                                                                DataUpdateException,
+                                                                DataRemovalException,
+                                                                InvalidFrozenBundleException,
+                                                                IllegalContractStatusException {
+        Collection<FrozenBundle> bs = getFrozenBundles(response.getOrderId(),
+                                                       conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
             if (s != ContractStatus.CLOSING) {
@@ -201,14 +159,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void closeTrade(Trade trade, ITraderDataConnection conn) throws EngineException {
-        Collection<FrozenBundle> bs;
-        try {
-            bs = getFrozenBundles(trade.getOrderId(), conn);
-        }
-        catch (DataQueryException ex) {
-            throw new EngineException(1, "");
-        }
+    private void closeTrade(Trade trade,
+                            ITraderDataConnection conn) throws DataQueryException,
+                                                               QuantityOverflowException,
+                                                               InstrumentNotFoundException,
+                                                               InvalidFrozenBundleException,
+                                                               IllegalContractStatusException {
+        Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
+                                                       conn);
         int count = 0;
         var it = bs.iterator();
         while (count < trade.getQuantity() && it.hasNext()) {
@@ -225,8 +183,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             ++count;
         }
         if (count < trade.getQuantity()) {
-            throw new EngineRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
-                                             ErrorCode.INCONSISTENT_FROZEN_INFO.message());
+            throw new QuantityOverflowException(trade.getQuantity() + ">" + count);
         }
     }
 
@@ -234,10 +191,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                            Margin margin,
                            Contract contract,
                            Trade response,
-                           ITraderDataConnection conn) throws EngineException {
-        requireStatus(commission, FeeStatus.FORZEN);
-        requireStatus(margin, FeeStatus.DEALED);
-        requireStatus(contract, ContractStatus.CLOSING);
+                           ITraderDataConnection conn) throws InstrumentNotFoundException,
+                                                              IllegalContractStatusException {
+        requireStatus(commission.getStatus(),
+                      FeeStatus.FORZEN);
+        requireStatus(margin.getStatus(),
+                      FeeStatus.DEALED);
+        requireStatus(contract.getStatus(),
+                      ContractStatus.CLOSING);
         try {
             /*
              * Update commission.
@@ -264,7 +225,12 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void dealDelete(Response response) throws DataSourceException {
+    private void dealDelete(Response response) throws RequestNotFoundException,
+                                                      InvalidRequestOffsetException,
+                                                      DataAccessException,
+                                                      InvalidFrozenBundleException,
+                                                      InvalidDataSourceException,
+                                                      IllegalContractStatusException {
         ITraderDataConnection conn = null;
         try {
             /*
@@ -278,34 +244,29 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.addResponse(response);
             var o = conn.getRequestByOrderId(response.getOrderId());
             if (o == null) {
-                throw new EngineRuntimeException(ErrorCode.ORDER_ID_NOT_FOUND.code(),
-                                                 ErrorCode.ORDER_ID_NOT_FOUND.message());
+                throw new RequestNotFoundException("Order ID: " + response.getOrderId() + ".");
             }
             var offset = o.getOffset();
             if (offset == null) {
-                throw new EngineRuntimeException(ErrorCode.OFFSET_NULL.code(),
-                                                 ErrorCode.OFFSET_NULL.message());
+                throw new InvalidRequestOffsetException("Order ID: " + o.getOrderId() + ".");
             }
             if (offset == Offset.OPEN) {
-                openDelete(response, conn);
+                openDelete(response,
+                           conn);
             }
             else {
-                closeDelete(response, conn);
+                closeDelete(response,
+                            conn);
             }
             conn.commit();
         }
-        catch (GatewayException e) {
-            rollbackAndCallHandler(conn,
-                                   e.getCode(),
-                                   e.getMessage(),
-                                   e);
-        }
-        catch (EngineRuntimeException e) {
+        catch (TraderRuntimeException e) {
             rollbackAndCallHandler(conn,
                                    e);
         }
         catch (DataException | SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
         finally {
             if (conn != null) {
@@ -318,10 +279,15 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                           Margin margin,
                           Contract contract,
                           Trade trade,
-                          ITraderDataConnection conn) throws EngineException {
-        requireStatus(commission, FeeStatus.FORZEN);
-        requireStatus(margin, FeeStatus.FORZEN);
-        requireStatus(contract, ContractStatus.OPENING);
+                          ITraderDataConnection conn) throws InstrumentNotFoundException,
+                                                             DataAccessException,
+                                                             IllegalContractStatusException {
+        requireStatus(commission.getStatus(),
+                      FeeStatus.FORZEN);
+        requireStatus(margin.getStatus(),
+                      FeeStatus.FORZEN);
+        requireStatus(contract.getStatus(),
+                      ContractStatus.OPENING);
         try {
             /*
              * Update commission.
@@ -347,11 +313,18 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.updateCommission(commission);
         }
         catch (DataUpdateException ex) {
-            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
     }
 
-    private void dealTrade(Trade trade) throws EngineException {
+    private void dealTrade(Trade trade) throws InvalidTradeOffsetException,
+                                               QuantityOverflowException,
+                                               InstrumentNotFoundException,
+                                               DataAccessException,
+                                               InvalidFrozenBundleException,
+                                               InvalidDataSourceException,
+                                               IllegalContractStatusException {
         ITraderDataConnection conn = null;
         try {
             /*
@@ -366,22 +339,17 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.addTrade(trade);
             var offset = trade.getOffset();
             if (offset == null) {
-                throw new GatewayRuntimeException(ErrorCode.OFFSET_NULL.code(),
-                                                  ErrorCode.OFFSET_NULL.message());
+                throw new InvalidTradeOffsetException("Order ID: " + trade.getOrderId() + ".");
             }
             if (Offset.OPEN == offset) {
-                openTrade(trade, conn);
+                openTrade(trade,
+                          conn);
             }
             else {
-                closeTrade(trade, conn);
+                closeTrade(trade,
+                           conn);
             }
             conn.commit();
-        }
-        catch (GatewayException e) {
-            rollbackAndCallHandler(conn,
-                                   e.getCode(),
-                                   e.getMessage(),
-                                   e);
         }
         catch (GatewayRuntimeException e) {
             rollbackAndCallHandler(conn,
@@ -390,7 +358,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                    e);
         }
         catch (SQLException | DataInsertionException | DataQueryException | ClassNotFoundException ex) {
-            Logger.getLogger(TraderGatewayHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
         finally {
             if (conn != null) {
@@ -403,8 +372,10 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                              Contract contract,
                              ITraderDataConnection conn) throws DataUpdateException,
                                                                 DataRemovalException,
-                                                                DataQueryException {
-        requireStatus(contract, ContractStatus.CLOSING);
+                                                                DataQueryException,
+                                                                IllegalContractStatusException {
+        requireStatus(contract.getStatus(),
+                      ContractStatus.CLOSING);
         contract.setStatus(ContractStatus.OPEN);
         conn.updateContract(contract);
         conn.removeCommission(commission.getCommissionId());
@@ -413,10 +384,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private void deleteOpen(Commission commission,
                             Margin margin,
                             Contract contract,
-                            ITraderDataConnection conn) throws DataRemovalException {
-        requireStatus(commission, FeeStatus.FORZEN);
-        requireStatus(margin, FeeStatus.FORZEN);
-        requireStatus(contract, ContractStatus.OPENING);
+                            ITraderDataConnection conn) throws DataRemovalException,
+                                                               IllegalContractStatusException {
+        requireStatus(commission.getStatus(),
+                      FeeStatus.FORZEN);
+        requireStatus(margin.getStatus(),
+                      FeeStatus.FORZEN);
+        requireStatus(contract.getStatus(),
+                      ContractStatus.OPENING);
         conn.removeContract(contract.getContractId());
         conn.removeCommission(commission.getCommissionId());
         conn.removeMargin(margin.getMarginId());
@@ -443,47 +418,44 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                requestId);
         }
         catch (Throwable th) {
-            callOnException(new EngineRuntimeException(ErrorCode.USER_CODE_ERROR.code(),
-                                                       ErrorCode.USER_CODE_ERROR.message(),
+            callOnException(new TraderRuntimeException(th.getMessage(),
                                                        th));
         }
     }
 
-    private ITraderDataSource getDataSource() throws GatewayException {
+    private ITraderDataSource getDataSource() throws InvalidDataSourceException {
         var ds = ctx.getEngine().getDataSource();
         if (ds == null) {
-            throw new GatewayException(ErrorCode.DATASOURCE_NULL.code(),
-                                       ErrorCode.DATASOURCE_NULL.message());
+            throw new InvalidDataSourceException("Data source null ptr.");
         }
         return ds;
     }
 
-    private Collection<FrozenBundle> getFrozenBundles(Long orderId, ITraderDataConnection conn) throws DataQueryException {
+    private Collection<FrozenBundle> getFrozenBundles(Long orderId,
+                                                      ITraderDataConnection conn) throws DataQueryException,
+                                                                                         InvalidFrozenBundleException {
         final var map = new HashMap<Long, FrozenBundle>(128);
         var ms = conn.getMarginsByOrderId(orderId);
-        checkMarginsNull(ms);
+        Objects.requireNonNull(ms);
         var cs = conn.getCommissionsByOrderId(orderId);
-        checkCommissionsNull(cs);
+        Objects.requireNonNull(cs);
         for (var c : cs) {
             var cid = c.getContractId();
-            checkContractIdNull(cid);
+            Objects.requireNonNull(cid);
             var cc = conn.getContractById(cid);
-            checkContractNull(cc);
+            Objects.requireNonNull(cc);
             var m = getMarginByContractId(cid, ms);
-            checkMarginNull(m);
+            Objects.requireNonNull(m);
             map.put(cid, new FrozenBundle(c, m, cc));
         }
         checkFrozenInfo(map.values());
         return map.values();
     }
 
-    private Instrument getInstrument(String instrumentId) throws EngineException {
+    private Instrument getInstrument(String instrumentId) throws InstrumentNotFoundException {
         var instrument = ctx.getEngine().getRelatedInstrument(instrumentId);
         if (instrument == null) {
-            throw new EngineException(
-                    ErrorCode.INSTRUMENT_NULL.code(),
-                    ErrorCode.INSTRUMENT_NULL.message() + "(Instrument ID:"
-                    + instrumentId + ")");
+            throw new InstrumentNotFoundException(instrumentId);
         }
         return instrument;
     }
@@ -497,18 +469,16 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return null;
     }
 
-    private Long getSrcId(Long destId) {
-        if (destId == null) {
-            throw new NullPointerException("Destinated ID null.");
-        }
+    private Long getSrcId(Long destId) throws SourceIdNotFoundException {
+        Objects.requireNonNull(destId, "Destinated ID null.");
         var srcId = ctx.getSourceId(destId);
         if (srcId == null) {
-            throw new NullPointerException("Source ID not found(Destinated ID:" + destId + ").");
+            throw new SourceIdNotFoundException("Source ID not found(Destinated ID:" + destId + ").");
         }
         return srcId;
     }
 
-    private Response initResponse(Request request) throws EngineException {
+    private Response initResponse(Request request) throws TraderException {
         var r = new Response();
         r.setInstrumentId(request.getInstrumentId());
         r.setOrderId(request.getOrderId());
@@ -519,8 +489,11 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     private void openDelete(Response response, ITraderDataConnection conn) throws DataQueryException,
-                                                                                  DataRemovalException {
-        var bs = getFrozenBundles(response.getOrderId(), conn);
+                                                                                  DataRemovalException,
+                                                                                  InvalidFrozenBundleException,
+                                                                                  IllegalContractStatusException {
+        Collection<FrozenBundle> bs = getFrozenBundles(response.getOrderId(),
+                                                       conn);
         for (var b : bs) {
             var s = b.getContract().getStatus();
             if (s != ContractStatus.OPENING) {
@@ -533,14 +506,21 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
     }
 
-    private void openTrade(Trade trade, ITraderDataConnection conn) throws EngineException, DataQueryException {
+    private void openTrade(Trade trade, ITraderDataConnection conn) throws DataQueryException,
+                                                                           QuantityOverflowException,
+                                                                           InstrumentNotFoundException,
+                                                                           DataAccessException,
+                                                                           InvalidFrozenBundleException,
+                                                                           IllegalContractStatusException {
         /*
          * Deal opening order.
          */
-        var bs = getFrozenBundles(trade.getOrderId(), conn);
+        Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
+                                                       conn);
         int count = 0;
         var it = bs.iterator();
-        while (count < trade.getQuantity() && it.hasNext()) {
+        while (count < trade.getQuantity()
+               && it.hasNext()) {
             var b = it.next();
             var s = b.getContract().getStatus();
             if (s != ContractStatus.OPENING) {
@@ -555,50 +535,38 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             ++count;
         }
         if (count < trade.getQuantity()) {
-            throw new EngineRuntimeException(ErrorCode.INCONSISTENT_FROZEN_INFO.code(),
-                                             ErrorCode.INCONSISTENT_FROZEN_INFO.message());
+            throw new QuantityOverflowException(trade.getQuantity() + ">" + count);
         }
     }
 
-    private void preprocess(Trade trade) throws EngineException {
-        try {
-            /*
-             * Order is deleted, so count down to zero.
-             */
-            ctx.countDown(trade.getOrderId(), trade.getQuantity());
-            trade.setOrderId(getSrcId(trade.getOrderId()));
-            trade.setTraderId(ctx.getTraderId());
-        }
-        catch (Throwable th) {
-            throw new EngineException(ErrorCode.PREPROC_RSPS_FAILED.code(),
-                                      ErrorCode.PREPROC_RSPS_FAILED.message(),
-                                      th);
-        }
+    private void preprocess(Trade trade) throws SourceIdNotFoundException {
+        /*
+         * Order is deleted, so count down to zero.
+         */
+        ctx.countDown(trade.getOrderId(),
+                      trade.getQuantity());
+        trade.setOrderId(getSrcId(trade.getOrderId()));
+        trade.setTraderId(ctx.getTraderId());
     }
 
-    private void preprocess(Response response) throws EngineException {
-        try {
-            var rest = ctx.getDownCountByDestId(response.getOrderId());
-            if (rest == null) {
-                throw new NullPointerException("Count down not found(" + response.getOrderId() + ").");
-            }
-            /*
-             * Order is deleted, so count down to zero.
-             */
-            ctx.countDown(response.getOrderId(), rest);
-            response.setOrderId(getSrcId(response.getOrderId()));
-            response.setTraderId(ctx.getTraderId());
-        }
-        catch (Throwable th) {
-            throw new EngineException(ErrorCode.PREPROC_RSPS_FAILED.code(),
-                                      ErrorCode.PREPROC_RSPS_FAILED.message(),
-                                      th);
-        }
+    private void preprocess(Response response) throws SourceIdNotFoundException {
+
+        var rest = ctx.getDownCountByDestId(response.getOrderId());
+        Objects.requireNonNull(rest,
+                               "Count down not found(Order ID: " + response.getOrderId() + ").");
+        /*
+         * Order is deleted, so count down to zero.
+         */
+        ctx.countDown(response.getOrderId(),
+                      rest);
+        response.setOrderId(getSrcId(response.getOrderId()));
+        response.setTraderId(ctx.getTraderId());
     }
 
     private <T> void publishEvent(Class<T> clazz, T object) {
         var e = (TraderEngine) ctx.getEngine();
-        e.publishEvent(clazz, object);
+        e.publishEvent(clazz,
+                       object);
     }
 
     private void publishRquestError(Request request,
@@ -607,33 +575,15 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         var r = new EngineRequestError();
         r.setRequest(request);
         r.setRequestId(requestId);
-        r.setException(new EngineRuntimeException(exception.getCode(),
-                                                  exception.getMessage(),
+        r.setException(new TraderRuntimeException(exception.getMessage(),
                                                   exception));
-        publishEvent(EngineRequestError.class, r);
+        publishEvent(EngineRequestError.class,
+                     r);
     }
 
-    private void requireStatus(Contract c, Integer s) {
-        if (!Objects.equals(c.getStatus(), s)) {
-            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_CONTRACT_STATUS.code(),
-                                              ErrorCode.INVALID_DELETING_CONTRACT_STATUS.message()
-                                              + "(Contract ID:" + c.getContractId() + ")");
-        }
-    }
-
-    private void requireStatus(Margin m, Integer s) {
-        if (!Objects.equals(m.getStatus(), s)) {
-            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_MARGIN_STATUS.code(),
-                                              ErrorCode.INVALID_DELETING_MARGIN_STATUS.message()
-                                              + "(Contract ID:" + m.getMarginId() + ")");
-        }
-    }
-
-    private void requireStatus(Commission c, Integer s) {
-        if (!Objects.equals(c.getStatus(), s)) {
-            throw new GatewayRuntimeException(ErrorCode.INVALID_DELETING_COMMISSION_STATUS.code(),
-                                              ErrorCode.INVALID_DELETING_COMMISSION_STATUS.message()
-                                              + "(Contract ID:" + c.getCommissionId() + ")");
+    private void requireStatus(Integer saw, Integer wanted) throws IllegalContractStatusException {
+        if (!Objects.equals(saw, wanted)) {
+            throw new IllegalContractStatusException("Expect " + wanted + " but " + saw + ".");
         }
     }
 
@@ -645,10 +595,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             conn.rollback();
         }
         catch (SQLException ex) {
-            callOnException(new EngineRuntimeException(
-                    ErrorCode.DS_FAILURE_UNFIXABLE.code(),
-                    ErrorCode.DS_FAILURE_UNFIXABLE.message(),
-                    ex));
+            callOnException(new TraderRuntimeException(ex.getMessage(),
+                                                       ex));
         }
     }
 
@@ -657,13 +605,12 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                         String message,
                                         Throwable th) {
         rollback(conn);
-        callOnException(new EngineRuntimeException(code,
-                                                   message,
+        callOnException(new TraderRuntimeException(message + "(" + code + ")",
                                                    th));
     }
 
     private void rollbackAndCallHandler(ITraderDataConnection conn,
-                                        EngineRuntimeException e) {
+                                        TraderRuntimeException e) {
         rollback(conn);
         callOnException(e);
     }

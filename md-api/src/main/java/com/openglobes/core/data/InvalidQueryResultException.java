@@ -16,22 +16,34 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.exceptions.ServiceStatus;
-
 /**
  *
  * @author chenh
  */
-public class MarketDataSourceException extends ServiceStatus {
+public class InvalidQueryResultException extends DataException {
 
-    private static final long serialVersionUID = 3256398000718765L;
-    
-    public MarketDataSourceException(Integer code, String msg) {
-        super(code, msg);
+    public InvalidQueryResultException(String message) {
+        super(message);
     }
 
-    public MarketDataSourceException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public InvalidQueryResultException(String message,
+                                       Throwable cause) {
+        super(message,
+              cause);
     }
-    
+
+    public InvalidQueryResultException(Throwable cause) {
+        super(cause);
+    }
+
+    public InvalidQueryResultException(String message,
+                                       Throwable cause,
+                                       boolean enableSuppression,
+                                       boolean writableStackTrace) {
+        super(message,
+              cause,
+              enableSuppression,
+              writableStackTrace);
+    }
+
 }

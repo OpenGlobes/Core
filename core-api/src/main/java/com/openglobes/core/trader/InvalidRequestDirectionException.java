@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class InvalidRequestDirectionException extends EngineException{
+public class InvalidRequestDirectionException extends TraderException{
     
     public InvalidRequestDirectionException(String message) {
         super(message);

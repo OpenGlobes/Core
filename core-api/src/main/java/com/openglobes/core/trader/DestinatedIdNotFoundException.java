@@ -16,14 +16,12 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DestinatedIdNotFoundException extends EngineException {
+public class DestinatedIdNotFoundException extends TraderException {
     
     public DestinatedIdNotFoundException(String message) {
         super(message);

@@ -16,7 +16,8 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.data.MarketDataSourceException;
+import com.openglobes.core.data.DataQueryException;
+import com.openglobes.core.data.IMarketDataConnection;
 import com.openglobes.core.market.HolidayTime;
 import com.openglobes.core.market.WorkdayTime;
 import com.openglobes.core.utils.Utils;
@@ -25,7 +26,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import com.openglobes.core.data.IMarketDataConnection;
 
 /**
  *
@@ -34,23 +34,22 @@ import com.openglobes.core.data.IMarketDataConnection;
  */
 public class TimeKeeper implements ITimeKeeper {
 
-    public static void assertTrue(Boolean x, ErrorCode exp) throws MarketDataSourceException {
-        if (!x) {
-            throw new MarketDataSourceException(exp.code(),
-                                                exp.message());
-        }
-    }
-
     public static TimeKeeper create(Long holidayTimeSetId,
                                     Long workdayTimeSetId,
-                                    IMarketDataConnection connection) throws MarketDataSourceException {
+                                    IMarketDataConnection connection) throws NoWorkdayException, 
+                                                                             NoHolidayException,
+                                                                             DataQueryException  {
         Objects.requireNonNull(connection);
         var wd = connection.getWorkdayTimesByTimeSetId(workdayTimeSetId);
         Objects.requireNonNull(wd);
-        assertTrue(!wd.isEmpty(), ErrorCode.NO_WORKDAY_TIME);
+        if (wd.isEmpty()) {
+            throw new NoWorkdayException("No workday.");
+        }
         var hd = connection.getHolidayTimesByTimeSetId(holidayTimeSetId);
         Objects.requireNonNull(hd);
-        assertTrue(!hd.isEmpty(), ErrorCode.NO_HOLIDAY_TIME);
+        if (hd.isEmpty()) {
+            throw new NoHolidayException("No holiday.");
+        }
         return new TimeKeeper(workdayTimeSetId,
                               wd,
                               holidayTimeSetId,

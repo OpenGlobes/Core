@@ -16,10 +16,9 @@
  */
 package com.openglobes.core.stick;
 
+import com.openglobes.core.data.DataException;
 import com.openglobes.core.data.IMarketDataSource;
-import com.openglobes.core.data.MarketDataSourceException;
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
@@ -51,7 +50,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                            IInstrumentNotifier,
                                            AutoCloseable {
 
-    public static InstrumentNotifier create(IMarketDataSource source) throws MarketDataSourceException {
+    public static InstrumentNotifier create(IMarketDataSource source) throws DataException {
         return new InstrumentNotifier(source);
     }
 
@@ -63,7 +62,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
 
-    private InstrumentNotifier(IMarketDataSource source) throws MarketDataSourceException {
+    private InstrumentNotifier(IMarketDataSource source) throws DataException {
         ds = source;
         evt = new EventSource();
         times = new HashMap<>(512);
@@ -120,7 +119,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                 });
             });
         }
-        catch (MarketDataSourceException ex) {
+        catch (DataException ex) {
             Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                                ex.toString(),
                                                                                ex);
@@ -128,7 +127,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     }
 
     @Override
-    public void reload() throws MarketDataSourceException {
+    public void reload() throws DataException {
         times.clear();
         try (var conn = ds.getConnection()) {
             setupTimes(conn.getInstrumentTimes());
@@ -179,7 +178,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                             });
                 set.add(time.getInstrumentId());
             }
-            catch (MarketDataSourceException ex) {
+            catch (NoHolidayException | NoWorkdayException | DataException ex) {
                 Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
                                                                                    ex.toString(),
                                                                                    ex);
@@ -198,44 +197,30 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     private void sendInstrumentMinuteNotice(String instrumentId,
                                             MinuteNotice min,
                                             LocalDate tradingDay) {
-        try {
-            evt.publish(InstrumentMinuteNotice.class,
-                        new InstrumentMinuteNotice(Utils.nextId(),
-                                                   instrumentId,
-                                                   getMinutes(),
-                                                   getMinuteOfTradingDay(instrumentId),
-                                                   min.getAlignTime(),
-                                                   ZonedDateTime.now(),
-                                                   tradingDay));
-        }
-        catch (EventException ex) {
-            Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
-                                                                               ex.toString(),
-                                                                               ex);
-        }
+        evt.publish(InstrumentMinuteNotice.class,
+                    new InstrumentMinuteNotice(Utils.nextId(),
+                                               instrumentId,
+                                               getMinutes(),
+                                               getMinuteOfTradingDay(instrumentId),
+                                               min.getAlignTime(),
+                                               ZonedDateTime.now(),
+                                               tradingDay));
     }
 
     private void sendInstrumentNotice(String instrumentId,
                                       Integer type,
                                       MinuteNotice notice,
                                       LocalDate tradingDay) {
-        try {
-            evt.publish(InstrumentNotice.class,
-                        new InstrumentNotice(Utils.nextId(),
-                                             instrumentId,
-                                             type,
-                                             notice.getAlignTime(),
-                                             ZonedDateTime.now(),
-                                             tradingDay));
-        }
-        catch (EventException ex) {
-            Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
-                                                                               ex.toString(),
-                                                                               ex);
-        }
+        evt.publish(InstrumentNotice.class,
+                    new InstrumentNotice(Utils.nextId(),
+                                         instrumentId,
+                                         type,
+                                         notice.getAlignTime(),
+                                         ZonedDateTime.now(),
+                                         tradingDay));
     }
 
-    private void setup() throws MarketDataSourceException {
+    private void setup() throws DataException {
         Collection<InstrumentTime> instruments = new HashSet<>(1);
         try (var conn = ds.getConnection()) {
             instruments = conn.getInstrumentTimes();

@@ -34,77 +34,77 @@ import java.util.Collection;
 public interface IMarketDataConnection extends AutoCloseable,
                                                IPooledConnection {
 
-    void addHolidayTime(HolidayTime time) throws MarketDataSourceException;
+    void addHolidayTime(HolidayTime time) throws DataInsertionException;
 
-    void addHolidayTimeSet(HolidayTimeSet set) throws MarketDataSourceException;
+    void addHolidayTimeSet(HolidayTimeSet set) throws DataInsertionException;
 
-    void addInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException;
+    void addInstrumentStickSetting(InstrumentStickSetting setting) throws DataInsertionException;
 
-    void addInstrumentTime(InstrumentTime time) throws MarketDataSourceException;
+    void addInstrumentTime(InstrumentTime time) throws DataInsertionException;
 
-    void addWorkdayTime(WorkdayTime time) throws MarketDataSourceException;
+    void addWorkdayTime(WorkdayTime time) throws DataInsertionException;
 
-    void addWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException;
+    void addWorkdayTimeSet(WorkdayTimeSet set) throws DataInsertionException;
 
     @Override
     void close();
 
-    HolidayTime getHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException;
+    HolidayTime getHolidayTimeById(Long holidayTimeId) throws DataQueryException;
 
-    HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws MarketDataSourceException;
+    HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws DataQueryException;
 
-    Collection<HolidayTimeSet> getHolidayTimeSets() throws MarketDataSourceException;
+    Collection<HolidayTimeSet> getHolidayTimeSets() throws DataQueryException;
 
-    Collection<HolidayTime> getHolidayTimes() throws MarketDataSourceException;
+    Collection<HolidayTime> getHolidayTimes() throws DataQueryException;
 
-    Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws MarketDataSourceException;
+    Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws DataQueryException;
 
-    InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException;
+    InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws DataQueryException;
 
-    Collection<InstrumentStickSetting> getInstrumentStickSettingByInstrumentId(String instrumentId) throws MarketDataSourceException;
+    Collection<InstrumentStickSetting> getInstrumentStickSettingByInstrumentId(String instrumentId) throws DataQueryException;
 
-    Collection<InstrumentStickSetting> getInstrumentStickSettings() throws MarketDataSourceException;
+    Collection<InstrumentStickSetting> getInstrumentStickSettings() throws DataQueryException;
 
-    InstrumentTime getInstrumentTimeByInstrumentId(String instrumentId) throws MarketDataSourceException;
+    InstrumentTime getInstrumentTimeByInstrumentId(String instrumentId) throws DataQueryException;
 
-    Collection<InstrumentTime> getInstrumentTimes() throws MarketDataSourceException;
+    Collection<InstrumentTime> getInstrumentTimes() throws DataQueryException;
 
-    TradingDay getTradingDay() throws MarketDataSourceException;
+    TradingDay getTradingDay() throws DataQueryException;
 
-    WorkdayTime getWorkdayTimeById(Long workdayTimeId) throws MarketDataSourceException;
+    WorkdayTime getWorkdayTimeById(Long workdayTimeId) throws DataQueryException;
 
-    WorkdayTimeSet getWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException;
+    WorkdayTimeSet getWorkdayTimeSetById(Long workdayTimeSetId) throws DataQueryException;
 
-    Collection<WorkdayTimeSet> getWorkdayTimeSets() throws MarketDataSourceException;
+    Collection<WorkdayTimeSet> getWorkdayTimeSets() throws DataQueryException;
 
-    Collection<WorkdayTime> getWorkdayTimes() throws MarketDataSourceException;
+    Collection<WorkdayTime> getWorkdayTimes() throws DataQueryException;
 
-    Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws MarketDataSourceException;
+    Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws DataQueryException;
 
-    void removeHolidayTimeById(Long holidayTimeId) throws MarketDataSourceException;
+    void removeHolidayTimeById(Long holidayTimeId) throws DataRemovalException;
 
-    void removeHolidayTimeSetById(Long holidayTimeSetId) throws MarketDataSourceException;
+    void removeHolidayTimeSetById(Long holidayTimeSetId) throws DataRemovalException;
 
-    void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws MarketDataSourceException;
+    void removeInstrumentStickSettingById(Long instrumentStickSettingId) throws DataRemovalException;
 
-    void removeInstrumentTimeById(Long instrumentTimeId) throws MarketDataSourceException;
+    void removeInstrumentTimeById(Long instrumentTimeId) throws DataRemovalException;
 
-    void removeWorkdayTimeById(Long workdayTimeId) throws MarketDataSourceException;
+    void removeWorkdayTimeById(Long workdayTimeId) throws DataRemovalException;
 
-    void removeWorkdayTimeSetById(Long workdayTimeSetId) throws MarketDataSourceException;
+    void removeWorkdayTimeSetById(Long workdayTimeSetId) throws DataRemovalException;
 
-    void updateHolidayTime(HolidayTime time) throws MarketDataSourceException;
+    void updateHolidayTime(HolidayTime time) throws DataUpdateException;
 
-    void updateHolidayTimeSet(HolidayTimeSet set) throws MarketDataSourceException;
+    void updateHolidayTimeSet(HolidayTimeSet set) throws DataUpdateException;
 
-    void updateInstrumentStickSetting(InstrumentStickSetting setting) throws MarketDataSourceException;
+    void updateInstrumentStickSetting(InstrumentStickSetting setting) throws DataUpdateException;
 
-    void updateInstrumentTime(InstrumentTime time) throws MarketDataSourceException;
+    void updateInstrumentTime(InstrumentTime time) throws DataUpdateException;
 
-    void updateTradingDay(TradingDay tradingDay) throws MarketDataSourceException;
+    void updateTradingDay(TradingDay tradingDay) throws DataUpdateException;
 
-    void updateWorkdayTime(WorkdayTime time) throws MarketDataSourceException;
+    void updateWorkdayTime(WorkdayTime time) throws DataUpdateException;
 
-    void updateWorkdayTimeSet(WorkdayTimeSet set) throws MarketDataSourceException;
+    void updateWorkdayTimeSet(WorkdayTimeSet set) throws DataUpdateException;
 
 }

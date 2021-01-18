@@ -17,7 +17,7 @@
 package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketDataSource;
-import com.openglobes.core.data.MarketDataSourceException;
+import com.openglobes.core.data.DataException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventSource;
@@ -43,7 +43,7 @@ import java.util.logging.Level;
 public class StickEngine implements IStickEngine, AutoCloseable {
 
     public static IStickEngine create(IMarketDataSource source) throws StickException,
-                                                                       MarketDataSourceException {
+                                                                       DataException {
         return new StickEngine(source);
     }
     private final Map<String, IStickBuilder> builders;
@@ -54,7 +54,7 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     private final IMarketDataSource src;
 
     private StickEngine(IMarketDataSource source) throws StickException,
-                                                         MarketDataSourceException {
+                                                         DataException {
         evt = new EventSource();
         src = source;
         builders = new ConcurrentHashMap<>(512);
@@ -80,57 +80,72 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     }
 
     @Override
-    public void onNotice(InstrumentMinuteNotice notice) throws StickException {
-        publishNotice(InstrumentMinuteNotice.class,
-                      notice);
-        buildAndPublish(notice.getInstrumentId(),
-                        notice.getAlignTime(),
-                        notice.getMinuteOfTradingDay(),
-                        null);
-    }
-
-    @Override
-    public void onNotice(InstrumentNotice notice) throws StickException {
-        publishNotice(InstrumentNotice.class,
-                      notice);
-        if (Notices.INSTRUMENT_END_TRADE == notice.getType()) {
-            /*
-             * Publish day sticks.
-             */
+    public void onNotice(InstrumentMinuteNotice notice) throws PublishException {
+        try {
+            publishNotice(InstrumentMinuteNotice.class,
+                          notice);
             buildAndPublish(notice.getInstrumentId(),
                             notice.getAlignTime(),
-                            null,
-                            1);
-            /*
-             * Publish sticks of other not-yet published minutes.
-             */
-            buildAndPublishOthers(notice);
+                            notice.getMinuteOfTradingDay(),
+                            null);
+        }
+        catch (MarketException ex) {
+            throw new PublishException(ex.getMessage(),
+                                       ex);
         }
     }
 
     @Override
-    public void updateTick(Tick tick) throws StickException {
+    public void onNotice(InstrumentNotice notice) throws PublishException {
+        try {
+            publishNotice(InstrumentNotice.class,
+                          notice);
+            if (Notices.INSTRUMENT_END_TRADE == notice.getType()) {
+                /*
+                 * Publish day sticks.
+                 */
+                buildAndPublish(notice.getInstrumentId(),
+                                notice.getAlignTime(),
+                                null,
+                                1);
+                /*
+                 * Publish sticks of other not-yet published minutes.
+                 */
+                buildAndPublishOthers(notice);
+            }
+        }
+        catch (MarketException ex) {
+            throw new PublishException(ex.getMessage(),
+                                       ex);
+        }
+    }
+
+    @Override
+    public void updateTick(Tick tick) throws StickBuilderNotFoundException,
+                                             IllegalInstrumentIdException {
         getBuilder(tick.getInstrumentId()).update(tick);
     }
 
     private void buildAndPublish(String instrumentId,
                                  ZonedDateTime alignTime,
                                  Integer minutes,
-                                 Integer days) throws StickException {
+                                 Integer days) throws StickBuilderNotFoundException,
+                                                      IllegalDaysException,
+                                                      IllegalMinutesException {
         publishSticks(getBuilder(instrumentId).build(minutes,
                                                      days,
                                                      alignTime));
     }
 
-    private void buildAndPublishOthers(InstrumentNotice notice) throws StickException {
+    private void buildAndPublishOthers(InstrumentNotice notice) throws StickBuilderNotFoundException,
+                                                                       IllegalEodException {
         publishSticks(getBuilder(notice.getInstrumentId()).tryBuild(notice.getAlignTime()));
     }
 
-    private IStickBuilder getBuilder(String instrumentId) throws StickException {
+    private IStickBuilder getBuilder(String instrumentId) throws StickBuilderNotFoundException {
         var b = builders.get(instrumentId);
         if (b == null) {
-            throw new StickException(ErrorCode.STICKBUILDER_NOT_FOUND.code(),
-                                     ErrorCode.STICKBUILDER_NOT_FOUND.message());
+            throw new StickBuilderNotFoundException(instrumentId);
         }
         return b;
     }
@@ -141,33 +156,19 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     }
 
     private <T> void publishNotice(Class<T> clazz, T notice) {
-        try {
-            evt.publish(clazz, notice);
-        }
-        catch (EventException ex) {
-            Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
-                                                                        ex.toString(),
-                                                                        ex);
-        }
+        evt.publish(clazz, notice);
     }
 
     private void publishSticks(Collection<Stick> ss) {
         ss.forEach(s -> {
-            try {
-                evt.publish(Stick.class, s);
-            }
-            catch (EventException ex) {
-                Loggers.getLogger(StickEngine.class.getCanonicalName()).log(Level.SEVERE,
-                                                                            ex.toString(),
-                                                                            ex);
-            }
+            evt.publish(Stick.class, s);
         });
     }
 
-    private void setup() throws StickException,
-                                MarketDataSourceException {
-        try {
-            var conn = src.getConnection();
+    private void setup() throws DataException,
+                                IllegalMinutesException,
+                                IllegalDaysException {
+        try (var conn = src.getConnection()) {
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
                                              k -> {
@@ -178,11 +179,6 @@ public class StickEngine implements IStickEngine, AutoCloseable {
             for (var b : builders.values()) {
                 b.addDays(1);
             }
-        }
-        catch (Exception ex) {
-            throw new MarketDataSourceException(ErrorCode.DATASOURCE_AUTOCLOSE_FAIL.code(),
-                                                ErrorCode.DATASOURCE_AUTOCLOSE_FAIL.message(),
-                                                ex);
         }
     }
 

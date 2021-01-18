@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class InvalidRequestOffsetException extends EngineException{
+public class InvalidRequestOffsetException extends TraderException{
     
     public InvalidRequestOffsetException(String message) {
         super(message);

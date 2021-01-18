@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,24 +14,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.trader;
 
 /**
- * Exception thrown by {@link ITraderService} with code and message.
  *
- * @author Hongbao Chen
- * @since 1.0
+ * @author chenh
  */
-public class GatewayException extends ServiceStatus {
-
-    private static final long serialVersionUID = 4875322229246237L;
-
-    public GatewayException(Integer code, String msg) {
-        super(code, msg);
+public class DeepCopyException extends TraderException {
+    
+    public DeepCopyException(String message) {
+        super(message);
     }
 
-    public GatewayException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
+    public DeepCopyException(String message, Throwable cause) {
+        super(message, cause);
     }
 
+    public DeepCopyException(Throwable cause) {
+        super(cause);
+    }
+
+    public DeepCopyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+    
 }

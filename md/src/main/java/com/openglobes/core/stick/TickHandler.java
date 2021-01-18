@@ -16,12 +16,13 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.exceptions.GatewayRuntimeException;
-import com.openglobes.core.exceptions.ServiceRuntimeStatus;
+import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.market.Tick;
 import com.openglobes.core.utils.Loggers;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -40,7 +41,7 @@ public class TickHandler implements IMarketGatewayHandler {
     @Override
     public void onException(GatewayRuntimeException ex) {
         Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
-                                                                    ex.toString(),
+                                                                    ex.getMessage(),
                                                                     ex);
     }
 
@@ -56,9 +57,9 @@ public class TickHandler implements IMarketGatewayHandler {
         try {
             eg.updateTick(tick);
         }
-        catch (StickException ex) {
+        catch (StickBuilderNotFoundException | StickException ex) {
             Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
-                                                                        ex.toString(),
+                                                                        ex.getMessage(),
                                                                         ex);
         }
     }

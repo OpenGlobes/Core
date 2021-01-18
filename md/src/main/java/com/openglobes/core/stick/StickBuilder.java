@@ -49,10 +49,9 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public void addDays(Integer days) throws StickException {
+    public void addDays(Integer days) throws IllegalDaysException {
         if (days <= 0) {
-            throw new StickException(ErrorCode.INVALID_STICK_DAYS.code(),
-                                     ErrorCode.INVALID_STICK_DAYS.message());
+            throw new IllegalDaysException(days.toString());
         }
         this.days.computeIfAbsent(days, m -> {
                               return new StickContext(days, true);
@@ -60,10 +59,9 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public void addMinutes(Integer minutes) throws StickException {
+    public void addMinutes(Integer minutes) throws IllegalMinutesException {
         if (minutes <= 0) {
-            throw new StickException(ErrorCode.INVALID_STICK_MINUTES.code(),
-                                     ErrorCode.INVALID_STICK_MINUTES.message());
+            throw new IllegalMinutesException(minutes.toString());
         }
         mins.computeIfAbsent(minutes, m -> {
                          return new StickContext(minutes, false);
@@ -73,14 +71,14 @@ public class StickBuilder implements IStickBuilder {
     @Override
     public Collection<Stick> build(Integer minutesOfDay,
                                    Integer daysOfyear,
-                                   ZonedDateTime alignTime) throws StickException {
+                                   ZonedDateTime alignTime) throws IllegalMinutesException, 
+                                                                   IllegalDaysException {
         synchronized (this) {
             try {
                 var r = new HashSet<Stick>(16);
                 if (minutesOfDay != null) {
                     if (minutesOfDay <= 0) {
-                        throw new StickException(ErrorCode.INVALID_MINUTES_OF_DAY.code(),
-                                                 ErrorCode.INVALID_MINUTES_OF_DAY.message());
+                        throw new IllegalMinutesException(minutesOfDay.toString());
                     }
                     else {
                         r.addAll(buildMinutesWithRest(minutesOfDay,
@@ -89,8 +87,7 @@ public class StickBuilder implements IStickBuilder {
                 }
                 if (daysOfyear != null) {
                     if (daysOfyear <= 0) {
-                        throw new StickException(ErrorCode.INVALID_MINUTES_OF_DAY.code(),
-                                                 ErrorCode.INVALID_MINUTES_OF_DAY.message());
+                        throw new IllegalDaysException(daysOfyear.toString());
                     }
                     else {
                         r.addAll(buildDaysWithRest(daysOfyear,
@@ -109,7 +106,7 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public Collection<Integer> getDays() throws StickException {
+    public Collection<Integer> getDays()  {
         return days.keySet();
     }
 
@@ -119,22 +116,22 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public Collection<Integer> getMinutes() throws StickException {
+    public Collection<Integer> getMinutes() {
         return mins.keySet();
     }
 
     @Override
-    public void removeDays(Integer d) throws StickException {
+    public void removeDays(Integer d) {
         days.remove(d);
     }
 
     @Override
-    public void removeMinutes(Integer minutes) throws StickException {
+    public void removeMinutes(Integer minutes) {
         mins.remove(minutes);
     }
 
     @Override
-    public Collection<Stick> tryBuild(ZonedDateTime eodTime) throws StickException {
+    public Collection<Stick> tryBuild(ZonedDateTime eodTime) throws IllegalEodException {
         synchronized (this) {
             try {
                 if (preAlign.isEqual(eodTime)) {
@@ -147,8 +144,7 @@ public class StickBuilder implements IStickBuilder {
                     /*
                      * Wield thing happens.
                      */
-                    throw new StickException(ErrorCode.WRONG_EOD_TIME.code(),
-                                             ErrorCode.WRONG_EOD_TIME.message());
+                    throw new IllegalEodException(eodTime.toString());
                 }
                 else {
                     return new HashSet<>(1);
@@ -164,23 +160,22 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public void update(Tick tick) throws StickException {
+    public void update(Tick tick) throws IllegalInstrumentIdException {
         synchronized (this) {
             if (iid == null) {
                 iid = tick.getInstrumentId();
             }
             if (!iid.equals(tick.getInstrumentId())) {
-                throw new StickException(ErrorCode.WRONG_INSTRUMENT_TICK.code(),
-                                         ErrorCode.WRONG_INSTRUMENT_TICK.message());
+                throw new IllegalInstrumentIdException("Expect " + iid + " but " + tick.getInstrumentId());
             }
-            for (var v : mins.values()) {
+            mins.values().forEach(v -> {
                 v.update(tick);
-            }
+            });
         }
     }
 
     private Collection<Stick> buildDaysWithRest(Integer daysOfYear,
-                                                ZonedDateTime alignTime) throws StickException {
+                                                ZonedDateTime alignTime)  {
         try {
             var r = new HashSet<Stick>(16);
             r.addAll(getSticks(daysOfYear,
@@ -207,7 +202,7 @@ public class StickBuilder implements IStickBuilder {
     }
 
     private Collection<Stick> buildMinutesWithRest(Integer minutesOfDay,
-                                                   ZonedDateTime alignTime) throws StickException {
+                                                   ZonedDateTime alignTime)   {
         try {
             var r = new HashSet<Stick>(16);
             r.addAll(getSticks(minutesOfDay,
@@ -234,7 +229,7 @@ public class StickBuilder implements IStickBuilder {
         }
     }
 
-    private Collection<Stick> buildRest() throws StickException {
+    private Collection<Stick> buildRest()  {
         var r = new HashSet<Stick>(16);
         r.addAll(getSticks(minOfDay,
                            mins,
@@ -250,7 +245,7 @@ public class StickBuilder implements IStickBuilder {
     private Collection<Stick> getSticks(Integer x,
                                         Map<Integer, IStickContext> sticks,
                                         boolean isDay,
-                                        boolean canDiv) throws StickException {
+                                        boolean canDiv)  {
         var r = new HashSet<Stick>(12);
         for (var e : sticks.entrySet()) {
             if (canDiv == (x % e.getKey() == 0)) {

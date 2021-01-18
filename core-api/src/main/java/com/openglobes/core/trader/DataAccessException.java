@@ -16,13 +16,11 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.exceptions.EngineException;
-
 /**
  *
  * @author chenh
  */
-public class DataAccessException extends EngineException{
+public class DataAccessException extends TraderException{
     
     public DataAccessException(String message) {
         super(message);

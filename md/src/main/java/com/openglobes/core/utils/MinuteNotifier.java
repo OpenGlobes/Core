@@ -61,17 +61,10 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
 
     @Override
     public void run() {
-        try {
-            evt.publish(MinuteNotice.class,
-                        new MinuteNotice(nid.incrementAndGet(),
-                                         Utils.getAlignByMinute(),
-                                         ZonedDateTime.now()));
-        }
-        catch (EventException ex) {
-            Loggers.getLogger(MinuteNotifier.class.getCanonicalName()).log(Level.SEVERE,
-                                                                           ex.toString(),
-                                                                           ex);
-        }
+        evt.publish(MinuteNotice.class,
+                    new MinuteNotice(nid.incrementAndGet(),
+                                     Utils.getAlignByMinute(),
+                                     ZonedDateTime.now()));
     }
 
     private static class CleanAction implements Runnable {

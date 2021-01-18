@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,39 +14,39 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.exceptions;
+package com.openglobes.core.data;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class EngineException extends Exception {
+public class DataInsertionException extends DataException{
 
-    private static final long serialVersionUID = 3421665487930276L;
-
-    public EngineException(String message) {
+    private static final long serialVersionUID = 2579287012392L;
+    
+    public DataInsertionException(String message) {
         super(message);
     }
 
-    public EngineException(String message,
-                           Throwable cause) {
+    public DataInsertionException(String message,
+                                  Throwable cause) {
         super(message,
               cause);
     }
 
-    public EngineException(Throwable cause) {
+    public DataInsertionException(Throwable cause) {
         super(cause);
     }
 
-    public EngineException(String message,
-                           Throwable cause,
-                           boolean enableSuppression,
-                           boolean writableStackTrace) {
+    public DataInsertionException(String message, 
+                                  Throwable cause, 
+                                  boolean enableSuppression,
+                                  boolean writableStackTrace) {
         super(message,
               cause,
               enableSuppression,
               writableStackTrace);
     }
-
+    
 }
