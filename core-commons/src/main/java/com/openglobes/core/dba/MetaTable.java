@@ -41,7 +41,7 @@ public class MetaTable<T> {
                                              UnsupportedFieldTypeException {
         type = clazz;
         fields = new LinkedList<>();
-        name = clazz.getSimpleName();
+        name = buildTableName(clazz.getSimpleName());
         parseFields(type);
     }
 
@@ -55,6 +55,10 @@ public class MetaTable<T> {
 
     public Class<?> getType() {
         return type;
+    }
+
+    private String buildTableName(String name) {
+        return "TABLE_" + name.toUpperCase();
     }
 
     private void parseFields(Class<T> clazz) throws IllegalFieldCharacterException,

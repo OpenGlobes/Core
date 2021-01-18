@@ -31,6 +31,7 @@ public class Request {
     private Long orderId;
     private Double price;
     private Long quantity;
+    private Long requestId;
     private String signature;
     private String tag;
     private Integer traderId;
@@ -92,6 +93,14 @@ public class Request {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
     }
 
     public String getSignature() {

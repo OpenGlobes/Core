@@ -51,15 +51,57 @@ public class DbaUtils {
         throw new UnsupportedFieldTypeException("Sql type" + semanticType + " is not supported.");
     }
 
-    public static MetaField inspectField(Field f) throws IllegalFieldCharacterException, 
+    public static Double getDouble(Field field, Object object) throws IllegalAccessException {
+        if (field.getType() == Double.class) {
+            var o = field.get(object);
+            return o != null ? (Double) o : null;
+        }
+        else if (field.getDeclaringClass() == double.class) {
+            return field.getDouble(object);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as double or Double.");
+        }
+    }
+
+    public static Integer getInt(Field field,
+                                 Object object) throws IllegalAccessException {
+        if (field.getType()== Integer.class) {
+            var o = field.get(object);
+            return o != null ? (Integer) o : null;
+        }
+        else if (field.getDeclaringClass() == int.class) {
+            return field.getInt(object);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as int or Integer.");
+        }
+    }
+
+    public static Long getLong(Field field,
+                               Object object) throws IllegalAccessException {
+        if (field.getType() == Long.class) {
+            var o = field.get(object);
+            return o != null ? (Long) o : null;
+        }
+        else if (field.getDeclaringClass() == long.class) {
+            return field.getLong(object);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as long or Long.");
+        }
+    }
+
+    public static MetaField inspectField(Field f) throws IllegalFieldCharacterException,
                                                          UnsupportedFieldTypeException {
-        com.openglobes.core.dba.MetaField info = new MetaField();
+        MetaField info = new MetaField();
         var names = split(f.getName());
+        var prefix = "FIELD_";
         if (names.size() == 1) {
-            info.setName(names.get(0).toUpperCase());
+            info.setName(prefix + names.get(0).toUpperCase());
         }
         else if (names.size() > 1) {
-            var s = names.get(0).toUpperCase();
+            var s = prefix + names.get(0).toUpperCase();
             for (int i = 1; i < names.size(); ++i) {
                 s += "_" + names.get(i).toUpperCase();
             }
@@ -83,7 +125,7 @@ public class DbaUtils {
         return r;
     }
 
-    private static int inspectType(Class<?> clazz) throws UnsupportedFieldTypeException  {
+    private static int inspectType(Class<?> clazz) throws UnsupportedFieldTypeException {
         if (clazz == Long.class || clazz == long.class) {
             return Types.BIGINT;
         }

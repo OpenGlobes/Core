@@ -18,6 +18,7 @@ package com.openglobes.core.dba;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.util.Objects;
 
 /**
  *
@@ -35,6 +36,7 @@ public class Queries {
     }
 
     public static IQuery createQuery(Connection dbConnection) {
+        Objects.requireNonNull(dbConnection);
         return new Query(dbConnection);
     }
 

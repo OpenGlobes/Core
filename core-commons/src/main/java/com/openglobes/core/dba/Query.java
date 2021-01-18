@@ -16,6 +16,8 @@
  */
 package com.openglobes.core.dba;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -56,7 +58,10 @@ class Query implements IQuery {
                                            MissingFieldException,
                                            IllegalFieldTypeException,
                                            NoPrimaryKeyException {
-        return execute(getInsertSql(findMeta(clazz), object));
+        var m = findMeta(clazz);
+        ensureTable(m);
+        return execute(getInsertSql(m,
+                                    object));
     }
 
     @Override
@@ -68,7 +73,9 @@ class Query implements IQuery {
                                                           IllegalFieldTypeException,
                                                           NoPrimaryKeyException,
                                                           NoFieldException {
-        return execute(getRemoveSql(findMeta(clazz),
+        var m = findMeta(clazz);
+        ensureTable(m);
+        return execute(getRemoveSql(m,
                                     condition));
     }
 
@@ -79,9 +86,14 @@ class Query implements IQuery {
                                                                        FieldAccessException,
                                                                        FieldInjectionException,
                                                                        UnsupportedFieldTypeException,
-                                                                       IllegalFieldCharacterException {
+                                                                       IllegalFieldCharacterException,
+                                                                       MissingFieldException,
+                                                                       IllegalFieldTypeException,
+                                                                       NoPrimaryKeyException,
+                                                                       NoFieldException {
         try {
             var m = findMeta(clazz);
+            ensureTable(m);
             return executeSelect(m,
                                  getSelectSql(m,
                                               condition),
@@ -103,7 +115,9 @@ class Query implements IQuery {
                                                           MissingFieldException,
                                                           IllegalFieldTypeException,
                                                           NoPrimaryKeyException {
-        return execute(getUpdateSql(findMeta(clazz),
+        var m = findMeta(clazz);
+        ensureTable(m);
+        return execute(getUpdateSql(m,
                                     object,
                                     condition));
     }
@@ -130,7 +144,7 @@ class Query implements IQuery {
             }
             sql += buildFieldWithKey(meta.fields().get(i), meta);
             if (!sql.contains(PRIMARY_KEY)) {
-                throw new NoPrimaryKeyException(meta.getName());
+                throw new NoPrimaryKeyException(meta.getClass().getSimpleName() + "(" + meta.getName() + ")");
             }
             return sql;
         }
@@ -168,6 +182,7 @@ class Query implements IQuery {
         String sql = "CREATE TABLE " + meta.getName() + "(";
         sql += buildFieldPairs(meta);
         sql += ")";
+        System.out.println("\n" + sql + "\n");
         execute(sql);
     }
 
@@ -248,13 +263,12 @@ class Query implements IQuery {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
         }
-        ensureTable(meta);
         var sql = "INSERT INTO " + meta.getName();
         String fields = "";
         String values = "";
-        int i = 0;
+        int i = -1;
         try {
-            while (i < meta.fields().size() - 1) {
+            while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
                 fields += f.getName() + ",";
                 values += getValue(f, object) + ",";
@@ -265,7 +279,7 @@ class Query implements IQuery {
             return sql + "(" + fields + ") VALUES (" + values + ")";
         }
         catch (IllegalArgumentException | IllegalAccessException ex) {
-            throw new FieldAccessException("Access field '" + meta.fields().get(i).getName() + "' failed.",
+            throw new FieldAccessException("Access field '" + meta.fields().get(i).getField().getName() + "' failed.",
                                            ex);
         }
     }
@@ -277,7 +291,6 @@ class Query implements IQuery {
                                                                     NoPrimaryKeyException,
                                                                     NoFieldException,
                                                                     UnsupportedFieldTypeException {
-        ensureTable(meta);
         return "DELETE FROM " + meta.getName() + " WHERE " + ((Condition<?>) condition).getSql();
     }
 
@@ -312,7 +325,6 @@ class Query implements IQuery {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
         }
-        ensureTable(meta);
         var sql = "UPDATE " + meta.getName() + " SET ";
         int i = 0;
         try {
@@ -333,24 +345,31 @@ class Query implements IQuery {
     private String getValue(MetaField f, Object object) throws IllegalArgumentException,
                                                                IllegalAccessException,
                                                                UnsupportedFieldTypeException {
+        /*
+         * Must set accessiblity to true for non-public modifier.
+         */
+        var fd = f.getField();
+        if (!isPublic(fd)) {
+            fd.setAccessible(true);
+        }
         switch (f.getType()) {
             case Types.BIGINT:
-                return Long.toString(f.getField().getLong(object));
+                return DbaUtils.getLong(fd, object) + "";
             case Types.INTEGER:
-                return Integer.toString(f.getField().getInt(object));
+                return DbaUtils.getInt(fd, object) + "";
             case Types.DECIMAL:
-                return Double.toString(f.getField().getDouble(object));
+                return DbaUtils.getDouble(fd, object) + "";
             case Types.DATE:
-                var date = (LocalDate) f.getField().get(object);
+                var date = (LocalDate) fd.get(object);
                 return date != null ? sqlStringValue(date.toString()) : null;
             case Types.TIME:
-                var time = (LocalTime) f.getField().get(object);
+                var time = (LocalTime) fd.get(object);
                 return time != null ? sqlStringValue(time.toString()) : null;
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                var timestamp = (ZonedDateTime) f.getField().get(object);
+                var timestamp = (ZonedDateTime) fd.get(object);
                 return timestamp != null ? sqlStringValue(timestamp.toString()) : null;
             case Types.CHAR:
-                var str = (String) f.getField().get(object);
+                var str = (String) fd.get(object);
                 return str != null ? sqlStringValue(str) : null;
             default:
                 throw new UnsupportedFieldTypeException("Sql type " + f.getType() + " is not supported.");
@@ -366,8 +385,12 @@ class Query implements IQuery {
 
     private <T> boolean isPrimaryKey(MetaField f,
                                      MetaTable<T> table) {
-        var pkn = table.getName().toLowerCase() + "id";
+        var pkn = table.getType().getSimpleName().toLowerCase() + "id";
         return f.getField().getName().compareToIgnoreCase(pkn) == 0;
+    }
+
+    private boolean isPublic(Field fd) {
+        return (fd.getModifiers() & Modifier.PUBLIC) != 0;
     }
 
     private <T> T rowT(MetaTable<T> meta, ResultSet rs, IDefaultFactory<T> factory) throws SQLException,

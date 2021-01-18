@@ -32,7 +32,11 @@ public interface IQuery {
                                                                 FieldAccessException,
                                                                 FieldInjectionException,
                                                                 UnsupportedFieldTypeException,
-                                                                IllegalFieldCharacterException;
+                                                                IllegalFieldCharacterException,
+                                                                MissingFieldException,
+                                                                IllegalFieldTypeException,
+                                                                NoPrimaryKeyException,
+                                                                NoFieldException;
 
     <T> int update(Class<T> clazz,
                    T object,
