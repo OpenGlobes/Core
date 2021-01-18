@@ -225,7 +225,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void unregisterTrader(int traderId) throws TraderException {
+    public void unregisterTrader(int traderId) throws UnknownTraderIdException {
         /*
          * Verify trader with specified ID exists, or throw exception.
          */

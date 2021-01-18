@@ -68,6 +68,6 @@ public interface ITraderEngine {
 
     void dispose() throws TraderDisposeException;
 
-    void unregisterTrader(int traderId) throws TraderException;
+    void unregisterTrader(int traderId) throws UnknownTraderIdException;
 
 }

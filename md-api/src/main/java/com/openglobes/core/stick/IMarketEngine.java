@@ -33,7 +33,7 @@ public interface IMarketEngine {
 
     void registerMarket(int marketId,
                         IMarketGateway gateway,
-                        Properties properties) throws UnknownMarketIdException;
+                        Properties properties) throws DuplicatedMarketIdException;
 
     void unregisterMarket(int marketId) throws UnknownMarketIdException;
 

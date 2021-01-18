@@ -79,10 +79,10 @@ public class MarketEngine implements IMarketEngine {
     @Override
     public void registerMarket(int marketId,
                                IMarketGateway gateway,
-                               Properties properties) throws UnknownMarketIdException {
+                               Properties properties) throws DuplicatedMarketIdException {
         Objects.requireNonNull(gateway);
         if (gates.containsKey(marketId)) {
-            throw new UnknownMarketIdException(Integer.toString(marketId));
+            throw new DuplicatedMarketIdException(Integer.toString(marketId));
         }
         gates.put(marketId, new MarketGatewayContext(marketId,
                                                      gateway,
