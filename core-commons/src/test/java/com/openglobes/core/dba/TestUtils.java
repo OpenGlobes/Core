@@ -30,7 +30,7 @@ public class TestUtils {
     public static Connection getDefaultConnection() {
         try {
             Class.forName("org.h2.Driver");
-            return DriverManager.getConnection("jdbc:h2:./default-db", "sa", "");
+            return DriverManager.getConnection("jdbc:h2:mem:default-db", "sa", "");
         }
         catch (SQLException | ClassNotFoundException ex) {
             return null;
