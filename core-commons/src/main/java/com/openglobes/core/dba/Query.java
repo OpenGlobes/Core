@@ -182,7 +182,6 @@ class Query implements IQuery {
         String sql = "CREATE TABLE " + meta.getName() + "(";
         sql += buildFieldPairs(meta);
         sql += ")";
-        System.out.println("\n" + sql + "\n");
         execute(sql);
     }
 
@@ -225,6 +224,10 @@ class Query implements IQuery {
             stat.execute(sql);
             return stat.getUpdateCount();
         }
+        catch (SQLException ex) {
+            throw new SQLException(ex.getMessage() + "|" + sql,
+                                   ex);
+        }
     }
 
     private <T> Collection<T> executeSelect(MetaTable<T> meta,
@@ -238,6 +241,10 @@ class Query implements IQuery {
             return convert(meta,
                            rs,
                            factory);
+        }
+        catch (SQLException ex) {
+            throw new SQLException(ex.getMessage() + "|" + sql,
+                                   ex);
         }
     }
 
@@ -326,9 +333,9 @@ class Query implements IQuery {
             throw new NoFieldException(meta.getName());
         }
         var sql = "UPDATE " + meta.getName() + " SET ";
-        int i = 0;
+        int i = -1;
         try {
-            while (i < meta.fields().size() - 1) {
+            while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
                 sql += f.getName() + "=" + getValue(f, object) + ",";
             }
@@ -414,16 +421,19 @@ class Query implements IQuery {
         try {
             switch (field.getType()) {
                 case Types.BIGINT:
-                    f.setLong(object,
-                              rs.getLong(n));
+                    DbaUtils.setLong(f, 
+                                     object,
+                                     rs.getLong(n));
                     break;
                 case Types.INTEGER:
-                    f.setInt(object,
-                             rs.getInt(n));
+                    DbaUtils.setInteger(f,
+                                        object,
+                                        rs.getInt(n));
                     break;
                 case Types.DECIMAL:
-                    f.setDouble(object,
-                                rs.getDouble(n));
+                    DbaUtils.setDouble(f, 
+                                       object, 
+                                       rs.getDouble(n));
                     break;
                 case Types.DATE:
                     var ds = rs.getString(n);

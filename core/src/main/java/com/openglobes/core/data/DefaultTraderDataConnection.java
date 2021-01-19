@@ -990,7 +990,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                                        factory),
                          DataChangeType.DELETE);
             query.remove(clazz,
-                         Queries.equals(clazz.getField(fieldName), id));
+                         Queries.equals(clazz.getDeclaredField(fieldName), id));
         }
         catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),

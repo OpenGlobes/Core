@@ -19,10 +19,8 @@ package com.openglobes.core.dba;
 import com.openglobes.core.dba.tables.EmptyTable;
 import com.openglobes.core.dba.tables.InvalidTableWithUnsupportedFieldTypes;
 import com.openglobes.core.dba.tables.InvalidTableWithoutId;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,14 +39,12 @@ public class BasicExceptionCaseTest extends Facilities {
     @Test
     @DisplayName("No field in a table.")
     public void emptyTable() {
-        Exception ex = assertThrows(NoFieldException.class,
-                                    () -> {
-                                        query().insert(EmptyTable.class,
-                                                       new EmptyTable());
-                                    },
-                                    "IQuery::insert should throw exception on am empty data object.");
-        assertTrue(true,
-                   ex.getMessage());
+        Exception ignored = assertThrows(NoFieldException.class,
+                                         () -> {
+                                             query().insert(EmptyTable.class,
+                                                            new EmptyTable());
+                                         },
+                                         "IQuery::insert should throw exception on am empty data object.");
     }
 
     @Test
@@ -56,26 +52,22 @@ public class BasicExceptionCaseTest extends Facilities {
     public void noPrimaryKey() {
         var r = new InvalidTableWithoutId();
         r.setName("UserWithoutID");
-        Exception ex = assertThrows(NoPrimaryKeyException.class,
-                                    () -> {
-                                        query().insert(InvalidTableWithoutId.class,
-                                                       r);
-                                    },
-                                    "IQuery::insert should throw exception on data object without ID.");
-        assertTrue(true,
-                   ex.getMessage());
+        Exception ignored = assertThrows(NoPrimaryKeyException.class,
+                                         () -> {
+                                             query().insert(InvalidTableWithoutId.class,
+                                                            r);
+                                         },
+                                         "IQuery::insert should throw exception on data object without ID.");
     }
 
     @Test
     @DisplayName("Null parameter.")
     public void nullParameter() {
-        Exception ex = assertThrows(Exception.class,
-                                    () -> {
-                                        Queries.createQuery(null);
-                                    },
-                                    "Method must throw exception on null parameters.");
-        assertTrue(true,
-                   ex.getMessage());
+        Exception ignored = assertThrows(Exception.class,
+                                         () -> {
+                                             Queries.createQuery(null);
+                                         },
+                                         "Method must throw exception on null parameters.");
     }
 
     @BeforeEach
@@ -92,14 +84,12 @@ public class BasicExceptionCaseTest extends Facilities {
     public void unsupportedFieldTypes() {
         var r = new InvalidTableWithUnsupportedFieldTypes();
         r.setInvalidTableWithUnsupportedFieldTypesId(System.currentTimeMillis());
-        Exception ex = assertThrows(UnsupportedFieldTypeException.class,
-                                    () -> {
-                                        query().insert(InvalidTableWithUnsupportedFieldTypes.class,
-                                                       r);
-                                    },
-                                    "IQuery::insert should throw exception on data object with supported field types.");
-        assertTrue(true,
-                   ex.getMessage());
+        Exception ignored = assertThrows(UnsupportedFieldTypeException.class,
+                                         () -> {
+                                             query().insert(InvalidTableWithUnsupportedFieldTypes.class,
+                                                            r);
+                                         },
+                                         "IQuery::insert should throw exception on data object with supported field types.");
     }
 
 }

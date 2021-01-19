@@ -149,6 +149,10 @@ class Condition<T> implements ICondition<T> {
                 return meta.getName() + " LIKE " + sqlv;
             case NOT:
                 return "NOT (" + sqlv + ")";
+            case IS_NULL:
+                return meta.getName() + " IS NULL";
+            case IS_NOT_NULL:
+                return meta.getName() + " IS NOT NULL";
         }
         throw new IllegalArgumentException("Wrong condition type " + t + ".");
     }

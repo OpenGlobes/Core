@@ -51,12 +51,13 @@ public class DbaUtils {
         throw new UnsupportedFieldTypeException("Sql type" + semanticType + " is not supported.");
     }
 
-    public static Double getDouble(Field field, Object object) throws IllegalAccessException {
+    public static Double getDouble(Field field,
+                                   Object object) throws IllegalAccessException {
         if (field.getType() == Double.class) {
             var o = field.get(object);
             return o != null ? (Double) o : null;
         }
-        else if (field.getDeclaringClass() == double.class) {
+        else if (field.getType() == double.class) {
             return field.getDouble(object);
         }
         else {
@@ -66,11 +67,11 @@ public class DbaUtils {
 
     public static Integer getInt(Field field,
                                  Object object) throws IllegalAccessException {
-        if (field.getType()== Integer.class) {
+        if (field.getType() == Integer.class) {
             var o = field.get(object);
             return o != null ? (Integer) o : null;
         }
-        else if (field.getDeclaringClass() == int.class) {
+        else if (field.getType() == int.class) {
             return field.getInt(object);
         }
         else {
@@ -84,7 +85,7 @@ public class DbaUtils {
             var o = field.get(object);
             return o != null ? (Long) o : null;
         }
-        else if (field.getDeclaringClass() == long.class) {
+        else if (field.getType() == long.class) {
             return field.getLong(object);
         }
         else {
@@ -123,6 +124,56 @@ public class DbaUtils {
             }
         }
         return r;
+    }
+
+    public static void setDouble(Field field,
+                                 Object object,
+                                 Double d) throws IllegalArgumentException, IllegalAccessException {
+        if (field.getType() == Double.class) {
+            field.set(object,
+                      d);
+        }
+        else if (field.getType() == double.class) {
+            field.setDouble(object,
+                            d);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as double or Double.");
+        }
+    }
+
+    public static void setInteger(Field field,
+                                  Object object,
+                                  Integer integer) throws IllegalArgumentException,
+                                                          IllegalAccessException {
+        if (field.getType() == Integer.class) {
+            field.set(object,
+                      integer);
+        }
+        else if (field.getType() == int.class) {
+            field.setInt(object,
+                         integer);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as int or Integer.");
+        }
+    }
+
+    public static void setLong(Field field,
+                               Object object,
+                               Long l) throws IllegalArgumentException,
+                                                 IllegalAccessException {
+        if (field.getType() == Long.class) {
+            field.set(object,
+                      l);
+        }
+        else if (field.getType() == long.class) {
+            field.setLong(object,
+                          l);
+        }
+        else {
+            throw new IllegalAccessException("Field must be declared as long or Long.");
+        }
     }
 
     private static int inspectType(Class<?> clazz) throws UnsupportedFieldTypeException {

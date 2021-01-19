@@ -17,6 +17,7 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.dba.DbaException;
+import com.openglobes.core.dba.DbaUtils;
 import com.openglobes.core.dba.ICondition;
 import com.openglobes.core.dba.IDefaultFactory;
 import com.openglobes.core.dba.IPooledDataSource;
@@ -86,7 +87,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public HolidayTime getHolidayTimeById(Long holidayTimeId) throws DataQueryException {
         try {
             return callGetSingle(HolidayTime.class,
-                                 Queries.equals(HolidayTime.class.getField("holidayTimeId"),
+                                 Queries.equals(HolidayTime.class.getDeclaredField("holidayTimeId"),
                                                 holidayTimeId),
                                  HolidayTime::new);
         }
@@ -100,7 +101,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public HolidayTimeSet getHolidayTimeSetById(Long holidayTimeSetId) throws DataQueryException {
         try {
             return callGetSingle(HolidayTimeSet.class,
-                                 Queries.equals(HolidayTimeSet.class.getField("holidayTimeSetId"),
+                                 Queries.equals(HolidayTimeSet.class.getDeclaredField("holidayTimeSetId"),
                                                 holidayTimeSetId),
                                  HolidayTimeSet::new);
         }
@@ -140,13 +141,13 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(HolidayTimePair.class,
-                                Queries.equals(HolidayTimePair.class.getField("holidayTimeSetId"),
+                                Queries.equals(HolidayTimePair.class.getDeclaredField("holidayTimeSetId"),
                                                holidayTimeSetId),
                                 HolidayTimePair::new);
             var r = new HashSet<HolidayTime>(8);
             for (var p : pairs) {
                 r.add(callGetSingle(HolidayTime.class,
-                                    Queries.equals(HolidayTime.class.getField("holidayTimeId"),
+                                    Queries.equals(HolidayTime.class.getDeclaredField("holidayTimeId"),
                                                    p.getHolidayTimeId()),
                                     HolidayTime::new));
             }
@@ -162,7 +163,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public InstrumentStickSetting getInstrumentStickSettingById(Long instrumentStickSettingId) throws DataQueryException {
         try {
             return callGetSingle(InstrumentStickSetting.class,
-                                 Queries.equals(InstrumentStickSetting.class.getField("instrumentStickSettingId"),
+                                 Queries.equals(InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId"),
                                                 instrumentStickSettingId),
                                  InstrumentStickSetting::new);
         }
@@ -203,7 +204,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public InstrumentTime getInstrumentTimeByInstrumentId(String instrumentId) throws DataQueryException {
         try {
             return callGetSingle(InstrumentTime.class,
-                                 Queries.equals(InstrumentTime.class.getField("instrumentId"),
+                                 Queries.equals(InstrumentTime.class.getDeclaredField("instrumentId"),
                                                 instrumentId),
                                  InstrumentTime::new);
         }
@@ -297,7 +298,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(WorkdayTimePair.class,
-                                Queries.equals(WorkdayTimePair.class.getField("workdayTimeSetId"),
+                                Queries.equals(WorkdayTimePair.class.getDeclaredField("workdayTimeSetId"),
                                                workdayTimeSetId),
                                 WorkdayTimePair::new);
             var r = new HashSet<WorkdayTime>(16);
@@ -495,7 +496,8 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                    V id) throws DataRemovalException {
         try {
             query.remove(clazz,
-                         Queries.equals(clazz.getField(fieldName), id));
+                         Queries.equals(clazz.getDeclaredField(fieldName),
+                                        id));
         }
         catch (NoSuchFieldException | SecurityException | SQLException | DbaException ex) {
             throw new DataRemovalException(clazz.getCanonicalName(),
@@ -509,7 +511,8 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
         try {
             query.update(clazz,
                          object,
-                         Queries.equals(field, field.getLong(object)));
+                         Queries.equals(field, 
+                                        DbaUtils.getLong(field, object)));
         }
         catch (IllegalArgumentException | IllegalAccessException | SQLException | DbaException ex) {
             throw new DataUpdateException(clazz.getCanonicalName(),
