@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -87,10 +88,30 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
     @Override
     public void ungetSqlConnection(Connection connection) throws UnknownConnectionException {
         synchronized (free) {
-            if (!free.containsKey(connection)) {
-                throw new UnknownConnectionException("Connection not found in cache.");
+            try {
+                if (!free.containsKey(connection)) {
+                    throw new UnknownConnectionException("Connection not found in cache.");
+                }
+                connection.setAutoCommit(true);
+                free.put(connection, Boolean.TRUE);
             }
-            free.put(connection, Boolean.TRUE);
+            catch (SQLException ex) {
+                /*
+                 * Close the connection if we fail restoring its auto-commit state.
+                 */
+                try {
+                    connection.close();
+                }
+                catch (SQLException se) {
+                    Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
+                            .log(Level.SEVERE,
+                                 se.getMessage() + "(" + se.getErrorCode() + ")",
+                                 se);
+                }
+                finally {
+                    free.remove(connection);
+                }
+            }
         }
     }
 
