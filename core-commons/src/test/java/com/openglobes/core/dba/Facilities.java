@@ -25,16 +25,15 @@ public class Facilities {
 
     private static IQuery query;
 
-    static {
-        query = Queries.createQuery(TestUtils.getDefaultConnection());
-    }
-
     protected void clear() {
         query = null;
         System.gc();
     }
 
-    protected IQuery query() {
+    protected synchronized IQuery query() {
+        if (query == null) {
+            query = Queries.createQuery(TestUtils.getDefaultConnection());
+        }
         return query;
     }
 }

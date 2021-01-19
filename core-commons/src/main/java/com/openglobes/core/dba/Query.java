@@ -356,9 +356,7 @@ class Query implements IQuery {
          * Must set accessiblity to true for non-public modifier.
          */
         var fd = f.getField();
-        if (!isPublic(fd)) {
-            fd.setAccessible(true);
-        }
+        DbaUtils.enableAccess(fd);
         switch (f.getType()) {
             case Types.BIGINT:
                 return DbaUtils.getLong(fd, object) + "";
@@ -396,10 +394,6 @@ class Query implements IQuery {
         return f.getField().getName().compareToIgnoreCase(pkn) == 0;
     }
 
-    private boolean isPublic(Field fd) {
-        return (fd.getModifiers() & Modifier.PUBLIC) != 0;
-    }
-
     private <T> T rowT(MetaTable<T> meta, ResultSet rs, IDefaultFactory<T> factory) throws SQLException,
                                                                                            FieldInjectionException {
         @SuppressWarnings("unchecked")
@@ -416,46 +410,47 @@ class Query implements IQuery {
                           Object object,
                           ResultSet rs) throws SQLException,
                                                FieldInjectionException {
-        var f = field.getField();
+        var fd = field.getField();
         var n = field.getName();
+        DbaUtils.enableAccess(fd);
         try {
             switch (field.getType()) {
                 case Types.BIGINT:
-                    DbaUtils.setLong(f, 
+                    DbaUtils.setLong(fd, 
                                      object,
                                      rs.getLong(n));
                     break;
                 case Types.INTEGER:
-                    DbaUtils.setInteger(f,
+                    DbaUtils.setInteger(fd,
                                         object,
                                         rs.getInt(n));
                     break;
                 case Types.DECIMAL:
-                    DbaUtils.setDouble(f, 
+                    DbaUtils.setDouble(fd, 
                                        object, 
                                        rs.getDouble(n));
                     break;
                 case Types.DATE:
                     var ds = rs.getString(n);
-                    f.set(object, ds != null ? LocalDate.parse(ds) : null);
+                    fd.set(object, ds != null ? LocalDate.parse(ds) : null);
                     break;
                 case Types.TIME:
                     var tm = rs.getString(n);
-                    f.set(object,
+                    fd.set(object,
                           tm != null ? LocalTime.parse(tm) : null);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
                     var ts = rs.getString(n);
-                    f.set(object,
+                    fd.set(object,
                           ts != null ? ZonedDateTime.parse(ts) : null);
                     break;
                 case Types.CHAR:
-                    f.set(object,
+                    fd.set(object,
                           rs.getString(n));
             }
         }
         catch (IllegalAccessException | IllegalArgumentException ex) {
-            throw new FieldInjectionException(f.getName(),
+            throw new FieldInjectionException(fd.getName(),
                                               ex);
         }
     }

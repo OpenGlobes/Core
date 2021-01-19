@@ -17,6 +17,7 @@
 package com.openglobes.core.dba;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -159,10 +160,20 @@ public class DbaUtils {
         }
     }
 
+    public static void enableAccess(Field field) {
+        if (!isPublic(field)) {
+            field.setAccessible(true);
+        }
+    }
+
+    private static boolean isPublic(Field fd) {
+        return (fd.getModifiers() & Modifier.PUBLIC) != 0;
+    }
+
     public static void setLong(Field field,
                                Object object,
                                Long l) throws IllegalArgumentException,
-                                                 IllegalAccessException {
+                                              IllegalAccessException {
         if (field.getType() == Long.class) {
             field.set(object,
                       l);

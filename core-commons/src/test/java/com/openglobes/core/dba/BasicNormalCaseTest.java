@@ -120,6 +120,7 @@ public class BasicNormalCaseTest extends Facilities {
 
     @AfterEach
     public void tearDown() {
+        clear();
     }
 
     @Test
