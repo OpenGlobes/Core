@@ -34,9 +34,9 @@ import org.junit.jupiter.api.TestMethodOrder;
  * @author Hongbao Chen
  * @since 1.0
  */
-@DisplayName("Basicc Normal Cases")
+@DisplayName("Normal Cases")
 @TestMethodOrder(OrderAnnotation.class)
-public class BasicNormalCaseTest extends Facilities {
+public class NormalCaseTest extends Facilities {
 
     @BeforeAll
     public static void setUpClass() {

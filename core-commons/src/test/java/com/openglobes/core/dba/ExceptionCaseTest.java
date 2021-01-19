@@ -30,10 +30,10 @@ import org.junit.jupiter.api.Test;
  * @author Hongbao Chen
  * @since 1.0
  */
-@DisplayName("Basic Exception Cases")
-public class BasicExceptionCaseTest extends Facilities {
+@DisplayName("Exception Cases")
+public class ExceptionCaseTest extends Facilities {
 
-    public BasicExceptionCaseTest() {
+    public ExceptionCaseTest() {
     }
 
     @Test
