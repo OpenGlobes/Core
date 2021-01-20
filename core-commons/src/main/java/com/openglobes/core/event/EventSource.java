@@ -82,6 +82,13 @@ public class EventSource implements IEventSource {
     }
 
     @Override
+    public void start() {
+        disruptors.values().forEach(v -> {
+            v.start();
+        });
+    }
+
+    @Override
     public <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws InvalidSubscriptionException {
         if (handlers.containsKey(clazz)) {
             throw new InvalidSubscriptionException(clazz.getCanonicalName());
@@ -102,7 +109,6 @@ public class EventSource implements IEventSource {
                 v = new Disruptor<Event<T>>(new DefaultFactory<>(),
                                             1024,
                                             DaemonThreadFactory.INSTANCE);
-                v.start();
                 disruptors.put(clazz, v);
             }
             else {
