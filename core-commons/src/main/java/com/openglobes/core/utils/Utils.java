@@ -43,31 +43,6 @@ public class Utils {
         }
     }
 
-    public synchronized static long getExecutionId() {
-        if (EXECUTION_ID.get() == 0L) {
-            var n = nextUuid().getLeastSignificantBits() >> 32;
-            EXECUTION_ID.set(n);
-        }
-        return EXECUTION_ID.get();
-    }
-
-    /**
-     * Get incremental ID.
-     *
-     * @return auto-incremental ID
-     */
-    public static Long nextId() {
-        return (getExecutionId() << 32) + AUTO_INC.incrementAndGet();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static UUID nextUuid() {
-        return UUID.randomUUID();
-    }
-
     public static ZonedDateTime getAlignByMinute() {
         ZonedDateTime n = ZonedDateTime.now();
         ZonedDateTime r = ZonedDateTime.of(n.getYear(),
@@ -79,6 +54,14 @@ public class Utils {
                                            0,
                                            n.getZone());
         return n.getSecond() >= 30 ? r.plusMinutes(1) : r;
+    }
+
+    public synchronized static long getExecutionId() {
+        if (EXECUTION_ID.get() == 0L) {
+            var n = nextUuid().getLeastSignificantBits() >> 32;
+            EXECUTION_ID.set(n);
+        }
+        return EXECUTION_ID.get();
     }
 
     /**
@@ -106,11 +89,29 @@ public class Utils {
     }
 
     /**
+     * Get incremental ID.
+     *
+     * @return auto-incremental ID
+     */
+    public static Long nextId() {
+        return (getExecutionId() << 32) + AUTO_INC.incrementAndGet();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static UUID nextUuid() {
+        return UUID.randomUUID();
+    }
+
+    /**
      * Schedule task to run from the begin of next time when some durations past
      * since the begin of day, and repeats for every duration.
      *
      * @param task     timer task.
      * @param duration duration between two tasks
+     *
      * @return timer.
      */
     public static Timer schedulePerDuration(TimerTask task, Duration duration) {

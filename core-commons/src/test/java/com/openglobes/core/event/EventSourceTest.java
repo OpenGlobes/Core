@@ -51,7 +51,7 @@ public class EventSourceTest {
     public static void tearDownClass() {
     }
 
-    private final Long sleepMilli = 500L;
+    private final Long sleepMilli = 100L;
     private final Integer total = 100;
 
     public EventSourceTest() {

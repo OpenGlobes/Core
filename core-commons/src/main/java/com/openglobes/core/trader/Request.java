@@ -26,6 +26,7 @@ public class Request {
 
     private Integer action;
     private Integer direction;
+    private String exchangeId;
     private String instrumentId;
     private Integer offset;
     private Long orderId;
@@ -53,6 +54,14 @@ public class Request {
 
     public void setDirection(Integer direction) {
         this.direction = direction;
+    }
+
+    public String getExchangeId() {
+        return exchangeId;
+    }
+
+    public void setExchangeId(String exchangeId) {
+        this.exchangeId = exchangeId;
     }
 
     public String getInstrumentId() {

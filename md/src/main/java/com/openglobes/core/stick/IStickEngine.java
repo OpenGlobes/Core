@@ -38,4 +38,8 @@ public interface IStickEngine {
     void onNotice(InstrumentNotice notice) throws PublishException;
 
     Long nextStickId();
+    
+    void addMinutes(int minutes) throws IllegalMinutesException;
+    
+    void addDays(int days) throws IllegalDaysException;
 }

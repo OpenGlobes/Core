@@ -65,6 +65,20 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     }
 
     @Override
+    public void addDays(int days) throws IllegalDaysException {
+        for (var b : builders.values()) {
+            b.addDays(days);
+        }
+    }
+
+    @Override
+    public void addMinutes(int minutes) throws IllegalMinutesException {
+        for (var b : builders.values()) {
+            b.addMinutes(minutes);
+        }
+    }
+
+    @Override
     public void close() throws Exception {
         cleanable.clean();
     }
