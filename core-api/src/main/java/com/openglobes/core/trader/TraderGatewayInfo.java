@@ -18,6 +18,7 @@ package com.openglobes.core.trader;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.Properties;
 
 /**
  * Trader service information updated upon every start.
@@ -25,13 +26,20 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TraderGatewayInfo {
+public class TraderGatewayInfo extends Properties {
+
+    private static final long serialVersionUID = 4389209809319836L;
 
     private LocalDate actionDay;
     private LocalDate tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public TraderGatewayInfo() {
+    }
+
+    @Override
+    public synchronized Object clone() {
+        return super.clone();
     }
 
     public LocalDate getActionDay() {
