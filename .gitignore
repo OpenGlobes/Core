@@ -1,2 +1,4 @@
 target/
-/core-commons/nbproject/
+.idea/
+
+*.iml
