@@ -22,6 +22,7 @@ import com.lmax.disruptor.TimeoutException;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import com.openglobes.core.utils.Loggers;
+
 import java.lang.ref.Cleaner;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,22 +32,21 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class EventSource implements IEventSource {
 
-    private final Cleaner.Cleanable cleanable;
-    private final Cleaner cleaner = Cleaner.create();
-    private final Map<Class<?>, Disruptor<?>> disruptors;
+    private final Cleaner.Cleanable               cleanable;
+    private final Cleaner                         cleaner = Cleaner.create();
+    private final Map<Class<?>, Disruptor<?>>     disruptors;
     private final Map<Class<?>, IEventHandler<?>> handlers;
 
     public EventSource() {
-        handlers = new ConcurrentHashMap<>(64);
+        handlers   = new ConcurrentHashMap<>(64);
         disruptors = new ConcurrentHashMap<>(64);
-        cleanable = cleaner.register(this,
-                                     new CleanAction(disruptors));
+        cleanable  = cleaner.register(this,
+                                      new CleanAction(disruptors));
     }
 
     @Override
@@ -110,8 +110,7 @@ public class EventSource implements IEventSource {
                                             1024,
                                             DaemonThreadFactory.INSTANCE);
                 disruptors.put(clazz, v);
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -131,8 +130,7 @@ public class EventSource implements IEventSource {
             x.values().forEach(d -> {
                 try {
                     d.shutdown(1, TimeUnit.SECONDS);
-                }
-                catch (TimeoutException ex) {
+                } catch (TimeoutException ex) {
                     Loggers.getLogger(EventSource.class.getCanonicalName()).log(Level.SEVERE,
                                                                                 ex.getMessage(),
                                                                                 ex);

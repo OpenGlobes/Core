@@ -20,18 +20,17 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class HolidayTime {
 
-    private Integer dayRank;
-    private LocalTime fromTime;
-    private Long holidayTimeId;
+    private Integer       dayRank;
+    private LocalTime     fromTime;
+    private Long          holidayTimeId;
     private ZonedDateTime timestamp;
-    private LocalTime toTime;
-    private Integer type;
+    private LocalTime     toTime;
+    private Integer       type;
 
     public HolidayTime() {
     }

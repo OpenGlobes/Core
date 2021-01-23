@@ -19,7 +19,6 @@ package com.openglobes.core.dba;
 import java.sql.SQLException;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

@@ -21,22 +21,20 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class TestUtils {
 
+    private TestUtils() {
+    }
+
     public static Connection getDefaultConnection() {
         try {
             Class.forName("org.h2.Driver");
             return DriverManager.getConnection("jdbc:h2:mem:default-db", "sa", "");
-        }
-        catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             return null;
         }
-    }
-
-    private TestUtils() {
     }
 }

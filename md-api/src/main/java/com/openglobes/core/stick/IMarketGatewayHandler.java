@@ -21,7 +21,6 @@ import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.market.Tick;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

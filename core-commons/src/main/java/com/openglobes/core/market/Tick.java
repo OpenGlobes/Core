@@ -9,25 +9,24 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Tick {
 
-    private Double askPrice;
-    private Long askVolumn;
-    private Double bidPrice;
-    private Long bidVolumn;
-    private String instrumentId;
-    private Long openInterest;
-    private Double price;
-    private Long quantity;
-    private Double settlementPrice;
-    private Long tickId;
+    private Double        askPrice;
+    private Long          askVolumn;
+    private Double        bidPrice;
+    private Long          bidVolumn;
+    private String        instrumentId;
+    private Long          openInterest;
+    private Double        price;
+    private Long          quantity;
+    private Double        settlementPrice;
+    private Long          tickId;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Long volumn;
+    private LocalDate     tradingDay;
+    private Long          volumn;
 
     public Tick() {
     }

@@ -16,22 +16,10 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.DbaException;
-import com.openglobes.core.dba.DbaUtils;
-import com.openglobes.core.dba.ICondition;
-import com.openglobes.core.dba.IDefaultFactory;
-import com.openglobes.core.dba.IPooledDataSource;
-import com.openglobes.core.dba.IQuery;
-import com.openglobes.core.dba.Queries;
-import com.openglobes.core.market.HolidayTime;
-import com.openglobes.core.market.HolidayTimePair;
-import com.openglobes.core.market.HolidayTimeSet;
-import com.openglobes.core.market.InstrumentStickSetting;
-import com.openglobes.core.market.InstrumentTime;
-import com.openglobes.core.market.WorkdayTime;
-import com.openglobes.core.market.WorkdayTimePair;
-import com.openglobes.core.market.WorkdayTimeSet;
+import com.openglobes.core.dba.*;
+import com.openglobes.core.market.*;
 import com.openglobes.core.trader.TradingDay;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,7 +27,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -90,8 +77,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(HolidayTime.class.getDeclaredField("holidayTimeId"),
                                                 holidayTimeId),
                                  HolidayTime::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -104,8 +90,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(HolidayTimeSet.class.getDeclaredField("holidayTimeSetId"),
                                                 holidayTimeSetId),
                                  HolidayTimeSet::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -117,8 +102,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(HolidayTimeSet.class,
                                Queries.isNotNull(HolidayTimeSet.class.getDeclaredField("holidayTimeSetId")),
                                HolidayTimeSet::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -130,8 +114,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(HolidayTime.class,
                                Queries.isNotNull(HolidayTime.class.getDeclaredField("holidayTimeId")),
                                HolidayTime::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -141,9 +124,9 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(HolidayTimePair.class,
-                                Queries.equals(HolidayTimePair.class.getDeclaredField("holidayTimeSetId"),
-                                               holidayTimeSetId),
-                                HolidayTimePair::new);
+                                    Queries.equals(HolidayTimePair.class.getDeclaredField("holidayTimeSetId"),
+                                                   holidayTimeSetId),
+                                    HolidayTimePair::new);
             var r = new HashSet<HolidayTime>(8);
             for (var p : pairs) {
                 r.add(callGetSingle(HolidayTime.class,
@@ -152,8 +135,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                     HolidayTime::new));
             }
             return r;
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -166,8 +148,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId"),
                                                 instrumentStickSettingId),
                                  InstrumentStickSetting::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -180,8 +161,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                Queries.equals(InstrumentStickSetting.class.getDeclaredField("instrumentId"),
                                               instrumentId),
                                InstrumentStickSetting::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -193,8 +173,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(InstrumentStickSetting.class,
                                Queries.isNotNull(InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId")),
                                InstrumentStickSetting::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -207,8 +186,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(InstrumentTime.class.getDeclaredField("instrumentId"),
                                                 instrumentId),
                                  InstrumentTime::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -220,8 +198,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(InstrumentTime.class,
                                Queries.isNotNull(InstrumentTime.class.getDeclaredField("instrumentTimeId")),
                                InstrumentTime::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -233,8 +210,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetSingle(TradingDay.class,
                                  Queries.isNotNull(TradingDay.class.getDeclaredField("tradingDayId")),
                                  TradingDay::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -247,8 +223,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(WorkdayTime.class.getDeclaredField("workdayTimeId"),
                                                 workdayTimeId),
                                  WorkdayTime::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -261,8 +236,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                  Queries.equals(WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId"),
                                                 workdayTimeSetId),
                                  WorkdayTimeSet::new);
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -274,8 +248,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(WorkdayTimeSet.class,
                                Queries.isNotNull(WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId")),
                                WorkdayTimeSet::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -287,8 +260,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return callGetMany(WorkdayTime.class,
                                Queries.isNotNull(WorkdayTime.class.getDeclaredField("workdayTimeId")),
                                WorkdayTime::new);
-        }
-        catch (DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -298,9 +270,9 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(WorkdayTimePair.class,
-                                Queries.equals(WorkdayTimePair.class.getDeclaredField("workdayTimeSetId"),
-                                               workdayTimeSetId),
-                                WorkdayTimePair::new);
+                                    Queries.equals(WorkdayTimePair.class.getDeclaredField("workdayTimeSetId"),
+                                                   workdayTimeSetId),
+                                    WorkdayTimePair::new);
             var r = new HashSet<WorkdayTime>(16);
             for (var p : pairs) {
                 r.add(callGetSingle(WorkdayTime.class,
@@ -309,8 +281,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
                                     WorkdayTime::new));
             }
             return r;
-        }
-        catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
+        } catch (InvalidQueryResultException | DbaException | NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -364,8 +335,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(HolidayTime.class,
                        time,
                        HolidayTime.class.getDeclaredField("holidayTimeId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -377,8 +347,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(HolidayTimeSet.class,
                        set,
                        HolidayTimeSet.class.getDeclaredField("holidayTimeSetId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -390,8 +359,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(InstrumentStickSetting.class,
                        setting,
                        InstrumentStickSetting.class.getDeclaredField("instrumentStickSettingId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -403,8 +371,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(InstrumentTime.class,
                        time,
                        InstrumentTime.class.getDeclaredField("instrumentTimeId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -416,8 +383,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(TradingDay.class,
                        tradingDay,
                        TradingDay.class.getDeclaredField("tradingDayId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -429,8 +395,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(WorkdayTime.class,
                        time,
                        WorkdayTime.class.getDeclaredField("workdayTimeId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -442,8 +407,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             callUpdate(WorkdayTimeSet.class,
                        set,
                        WorkdayTimeSet.class.getDeclaredField("workdayTimeSetId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -456,8 +420,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             return query.select(clazz,
                                 condition,
                                 factory);
-        }
-        catch (SQLException | DbaException ex) {
+        } catch (SQLException | DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
         }
@@ -484,8 +447,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
         try {
             query.insert(clazz,
                          object);
-        }
-        catch (SQLException | DbaException ex) {
+        } catch (SQLException | DbaException ex) {
             throw new DataInsertionException(clazz.getCanonicalName(),
                                              ex);
         }
@@ -498,8 +460,7 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
             query.remove(clazz,
                          Queries.equals(clazz.getDeclaredField(fieldName),
                                         id));
-        }
-        catch (NoSuchFieldException | SecurityException | SQLException | DbaException ex) {
+        } catch (NoSuchFieldException | SecurityException | SQLException | DbaException ex) {
             throw new DataRemovalException(clazz.getCanonicalName(),
                                            ex);
         }
@@ -511,10 +472,9 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
         try {
             query.update(clazz,
                          object,
-                         Queries.equals(field, 
+                         Queries.equals(field,
                                         DbaUtils.getLong(field, object)));
-        }
-        catch (IllegalArgumentException | IllegalAccessException | SQLException | DbaException ex) {
+        } catch (IllegalArgumentException | IllegalAccessException | SQLException | DbaException ex) {
             throw new DataUpdateException(clazz.getCanonicalName(),
                                           ex);
         }

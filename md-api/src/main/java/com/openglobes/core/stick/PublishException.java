@@ -17,11 +17,10 @@
 package com.openglobes.core.stick;
 
 /**
- *
  * @author chenh
  */
-public class PublishException extends MarketException{
-    
+public class PublishException extends MarketException {
+
     public PublishException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class PublishException extends MarketException{
     public PublishException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

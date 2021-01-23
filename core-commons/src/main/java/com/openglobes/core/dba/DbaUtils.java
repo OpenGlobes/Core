@@ -26,11 +26,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Hongbao Chen
  * @sicne 1.0
  */
 public class DbaUtils {
+
+    private DbaUtils() {
+    }
 
     public static String convertSqlType(int semanticType) throws UnsupportedFieldTypeException {
         switch (semanticType) {
@@ -57,11 +59,9 @@ public class DbaUtils {
         if (field.getType() == Double.class) {
             var o = field.get(object);
             return o != null ? (Double) o : null;
-        }
-        else if (field.getType() == double.class) {
+        } else if (field.getType() == double.class) {
             return field.getDouble(object);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as double or Double.");
         }
     }
@@ -71,11 +71,9 @@ public class DbaUtils {
         if (field.getType() == Integer.class) {
             var o = field.get(object);
             return o != null ? (Integer) o : null;
-        }
-        else if (field.getType() == int.class) {
+        } else if (field.getType() == int.class) {
             return field.getInt(object);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as int or Integer.");
         }
     }
@@ -85,24 +83,21 @@ public class DbaUtils {
         if (field.getType() == Long.class) {
             var o = field.get(object);
             return o != null ? (Long) o : null;
-        }
-        else if (field.getType() == long.class) {
+        } else if (field.getType() == long.class) {
             return field.getLong(object);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as long or Long.");
         }
     }
 
     public static MetaField inspectField(Field f) throws IllegalFieldCharacterException,
                                                          UnsupportedFieldTypeException {
-        MetaField info = new MetaField();
-        var names = split(f.getName());
-        var prefix = "FIELD_";
+        MetaField info   = new MetaField();
+        var       names  = split(f.getName());
+        var       prefix = "FIELD_";
         if (names.size() == 1) {
             info.setName(prefix + names.get(0).toUpperCase());
-        }
-        else if (names.size() > 1) {
+        } else if (names.size() > 1) {
             var s = prefix + names.get(0).toUpperCase();
             for (int i = 1; i < names.size(); ++i) {
                 s += "_" + names.get(i).toUpperCase();
@@ -117,7 +112,7 @@ public class DbaUtils {
     public static List<MetaField> inspectFields(Class<?> clazz) throws IllegalFieldCharacterException,
                                                                        UnsupportedFieldTypeException {
         var fs = clazz.getDeclaredFields();
-        var r = new LinkedList<MetaField>();
+        var r  = new LinkedList<MetaField>();
         for (var f : fs) {
             var info = inspectField(f);
             if (info != null) {
@@ -133,12 +128,10 @@ public class DbaUtils {
         if (field.getType() == Double.class) {
             field.set(object,
                       d);
-        }
-        else if (field.getType() == double.class) {
+        } else if (field.getType() == double.class) {
             field.setDouble(object,
                             d);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as double or Double.");
         }
     }
@@ -150,12 +143,10 @@ public class DbaUtils {
         if (field.getType() == Integer.class) {
             field.set(object,
                       integer);
-        }
-        else if (field.getType() == int.class) {
+        } else if (field.getType() == int.class) {
             field.setInt(object,
                          integer);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as int or Integer.");
         }
     }
@@ -177,12 +168,10 @@ public class DbaUtils {
         if (field.getType() == Long.class) {
             field.set(object,
                       l);
-        }
-        else if (field.getType() == long.class) {
+        } else if (field.getType() == long.class) {
             field.setLong(object,
                           l);
-        }
-        else {
+        } else {
             throw new IllegalAccessException("Field must be declared as long or Long.");
         }
     }
@@ -190,26 +179,19 @@ public class DbaUtils {
     private static int inspectType(Class<?> clazz) throws UnsupportedFieldTypeException {
         if (clazz == Long.class || clazz == long.class) {
             return Types.BIGINT;
-        }
-        else if (clazz == Integer.class || clazz == int.class) {
+        } else if (clazz == Integer.class || clazz == int.class) {
             return Types.INTEGER;
-        }
-        else if (clazz == Double.class || clazz == double.class) {
+        } else if (clazz == Double.class || clazz == double.class) {
             return Types.DECIMAL;
-        }
-        else if (clazz == LocalDate.class) {
+        } else if (clazz == LocalDate.class) {
             return Types.DATE;
-        }
-        else if (clazz == LocalTime.class) {
+        } else if (clazz == LocalTime.class) {
             return Types.TIME;
-        }
-        else if (clazz == ZonedDateTime.class) {
+        } else if (clazz == ZonedDateTime.class) {
             return Types.TIMESTAMP_WITH_TIMEZONE;
-        }
-        else if (clazz == String.class) {
+        } else if (clazz == String.class) {
             return Types.CHAR;
-        }
-        else {
+        } else {
             throw new UnsupportedFieldTypeException(clazz.getCanonicalName() + " is not supported.");
         }
     }
@@ -224,16 +206,14 @@ public class DbaUtils {
             var c = name.charAt(i);
             if (c == '_') {
                 throw new IllegalFieldCharacterException("Illegal character \'" + c + "\'.");
-            }
-            else if (Character.isUpperCase(c)) {
+            } else if (Character.isUpperCase(c)) {
                 var str = buffer.toString();
                 if (!str.isBlank()) {
                     r.add(str);
                 }
                 buffer = new StringBuffer(128);
                 buffer.append(Character.toLowerCase(c));
-            }
-            else {
+            } else {
                 buffer.append(c);
             }
         }
@@ -242,8 +222,5 @@ public class DbaUtils {
             r.add(str);
         }
         return r;
-    }
-
-    private DbaUtils() {
     }
 }

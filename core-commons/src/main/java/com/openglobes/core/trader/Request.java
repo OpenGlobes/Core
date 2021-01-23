@@ -26,15 +26,15 @@ public class Request {
 
     private Integer action;
     private Integer direction;
-    private String exchangeId;
-    private String instrumentId;
+    private String  exchangeId;
+    private String  instrumentId;
     private Integer offset;
-    private Long orderId;
-    private Double price;
-    private Long quantity;
-    private Long requestId;
-    private String signature;
-    private String tag;
+    private Long    orderId;
+    private Double  price;
+    private Long    quantity;
+    private Long    requestId;
+    private String  signature;
+    private String  tag;
     private Integer traderId;
 
     public Request() {

@@ -17,7 +17,6 @@
 package com.openglobes.core;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -30,7 +29,7 @@ public class CoreDisposeException extends CoreException {
     }
 
     public CoreDisposeException(String message,
-                            Throwable cause) {
+                                Throwable cause) {
         super(message,
               cause);
     }
@@ -40,9 +39,9 @@ public class CoreDisposeException extends CoreException {
     }
 
     public CoreDisposeException(String message,
-                            Throwable cause,
-                            boolean enableSuppression,
-                            boolean writableStackTrace) {
+                                Throwable cause,
+                                boolean enableSuppression,
+                                boolean writableStackTrace) {
         super(message,
               cause,
               enableSuppression,

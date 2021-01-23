@@ -24,7 +24,7 @@ package com.openglobes.core.trader;
  */
 public class RatioType {
 
-    public static final int BY_MONEY = (0x50);
+    public static final int BY_MONEY  = (0x50);
     public static final int BY_VOLUMN = (0x51);
 
     private RatioType() {

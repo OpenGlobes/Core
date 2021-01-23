@@ -17,20 +17,19 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class UnknownDataChangeException extends DataException{
+public class UnknownDataChangeException extends DataException {
 
     private static final long serialVersionUID = 137628738729816L;
-    
+
     public UnknownDataChangeException(String message) {
         super(message);
     }
 
-    public UnknownDataChangeException(String message, 
-                                       Throwable cause) {
+    public UnknownDataChangeException(String message,
+                                      Throwable cause) {
         super(message,
               cause);
     }
@@ -39,14 +38,14 @@ public class UnknownDataChangeException extends DataException{
         super(cause);
     }
 
-    public UnknownDataChangeException(String message, 
-                                       Throwable cause,
-                                       boolean enableSuppression, 
-                                       boolean writableStackTrace) {
+    public UnknownDataChangeException(String message,
+                                      Throwable cause,
+                                      boolean enableSuppression,
+                                      boolean writableStackTrace) {
         super(message,
               cause,
-              enableSuppression, 
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

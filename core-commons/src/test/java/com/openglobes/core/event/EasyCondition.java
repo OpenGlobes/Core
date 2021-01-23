@@ -17,20 +17,18 @@
 package com.openglobes.core.event;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class EasyCondition {
 
     private final Condition c;
-    private final Lock l;
+    private final Lock      l;
 
     public EasyCondition() {
         l = new ReentrantLock();
@@ -41,8 +39,7 @@ public class EasyCondition {
         l.lock();
         try {
             c.signalAll();
-        }
-        finally {
+        } finally {
             l.unlock();
         }
     }
@@ -51,8 +48,7 @@ public class EasyCondition {
         l.lock();
         try {
             c.signal();
-        }
-        finally {
+        } finally {
             l.unlock();
         }
     }
@@ -61,8 +57,7 @@ public class EasyCondition {
         l.lock();
         try {
             c.await();
-        }
-        finally {
+        } finally {
             l.unlock();
         }
     }
@@ -73,8 +68,7 @@ public class EasyCondition {
         try {
             return c.await(timeout,
                            unit);
-        }
-        finally {
+        } finally {
             l.unlock();
         }
     }

@@ -17,7 +17,6 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -33,11 +32,11 @@ public enum TraderEngineStatuses {
     STOPPED(0x8, "Stopped."),
     STOP_FAILED(0x9, "Stop failed.");
 
-    private final int code;
+    private final int    code;
     private final String message;
 
     private TraderEngineStatuses(int code, String message) {
-        this.code = code;
+        this.code    = code;
         this.message = message;
     }
 

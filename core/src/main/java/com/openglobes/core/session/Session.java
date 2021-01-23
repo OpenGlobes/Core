@@ -24,14 +24,9 @@ import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.data.DataQueryException;
 import com.openglobes.core.interceptor.InterceptorException;
 import com.openglobes.core.interceptor.RequestInterceptingContext;
-import com.openglobes.core.trader.ActionType;
-import com.openglobes.core.trader.EngineRequestError;
-import com.openglobes.core.trader.Instrument;
-import com.openglobes.core.trader.OrderStatus;
-import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.Response;
-import com.openglobes.core.trader.Trade;
+import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.Utils;
+
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -39,21 +34,20 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 class Session implements ISession {
 
-    private boolean disposed;
-    private final IdMapper map;
-    private final IRequestContext req;
+    private final IdMapper         map;
+    private final IRequestContext  req;
     private final IResponseContext rsp;
+    private       boolean          disposed;
 
     Session(IRequestContext request, IResponseContext response) {
-        req = request;
-        rsp = response;
-        map = new IdMapper();
+        req      = request;
+        rsp      = response;
+        map      = new IdMapper();
         disposed = true;
     }
 
@@ -85,22 +79,17 @@ class Session implements ISession {
             adjustSrcId(object);
             if (object instanceof Trade) {
                 rsp.getConnector().write((Trade) object);
-            }
-            else if (object instanceof Response) {
+            } else if (object instanceof Response) {
                 rsp.getConnector().write((Response) object);
-            }
-            else if (object instanceof EngineRequestError) {
+            } else if (object instanceof EngineRequestError) {
                 rsp.getConnector().write((EngineRequestError) object);
-            }
-            else {
+            } else {
                 throw new InvalidSessionResponseException(object.getClass().getCanonicalName());
             }
-        }
-        catch (ConnectorException | ResponseException ex) {
+        } catch (ConnectorException | ResponseException ex) {
             throw new ForwardResponseException(ex.getMessage(),
                                                ex);
-        }
-        catch (NullPointerException ex) {
+        } catch (NullPointerException ex) {
             throw new InvalidSessionResponseException("Response null ptr.",
                                                       ex);
         }
@@ -114,8 +103,7 @@ class Session implements ISession {
              */
             var scrId = req.getSessionCorrelator().registerRequest(r, this);
             map.correlate(scrId, r.getOrderId());
-        }
-        else {
+        } else {
             /*
              * For DELETE action, recover destinated Id from mapper.
              */
@@ -128,18 +116,15 @@ class Session implements ISession {
         if (object instanceof Trade) {
             var r = (Trade) object;
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
-        }
-        else if (object instanceof Response) {
+        } else if (object instanceof Response) {
             var r = (Response) object;
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
             checkRemoveMapping(r);
-        }
-        else if (object instanceof EngineRequestError) {
+        } else if (object instanceof EngineRequestError) {
             var r = ((EngineRequestError) object).getRequest();
             Objects.requireNonNull(r);
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
-        }
-        else {
+        } else {
             throw new UnsupportedSessionResponseException(object.getClass().getCanonicalName());
         }
     }
@@ -174,13 +159,12 @@ class Session implements ISession {
         try {
             adjuestDestId(request);
             req.getSharedContext().getInterceptorStack()
-                    .request(RequestInterceptingContext.class,
-                             new RequestInterceptingContext(request,
-                                                            getInstrument(request.getInstrumentId()),
-                                                            properties,
-                                                            Utils.nextId().intValue()));
-        }
-        catch (RequestException | InterceptorException ex) {
+               .request(RequestInterceptingContext.class,
+                        new RequestInterceptingContext(request,
+                                                       getInstrument(request.getInstrumentId()),
+                                                       properties,
+                                                       Utils.nextId().intValue()));
+        } catch (RequestException | InterceptorException ex) {
             throw new ForwardRequestException(ex.getMessage(),
                                               ex);
         }
@@ -191,8 +175,7 @@ class Session implements ISession {
         var ds = req.getTraderEngine().getDataSource();
         try (var conn = ds.getConnection()) {
             return conn.getInstrumentById(instrumentId);
-        }
-        catch (DataQueryException | SQLException | ClassNotFoundException ex) {
+        } catch (DataQueryException | SQLException | ClassNotFoundException ex) {
             throw new AcquireInformationException(ex.getMessage(),
                                                   ex);
         }
@@ -205,7 +188,7 @@ class Session implements ISession {
 
         IdMapper() {
             toDest = new ConcurrentHashMap<>(1024);
-            toSrc = new ConcurrentHashMap<>(1024);
+            toSrc  = new ConcurrentHashMap<>(1024);
         }
 
         public void correlate(Long srcId, Long destId) {

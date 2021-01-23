@@ -16,14 +16,7 @@
  */
 package com.openglobes.core.dba;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -33,14 +26,13 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 class Query implements IQuery {
 
-    private final String PRIMARY_KEY = "PRIMARY KEY";
-    private final Connection conn;
+    private final String                    PRIMARY_KEY = "PRIMARY KEY";
+    private final Connection                conn;
     private final Map<String, MetaTable<?>> meta;
 
     Query(Connection connection) {
@@ -98,8 +90,7 @@ class Query implements IQuery {
                                  getSelectSql(m,
                                               condition),
                                  factory);
-        }
-        catch (ReflectiveOperationException ex) {
+        } catch (ReflectiveOperationException ex) {
             throw new FieldAccessException("Fail executing selection.", ex);
         }
     }
@@ -131,10 +122,9 @@ class Query implements IQuery {
                                                                  NoPrimaryKeyException {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
-        }
-        else {
+        } else {
             String sql = "";
-            int i = 0;
+            int    i   = 0;
             while (i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
                 String sqlField = buildFieldWithKey(f,
@@ -196,8 +186,7 @@ class Query implements IQuery {
                                    dbm);
         if (!has) {
             createTable(meta);
-        }
-        else {
+        } else {
             verifyTableColumns(meta,
                                dbm);
         }
@@ -223,8 +212,7 @@ class Query implements IQuery {
         try (Statement stat = conn.createStatement()) {
             stat.execute(sql);
             return stat.getUpdateCount();
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new SQLException(ex.getMessage() + "|" + sql,
                                    ex);
         }
@@ -241,8 +229,7 @@ class Query implements IQuery {
             return convert(meta,
                            rs,
                            factory);
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             throw new SQLException(ex.getMessage() + "|" + sql,
                                    ex);
         }
@@ -270,10 +257,10 @@ class Query implements IQuery {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
         }
-        var sql = "INSERT INTO " + meta.getName();
+        var    sql    = "INSERT INTO " + meta.getName();
         String fields = "";
         String values = "";
-        int i = -1;
+        int    i      = -1;
         try {
             while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
@@ -284,8 +271,7 @@ class Query implements IQuery {
             fields += f.getName();
             values += getValue(f, object);
             return sql + "(" + fields + ") VALUES (" + values + ")";
-        }
-        catch (IllegalArgumentException | IllegalAccessException ex) {
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
             throw new FieldAccessException("Access field '" + meta.fields().get(i).getField().getName() + "' failed.",
                                            ex);
         }
@@ -310,9 +296,9 @@ class Query implements IQuery {
                                                  DatabaseMetaData dbMeta) throws SQLException {
         var t = new HashMap<String, Integer>(128);
         var cs = dbMeta.getColumns("",
-                               "",
-                               name,
-                               "%");
+                                   "",
+                                   name,
+                                   "%");
         while (cs.next()) {
             t.put(cs.getString("COLUMN_NAME"),
                   cs.getInt("DATA_TYPE"));
@@ -333,7 +319,7 @@ class Query implements IQuery {
             throw new NoFieldException(meta.getName());
         }
         var sql = "UPDATE " + meta.getName() + " SET ";
-        int i = -1;
+        int i   = -1;
         try {
             while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
@@ -342,8 +328,7 @@ class Query implements IQuery {
             var f = meta.fields().get(i);
             sql += f.getName() + "=" + getValue(f, object);
             return sql + " WHERE " + ((Condition<?>) condition).getSql();
-        }
-        catch (IllegalArgumentException | IllegalAccessException ex) {
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
             throw new FieldAccessException(meta.fields().get(i).getName(),
                                            ex);
         }
@@ -411,12 +396,12 @@ class Query implements IQuery {
                           ResultSet rs) throws SQLException,
                                                FieldInjectionException {
         var fd = field.getField();
-        var n = field.getName();
+        var n  = field.getName();
         DbaUtils.enableAccess(fd);
         try {
             switch (field.getType()) {
                 case Types.BIGINT:
-                    DbaUtils.setLong(fd, 
+                    DbaUtils.setLong(fd,
                                      object,
                                      rs.getLong(n));
                     break;
@@ -426,8 +411,8 @@ class Query implements IQuery {
                                         rs.getInt(n));
                     break;
                 case Types.DECIMAL:
-                    DbaUtils.setDouble(fd, 
-                                       object, 
+                    DbaUtils.setDouble(fd,
+                                       object,
                                        rs.getDouble(n));
                     break;
                 case Types.DATE:
@@ -437,19 +422,18 @@ class Query implements IQuery {
                 case Types.TIME:
                     var tm = rs.getString(n);
                     fd.set(object,
-                          tm != null ? LocalTime.parse(tm) : null);
+                           tm != null ? LocalTime.parse(tm) : null);
                     break;
                 case Types.TIMESTAMP_WITH_TIMEZONE:
                     var ts = rs.getString(n);
                     fd.set(object,
-                          ts != null ? ZonedDateTime.parse(ts) : null);
+                           ts != null ? ZonedDateTime.parse(ts) : null);
                     break;
                 case Types.CHAR:
                     fd.set(object,
-                          rs.getString(n));
+                           rs.getString(n));
             }
-        }
-        catch (IllegalAccessException | IllegalArgumentException ex) {
+        } catch (IllegalAccessException | IllegalArgumentException ex) {
             throw new FieldInjectionException(fd.getName(),
                                               ex);
         }
@@ -469,8 +453,7 @@ class Query implements IQuery {
             var type = m.get(f.getName());
             if (type == null) {
                 throw new MissingFieldException(f.getName() + " not found in table.");
-            }
-            else if (!equalsType(type, f.getType())) {
+            } else if (!equalsType(type, f.getType())) {
                 throw new IllegalFieldTypeException(f.getName() + " has wrong type.");
             }
         }

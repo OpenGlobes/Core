@@ -24,17 +24,14 @@ import com.lmax.disruptor.util.ThreadHints;
  * This strategy will use CPU resource to avoid syscalls which can introduce latency jitter.  It is best
  * used when threads can be bound to specific CPU cores.
  */
-public final class BusySpinWaitStrategy implements WaitStrategy
-{
+public final class BusySpinWaitStrategy implements WaitStrategy {
     @Override
     public long waitFor(
-        final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
-        throws AlertException, InterruptedException
-    {
+            final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
+            throws AlertException, InterruptedException {
         long availableSequence;
 
-        while ((availableSequence = dependentSequence.get()) < sequence)
-        {
+        while ((availableSequence = dependentSequence.get()) < sequence) {
             barrier.checkAlert();
             ThreadHints.onSpinWait();
         }
@@ -43,7 +40,6 @@ public final class BusySpinWaitStrategy implements WaitStrategy
     }
 
     @Override
-    public void signalAllWhenBlocking()
-    {
+    public void signalAllWhenBlocking() {
     }
 }

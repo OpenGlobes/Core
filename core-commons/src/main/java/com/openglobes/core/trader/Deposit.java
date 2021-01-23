@@ -9,16 +9,15 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Deposit {
 
-    private Double amount;
-    private Long depositId;
+    private Double        amount;
+    private Long          depositId;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
+    private LocalDate     tradingDay;
 
     public Deposit() {
     }

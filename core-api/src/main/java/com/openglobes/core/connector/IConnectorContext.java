@@ -9,7 +9,6 @@ import com.openglobes.core.IConfiguredContext;
 import com.openglobes.core.session.ISessionFactory;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

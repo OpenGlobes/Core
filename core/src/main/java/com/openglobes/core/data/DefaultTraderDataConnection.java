@@ -16,24 +16,10 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.DbaException;
-import com.openglobes.core.dba.ICondition;
-import com.openglobes.core.dba.IDefaultFactory;
-import com.openglobes.core.dba.IQuery;
-import com.openglobes.core.dba.Queries;
+import com.openglobes.core.dba.*;
 import com.openglobes.core.event.EventException;
-import com.openglobes.core.trader.Account;
-import com.openglobes.core.trader.Commission;
-import com.openglobes.core.trader.Contract;
-import com.openglobes.core.trader.Deposit;
-import com.openglobes.core.trader.Instrument;
-import com.openglobes.core.trader.Margin;
-import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.Response;
-import com.openglobes.core.trader.SettlementPrice;
-import com.openglobes.core.trader.Trade;
-import com.openglobes.core.trader.TradingDay;
-import com.openglobes.core.trader.Withdraw;
+import com.openglobes.core.trader.*;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -59,8 +45,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addAccount(Account account) throws DataInsertionException {
         try {
             callInsert(Account.class, account);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -70,8 +55,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addCommission(Commission commission) throws DataInsertionException {
         try {
             callInsert(Commission.class, commission);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -81,8 +65,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addContract(Contract contract) throws DataInsertionException {
         try {
             callInsert(Contract.class, contract);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -92,8 +75,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addDeposit(Deposit deposit) throws DataInsertionException {
         try {
             callInsert(Deposit.class, deposit);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -103,8 +85,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addInstrument(Instrument instrument) throws DataInsertionException {
         try {
             callInsert(Instrument.class, instrument);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -114,8 +95,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addMargin(Margin margin) throws DataInsertionException {
         try {
             callInsert(Margin.class, margin);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -125,8 +105,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addRequest(Request request) throws DataInsertionException {
         try {
             callInsert(Request.class, request);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -136,8 +115,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addResponse(Response response) throws DataInsertionException {
         try {
             callInsert(Response.class, response);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -147,8 +125,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addSettlementPrice(SettlementPrice price) throws DataInsertionException {
         try {
             callInsert(SettlementPrice.class, price);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -158,8 +135,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addTrade(Trade trade) throws DataInsertionException {
         try {
             callInsert(Trade.class, trade);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -169,8 +145,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addTradingDay(TradingDay day) throws DataInsertionException {
         try {
             callInsert(TradingDay.class, day);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -180,8 +155,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
     public void addWithdraw(Withdraw withdraw) throws DataInsertionException {
         try {
             callInsert(Withdraw.class, withdraw);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataInsertionException(ex.getMessage(),
                                              ex);
         }
@@ -193,12 +167,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Account.class,
                                  Queries.isNotNull(Account.class.getDeclaredField("accountId")),
                                  Account::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Account.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -210,12 +182,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Commission.class,
                                  Queries.equals(Commission.class.getDeclaredField("commissionId"), commissionId),
                                  Commission::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Commission.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -227,12 +197,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Commission.class,
                                Queries.isNotNull(Commission.class.getDeclaredField("commissionId")),
                                Commission::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Commission.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -244,12 +212,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Commission.class,
                                Queries.equals(Commission.class.getDeclaredField("orderId"), orderId),
                                Commission::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Commission.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -261,12 +227,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Commission.class,
                                Queries.equals(Commission.class.getDeclaredField("status"), status),
                                Commission::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Commission.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -278,12 +242,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Contract.class,
                                  Queries.equals(Contract.class.getDeclaredField("contractId"), contractId),
                                  Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Contract.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -295,12 +257,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Contract.class,
                                Queries.isNotNull(Contract.class.getDeclaredField("contractId")),
                                Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Contract.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -312,12 +272,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("instrumentId"), instrumentId),
                                Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Contract.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -329,12 +287,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("status"), status),
                                Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Contract.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -346,12 +302,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Contract.class,
                                Queries.equals(Contract.class.getDeclaredField("tradeId"), tradeId),
                                Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Contract.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -368,12 +322,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Deposit.class,
                                Queries.isNotNull(Deposit.class.getDeclaredField("depositId")),
                                Deposit::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Deposit.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -385,12 +337,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Instrument.class,
                                  Queries.equals(Instrument.class.getDeclaredField("instrumentId"), instrumentId),
                                  Instrument::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Instrument.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -402,12 +352,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Instrument.class,
                                Queries.equals(Instrument.class.getDeclaredField("exchangeId"), exchangeId),
                                Instrument::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Instrument.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -419,12 +367,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Margin.class,
                                  Queries.equals(Margin.class.getDeclaredField("marginId"), marginId),
                                  Margin::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Margin.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -436,12 +382,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Margin.class,
                                Queries.isNotNull(Margin.class.getDeclaredField("marginId")),
                                Margin::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Margin.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -453,12 +397,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Margin.class,
                                Queries.equals(Margin.class.getDeclaredField("orderId"), orderId),
                                Margin::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Margin.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -470,12 +412,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Margin.class,
                                Queries.equals(Margin.class.getDeclaredField("status"), status),
                                Margin::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Margin.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -487,12 +427,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Request.class,
                                  Queries.equals(Request.class.getDeclaredField("orderId"), orderId),
                                  Request::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Request.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -504,12 +442,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Request.class,
                                Queries.isNotNull(Request.class.getDeclaredField("orderId")),
                                Request::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Request.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -521,12 +457,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Response.class,
                                  Queries.equals(Response.class.getDeclaredField("responseId"), responseId),
                                  Response::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Response.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -538,12 +472,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Response.class,
                                Queries.equals(Response.class.getDeclaredField("orderId"), orderId),
                                Response::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Response.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -555,12 +487,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Response.class,
                                Queries.isNotNull(Response.class.getDeclaredField("responseId")),
                                Response::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Response.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -572,12 +502,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(SettlementPrice.class,
                                  Queries.equals(SettlementPrice.class.getDeclaredField("instrumentId"), instrumentId),
                                  SettlementPrice::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(SettlementPrice.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -594,12 +522,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(Trade.class,
                                  Queries.equals(Trade.class.getDeclaredField("tradeId"), tradeId),
                                  Trade::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Trade.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -611,12 +537,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Trade.class,
                                Queries.isNotNull(Trade.class.getDeclaredField("tradeId")),
                                Trade::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Trade.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -628,12 +552,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Trade.class,
                                Queries.equals(Trade.class.getDeclaredField("orderId"), orderId),
                                Trade::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Trade.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -645,12 +567,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetSingle(TradingDay.class,
                                  Queries.isNotNull(TradingDay.class.getDeclaredField("tradingDayId")),
                                  TradingDay::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(TradingDay.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -662,12 +582,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             return callGetMany(Withdraw.class,
                                Queries.isNotNull(Withdraw.class.getDeclaredField("withdrawId")),
                                Withdraw::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataQueryException(Withdraw.class.getCanonicalName(),
                                          ex);
-        }
-        catch (DbaException | SQLException | DataException ex) {
+        } catch (DbaException | SQLException | DataException ex) {
             throw new DataQueryException(ex.getMessage(),
                                          ex);
         }
@@ -680,12 +598,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "commissionId",
                        commissionId,
                        Commission::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Commission.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -698,12 +614,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "contractId",
                        contractId,
                        Contract::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Contract.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -716,12 +630,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "depositId",
                        depositId,
                        Deposit::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Deposit.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -734,12 +646,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "instrumentId",
                        instrumentId,
                        Instrument::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Instrument.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -752,12 +662,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "marginId",
                        marginId,
                        Margin::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Margin.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -770,12 +678,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "instrumentId",
                        instrumentId,
                        SettlementPrice::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(SettlementPrice.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -788,12 +694,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                        "withdrawId",
                        withdrawId,
                        Withdraw::new);
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataRemovalException(Withdraw.class.getCanonicalName(),
                                            ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataRemovalException(ex.getMessage(),
                                            ex);
         }
@@ -805,12 +709,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(Account.class,
                        account,
                        Account.class.getDeclaredField("accountId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(Account.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -822,12 +724,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(Commission.class,
                        commission,
                        Commission.class.getDeclaredField("commissionId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(Commission.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -839,12 +739,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(Contract.class,
                        contract,
                        Contract.class.getDeclaredField("contractId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(Contract.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -856,12 +754,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(Instrument.class,
                        instrument,
                        Instrument.class.getDeclaredField("instrumentId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(Instrument.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -873,12 +769,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(Margin.class,
                        margin,
                        Margin.class.getDeclaredField("marginId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(Margin.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -890,12 +784,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(SettlementPrice.class,
                        price,
                        SettlementPrice.class.getDeclaredField("instrumentId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(SettlementPrice.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -907,12 +799,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callUpdate(TradingDay.class,
                        day,
                        TradingDay.class.getDeclaredField("tradingDayId"));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new DataUpdateException(TradingDay.class.getCanonicalName(),
                                           ex);
-        }
-        catch (EventException | SQLException | DataException ex) {
+        } catch (EventException | SQLException | DataException ex) {
             throw new DataUpdateException(ex.getMessage(),
                                           ex);
         }
@@ -925,8 +815,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                                                                              DataQueryException {
         try {
             return query.select(clazz, condition, factory);
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
         }
@@ -959,8 +848,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callOnChange(clazz,
                          object,
                          DataChangeType.CREATE);
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
         }
@@ -991,8 +879,7 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
                          DataChangeType.DELETE);
             query.remove(clazz,
                          Queries.equals(clazz.getDeclaredField(fieldName), id));
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
         }
@@ -1011,12 +898,10 @@ public class DefaultTraderDataConnection extends TraderDataConnection {
             callOnChange(clazz,
                          object,
                          DataChangeType.UPDATE);
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
-        }
-        catch (IllegalArgumentException | IllegalAccessException ex) {
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
             throw new DataQueryException(ex);
         }
     }

@@ -6,7 +6,6 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -20,7 +19,7 @@ public class DbaException extends Exception {
 
     public DbaException(String message,
                         Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -29,12 +28,12 @@ public class DbaException extends Exception {
     }
 
     public DbaException(String message,
-                        Throwable cause, 
-                        boolean enableSuppression, 
+                        Throwable cause,
+                        boolean enableSuppression,
                         boolean writableStackTrace) {
-        super(message, 
-              cause, 
-              enableSuppression, 
+        super(message,
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
 

@@ -27,14 +27,14 @@ import java.time.ZonedDateTime;
  */
 public class Margin {
 
-    private Long contractId;
-    private Double margin;
-    private Long marginId;
-    private Long orderId;
-    private Integer status;
-    private String tag;
+    private Long          contractId;
+    private Double        margin;
+    private Long          marginId;
+    private Long          orderId;
+    private Integer       status;
+    private String        tag;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
+    private LocalDate     tradingDay;
 
     public Margin() {
     }

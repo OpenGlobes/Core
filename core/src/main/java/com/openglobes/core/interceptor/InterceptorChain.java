@@ -20,16 +20,12 @@ import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Loggers;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -37,7 +33,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -48,26 +43,26 @@ public class InterceptorChain implements IInterceptorChain {
         return Integer.compare(o1.getPosition(), o2.getPosition());
     };
 
-    private final List<InterceptorContext> chain;
-    private final Queue<EngineRequestError> errors;
-    private final ReentrantReadWriteLock lock;
-    private final Condition qCond;
-    private final Lock qLock;
+    private final List<InterceptorContext>          chain;
+    private final Queue<EngineRequestError>         errors;
+    private final ReentrantReadWriteLock            lock;
+    private final Condition                         qCond;
+    private final Lock                              qLock;
     private final Queue<RequestInterceptingContext> requests;
-    private final Queue<Response> responses;
-    private final Queue<Trade> trades;
-    private final Worker worker;
+    private final Queue<Response>                   responses;
+    private final Queue<Trade>                      trades;
+    private final Worker                            worker;
 
     public InterceptorChain() {
-        qLock = new ReentrantLock();
-        qCond = qLock.newCondition();
-        lock = new ReentrantReadWriteLock();
-        chain = new LinkedList<>();
-        requests = new LinkedList<>();
+        qLock     = new ReentrantLock();
+        qCond     = qLock.newCondition();
+        lock      = new ReentrantReadWriteLock();
+        chain     = new LinkedList<>();
+        requests  = new LinkedList<>();
         responses = new LinkedList<>();
-        trades = new LinkedList<>();
-        errors = new LinkedList<>();
-        worker = new Worker(this);
+        trades    = new LinkedList<>();
+        errors    = new LinkedList<>();
+        worker    = new Worker(this);
     }
 
     @Override
@@ -82,8 +77,7 @@ public class InterceptorChain implements IInterceptorChain {
                                              vClazz,
                                              interceptor));
             chain.sort(c);
-        }
-        finally {
+        } finally {
             lock.writeLock().unlock();
         }
     }
@@ -106,8 +100,7 @@ public class InterceptorChain implements IInterceptorChain {
         }
         try {
             return chain.remove(chain.size() - 1).getInterceptor();
-        }
-        finally {
+        } finally {
             lock.writeLock().unlock();
         }
     }
@@ -116,8 +109,7 @@ public class InterceptorChain implements IInterceptorChain {
     public <T> void request(Class<T> clazz, T request) throws InterceptorException {
         if (clazz == EngineRequestError.class) {
             addError((EngineRequestError) request);
-        }
-        else {
+        } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
@@ -126,14 +118,11 @@ public class InterceptorChain implements IInterceptorChain {
     public <T> void respond(Class<T> clazz, T response) throws InterceptorException {
         if (clazz == Trade.class) {
             addTrade((Trade) response);
-        }
-        else if (clazz == RequestInterceptingContext.class) {
+        } else if (clazz == RequestInterceptingContext.class) {
             addRequest((RequestInterceptingContext) response);
-        }
-        else if (clazz == Response.class) {
+        } else if (clazz == Response.class) {
             addResponse((Response) response);
-        }
-        else {
+        } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
@@ -172,23 +161,19 @@ public class InterceptorChain implements IInterceptorChain {
             synchronized (trades) {
                 return (T) trades.poll();
             }
-        }
-        else if (clazz == Response.class) {
+        } else if (clazz == Response.class) {
             synchronized (responses) {
                 return (T) responses.poll();
             }
-        }
-        else if (clazz == RequestInterceptingContext.class) {
+        } else if (clazz == RequestInterceptingContext.class) {
             synchronized (requests) {
                 return (T) requests.poll();
             }
-        }
-        else if (clazz == EngineRequestError.class) {
+        } else if (clazz == EngineRequestError.class) {
             synchronized (errors) {
                 return (T) errors.poll();
             }
-        }
-        else {
+        } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
     }
@@ -197,8 +182,7 @@ public class InterceptorChain implements IInterceptorChain {
         qLock.lock();
         try {
             qCond.signalAll();
-        }
-        finally {
+        } finally {
             qLock.unlock();
         }
     }
@@ -208,14 +192,12 @@ public class InterceptorChain implements IInterceptorChain {
         try {
             qCond.await();
             return true;
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                              ex.getMessage(),
                                                                              ex);
             return false;
-        }
-        finally {
+        } finally {
             qLock.unlock();
         }
     }
@@ -223,18 +205,18 @@ public class InterceptorChain implements IInterceptorChain {
     private static class InterceptorContext {
 
         private final IInterceptor<?, ?> intc;
-        private final int pos;
-        private final Class<?> reqClz;
-        private final Class<?> rspClz;
+        private final int                pos;
+        private final Class<?>           reqClz;
+        private final Class<?>           rspClz;
 
         InterceptorContext(int pos,
                            Class<?> reqClz,
                            Class<?> rspClz,
                            IInterceptor<?, ?> intc) {
-            this.intc = intc;
+            this.intc   = intc;
             this.reqClz = reqClz;
             this.rspClz = rspClz;
-            this.pos = pos;
+            this.pos    = pos;
         }
 
         public IInterceptor<?, ?> getInterceptor() {
@@ -257,13 +239,13 @@ public class InterceptorChain implements IInterceptorChain {
     private class Worker implements Runnable {
 
         private final IInterceptorChain c;
-        private final ExecutorService es;
-        private final Future<?> future;
+        private final ExecutorService   es;
+        private final Future<?>         future;
 
         Worker(IInterceptorChain chain) {
-            this.c = chain;
+            this.c  = chain;
             this.es = Executors.newCachedThreadPool();
-            future = es.submit(this);
+            future  = es.submit(this);
         }
 
         @Override
@@ -286,8 +268,7 @@ public class InterceptorChain implements IInterceptorChain {
                     execute(EngineRequestError.class,
                             15,
                             TimeUnit.SECONDS);
-                }
-                finally {
+                } finally {
                     lock.readLock().unlock();
                 }
             }
@@ -302,14 +283,12 @@ public class InterceptorChain implements IInterceptorChain {
                                 object,
                                 timeout,
                                 unit);
-            }
-            else if (object instanceof RequestInterceptingContext) {
+            } else if (object instanceof RequestInterceptingContext) {
                 executeRequest(clazz,
                                object,
                                timeout,
                                unit);
-            }
-            else {
+            } else {
                 throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
             }
         }
@@ -322,8 +301,7 @@ public class InterceptorChain implements IInterceptorChain {
                 while ((object = pop(clazz)) != null) {
                     execute(clazz, object, timeout, unit);
                 }
-            }
-            catch (InterceptorException ex) {
+            } catch (InterceptorException ex) {
                 Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                                  ex.toString(),
                                                                                  ex);
@@ -334,8 +312,8 @@ public class InterceptorChain implements IInterceptorChain {
                                         T request,
                                         int timeout,
                                         TimeUnit unit) {
-            var nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
-            long s0 = System.nanoTime();
+            var  nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
+            long s0    = System.nanoTime();
             for (var i = 0; i < chain.size(); ++i) {
                 var interceptor = chain.get(i);
                 if (interceptor.getRequestClass() == clazz) {
@@ -347,9 +325,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                    .log(Level.SEVERE,
-                                         "Interceptor request chaining run out of time({0}ns)",
-                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                   .log(Level.SEVERE,
+                                        "Interceptor request chaining run out of time({0}ns)",
+                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();
@@ -362,8 +340,8 @@ public class InterceptorChain implements IInterceptorChain {
                                          R object,
                                          int timeout,
                                          TimeUnit unit) {
-            var nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
-            long s0 = System.nanoTime();
+            var  nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
+            long s0    = System.nanoTime();
             for (var i = chain.size() - 1; i >= 0; --i) {
                 var interceptor = chain.get(i);
                 if (interceptor.getResponseClass() == clazz) {
@@ -375,9 +353,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                    .log(Level.SEVERE,
-                                         "Interceptor response chaining run out of time({0}ns)",
-                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                   .log(Level.SEVERE,
+                                        "Interceptor response chaining run out of time({0}ns)",
+                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();
@@ -394,8 +372,7 @@ public class InterceptorChain implements IInterceptorChain {
             });
             try {
                 return fut.get(nanos, TimeUnit.NANOSECONDS);
-            }
-            catch (InterruptedException | ExecutionException | TimeoutException ex) {
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                                  ex.getMessage(),
                                                                                  ex);
@@ -411,8 +388,7 @@ public class InterceptorChain implements IInterceptorChain {
             });
             try {
                 return fut.get(nanos, TimeUnit.NANOSECONDS);
-            }
-            catch (InterruptedException | ExecutionException | TimeoutException ex) {
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                                  ex.getMessage(),
                                                                                  ex);

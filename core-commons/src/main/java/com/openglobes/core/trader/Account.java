@@ -27,22 +27,22 @@ import java.time.ZonedDateTime;
  */
 public class Account {
 
-    private Double accountId;
-    private Double balance;
-    private Double closeProfit;
-    private Double commission;
-    private Double deposit;
-    private Double frozenCommission;
-    private Double frozenMargin;
-    private Double margin;
-    private Double positionProfit;
-    private Double preBalance;
-    private Double preDeposit;
-    private Double preMargin;
-    private Double preWithdraw;
+    private Double        accountId;
+    private Double        balance;
+    private Double        closeProfit;
+    private Double        commission;
+    private Double        deposit;
+    private Double        frozenCommission;
+    private Double        frozenMargin;
+    private Double        margin;
+    private Double        positionProfit;
+    private Double        preBalance;
+    private Double        preDeposit;
+    private Double        preMargin;
+    private Double        preWithdraw;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Double withdraw;
+    private LocalDate     tradingDay;
+    private Double        withdraw;
 
     public Account() {
     }

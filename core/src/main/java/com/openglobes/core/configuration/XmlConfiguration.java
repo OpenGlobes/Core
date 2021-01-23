@@ -16,25 +16,26 @@
  */
 package com.openglobes.core.configuration;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 /**
- *
  * @author Hongbao Chen
  * @sicne 1.0
  */
 public class XmlConfiguration {
 
+    private XmlConfiguration() {
+    }
+
     public static <T> T load(Class<T> clazz, Reader reader) throws ConfigurationException {
         try {
             var content = JAXBContext.newInstance(clazz);
             return clazz.cast(content.createUnmarshaller().unmarshal(reader));
-        }
-        catch (JAXBException ex) {
+        } catch (JAXBException ex) {
             throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
@@ -44,8 +45,7 @@ public class XmlConfiguration {
         try {
             var content = JAXBContext.newInstance(clazz);
             return clazz.cast(content.createUnmarshaller().unmarshal(stream));
-        }
-        catch (JAXBException ex) {
+        } catch (JAXBException ex) {
             throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
@@ -55,13 +55,9 @@ public class XmlConfiguration {
         try {
             var content = JAXBContext.newInstance(clazz);
             return clazz.cast(content.createUnmarshaller().unmarshal(new ByteArrayInputStream(xml.getBytes())));
-        }
-        catch (JAXBException ex) {
+        } catch (JAXBException ex) {
             throw new ConfigurationException(ex.getMessage(),
                                              ex);
         }
-    }
-
-    private XmlConfiguration() {
     }
 }

@@ -20,33 +20,32 @@ import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.market.InstrumentMinuteNotice;
 import com.openglobes.core.utils.Loggers;
+
 import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InstrumentMinuteNoticeHandler implements IEventHandler<InstrumentMinuteNotice> {
 
     private final IStickEngine eg;
-    
+
     public InstrumentMinuteNoticeHandler(IStickEngine engine) {
         Objects.requireNonNull(engine);
         eg = engine;
     }
-    
+
     @Override
     public void handle(IEvent<InstrumentMinuteNotice> event) {
         try {
             eg.onNotice(event.get());
-        }
-        catch (PublishException ex) {
-            Loggers.getLogger(InstrumentMinuteNoticeHandler.class.getCanonicalName()).log(Level.SEVERE, 
+        } catch (PublishException ex) {
+            Loggers.getLogger(InstrumentMinuteNoticeHandler.class.getCanonicalName()).log(Level.SEVERE,
                                                                                           ex.toString(),
                                                                                           ex);
         }
     }
-    
+
 }

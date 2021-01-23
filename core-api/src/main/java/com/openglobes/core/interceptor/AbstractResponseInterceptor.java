@@ -16,20 +16,15 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.interceptor.IInterceptor;
-import com.openglobes.core.interceptor.IInterceptorChain;
-import com.openglobes.core.interceptor.InterceptOperation;
-
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractResponseInterceptor<R> implements IInterceptor<Object, R>{
-    
+public abstract class AbstractResponseInterceptor<R> implements IInterceptor<Object, R> {
+
     @Override
     public InterceptOperation onRequest(Object request, IInterceptorChain stack) {
         return InterceptOperation.CONTINUE;
     }
-    
+
 }

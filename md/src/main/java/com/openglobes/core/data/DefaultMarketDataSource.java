@@ -19,7 +19,6 @@ package com.openglobes.core.data;
 import java.sql.SQLException;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -29,8 +28,7 @@ public class DefaultMarketDataSource extends MarketDataSource {
     public IMarketDataConnection getConnection() throws DataException {
         try {
             return new DefaultMarketDataConnection(getSqlConnection(), this);
-        }
-        catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             throw new DataException(ex.getMessage(),
                                     ex);
         }

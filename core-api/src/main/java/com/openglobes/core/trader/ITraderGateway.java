@@ -1,6 +1,7 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.GatewayException;
+
 import java.util.Properties;
 
 /**

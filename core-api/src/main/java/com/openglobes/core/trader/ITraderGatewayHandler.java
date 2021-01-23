@@ -16,8 +16,8 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.ServiceRuntimeStatus;
 
 /**
  * Handler for trading responses from {@link ITraderService}.

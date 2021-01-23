@@ -20,12 +20,11 @@ import com.openglobes.core.GatewayRuntimeException;
 import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.market.Tick;
 import com.openglobes.core.utils.Loggers;
+
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -56,8 +55,7 @@ public class TickHandler implements IMarketGatewayHandler {
     public void onTick(Tick tick) {
         try {
             eg.updateTick(tick);
-        }
-        catch (StickBuilderNotFoundException | StickException ex) {
+        } catch (StickBuilderNotFoundException | StickException ex) {
             Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
                                                                         ex.getMessage(),
                                                                         ex);

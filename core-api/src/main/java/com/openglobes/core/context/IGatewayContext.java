@@ -16,14 +16,13 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.trader.ITraderGateway;
 import com.openglobes.core.IConfiguredContext;
+import com.openglobes.core.trader.ITraderGateway;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface IGatewayContext extends IConfiguredContext<ITraderGateway> {
-    
+
 }

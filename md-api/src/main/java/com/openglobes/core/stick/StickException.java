@@ -16,10 +16,7 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.stick.MarketException;
-
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

@@ -20,12 +20,11 @@ import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class StickContext extends Stick implements IStickContext {
-    
+
     private Long curVol, preVol;
 
     public StickContext(Integer minutesOrDays, boolean isDay) {
@@ -36,17 +35,16 @@ public class StickContext extends Stick implements IStickContext {
     @Override
     public Stick nextStick(Long stickId) {
         try {
-            var r = get(stickId, curVol -preVol);
+            var r = get(stickId, curVol - preVol);
             preVol = curVol;
             return r;
-        }
-        finally {
+        } finally {
             clean();
         }
     }
 
     @Override
-    public void update(Tick tick)  {
+    public void update(Tick tick) {
         setClosePrice(tick.getPrice());
         if (getClosePrice() > getHighPrice()) {
             setHighPrice(getClosePrice());
@@ -104,8 +102,7 @@ public class StickContext extends Stick implements IStickContext {
         if (!isDay) {
             setMinutes(x);
             setDays(0);
-        }
-        else {
+        } else {
             setMinutes(0);
             setDays(x);
         }

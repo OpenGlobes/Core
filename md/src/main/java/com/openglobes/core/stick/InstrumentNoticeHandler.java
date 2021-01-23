@@ -20,11 +20,11 @@ import com.openglobes.core.event.IEvent;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.market.InstrumentNotice;
 import com.openglobes.core.utils.Loggers;
+
 import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -41,8 +41,7 @@ public class InstrumentNoticeHandler implements IEventHandler<InstrumentNotice> 
     public void handle(IEvent<InstrumentNotice> event) {
         try {
             eg.onNotice(event.get());
-        }
-        catch (PublishException ex) {
+        } catch (PublishException ex) {
             Loggers.getLogger(InstrumentNoticeHandler.class.getCanonicalName()).log(Level.SEVERE,
                                                                                     ex.toString(),
                                                                                     ex);

@@ -16,52 +16,45 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.DataException;
+import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.market.InstrumentMinuteNotice;
-import com.openglobes.core.market.InstrumentNotice;
-import com.openglobes.core.market.Notices;
-import com.openglobes.core.market.Stick;
-import com.openglobes.core.market.Tick;
-import com.openglobes.core.utils.Loggers;
+import com.openglobes.core.market.*;
+
 import java.lang.ref.Cleaner;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class StickEngine implements IStickEngine, AutoCloseable {
 
-    public static IStickEngine create(IMarketDataSource source) throws StickException,
-                                                                       DataException {
-        return new StickEngine(source);
-    }
     private final Map<String, IStickBuilder> builders;
-    private final Cleaner.Cleanable cleanable;
-    private final Cleaner cleaner = Cleaner.create();
-    private final IEventSource evt;
-    private final AtomicLong sid;
-    private final IMarketDataSource src;
-
+    private final Cleaner.Cleanable          cleanable;
+    private final Cleaner                    cleaner = Cleaner.create();
+    private final IEventSource               evt;
+    private final AtomicLong                 sid;
+    private final IMarketDataSource          src;
     private StickEngine(IMarketDataSource source) throws StickException,
                                                          DataException {
-        evt = new EventSource();
-        src = source;
-        builders = new ConcurrentHashMap<>(512);
-        sid = new AtomicLong(getInitStickId());
+        evt       = new EventSource();
+        src       = source;
+        builders  = new ConcurrentHashMap<>(512);
+        sid       = new AtomicLong(getInitStickId());
         cleanable = cleaner.register(this,
                                      new CleanAction(evt));
         setup();
+    }
+
+    public static IStickEngine create(IMarketDataSource source) throws StickException,
+                                                                       DataException {
+        return new StickEngine(source);
     }
 
     @Override
@@ -102,8 +95,7 @@ public class StickEngine implements IStickEngine, AutoCloseable {
                             notice.getAlignTime(),
                             notice.getMinuteOfTradingDay(),
                             null);
-        }
-        catch (MarketException ex) {
+        } catch (MarketException ex) {
             throw new PublishException(ex.getMessage(),
                                        ex);
         }
@@ -127,8 +119,7 @@ public class StickEngine implements IStickEngine, AutoCloseable {
                  */
                 buildAndPublishOthers(notice);
             }
-        }
-        catch (MarketException ex) {
+        } catch (MarketException ex) {
             throw new PublishException(ex.getMessage(),
                                        ex);
         }
@@ -185,9 +176,9 @@ public class StickEngine implements IStickEngine, AutoCloseable {
         try (var conn = src.getConnection()) {
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
-                                             k -> {
-                                                 return new StickBuilder(this);
-                                             });
+                                                 k -> {
+                                                     return new StickBuilder(this);
+                                                 });
                 b.addMinutes(setting.getMinutes());
             }
             for (var b : builders.values()) {

@@ -16,23 +16,15 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.GatewayException;
 import com.openglobes.core.GatewayRuntimeException;
 import com.openglobes.core.ServiceRuntimeStatus;
-import com.openglobes.core.data.DataException;
-import com.openglobes.core.data.DataInsertionException;
-import com.openglobes.core.data.DataQueryException;
-import com.openglobes.core.data.DataRemovalException;
-import com.openglobes.core.data.DataUpdateException;
-import com.openglobes.core.data.ITraderDataConnection;
-import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.data.*;
 import com.openglobes.core.utils.Utils;
+
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Implementation of service handler to process responses.
@@ -64,8 +56,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Delete action fails, so order is unchanged.
              */
-        }
-        else {
+        } else {
             deleteOrderWhenException(request,
                                      exception,
                                      requestId);
@@ -83,12 +74,10 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                 }
             }
             callOnResponse(response);
-        }
-        catch (DataException ex) {
+        } catch (DataException ex) {
             callOnException(new TraderRuntimeException("Fail saving response to data source.",
                                                        ex));
-        }
-        catch (SQLException | ClassNotFoundException | TraderException ex) {
+        } catch (SQLException | ClassNotFoundException | TraderException ex) {
             callOnException(new TraderRuntimeException(ex.getMessage(),
                                                        ex));
         }
@@ -107,8 +96,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                 dealTrade(trade);
             }
             callOnTrade(trade);
-        }
-        catch (TraderException ex) {
+        } catch (TraderException ex) {
             callOnException(new TraderRuntimeException(ex.getMessage(),
                                                        ex));
         }
@@ -119,8 +107,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             onException(new GatewayRuntimeException(0,
                                                     e.getMessage(),
                                                     e));
-        }
-        catch (Throwable ignored) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -168,7 +155,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
                                                        conn);
         int count = 0;
-        var it = bs.iterator();
+        var it    = bs.iterator();
         while (count < trade.getQuantity() && it.hasNext()) {
             var b = it.next();
             var s = b.getContract().getStatus();
@@ -213,14 +200,13 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Update contract.
              */
-            var price = response.getPrice();
+            var price      = response.getPrice();
             var instrument = getInstrument(response.getInstrumentId());
-            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            var amount     = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setCloseAmount(amount);
             contract.setStatus(ContractStatus.CLOSED);
             conn.updateContract(contract);
-        }
-        catch (DataUpdateException ex) {
+        } catch (DataUpdateException ex) {
 
         }
     }
@@ -253,22 +239,18 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             if (offset == Offset.OPEN) {
                 openDelete(response,
                            conn);
-            }
-            else {
+            } else {
                 closeDelete(response,
                             conn);
             }
             conn.commit();
-        }
-        catch (TraderRuntimeException e) {
+        } catch (TraderRuntimeException e) {
             rollbackAndCallHandler(conn,
                                    e);
-        }
-        catch (DataException | SQLException | ClassNotFoundException ex) {
+        } catch (DataException | SQLException | ClassNotFoundException ex) {
             throw new DataAccessException(ex.getMessage(),
                                           ex);
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 conn.close();
             }
@@ -302,17 +284,16 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Update contract.
              */
-            var price = trade.getPrice();
+            var price      = trade.getPrice();
             var instrument = getInstrument(trade.getInstrumentId());
-            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            var amount     = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setOpenAmount(amount);
             contract.setStatus(ContractStatus.OPEN);
             contract.setTradeId(trade.getTradeId());
             contract.setOpenTimestamp(trade.getTimestamp());
             contract.setOpenTradingDay(trade.getTradingDay());
             conn.updateCommission(commission);
-        }
-        catch (DataUpdateException ex) {
+        } catch (DataUpdateException ex) {
             throw new DataAccessException(ex.getMessage(),
                                           ex);
         }
@@ -344,24 +325,20 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             if (Offset.OPEN == offset) {
                 openTrade(trade,
                           conn);
-            }
-            else {
+            } else {
                 closeTrade(trade,
                            conn);
             }
             conn.commit();
-        }
-        catch (GatewayRuntimeException e) {
+        } catch (GatewayRuntimeException e) {
             rollbackAndCallHandler(conn,
                                    e.getCode(),
                                    e.getMessage(),
                                    e);
-        }
-        catch (SQLException | DataInsertionException | DataQueryException | ClassNotFoundException ex) {
+        } catch (SQLException | DataInsertionException | DataQueryException | ClassNotFoundException ex) {
             throw new DataAccessException(ex.getMessage(),
                                           ex);
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 conn.close();
             }
@@ -416,8 +393,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             publishRquestError(request,
                                exception,
                                requestId);
-        }
-        catch (Throwable th) {
+        } catch (Throwable th) {
             callOnException(new TraderRuntimeException(th.getMessage(),
                                                        th));
         }
@@ -435,7 +411,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                                       ITraderDataConnection conn) throws DataQueryException,
                                                                                          InvalidFrozenBundleException {
         final var map = new HashMap<Long, FrozenBundle>(128);
-        var ms = conn.getMarginsByOrderId(orderId);
+        var       ms  = conn.getMarginsByOrderId(orderId);
         Objects.requireNonNull(ms);
         var cs = conn.getCommissionsByOrderId(orderId);
         Objects.requireNonNull(cs);
@@ -518,7 +494,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
                                                        conn);
         int count = 0;
-        var it = bs.iterator();
+        var it    = bs.iterator();
         while (count < trade.getQuantity()
                && it.hasNext()) {
             var b = it.next();
@@ -531,7 +507,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                      b.getContract(),
                      trade,
                      conn
-            );
+                    );
             ++count;
         }
         if (count < trade.getQuantity()) {
@@ -593,8 +569,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         }
         try {
             conn.rollback();
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             callOnException(new TraderRuntimeException(ex.getMessage(),
                                                        ex));
         }
@@ -617,14 +592,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private class FrozenBundle {
 
-        private Commission commission;
-        private final Contract contract;
-        private final Margin margin;
+        private final Contract   contract;
+        private final Margin     margin;
+        private       Commission commission;
 
         FrozenBundle(Commission commission, Margin margin, Contract contract) {
             this.commission = commission;
-            this.margin = margin;
-            this.contract = contract;
+            this.margin     = margin;
+            this.contract   = contract;
         }
 
         Commission getCommission() {

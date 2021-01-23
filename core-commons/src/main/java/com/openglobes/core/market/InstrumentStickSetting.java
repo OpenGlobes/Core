@@ -19,16 +19,15 @@ package com.openglobes.core.market;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InstrumentStickSetting {
 
-    private Integer days;
-    private String instrumentId;
-    private Long instrumentStickSettingId;
-    private Integer minutes;
+    private Integer       days;
+    private String        instrumentId;
+    private Long          instrumentStickSettingId;
+    private Integer       minutes;
     private ZonedDateTime timestamp;
 
     public InstrumentStickSetting() {

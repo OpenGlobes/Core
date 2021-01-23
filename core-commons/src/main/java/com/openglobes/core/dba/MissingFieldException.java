@@ -17,21 +17,20 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class MissingFieldException extends DbaException{
+public class MissingFieldException extends DbaException {
 
     private static final long serialVersionUID = 3215672134099754L;
-    
+
     public MissingFieldException(String message) {
         super(message);
     }
 
-    public MissingFieldException(String message, 
+    public MissingFieldException(String message,
                                  Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class MissingFieldException extends DbaException{
         super(cause);
     }
 
-    public MissingFieldException(String message, 
-                                 Throwable cause, 
-                                 boolean enableSuppression, 
+    public MissingFieldException(String message,
+                                 Throwable cause,
+                                 boolean enableSuppression,
                                  boolean writableStackTrace) {
         super(message,
-              cause, 
-              enableSuppression, 
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

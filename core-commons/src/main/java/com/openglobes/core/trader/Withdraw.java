@@ -9,16 +9,15 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Withdraw {
 
-    private Double amount;
+    private Double        amount;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Long withdrawId;
+    private LocalDate     tradingDay;
+    private Long          withdrawId;
 
     public Withdraw() {
     }

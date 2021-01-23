@@ -17,7 +17,6 @@
 package com.openglobes.core.stick;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

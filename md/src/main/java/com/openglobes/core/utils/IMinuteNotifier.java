@@ -19,12 +19,11 @@ package com.openglobes.core.utils;
 import com.openglobes.core.event.IEventSource;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface IMinuteNotifier {
 
     IEventSource getEventSource();
-    
+
 }

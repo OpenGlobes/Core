@@ -20,17 +20,16 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class SettlementPrice {
 
-    private String instrumentId;
-    private Double settlementPrice;
-    private Long settlementPriceId;
+    private String        instrumentId;
+    private Double        settlementPrice;
+    private Long          settlementPriceId;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
+    private LocalDate     tradingDay;
 
     public SettlementPrice() {
     }

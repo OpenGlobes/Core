@@ -16,33 +16,32 @@
  */
 package com.openglobes.core.event;
 
-import com.openglobes.core.event.IEvent;
 import com.openglobes.core.utils.Utils;
+
 import java.time.ZonedDateTime;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public class Event<T> implements IEvent<T> {
 
-    private Class<T> c;
-    private T o;
-    private final Long seq;
+    private final Long          seq;
     private final ZonedDateTime ts;
+    private       Class<T>      c;
+    private       T             o;
 
     public Event() {
         seq = Utils.nextId();
-        ts = ZonedDateTime.now();
+        ts  = ZonedDateTime.now();
     }
 
     @Override
     public T get() {
         return o;
     }
+
     public void set(T o) {
         this.o = o;
     }
@@ -61,6 +60,7 @@ public class Event<T> implements IEvent<T> {
     public Class<T> getType() {
         return c;
     }
+
     public void setType(Class<T> c) {
         this.c = c;
     }

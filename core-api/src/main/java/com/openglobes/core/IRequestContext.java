@@ -20,7 +20,6 @@ import com.openglobes.core.session.ISessionCorrelator;
 import com.openglobes.core.trader.ITraderEngine;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -31,5 +30,5 @@ public interface IRequestContext {
     ISharedContext getSharedContext() throws RequestException;
 
     ITraderEngine getTraderEngine() throws RequestException;
-    
+
 }

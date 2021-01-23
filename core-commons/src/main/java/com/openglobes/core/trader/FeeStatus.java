@@ -24,8 +24,8 @@ package com.openglobes.core.trader;
  */
 public class FeeStatus {
 
-    public static final int DEALED = (0x21);
-    public static final int FORZEN = (0x20);
+    public static final int DEALED  = (0x21);
+    public static final int FORZEN  = (0x20);
     public static final int REMOVED = (0x22);
 
     private FeeStatus() {

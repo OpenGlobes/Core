@@ -19,7 +19,6 @@ package com.openglobes.core.trader;
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -27,17 +26,17 @@ public class RequestDetail {
 
     private final Instrument instrument;
     private final Properties properties;
-    private final Request request;
-    private final int requestId;
+    private final Request    request;
+    private final int        requestId;
 
     public RequestDetail(Request request,
-                          Instrument instrument,
-                          Properties properties,
-                          int requestId) {
-        this.request = request;
+                         Instrument instrument,
+                         Properties properties,
+                         int requestId) {
+        this.request    = request;
         this.instrument = instrument;
         this.properties = properties;
-        this.requestId = requestId;
+        this.requestId  = requestId;
     }
 
     public Instrument getInstrument() {

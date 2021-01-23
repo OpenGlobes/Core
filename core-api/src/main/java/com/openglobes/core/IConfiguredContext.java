@@ -19,10 +19,8 @@ package com.openglobes.core;
 import java.util.Properties;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface IConfiguredContext<T> {

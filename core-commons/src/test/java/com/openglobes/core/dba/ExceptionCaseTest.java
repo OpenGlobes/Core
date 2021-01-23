@@ -20,13 +20,13 @@ import com.openglobes.core.dba.tables.EmptyTable;
 import com.openglobes.core.dba.tables.InvalidTableWithUnsupportedFieldTypes;
 import com.openglobes.core.dba.tables.InvalidTableWithoutId;
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

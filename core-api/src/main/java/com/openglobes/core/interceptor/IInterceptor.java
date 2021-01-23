@@ -16,19 +16,15 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.interceptor.InterceptOperation;
-
 /**
- *
- * @author Hongbao Chen
  * @param <T>
  * @param <V>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface IInterceptor<T, V> {
 
     InterceptOperation onRequest(T request, IInterceptorChain stack);
-    
+
     InterceptOperation onResponse(V response, IInterceptorChain stack);
 }

@@ -17,16 +17,15 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
-public class InvalidTradeOffsetException extends TraderException{
-    
+public class InvalidTradeOffsetException extends TraderException {
+
     public InvalidTradeOffsetException(String message) {
         super(message);
     }
 
-    public InvalidTradeOffsetException(String message, 
+    public InvalidTradeOffsetException(String message,
                                        Throwable cause) {
         super(message,
               cause);
@@ -37,13 +36,13 @@ public class InvalidTradeOffsetException extends TraderException{
     }
 
     public InvalidTradeOffsetException(String message,
-                                       Throwable cause, 
-                                       boolean enableSuppression, 
+                                       Throwable cause,
+                                       boolean enableSuppression,
                                        boolean writableStackTrace) {
-        super(message, 
-              cause, 
-              enableSuppression, 
+        super(message,
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

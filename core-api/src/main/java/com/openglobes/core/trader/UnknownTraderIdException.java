@@ -17,14 +17,13 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class UnknownTraderIdException extends TraderException {
 
     private static final long serialVersionUID = 436687739820193L;
-    
+
     public UnknownTraderIdException(String message) {
         super(message);
     }
@@ -39,14 +38,14 @@ public class UnknownTraderIdException extends TraderException {
         super(cause);
     }
 
-    public UnknownTraderIdException(String message, 
+    public UnknownTraderIdException(String message,
                                     Throwable cause,
-                                    boolean enableSuppression, 
+                                    boolean enableSuppression,
                                     boolean writableStackTrace) {
-        super(message, 
+        super(message,
               cause,
-              enableSuppression, 
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

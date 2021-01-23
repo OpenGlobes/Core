@@ -16,44 +16,20 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.configuration.ConfigurationException;
-import com.openglobes.core.configuration.ConnectorConfiguration;
-import com.openglobes.core.configuration.CoreConfiguration;
-import com.openglobes.core.configuration.DataSourceConfiguration;
-import com.openglobes.core.configuration.GatewayConfiguration;
-import com.openglobes.core.configuration.PluginConfiguration;
-import com.openglobes.core.configuration.XmlConfiguration;
+import com.openglobes.core.configuration.*;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
-import com.openglobes.core.context.ConnectorContext;
-import com.openglobes.core.context.DataSourceContext;
-import com.openglobes.core.context.GatewayContext;
-import com.openglobes.core.context.IDataSourceContext;
-import com.openglobes.core.context.IGatewayContext;
-import com.openglobes.core.context.PluginContext;
-import com.openglobes.core.context.RequestContext;
-import com.openglobes.core.context.SharedContext;
+import com.openglobes.core.context.*;
 import com.openglobes.core.data.ITraderDataSource;
-import com.openglobes.core.trader.TraderException;
-import com.openglobes.core.interceptor.InterceptorException;
-import com.openglobes.core.interceptor.LastRequestErrorInterceptor;
-import com.openglobes.core.interceptor.LastRequestInterceptor;
-import com.openglobes.core.interceptor.LastResponseInterceptor;
-import com.openglobes.core.interceptor.LastTradeInterceptor;
-import com.openglobes.core.interceptor.RequestInterceptingContext;
+import com.openglobes.core.interceptor.*;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
-import com.openglobes.core.trader.DefaultTraderEngineAlgorithm;
-import com.openglobes.core.trader.EngineRequestError;
-import com.openglobes.core.trader.ITraderEngine;
-import com.openglobes.core.trader.ITraderEngineAlgorithm;
-import com.openglobes.core.trader.ITraderGateway;
-import com.openglobes.core.trader.Response;
-import com.openglobes.core.trader.Trade;
-import com.openglobes.core.trader.TraderEngine;
+import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.ServiceSelector;
+
+import javax.management.ServiceNotFoundException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -62,32 +38,30 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.management.ServiceNotFoundException;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Core implements ICore {
 
-    public static ICore create() {
-        return new Core();
-    }
-    private final ITraderEngineAlgorithm algo;
-    private Collection<IConnectorContext> connectors;
-    private IDataSourceContext ds;
-    private final ITraderEngine engine;
-    private Collection<IGatewayContext> gates;
-    private Collection<IPluginContext> plugins;
-    private final IRequestContext reqCtx;
-    private final ISharedContext sharedCtx;
-
+    private final ITraderEngineAlgorithm        algo;
+    private final ITraderEngine                 engine;
+    private final IRequestContext               reqCtx;
+    private final ISharedContext                sharedCtx;
+    private       Collection<IConnectorContext> connectors;
+    private       IDataSourceContext            ds;
+    private       Collection<IGatewayContext>   gates;
+    private       Collection<IPluginContext>    plugins;
     public Core() {
         sharedCtx = new SharedContext();
-        engine = new TraderEngine();
-        reqCtx = new RequestContext(engine, sharedCtx);
-        algo = new DefaultTraderEngineAlgorithm();
+        engine    = new TraderEngine();
+        reqCtx    = new RequestContext(engine, sharedCtx);
+        algo      = new DefaultTraderEngineAlgorithm();
+    }
+
+    public static ICore create() {
+        return new Core();
     }
 
     @Override
@@ -107,8 +81,7 @@ public class Core implements ICore {
             }
             while (sharedCtx.getInterceptorStack().removeInterceptor() != null) {
             }
-        }
-        catch (TraderException | ConnectorException | PluginException | InterceptorException ex) {
+        } catch (TraderException | ConnectorException | PluginException | InterceptorException ex) {
             throw new CoreDisposeException(ex.getMessage(),
                                            ex);
         }
@@ -144,8 +117,7 @@ public class Core implements ICore {
         try {
             install(XmlConfiguration.load(CoreConfiguration.class, xml),
                     jars);
-        }
-        catch (ConfigurationException ex) {
+        } catch (ConfigurationException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -156,8 +128,7 @@ public class Core implements ICore {
         try {
             install(XmlConfiguration.load(CoreConfiguration.class, stream),
                     jars);
-        }
-        catch (ConfigurationException ex) {
+        } catch (ConfigurationException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -168,8 +139,7 @@ public class Core implements ICore {
         try {
             install(XmlConfiguration.load(CoreConfiguration.class, reader),
                     jars);
-        }
-        catch (ConfigurationException ex) {
+        } catch (ConfigurationException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -181,8 +151,7 @@ public class Core implements ICore {
         connectors.add(connectorContext);
         try {
             connectorContext.get().listen(connectorContext);
-        }
-        catch (ConnectorException ex) {
+        } catch (ConnectorException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -203,8 +172,7 @@ public class Core implements ICore {
             engine.setAlgorithm(algo);
             engine.registerTrader(gates.size(),
                                   gatewayContext.get());
-        }
-        catch (TraderException ex) {
+        } catch (TraderException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -216,8 +184,7 @@ public class Core implements ICore {
         plugins.add(pluginContext);
         try {
             pluginContext.get().initialize(pluginContext);
-        }
-        catch (PluginException ex) {
+        } catch (PluginException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
@@ -233,8 +200,7 @@ public class Core implements ICore {
         try {
             installInterceptors();
             engine.start(new Properties());
-        }
-        catch (TraderException ex) {
+        } catch (TraderException ex) {
             throw new CoreStartException(ex.getMessage(),
                                          ex);
         }
@@ -256,13 +222,12 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var conn = ServiceSelector.selectService(IConnector.class,
-                                                     c.getClassCanonicalName(),
-                                                     jars);
+                                                         c.getClassCanonicalName(),
+                                                         jars);
                 installConnector(new ConnectorContext(c,
                                                       conn,
                                                       reqCtx));
-            }
-            catch (ServiceNotFoundException ex) {
+            } catch (ServiceNotFoundException ex) {
                 throw new CoreInstallException(ex.getMessage(),
                                                ex
                 );
@@ -275,13 +240,12 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var d = ServiceSelector.selectService(ITraderDataSource.class,
-                                                  c.getClassCanonicalName(),
-                                                  jars);
+                                                      c.getClassCanonicalName(),
+                                                      jars);
                 installDataSource(new DataSourceContext(c,
                                                         d));
                 break;
-            }
-            catch (ServiceNotFoundException ex) {
+            } catch (ServiceNotFoundException ex) {
                 throw new CoreInstallException(ex.getMessage(),
                                                ex);
             }
@@ -293,12 +257,11 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var gate = ServiceSelector.selectService(ITraderGateway.class,
-                                                     c.getClassCanonicalName(),
-                                                     jars);
+                                                         c.getClassCanonicalName(),
+                                                         jars);
                 installGateway(new GatewayContext(c,
                                                   gate));
-            }
-            catch (ServiceNotFoundException ex) {
+            } catch (ServiceNotFoundException ex) {
                 throw new CoreInstallException(ex.getMessage(),
                                                ex);
             }
@@ -320,8 +283,7 @@ public class Core implements ICore {
             x.addInterceptor(Integer.MAX_VALUE,
                              RequestInterceptingContext.class,
                              new LastRequestInterceptor(reqCtx));
-        }
-        catch (InterceptorException ex) {
+        } catch (InterceptorException ex) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -331,13 +293,12 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var p = ServiceSelector.selectService(IPlugin.class,
-                                                  c.getClassCanonicalName(),
-                                                  jars);
+                                                      c.getClassCanonicalName(),
+                                                      jars);
                 installPlugin(new PluginContext(c,
                                                 p,
                                                 this));
-            }
-            catch (ServiceNotFoundException ex) {
+            } catch (ServiceNotFoundException ex) {
                 throw new CoreInstallException(ex.getMessage(),
                                                ex);
             }

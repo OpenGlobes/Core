@@ -20,7 +20,6 @@ import com.openglobes.core.IConfiguredContext;
 import com.openglobes.core.ICore;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

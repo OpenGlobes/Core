@@ -16,24 +16,23 @@
  */
 package com.openglobes.core.configuration;
 
+import javax.xml.bind.annotation.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class DataSourceConfiguration {
 
-    private String classCanonicalName;
-    private String driverClass;
-    private String name;
-    private String password;
+    private String              classCanonicalName;
+    private String              driverClass;
+    private String              name;
+    private String              password;
     private Map<String, String> properties;
-    private String url;
-    private String username;
+    private String              url;
+    private String              username;
 
     public DataSourceConfiguration() {
         properties = new HashMap<>(16);

@@ -19,7 +19,6 @@ package com.openglobes.core.data;
 import com.openglobes.core.dba.AbstractPooledDataSource;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

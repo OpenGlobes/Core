@@ -17,10 +17,8 @@
 package com.openglobes.core.event;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface IEventHandler<T> {

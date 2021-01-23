@@ -17,7 +17,6 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author chenh
  */
 public class DataQueryException extends DataException {

@@ -21,13 +21,13 @@ import com.openglobes.core.context.IDataSourceContext;
 import com.openglobes.core.context.IGatewayContext;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.trader.ITraderEngine;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.util.Collection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -38,11 +38,11 @@ public interface ICore {
     void dispose() throws CoreDisposeException;
 
     void installPlugin(IPluginContext pluginContext) throws CoreInstallException;
-    
+
     void installConnector(IConnectorContext connectorContext) throws CoreInstallException;
-    
+
     void installGateway(IGatewayContext gatewayContext) throws CoreInstallException;
-    
+
     void installDataSource(IDataSourceContext dataSourceContext) throws CoreInstallException;
 
     void install(String xml, File... jars) throws CoreInstallException;
@@ -50,18 +50,18 @@ public interface ICore {
     void install(InputStream stream, File... jars) throws CoreInstallException;
 
     void install(FileReader reader, File... jars) throws CoreInstallException;
-    
+
     Collection<IConnectorContext> connectors();
-    
+
     Collection<IPluginContext> plugins();
-    
+
     Collection<IGatewayContext> gateways();
-    
+
     IDataSourceContext getDataSource();
-    
+
     IRequestContext getRequest();
-    
+
     ISharedContext getShared();
-    
+
     ITraderEngine getTraderEngine();
 }

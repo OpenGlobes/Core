@@ -21,19 +21,18 @@ import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface IConnector {
-    
+
     void write(Trade trade) throws ConnectorException;
-    
+
     void write(Response response) throws ConnectorException;
-    
+
     void write(EngineRequestError error) throws ConnectorException;
 
     void listen(IConnectorContext context) throws ConnectorException;
-    
+
     void dispose() throws ConnectorException;
 }

@@ -17,7 +17,6 @@
 package com.openglobes.core.configuration;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

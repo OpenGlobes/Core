@@ -21,6 +21,7 @@ import com.openglobes.core.data.IMarketDataConnection;
 import com.openglobes.core.market.HolidayTime;
 import com.openglobes.core.market.WorkdayTime;
 import com.openglobes.core.utils.Utils;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -28,17 +29,31 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class TimeKeeper implements ITimeKeeper {
 
+    final         Long              holidayTimeSetId;
+    final         Long              workdayTimeSetId;
+    private final List<HolidayTime> holiday;
+    private final List<WorkdayTime> workday;
+    private TimeKeeper(Long workdayTimeSetId,
+                       Collection<WorkdayTime> workday,
+                       Long holidayTimeSetId,
+                       Collection<HolidayTime> holiday) {
+        this.holidayTimeSetId = holidayTimeSetId;
+        this.workdayTimeSetId = workdayTimeSetId;
+        this.holiday          = new LinkedList<>(holiday);
+        this.workday          = new LinkedList<>(workday);
+        setup();
+    }
+
     public static TimeKeeper create(Long holidayTimeSetId,
                                     Long workdayTimeSetId,
-                                    IMarketDataConnection connection) throws NoWorkdayException, 
+                                    IMarketDataConnection connection) throws NoWorkdayException,
                                                                              NoHolidayException,
-                                                                             DataQueryException  {
+                                                                             DataQueryException {
         Objects.requireNonNull(connection);
         var wd = connection.getWorkdayTimesByTimeSetId(workdayTimeSetId);
         Objects.requireNonNull(wd);
@@ -56,36 +71,17 @@ public class TimeKeeper implements ITimeKeeper {
                               hd);
     }
 
-    private final List<HolidayTime> holiday;
-    private final List<WorkdayTime> workday;
-    final Long holidayTimeSetId;
-    final Long workdayTimeSetId;
-
-    private TimeKeeper(Long workdayTimeSetId,
-                       Collection<WorkdayTime> workday,
-                       Long holidayTimeSetId,
-                       Collection<HolidayTime> holiday) {
-        this.holidayTimeSetId = holidayTimeSetId;
-        this.workdayTimeSetId = workdayTimeSetId;
-        this.holiday = new LinkedList<>(holiday);
-        this.workday = new LinkedList<>(workday);
-        setup();
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
-        }
-        else if (obj == this || obj.hashCode() == hashCode()) {
+        } else if (obj == this || obj.hashCode() == hashCode()) {
             return true;
-        }
-        else if (obj instanceof TimeKeeper) {
+        } else if (obj instanceof TimeKeeper) {
             var x = (TimeKeeper) obj;
             return Objects.equals(x.workdayTimeSetId, workdayTimeSetId)
                    && Objects.equals(x.holidayTimeSetId, holidayTimeSetId);
-        }
-        else {
+        } else {
             return false;
         }
     }

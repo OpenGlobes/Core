@@ -17,14 +17,13 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InvalidQueryResultException extends DataException{
+public class InvalidQueryResultException extends DataException {
 
     private static final long serialVersionUID = 1264792873010093L;
-    
+
     public InvalidQueryResultException(String message) {
         super(message);
     }
@@ -39,14 +38,14 @@ public class InvalidQueryResultException extends DataException{
         super(cause);
     }
 
-    public InvalidQueryResultException(String message, 
+    public InvalidQueryResultException(String message,
                                        Throwable cause,
                                        boolean enableSuppression,
                                        boolean writableStackTrace) {
         super(message,
-              cause, 
-              enableSuppression, 
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

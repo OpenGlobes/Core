@@ -17,20 +17,19 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class IllegalFieldTypeException extends DbaException{
+public class IllegalFieldTypeException extends DbaException {
 
     private static final long serialVersionUID = 3652687009833981L;
-    
+
     public IllegalFieldTypeException(String message) {
         super(message);
     }
 
-    public IllegalFieldTypeException(String message, 
-                              Throwable cause) {
+    public IllegalFieldTypeException(String message,
+                                     Throwable cause) {
         super(message,
               cause);
     }
@@ -40,13 +39,13 @@ public class IllegalFieldTypeException extends DbaException{
     }
 
     public IllegalFieldTypeException(String message,
-                              Throwable cause, 
-                              boolean enableSuppression, 
-                              boolean writableStackTrace) {
+                                     Throwable cause,
+                                     boolean enableSuppression,
+                                     boolean writableStackTrace) {
         super(message,
-              cause, 
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

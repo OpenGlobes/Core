@@ -6,10 +6,8 @@
 package com.openglobes.core.dba;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface IDefaultFactory<T> {

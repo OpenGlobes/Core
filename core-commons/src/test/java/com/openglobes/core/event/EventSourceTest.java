@@ -18,30 +18,29 @@ package com.openglobes.core.event;
 
 import com.openglobes.core.trader.Request;
 import com.openglobes.core.trader.Response;
+import org.junit.jupiter.api.*;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
+
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventSourceTest {
+
+    private final Long    sleepMilli = 100L;
+    private final Integer total      = 100;
+
+    public EventSourceTest() {
+    }
 
     @BeforeAll
     public static void setUpClass() {
@@ -49,12 +48,6 @@ public class EventSourceTest {
 
     @AfterAll
     public static void tearDownClass() {
-    }
-
-    private final Long sleepMilli = 100L;
-    private final Integer total = 100;
-
-    public EventSourceTest() {
     }
 
     @Test
@@ -81,18 +74,16 @@ public class EventSourceTest {
         try (EventSource source = new EventSource()) {
             final AtomicLong seq0 = new AtomicLong(0);
             final AtomicLong seq1 = new AtomicLong(0);
-            final var req = new SingleEventHandler<Request>();
-            final var rsp = new SingleEventHandler<Response>();
+            final var        req  = new SingleEventHandler<Request>();
+            final var        rsp  = new SingleEventHandler<Response>();
             try {
                 source.subscribe(Request.class,
                                  req);
                 source.subscribe(Response.class,
                                  rsp);
-            }
-            catch (InvalidSubscriptionException ex) {
+            } catch (InvalidSubscriptionException ex) {
                 fail(ex.getMessage());
-            }
-            catch (Throwable th) {
+            } catch (Throwable th) {
                 fail(th.getMessage());
             }
             /*
@@ -124,8 +115,7 @@ public class EventSourceTest {
                              req.getCount());
                 assertEquals(total.intValue(),
                              rsp.getCount());
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -136,17 +126,15 @@ public class EventSourceTest {
     @DisplayName("Multiple producers, single consumer.")
     public void multiProducerSingleConsumer() {
         try (EventSource source = new EventSource()) {
-            final ExecutorService es = Executors.newCachedThreadPool();
-            final var req = new SingleEventHandler<Request>();
-            final Integer threadCount = 10;
+            final ExecutorService es          = Executors.newCachedThreadPool();
+            final var             req         = new SingleEventHandler<Request>();
+            final Integer         threadCount = 10;
             try {
                 source.subscribe(Request.class,
                                  req);
-            }
-            catch (InvalidSubscriptionException ex) {
+            } catch (InvalidSubscriptionException ex) {
                 fail(ex.getMessage());
-            }
-            catch (Throwable th) {
+            } catch (Throwable th) {
                 fail(th.getMessage());
             }
             /*
@@ -176,8 +164,7 @@ public class EventSourceTest {
                 Thread.sleep(sleepMilli);
                 assertEquals(total * threadCount,
                              req.getCount());
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -194,18 +181,16 @@ public class EventSourceTest {
         try (EventSource source = new EventSource()) {
             final AtomicLong seq0 = new AtomicLong(0);
             final AtomicLong seq1 = new AtomicLong(0);
-            final var req = new SingleEventHandler<Request>();
-            final var rsp = new SingleEventHandler<Response>();
+            final var        req  = new SingleEventHandler<Request>();
+            final var        rsp  = new SingleEventHandler<Response>();
             try {
                 source.subscribe(Request.class,
                                  req);
                 source.subscribe(Response.class,
                                  rsp);
-            }
-            catch (InvalidSubscriptionException ex) {
+            } catch (InvalidSubscriptionException ex) {
                 fail(ex.getMessage());
-            }
-            catch (Throwable th) {
+            } catch (Throwable th) {
                 fail(th.getMessage());
             }
             /*
@@ -237,8 +222,7 @@ public class EventSourceTest {
                              req.getCount());
                 assertEquals(total.intValue(),
                              rsp.getCount());
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -250,15 +234,13 @@ public class EventSourceTest {
     public void singleProducerSingleConsumer() {
         try (EventSource source = new EventSource()) {
             final AtomicLong sequence = new AtomicLong(0);
-            final var req = new SingleEventHandler<Request>();
+            final var        req      = new SingleEventHandler<Request>();
             try {
                 source.subscribe(Request.class,
                                  req);
-            }
-            catch (InvalidSubscriptionException ex) {
+            } catch (InvalidSubscriptionException ex) {
                 fail(ex.getMessage());
-            }
-            catch (Throwable th) {
+            } catch (Throwable th) {
                 fail(th.getMessage());
             }
             /*
@@ -283,8 +265,7 @@ public class EventSourceTest {
                 Thread.sleep(sleepMilli);
                 assertEquals(total,
                              req.getCount());
-            }
-            catch (InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 fail(ex.getMessage());
             }
         }
@@ -296,7 +277,7 @@ public class EventSourceTest {
 
     private class SingleEventHandler<T> implements IEventHandler<T> {
 
-        private final AtomicInteger count = new AtomicInteger(0);
+        private final AtomicInteger           count = new AtomicInteger(0);
         private final Map<String, AtomicLong> m;
 
         SingleEventHandler() {
@@ -309,24 +290,22 @@ public class EventSourceTest {
 
         @Override
         public void handle(IEvent<T> event) {
-            var r = event.get();
+            var    r = event.get();
             String instrumentId;
-            Long orderId;
+            Long   orderId;
             if (r instanceof Request) {
                 instrumentId = ((Request) r).getInstrumentId();
-                orderId = ((Request) r).getOrderId();
-            }
-            else if (r instanceof Response) {
+                orderId      = ((Request) r).getOrderId();
+            } else if (r instanceof Response) {
                 instrumentId = ((Response) r).getInstrumentId();
-                orderId = ((Response) r).getOrderId();
-            }
-            else {
+                orderId      = ((Response) r).getOrderId();
+            } else {
                 return;
             }
             var v = m.computeIfAbsent(instrumentId,
-                                  k -> {
-                                      return new AtomicLong(0);
-                                  });
+                                      k -> {
+                                          return new AtomicLong(0);
+                                      });
             assertEquals(v.get() + 1,
                          orderId);
             v.set(orderId);

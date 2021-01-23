@@ -16,20 +16,19 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.IConfiguredContext;
+import com.openglobes.core.data.ITraderDataSource;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface IDataSourceContext extends IConfiguredContext<ITraderDataSource>{
+public interface IDataSourceContext extends IConfiguredContext<ITraderDataSource> {
     String getDriverClass();
-    
+
     String getUrl();
-    
+
     String getUsername();
-    
+
     String getPassword();
 }

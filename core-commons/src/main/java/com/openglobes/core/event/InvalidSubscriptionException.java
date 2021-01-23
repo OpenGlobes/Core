@@ -17,21 +17,20 @@
 package com.openglobes.core.event;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InvalidSubscriptionException extends EventException{
+public class InvalidSubscriptionException extends EventException {
 
     private static final long serialVersionUID = 3652873981628L;
-    
+
     public InvalidSubscriptionException(String message) {
         super(message);
     }
 
-    public InvalidSubscriptionException(String message, 
+    public InvalidSubscriptionException(String message,
                                         Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class InvalidSubscriptionException extends EventException{
         super(cause);
     }
 
-    public InvalidSubscriptionException(String message, 
+    public InvalidSubscriptionException(String message,
                                         Throwable cause,
-                                        boolean enableSuppression, 
+                                        boolean enableSuppression,
                                         boolean writableStackTrace) {
-        super(message, 
-              cause, 
-              enableSuppression, 
+        super(message,
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

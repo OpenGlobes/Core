@@ -30,8 +30,8 @@ public class TraderGatewayInfo extends Properties {
 
     private static final long serialVersionUID = 4389209809319836L;
 
-    private LocalDate actionDay;
-    private LocalDate tradingDay;
+    private LocalDate     actionDay;
+    private LocalDate     tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public TraderGatewayInfo() {

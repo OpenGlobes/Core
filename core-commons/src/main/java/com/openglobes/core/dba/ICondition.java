@@ -19,10 +19,8 @@ package com.openglobes.core.dba;
 import java.lang.reflect.Field;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface ICondition<T> {

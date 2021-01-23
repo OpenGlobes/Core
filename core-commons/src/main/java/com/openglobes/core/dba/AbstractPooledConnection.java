@@ -17,6 +17,7 @@
 package com.openglobes.core.dba;
 
 import com.openglobes.core.utils.Loggers;
+
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,25 +25,24 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public abstract class AbstractPooledConnection implements AutoCloseable,
                                                           IPooledConnection {
 
-    private static final Cleaner cleaner = Cleaner.create();
-    private final Cleaner.Cleanable cleanable;
-    private final Connection conn;
-    private Boolean exAutoCommit;
-    private final IPooledDataSource src;
+    private static final Cleaner           cleaner = Cleaner.create();
+    private final        Cleaner.Cleanable cleanable;
+    private final        Connection        conn;
+    private final        IPooledDataSource src;
+    private              Boolean           exAutoCommit;
 
     public AbstractPooledConnection(Connection connection,
                                     IPooledDataSource source) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(source);
-        conn = connection;
-        src = source;
+        conn      = connection;
+        src       = source;
         cleanable = cleaner.register(this, new CleanAction(conn, src));
     }
 
@@ -55,8 +55,7 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
     public void commit() throws SQLException {
         try {
             conn().commit();
-        }
-        finally {
+        } finally {
             restoreTransaction();
         }
     }
@@ -70,8 +69,7 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
     public void rollback() throws SQLException {
         try {
             conn().rollback();
-        }
-        finally {
+        } finally {
             restoreTransaction();
         }
     }
@@ -81,8 +79,7 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
         try {
             exAutoCommit = conn().getAutoCommit();
             conn().setAutoCommit(false);
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             restoreTransaction();
             throw ex;
         }
@@ -100,20 +97,19 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
 
     private static class CleanAction implements Runnable {
 
-        private final Connection conn;
+        private final Connection        conn;
         private final IPooledDataSource src;
 
         CleanAction(Connection connection, IPooledDataSource source) {
             conn = connection;
-            src = source;
+            src  = source;
         }
 
         @Override
         public void run() {
             try {
                 src.ungetSqlConnection(conn);
-            }
-            catch (Throwable th) {
+            } catch (Throwable th) {
                 Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName()).log(Level.SEVERE,
                                                                                          th.getMessage(),
                                                                                          th);

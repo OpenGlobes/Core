@@ -17,12 +17,11 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DuplicatedTraderIdException extends TraderException{
-    
+public class DuplicatedTraderIdException extends TraderException {
+
     public DuplicatedTraderIdException(String message) {
         super(message);
     }
@@ -38,5 +37,5 @@ public class DuplicatedTraderIdException extends TraderException{
     public DuplicatedTraderIdException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

@@ -17,7 +17,6 @@
 package com.openglobes.core.event;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -31,7 +30,7 @@ public class EventException extends Exception {
 
     public EventException(String message,
                           Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,13 +38,13 @@ public class EventException extends Exception {
         super(cause);
     }
 
-    public EventException(String message, 
+    public EventException(String message,
                           Throwable cause,
-                          boolean enableSuppression, 
+                          boolean enableSuppression,
                           boolean writableStackTrace) {
-        super(message, 
-              cause, 
-              enableSuppression, 
+        super(message,
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
 

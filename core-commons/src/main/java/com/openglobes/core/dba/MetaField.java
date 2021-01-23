@@ -19,15 +19,14 @@ package com.openglobes.core.dba;
 import java.lang.reflect.Field;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MetaField {
 
-    private Field field;
+    private Field  field;
     private String name;
-    private int type;
+    private int    type;
 
     public MetaField() {
     }

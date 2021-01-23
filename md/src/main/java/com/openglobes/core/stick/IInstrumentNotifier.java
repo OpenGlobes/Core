@@ -20,14 +20,13 @@ import com.openglobes.core.data.DataException;
 import com.openglobes.core.event.IEventSource;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface IInstrumentNotifier {
 
     IEventSource getEventSource();
-    
+
     void reload() throws DataException;
-    
+
 }

@@ -19,20 +19,19 @@ package com.openglobes.core.stick;
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MarketGatewayContext {
     private final IMarketGateway gateway;
-    private final Integer marketId;
-    private final Properties props;
+    private final Integer        marketId;
+    private final Properties     props;
 
-    public MarketGatewayContext(Integer marketId, 
-                                IMarketGateway gateway, 
+    public MarketGatewayContext(Integer marketId,
+                                IMarketGateway gateway,
                                 Properties properties) {
-        this.props = properties;
-        this.gateway = gateway;
+        this.props    = properties;
+        this.gateway  = gateway;
         this.marketId = marketId;
     }
 

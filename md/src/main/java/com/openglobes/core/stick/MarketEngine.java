@@ -17,8 +17,8 @@
 package com.openglobes.core.stick;
 
 import com.openglobes.core.GatewayException;
-import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.data.DataException;
+import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.event.InvalidSubscriptionException;
 import com.openglobes.core.market.InstrumentMinuteNotice;
@@ -27,6 +27,7 @@ import com.openglobes.core.utils.IMinuteNotifier;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
 import com.openglobes.core.utils.MinuteNotifier;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -34,21 +35,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MarketEngine implements IMarketEngine {
 
-    private IMarketDataSource ds;
-    private IStickEngine eg;
-    private TickHandler gateHandler;
     private final Map<Integer, MarketGatewayContext> gates;
-    private InstrumentNotifier instNotifier;
-    private final IMinuteNotifier minNotifier;
+    private final IMinuteNotifier                    minNotifier;
+    private       IMarketDataSource                  ds;
+    private       IStickEngine                       eg;
+    private       TickHandler                        gateHandler;
+    private       InstrumentNotifier                 instNotifier;
 
     public MarketEngine() {
-        gates = new ConcurrentHashMap<>(16);
+        gates       = new ConcurrentHashMap<>(16);
         minNotifier = new MinuteNotifier();
     }
 
@@ -57,8 +57,7 @@ public class MarketEngine implements IMarketEngine {
         for (var g : gates.values()) {
             try {
                 g.getGateway().stop();
-            }
-            catch (GatewayException ex) {
+            } catch (GatewayException ex) {
                 throw new MarketDisposeException(ex.getMessage() + "(" + ex.getCode() + ")",
                                                  ex);
             }
@@ -109,7 +108,7 @@ public class MarketEngine implements IMarketEngine {
             /*
              * Connect stick engine to ticks.
              */
-            eg = StickEngine.create(ds);
+            eg          = StickEngine.create(ds);
             gateHandler = new TickHandler(eg);
             /*
              * Connect stick engine to notices.
@@ -124,12 +123,10 @@ public class MarketEngine implements IMarketEngine {
              */
             minNotifier.getEventSource().subscribe(MinuteNotice.class,
                                                    instNotifier);
-        }
-        catch (StickException | DataException ex) {
+        } catch (StickException | DataException ex) {
             throw new MarketStartException(ex.getMessage(),
                                            ex);
-        }
-        catch (InvalidSubscriptionException ex) {
+        } catch (InvalidSubscriptionException ex) {
             Loggers.getLogger(MarketEngine.class.getCanonicalName()).log(Level.SEVERE,
                                                                          ex.getMessage(),
                                                                          ex);
@@ -142,8 +139,7 @@ public class MarketEngine implements IMarketEngine {
                 var p = new Properties(properties);
                 p.putAll(g.getProperties());
                 g.getGateway().start(p, gateHandler);
-            }
-            catch (GatewayException ex) {
+            } catch (GatewayException ex) {
                 throw new MarketStartException(ex.getMessage() + "(" + ex.getCode() + ")",
                                                ex);
             }

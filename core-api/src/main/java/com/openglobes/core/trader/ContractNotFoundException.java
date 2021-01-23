@@ -17,11 +17,10 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
 public class ContractNotFoundException extends TraderException {
-    
+
     public ContractNotFoundException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class ContractNotFoundException extends TraderException {
     public ContractNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

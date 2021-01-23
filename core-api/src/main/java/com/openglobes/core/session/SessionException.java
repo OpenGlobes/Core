@@ -17,7 +17,6 @@
 package com.openglobes.core.session;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -29,7 +28,7 @@ public class SessionException extends Exception {
         super(message);
     }
 
-    public SessionException(String message, 
+    public SessionException(String message,
                             Throwable cause) {
         super(message,
               cause);
@@ -39,12 +38,12 @@ public class SessionException extends Exception {
         super(cause);
     }
 
-    public SessionException(String message, 
+    public SessionException(String message,
                             Throwable cause,
                             boolean enableSuppression,
                             boolean writableStackTrace) {
-        super(message, 
-              cause, 
+        super(message,
+              cause,
               enableSuppression,
               writableStackTrace);
     }

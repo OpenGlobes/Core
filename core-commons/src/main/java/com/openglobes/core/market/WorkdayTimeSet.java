@@ -19,15 +19,14 @@ package com.openglobes.core.market;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class WorkdayTimeSet {
 
-    private String name;
+    private String        name;
     private ZonedDateTime timestamp;
-    private Long workdayTimeSetId;
+    private Long          workdayTimeSetId;
 
     public WorkdayTimeSet() {
     }

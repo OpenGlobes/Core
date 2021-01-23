@@ -21,11 +21,13 @@ import java.sql.Connection;
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Queries {
+
+    private Queries() {
+    }
 
     public static ICondition<ICondition<?>> and(ICondition<?> c0,
                                                 ICondition<?> c1) throws IllegalConditionTypeException,
@@ -48,16 +50,16 @@ public class Queries {
                                ConditionType.EQUALS);
     }
 
-    public static ICondition<ICondition<?>> isNotNull(Field field) throws IllegalConditionTypeException, 
+    public static ICondition<ICondition<?>> isNotNull(Field field) throws IllegalConditionTypeException,
                                                                           IllegalFieldCharacterException,
-                                                                          UnsupportedFieldTypeException    {
+                                                                          UnsupportedFieldTypeException {
         return new Condition<>(field,
                                ConditionType.IS_NOT_NULL);
     }
 
     public static ICondition<ICondition<?>> isNull(Field field) throws IllegalConditionTypeException,
                                                                        IllegalFieldCharacterException,
-                                                                       UnsupportedFieldTypeException  {
+                                                                       UnsupportedFieldTypeException {
         return new Condition<>(field,
                                ConditionType.IS_NULL);
     }
@@ -98,8 +100,5 @@ public class Queries {
         return new Condition<>(c0,
                                c1,
                                ConditionType.OR);
-    }
-
-    private Queries() {
     }
 }

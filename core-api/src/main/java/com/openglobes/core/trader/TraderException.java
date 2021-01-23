@@ -17,7 +17,6 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

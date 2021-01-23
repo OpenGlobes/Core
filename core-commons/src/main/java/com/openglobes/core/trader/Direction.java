@@ -6,13 +6,12 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Direction {
 
-    public static final int BUY = (0xA0);
+    public static final int BUY  = (0xA0);
     public static final int SELL = (0xA1);
 
     private Direction() {

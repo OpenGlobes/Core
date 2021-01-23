@@ -19,7 +19,6 @@ package com.openglobes.core.data;
 import com.openglobes.core.stick.MarketException;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -32,7 +31,7 @@ public class DataException extends MarketException {
     }
 
     public DataException(String message,
-                                     Throwable cause) {
+                         Throwable cause) {
         super(message,
               cause);
     }
@@ -42,9 +41,9 @@ public class DataException extends MarketException {
     }
 
     public DataException(String message,
-                                     Throwable cause,
-                                     boolean enableSuppression,
-                                     boolean writableStackTrace) {
+                         Throwable cause,
+                         boolean enableSuppression,
+                         boolean writableStackTrace) {
         super(message,
               cause,
               enableSuppression,

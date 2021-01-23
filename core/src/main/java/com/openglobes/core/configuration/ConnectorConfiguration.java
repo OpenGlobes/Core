@@ -16,23 +16,22 @@
  */
 package com.openglobes.core.configuration;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 @XmlRootElement(name = "Connector")
 public class ConnectorConfiguration {
 
-    private String classCanonicalName;
-    private String ip;
-    private String name;
-    private Integer port;
+    private String              classCanonicalName;
+    private String              ip;
+    private String              name;
+    private Integer             port;
     private Map<String, String> properties;
 
     public ConnectorConfiguration() {

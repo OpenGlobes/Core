@@ -17,14 +17,13 @@
 package com.openglobes.core.connector;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ConnectorException extends Exception{
+public class ConnectorException extends Exception {
 
     private static final long serialVersionUID = 12343542365L;
-    
+
     public ConnectorException() {
     }
 
@@ -43,5 +42,5 @@ public class ConnectorException extends Exception{
     public ConnectorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

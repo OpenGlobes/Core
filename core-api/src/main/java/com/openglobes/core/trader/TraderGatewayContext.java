@@ -27,17 +27,17 @@ import java.util.Properties;
  */
 public class TraderGatewayContext {
 
-    private Boolean enabled;
-    private ITraderEngine engine;
-    private ITraderGatewayHandler handler;
-    private Properties initProperties;
-    private String note;
-    private final ZonedDateTime registerTimestamp;
-    private Properties settleProperties;
-    private Properties startProperties;
-    private ITraderGateway trader;
-    private Integer traderId;
-    private ZonedDateTime updateTimestamp;
+    private final ZonedDateTime         registerTimestamp;
+    private       Boolean               enabled;
+    private       ITraderEngine         engine;
+    private       ITraderGatewayHandler handler;
+    private       Properties            initProperties;
+    private       String                note;
+    private       Properties            settleProperties;
+    private       Properties            startProperties;
+    private       ITraderGateway        trader;
+    private       Integer               traderId;
+    private       ZonedDateTime         updateTimestamp;
 
     public TraderGatewayContext() {
         registerTimestamp = ZonedDateTime.now();
@@ -73,8 +73,7 @@ public class TraderGatewayContext {
     public void setInitProperties(Properties initProperties) {
         if (this.initProperties == null) {
             this.initProperties = new Properties(initProperties);
-        }
-        else {
+        } else {
             this.initProperties.clear();
             this.initProperties.putAll(initProperties);
         }
@@ -101,8 +100,7 @@ public class TraderGatewayContext {
     public void setSettleProperties(Properties settleProperties) {
         if (this.settleProperties == null) {
             this.settleProperties = new Properties(settleProperties);
-        }
-        else {
+        } else {
             this.settleProperties.clear();
             this.settleProperties.putAll(settleProperties);
         }
@@ -116,8 +114,7 @@ public class TraderGatewayContext {
     public void setStartProperties(Properties startProperties) {
         if (this.startProperties == null) {
             this.startProperties = new Properties(startProperties);
-        }
-        else {
+        } else {
             this.startProperties.clear();
             this.startProperties.putAll(startProperties);
         }

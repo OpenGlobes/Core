@@ -16,26 +16,26 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.trader.ITraderEngine;
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.ISharedContext;
 import com.openglobes.core.RequestException;
 import com.openglobes.core.session.ISessionCorrelator;
+import com.openglobes.core.trader.ITraderEngine;
+
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class RequestContext implements IRequestContext {
 
-    private final ITraderEngine eg;
+    private final ITraderEngine  eg;
     private final ISharedContext shared;
 
     public RequestContext(ITraderEngine engine, ISharedContext context) {
         shared = context;
-        eg = engine;
+        eg     = engine;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class RequestContext implements IRequestContext {
         Objects.requireNonNull(shared);
         return shared;
     }
-    
+
     @Override
     public ITraderEngine getTraderEngine() throws RequestException {
         Objects.requireNonNull(eg);

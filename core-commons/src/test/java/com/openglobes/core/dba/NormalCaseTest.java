@@ -17,20 +17,14 @@
 package com.openglobes.core.dba;
 
 import com.openglobes.core.trader.Request;
-import java.sql.SQLException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -72,11 +66,9 @@ public class NormalCaseTest extends Facilities {
                              insertRequest(4L, "c2205", 1005L);
                          },
                          "Insert duplicated primary should throw SQLException.");
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             fail(ex.getMessage() + "(" + ex.getSQLState() + ":" + ex.getErrorCode() + ")");
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             fail(ex.getMessage());
         }
     }
@@ -107,11 +99,9 @@ public class NormalCaseTest extends Facilities {
             assertEquals(1,
                          selectRequest(),
                          "Delete three records.");
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             fail(ex.getMessage() + "(" + ex.getSQLState() + ":" + ex.getErrorCode() + ")");
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             fail(ex.getMessage());
         }
     }
@@ -146,11 +136,9 @@ public class NormalCaseTest extends Facilities {
                          selectRequestByInstrumentId("c2205"),
                          "Select with a non-primary key condition should work too.");
 
-        }
-        catch (SQLException ex) {
+        } catch (SQLException ex) {
             fail(ex.getMessage() + "(" + ex.getSQLState() + ":" + ex.getErrorCode() + ")");
-        }
-        catch (DbaException ex) {
+        } catch (DbaException ex) {
             fail(ex.getMessage());
         }
     }
@@ -175,22 +163,18 @@ public class NormalCaseTest extends Facilities {
                 return query().remove(Request.class,
                                       Queries.equals(Request.class.getDeclaredField("requestId"),
                                                      requestId));
-            }
-            else if (instrumentId != null) {
+            } else if (instrumentId != null) {
                 return query().remove(Request.class,
                                       Queries.equals(Request.class.getDeclaredField("instrumentId"),
                                                      instrumentId));
-            }
-            else if (orderId != null) {
+            } else if (orderId != null) {
                 return query().remove(Request.class,
                                       Queries.equals(Request.class.getDeclaredField("orderId"),
                                                      orderId));
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
         }
@@ -202,9 +186,8 @@ public class NormalCaseTest extends Facilities {
             return query().select(Request.class,
                                   Queries.isNotNull(Request.class.getDeclaredField("requestId")),
                                   Request::new)
-                    .size();
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+                          .size();
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
         }
@@ -217,9 +200,8 @@ public class NormalCaseTest extends Facilities {
                                   Queries.equals(Request.class.getDeclaredField("requestId"),
                                                  requestId),
                                   Request::new)
-                    .size();
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+                          .size();
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
         }
@@ -232,9 +214,8 @@ public class NormalCaseTest extends Facilities {
                                   Queries.equals(Request.class.getDeclaredField("instrumentId"),
                                                  instrumentId),
                                   Request::new)
-                    .size();
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+                          .size();
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
         }
@@ -247,8 +228,7 @@ public class NormalCaseTest extends Facilities {
                                   object,
                                   Queries.equals(Request.class.getDeclaredField("requestId"),
                                                  object.getRequestId()));
-        }
-        catch (NoSuchFieldException | SecurityException ex) {
+        } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
         }

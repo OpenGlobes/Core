@@ -17,21 +17,20 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class NoPrimaryKeyException extends DbaException{
+public class NoPrimaryKeyException extends DbaException {
 
     private static final long serialVersionUID = 3542763209819811L;
-    
+
     public NoPrimaryKeyException(String message) {
         super(message);
     }
 
-    public NoPrimaryKeyException(String message, 
+    public NoPrimaryKeyException(String message,
                                  Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class NoPrimaryKeyException extends DbaException{
         super(cause);
     }
 
-    public NoPrimaryKeyException(String message, 
-                                 Throwable cause, 
-                                 boolean enableSuppression, 
+    public NoPrimaryKeyException(String message,
+                                 Throwable cause,
+                                 boolean enableSuppression,
                                  boolean writableStackTrace) {
         super(message,
-              cause, 
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

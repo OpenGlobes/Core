@@ -17,16 +17,15 @@
 package com.openglobes.core.market;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InstrumentTime {
 
-    private Long holidayTimeSetId;
+    private Long   holidayTimeSetId;
     private String instrumentId;
-    private Long instrumentTimeId;
-    private Long workdayTimeSetId;
+    private Long   instrumentTimeId;
+    private Long   workdayTimeSetId;
 
     public InstrumentTime() {
     }

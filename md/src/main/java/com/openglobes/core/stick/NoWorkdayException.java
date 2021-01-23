@@ -17,7 +17,6 @@
 package com.openglobes.core.stick;
 
 /**
- *
  * @author chenh
  */
 public class NoWorkdayException extends StickException {

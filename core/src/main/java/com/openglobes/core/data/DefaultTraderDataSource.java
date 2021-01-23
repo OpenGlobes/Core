@@ -17,16 +17,15 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.event.InvalidSubscriptionException;
+
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

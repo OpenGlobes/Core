@@ -17,14 +17,7 @@
 package com.openglobes.core.trader;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Algorithm implemetation.
@@ -45,12 +38,12 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                               Collection<Deposit> deposits,
                               Collection<Withdraw> withdraws,
                               Collection<Position> positions) throws InvalidAmountException {
-        double closeProfit = 0D;
-        double positionProfit = 0D;
-        double frozenMargin = 0D;
+        double closeProfit      = 0D;
+        double positionProfit   = 0D;
+        double frozenMargin     = 0D;
         double frozenCommission = 0D;
-        double margin = 0D;
-        double commission = 0D;
+        double margin           = 0D;
+        double commission       = 0D;
         Objects.requireNonNull(positions);
         for (var p : positions) {
             requireNotNulls(p.getCloseProfit(),
@@ -66,9 +59,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             margin += p.getMargin();
             commission += p.getCommission();
         }
-        double deposit = getProperDeposit(deposits);
+        double deposit  = getProperDeposit(deposits);
         double withdraw = getProperWithdraw(withdraws);
-        var r = initAccount(pre);
+        var    r        = initAccount(pre);
         r.setCloseProfit(closeProfit);
         r.setCommission(commission);
         r.setDeposit(deposit);
@@ -78,7 +71,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         r.setPositionProfit(positionProfit);
         r.setWithdraw(withdraw);
         var balance = r.getPreBalance() + r.getDeposit() - r.getWithdraw()
-                  + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
+                      + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
         r.setBalance(balance);
         return r;
     }
@@ -110,8 +103,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             double m = getAmount(price,
                                  instrument);
             return m * ratio;
-        }
-        else {
+        } else {
             return ratio;
         }
     }
@@ -131,8 +123,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             double m = getAmount(price,
                                  instrument);
             return m * ratio;
-        }
-        else {
+        } else {
             return ratio;
         }
     }
@@ -183,7 +174,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         /*
          * Store margins/commissions in map for constant access time.
          */
-        final var map = new HashMap<Long, Margin>(64);
+        final var map  = new HashMap<Long, Margin>(64);
         final var cmap = new HashMap<Long, Set<Commission>>(64);
         margins.forEach(m -> {
             map.put(m.getContractId(), m);
@@ -195,19 +186,18 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
         for (var c : contracts) {
             Position p;
-            var direction = c.getDirection();
+            var      direction = c.getDirection();
             if (direction == null) {
                 throw new InvalidContractDirectionException(c.getInstrumentId());
             }
             if (direction == Direction.BUY) {
                 p = lp.computeIfAbsent(c.getInstrumentId(), k -> {
-                                   return initPosition(c, tradingDay);
-                               });
-            }
-            else {
+                    return initPosition(c, tradingDay);
+                });
+            } else {
                 p = sp.computeIfAbsent(c.getInstrumentId(), k -> {
-                                   return initPosition(c, tradingDay);
-                               });
+                    return initPosition(c, tradingDay);
+                });
             }
             var id = c.getInstrumentId();
             if (id.isBlank()) {
@@ -218,13 +208,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                 throw new InvalidContractIdException("Contract ID null ptr.");
             }
             var margin = findMargin(cid,
-                                map);
+                                    map);
             var commission = findCommission(cid,
-                                        cmap);
+                                            cmap);
             var price = findPriceProperty(id,
-                                      prices);
+                                          prices);
             var instrument = findInstrumentProperty(id,
-                                                instruments);
+                                                    instruments);
             if (c.getOpenTradingDay().isBefore(tradingDay)) {
                 addPrePosition(p,
                                c,
@@ -232,8 +222,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                margin,
                                price,
                                instrument);
-            }
-            else {
+            } else {
                 addTodayPosition(p,
                                  c,
                                  commission,
@@ -257,21 +246,19 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                    Contract c,
                                    Collection<Commission> commissions) throws InvalidCommissionException {
         var closeProfit = getProperProfit(c.getOpenAmount(),
-                                      c.getCloseAmount(),
-                                      c.getDirection());
+                                          c.getCloseAmount(),
+                                          c.getDirection());
         if (p.getCloseProfit() == null) {
             p.setCloseProfit(closeProfit);
-        }
-        else {
+        } else {
             p.setCloseProfit(p.getCloseProfit() + closeProfit);
         }
         var commission = getProperCommission(c.getContractId(),
-                                         commissions,
-                                         FeeStatus.DEALED);
+                                             commissions,
+                                             FeeStatus.DEALED);
         if (p.getCommission() == null) {
             p.setCommission(commission);
-        }
-        else {
+        } else {
             p.setCommission(p.getCommission() + commission);
         }
     }
@@ -286,8 +273,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                                   IllegalFeeStatusException {
         if (p.getAmount() == null) {
             p.setAmount(c.getOpenAmount());
-        }
-        else {
+        } else {
             p.setAmount(p.getAmount() + c.getOpenAmount());
         }
         Double commission = getProperCommission(c.getContractId(),
@@ -298,14 +284,12 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                       FeeStatus.FORZEN);
         if (p.getCommission() == null) {
             p.setCommission(commission);
-        }
-        else {
+        } else {
             p.setCommission(p.getCommission() + commission);
         }
         if (p.getFrozenCommission() == null) {
             p.setFrozenCommission(frozenCommission);
-        }
-        else {
+        } else {
             p.setFrozenCommission(p.getFrozenCommission() + frozenCommission);
         }
         Long frozenCloseVolumn = getProperVolumn(c.getStatus(),
@@ -313,14 +297,12 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         var volumn = frozenCloseVolumn;
         if (p.getVolumn() == null) {
             p.setVolumn(volumn);
-        }
-        else {
+        } else {
             p.setVolumn(p.getVolumn() + volumn);
         }
         if (p.getFrozenCloseVolumn() == null) {
             p.setFrozenCloseVolumn(frozenCloseVolumn);
-        }
-        else {
+        } else {
             p.setFrozenCloseVolumn(p.getFrozenCloseVolumn() + frozenCloseVolumn);
         }
         Double m = getProperMargin(c.getContractId(),
@@ -328,8 +310,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                    FeeStatus.DEALED);
         if (p.getMargin() == null) {
             p.setMargin(m);
-        }
-        else {
+        } else {
             p.setMargin(p.getMargin() + m);
         }
         Double pprofit = getProperPositionProfit(c,
@@ -337,8 +318,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                  instrument);
         if (p.getPositionProfit() == null) {
             p.setPositionProfit(pprofit);
-        }
-        else {
+        } else {
             p.setPositionProfit(p.getPositionProfit() + pprofit);
         }
 
@@ -352,8 +332,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                  Instrument instrument) throws InvalidCommissionException, IllegalContractStatusException, IllegalFeeStatusException {
         if (p.getAmount() == null) {
             p.setAmount(c.getOpenAmount());
-        }
-        else {
+        } else {
             p.setAmount(p.getAmount() + c.getOpenAmount());
         }
         Double commission = getProperCommission(c.getContractId(),
@@ -361,16 +340,14 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                 FeeStatus.DEALED);
         if (p.getCommission() == null) {
             p.setCommission(commission);
-        }
-        else {
+        } else {
             p.setCommission(p.getCommission() + commission);
         }
         Long volumn = getProperVolumn(c.getStatus(),
                                       ContractStatus.OPEN);
         if (p.getVolumn() == null) {
             p.setVolumn(volumn);
-        }
-        else {
+        } else {
             p.setVolumn(p.getVolumn() + volumn);
         }
         Double m = getProperMargin(c.getContractId(),
@@ -378,8 +355,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                    FeeStatus.DEALED);
         if (p.getMargin() == null) {
             p.setMargin(m);
-        }
-        else {
+        } else {
             p.setMargin(p.getMargin() + m);
         }
         Double pprofit = getProperPositionProfit(c,
@@ -387,8 +363,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                  instrument);
         if (p.getPositionProfit() == null) {
             p.setPositionProfit(pprofit);
-        }
-        else {
+        } else {
             p.setPositionProfit(p.getPositionProfit() + pprofit);
         }
     }
@@ -404,16 +379,14 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                       FeeStatus.FORZEN);
         if (p.getFrozenCommission() == null) {
             p.setFrozenCommission(frozenCommission);
-        }
-        else {
+        } else {
             p.setFrozenCommission(p.getFrozenCommission() + frozenCommission);
         }
         Long frozenOpenVolumn = getProperVolumn(c.getStatus(),
                                                 ContractStatus.OPENING);
         if (p.getFrozenOpenVolumn() == null) {
             p.setFrozenOpenVolumn(frozenOpenVolumn);
-        }
-        else {
+        } else {
             p.setFrozenOpenVolumn(p.getFrozenOpenVolumn() + frozenOpenVolumn);
         }
         Double frozenMargin = getProperMargin(c.getContractId(),
@@ -421,8 +394,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                               FeeStatus.FORZEN);
         if (p.getFrozenMargin() == null) {
             p.setFrozenMargin(frozenMargin);
-        }
-        else {
+        } else {
             p.setFrozenMargin(p.getFrozenMargin() + frozenMargin);
         }
     }
@@ -430,20 +402,17 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     private void addPreContract(Position p, Contract c, Margin margin) {
         if (p.getPreAmount() == null) {
             p.setPreAmount(c.getOpenAmount());
-        }
-        else {
+        } else {
             p.setPreAmount(p.getPreAmount() + c.getOpenAmount());
         }
         if (p.getPreVolumn() == null) {
             p.setPreVolumn(1L);
-        }
-        else {
+        } else {
             p.setPreVolumn(p.getPreVolumn() + 1L);
         }
         if (p.getPreMargin() == null) {
             p.setPreMargin(margin.getMargin());
-        }
-        else {
+        } else {
             p.setPreMargin(p.getPreMargin() + margin.getMargin());
         }
     }
@@ -497,25 +466,22 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                         IllegalContractStatusException {
         if (p.getTodayAmount() == null) {
             p.setTodayAmount(c.getOpenAmount());
-        }
-        else {
+        } else {
             p.setTodayAmount(p.getTodayAmount() + c.getOpenAmount());
         }
         var volumn = getProperVolumn(c.getStatus(),
-                                 ContractStatus.OPEN);
+                                     ContractStatus.OPEN);
         if (p.getTodayVolumn() == null) {
             p.setTodayVolumn(volumn);
-        }
-        else {
+        } else {
             p.setTodayVolumn(p.getTodayVolumn() + volumn);
         }
         var m = getProperMargin(c.getContractId(),
-                            margin,
-                            FeeStatus.DEALED);
+                                margin,
+                                FeeStatus.DEALED);
         if (p.getTodayMargin() == null) {
             p.setTodayMargin(m);
-        }
-        else {
+        } else {
             p.setTodayMargin(p.getTodayMargin() + m);
         }
     }
@@ -525,20 +491,17 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                       Margin margin) {
         if (p.getTodayOpenAmount() == null) {
             p.setTodayOpenAmount(c.getOpenAmount());
-        }
-        else {
+        } else {
             p.setTodayOpenAmount(p.getTodayOpenAmount() + c.getOpenAmount());
         }
         if (p.getTodayOpenVolumn() == null) {
             p.setTodayOpenVolumn(1L);
-        }
-        else {
+        } else {
             p.setTodayOpenVolumn(p.getTodayOpenVolumn() + 1L);
         }
         if (p.getTodayOpenMargin() == null) {
             p.setTodayOpenMargin(margin.getMargin());
-        }
-        else {
+        } else {
             p.setTodayOpenMargin(p.getTodayOpenMargin() + margin.getMargin());
         }
     }
@@ -656,12 +619,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         if (traded > 0) {
             if (Objects.equals(traded, order.getQuantity())) {
                 order.setStatus(OrderStatus.ALL_TRADED);
-            }
-            else {
+            } else {
                 order.setStatus(OrderStatus.QUEUED);
             }
-        }
-        else {
+        } else {
             order.setStatus(OrderStatus.ACCEPTED);
         }
     }
@@ -689,12 +650,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                instrument.getInstrumentId());
         if (offset == Offset.OPEN) {
             return instrument.getCommissionOpenRatio();
-        }
-        else {
+        } else {
             if (offset == Offset.CLOSE) {
                 return instrument.getCommissionCloseRatio();
-            }
-            else {
+            } else {
                 return instrument.getCommissionCloseTodayRatio();
             }
         }
@@ -719,8 +678,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         if (Objects.equals(contractId, margin.getContractId())
             && Objects.equals(margin.getStatus(), status)) {
             return margin.getMargin();
-        }
-        else {
+        } else {
             throw new IllegalFeeStatusException(contractId.toString());
         }
     }
@@ -740,8 +698,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         Objects.requireNonNull(direction);
         if (direction == Direction.BUY) {
             return current - pre;
-        }
-        else {
+        } else {
             return pre - current;
         }
     }
@@ -750,8 +707,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                  Integer wantedStatus) throws IllegalContractStatusException {
         if (Objects.equals(status, wantedStatus)) {
             return 1L;
-        }
-        else {
+        } else {
             throw new IllegalContractStatusException("Unexpected contract status.");
         }
     }
@@ -819,8 +775,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
     private void setContracts(Order order,
                               Collection<Contract> contracts) throws IllegalContractException {
-        double amount = 0D;
-        long tradedVolumn = 0L;
+        double amount       = 0D;
+        long   tradedVolumn = 0L;
         for (var c : contracts) {
             if (!Objects.equals(c.getDirection(), order.getDirection())
                 || c.getInstrumentId().equals(order.getInstrumentId())) {
@@ -838,8 +794,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         Objects.requireNonNull(responses);
         if (responses.isEmpty()) {
             order.setDeleted(Boolean.FALSE);
-        }
-        else {
+        } else {
             for (var r : responses) {
                 if (r.getStatus() == OrderStatus.DELETED) {
                     order.setDeleteTimestamp(r.getTimestamp());

@@ -16,15 +16,9 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.interceptor.IInterceptor;
-import com.openglobes.core.interceptor.IInterceptorChain;
-import com.openglobes.core.interceptor.InterceptOperation;
-
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public abstract class AbstractRequestInterceptor<T> implements IInterceptor<T, Object> {

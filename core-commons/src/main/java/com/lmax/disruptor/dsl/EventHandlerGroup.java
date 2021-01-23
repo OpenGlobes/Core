@@ -15,11 +15,7 @@
  */
 package com.lmax.disruptor.dsl;
 
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.EventProcessor;
-import com.lmax.disruptor.Sequence;
-import com.lmax.disruptor.SequenceBarrier;
-import com.lmax.disruptor.WorkHandler;
+import com.lmax.disruptor.*;
 
 import java.util.Arrays;
 
@@ -28,20 +24,18 @@ import java.util.Arrays;
  *
  * @param <T> the type of entry used by the event processors.
  */
-public class EventHandlerGroup<T>
-{
-    private final Disruptor<T> disruptor;
+public class EventHandlerGroup<T> {
+    private final Disruptor<T>          disruptor;
     private final ConsumerRepository<T> consumerRepository;
-    private final Sequence[] sequences;
+    private final Sequence[]            sequences;
 
     EventHandlerGroup(
-        final Disruptor<T> disruptor,
-        final ConsumerRepository<T> consumerRepository,
-        final Sequence[] sequences)
-    {
-        this.disruptor = disruptor;
+            final Disruptor<T> disruptor,
+            final ConsumerRepository<T> consumerRepository,
+            final Sequence[] sequences) {
+        this.disruptor          = disruptor;
         this.consumerRepository = consumerRepository;
-        this.sequences = Arrays.copyOf(sequences, sequences.length);
+        this.sequences          = Arrays.copyOf(sequences, sequences.length);
     }
 
     /**
@@ -50,13 +44,12 @@ public class EventHandlerGroup<T>
      * @param otherHandlerGroup the event handler group to combine.
      * @return a new EventHandlerGroup combining the existing and new consumers into a single dependency group.
      */
-    public EventHandlerGroup<T> and(final EventHandlerGroup<T> otherHandlerGroup)
-    {
+    public EventHandlerGroup<T> and(final EventHandlerGroup<T> otherHandlerGroup) {
         final Sequence[] combinedSequences = new Sequence[this.sequences.length + otherHandlerGroup.sequences.length];
         System.arraycopy(this.sequences, 0, combinedSequences, 0, this.sequences.length);
         System.arraycopy(
-            otherHandlerGroup.sequences, 0,
-            combinedSequences, this.sequences.length, otherHandlerGroup.sequences.length);
+                otherHandlerGroup.sequences, 0,
+                combinedSequences, this.sequences.length, otherHandlerGroup.sequences.length);
         return new EventHandlerGroup<>(disruptor, consumerRepository, combinedSequences);
     }
 
@@ -66,12 +59,10 @@ public class EventHandlerGroup<T>
      * @param processors the processors to combine.
      * @return a new EventHandlerGroup combining the existing and new processors into a single dependency group.
      */
-    public EventHandlerGroup<T> and(final EventProcessor... processors)
-    {
+    public EventHandlerGroup<T> and(final EventProcessor... processors) {
         Sequence[] combinedSequences = new Sequence[sequences.length + processors.length];
 
-        for (int i = 0; i < processors.length; i++)
-        {
+        for (int i = 0; i < processors.length; i++) {
             consumerRepository.add(processors[i]);
             combinedSequences[i] = processors[i].getSequence();
         }
@@ -93,8 +84,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to set up a event processor barrier over the created event processors.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> then(final EventHandler<? super T>... handlers)
-    {
+    public final EventHandlerGroup<T> then(final EventHandler<? super T>... handlers) {
         return handleEventsWith(handlers);
     }
 
@@ -109,8 +99,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> then(final EventProcessorFactory<T>... eventProcessorFactories)
-    {
+    public final EventHandlerGroup<T> then(final EventProcessorFactory<T>... eventProcessorFactories) {
         return handleEventsWith(eventProcessorFactories);
     }
 
@@ -128,8 +117,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to set up a event processor barrier over the created event processors.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> thenHandleEventsWithWorkerPool(final WorkHandler<? super T>... handlers)
-    {
+    public final EventHandlerGroup<T> thenHandleEventsWithWorkerPool(final WorkHandler<? super T>... handlers) {
         return handleEventsWithWorkerPool(handlers);
     }
 
@@ -146,8 +134,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to set up a event processor barrier over the created event processors.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> handleEventsWith(final EventHandler<? super T>... handlers)
-    {
+    public final EventHandlerGroup<T> handleEventsWith(final EventHandler<? super T>... handlers) {
         return disruptor.createEventProcessors(sequences, handlers);
     }
 
@@ -164,8 +151,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> handleEventsWith(final EventProcessorFactory<T>... eventProcessorFactories)
-    {
+    public final EventHandlerGroup<T> handleEventsWith(final EventProcessorFactory<T>... eventProcessorFactories) {
         return disruptor.createEventProcessors(sequences, eventProcessorFactories);
     }
 
@@ -183,8 +169,7 @@ public class EventHandlerGroup<T>
      * @return a {@link EventHandlerGroup} that can be used to set up a event processor barrier over the created event processors.
      */
     @SafeVarargs
-    public final EventHandlerGroup<T> handleEventsWithWorkerPool(final WorkHandler<? super T>... handlers)
-    {
+    public final EventHandlerGroup<T> handleEventsWithWorkerPool(final WorkHandler<? super T>... handlers) {
         return disruptor.createWorkerPool(sequences, handlers);
     }
 
@@ -195,8 +180,7 @@ public class EventHandlerGroup<T>
      *
      * @return a {@link SequenceBarrier} including all the processors in this group.
      */
-    public SequenceBarrier asSequenceBarrier()
-    {
+    public SequenceBarrier asSequenceBarrier() {
         return disruptor.getRingBuffer().newBarrier(sequences);
     }
 }

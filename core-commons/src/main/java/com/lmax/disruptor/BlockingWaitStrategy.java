@@ -15,46 +15,38 @@
  */
 package com.lmax.disruptor;
 
+import com.lmax.disruptor.util.ThreadHints;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.lmax.disruptor.util.ThreadHints;
 
 /**
  * Blocking strategy that uses a lock and condition variable for {@link EventProcessor}s waiting on a barrier.
  * <p>
  * This strategy can be used when throughput and low-latency are not as important as CPU resource.
  */
-public final class BlockingWaitStrategy implements WaitStrategy
-{
-    private final Lock lock = new ReentrantLock();
+public final class BlockingWaitStrategy implements WaitStrategy {
+    private final Lock      lock                     = new ReentrantLock();
     private final Condition processorNotifyCondition = lock.newCondition();
 
     @Override
     public long waitFor(long sequence, Sequence cursorSequence, Sequence dependentSequence, SequenceBarrier barrier)
-        throws AlertException, InterruptedException
-    {
+            throws AlertException, InterruptedException {
         long availableSequence;
-        if (cursorSequence.get() < sequence)
-        {
+        if (cursorSequence.get() < sequence) {
             lock.lock();
-            try
-            {
-                while (cursorSequence.get() < sequence)
-                {
+            try {
+                while (cursorSequence.get() < sequence) {
                     barrier.checkAlert();
                     processorNotifyCondition.await();
                 }
-            }
-            finally
-            {
+            } finally {
                 lock.unlock();
             }
         }
 
-        while ((availableSequence = dependentSequence.get()) < sequence)
-        {
+        while ((availableSequence = dependentSequence.get()) < sequence) {
             barrier.checkAlert();
             ThreadHints.onSpinWait();
         }
@@ -63,24 +55,19 @@ public final class BlockingWaitStrategy implements WaitStrategy
     }
 
     @Override
-    public void signalAllWhenBlocking()
-    {
+    public void signalAllWhenBlocking() {
         lock.lock();
-        try
-        {
+        try {
             processorNotifyCondition.signalAll();
-        }
-        finally
-        {
+        } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "BlockingWaitStrategy{" +
-            "processorNotifyCondition=" + processorNotifyCondition +
-            '}';
+               "processorNotifyCondition=" + processorNotifyCondition +
+               '}';
     }
 }

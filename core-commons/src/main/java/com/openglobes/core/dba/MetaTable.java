@@ -20,29 +20,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public class MetaTable<T> {
 
+    private final List<MetaField> fields;
+    private final String          name;
+    private final Class<T>        type;
+    private MetaTable(Class<T> clazz) throws IllegalFieldCharacterException,
+                                             UnsupportedFieldTypeException {
+        type   = clazz;
+        fields = new LinkedList<>();
+        name   = buildTableName(clazz.getSimpleName());
+        parseFields(type);
+    }
+
     public static <T> MetaTable<T> create(Class<T> clazz) throws IllegalFieldCharacterException,
                                                                  UnsupportedFieldTypeException {
         return new MetaTable<>(clazz);
-    }
-
-    private final List<MetaField> fields;
-    private final String name;
-    private final Class<T> type;
-
-    private MetaTable(Class<T> clazz) throws IllegalFieldCharacterException,
-                                             UnsupportedFieldTypeException {
-        type = clazz;
-        fields = new LinkedList<>();
-        name = buildTableName(clazz.getSimpleName());
-        parseFields(type);
     }
 
     public List<MetaField> fields() {

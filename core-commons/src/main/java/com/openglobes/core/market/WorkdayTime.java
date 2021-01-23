@@ -20,18 +20,17 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class WorkdayTime {
 
-    private Integer dayRank;
-    private LocalTime fromTime;
+    private Integer       dayRank;
+    private LocalTime     fromTime;
     private ZonedDateTime timestamp;
-    private LocalTime toTime;
-    private Integer type;
-    private Long workdayTimeId;
+    private LocalTime     toTime;
+    private Integer       type;
+    private Long          workdayTimeId;
 
     public WorkdayTime() {
     }

@@ -17,7 +17,6 @@
 package com.openglobes.core.dba.tables;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -28,5 +27,5 @@ public class EmptyTable {
      */
     public EmptyTable() {
     }
-    
+
 }

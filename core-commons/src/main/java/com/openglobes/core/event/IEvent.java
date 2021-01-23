@@ -19,10 +19,8 @@ package com.openglobes.core.event;
 import java.time.ZonedDateTime;
 
 /**
- *
- * @author Hongbao Chen
  * @param <T>
- *
+ * @author Hongbao Chen
  * @since 1.0
  */
 public interface IEvent<T> {

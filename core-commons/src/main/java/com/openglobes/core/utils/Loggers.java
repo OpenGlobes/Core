@@ -24,13 +24,15 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Loggers {
 
     private static final Map<Handler, Object> handlers = new ConcurrentHashMap<>(64);
+
+    private Loggers() {
+    }
 
     public static void addLogHandler(Handler handler) {
         handlers.put(handler, handler);
@@ -45,9 +47,6 @@ public class Loggers {
 
     public static void removeLogHandler(Handler handler) {
         handlers.remove(handler);
-    }
-
-    private Loggers() {
     }
 
     private static class CollectiveHandler extends Handler {
@@ -80,8 +79,7 @@ public class Loggers {
         private void publishLog(LogRecord record) {
             if (handlers.isEmpty()) {
                 System.err.println(format.format(record));
-            }
-            else {
+            } else {
                 handlers.keySet().forEach(h -> {
                     h.publish(record);
                 });

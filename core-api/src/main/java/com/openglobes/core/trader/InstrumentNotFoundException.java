@@ -17,11 +17,10 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  */
-public class InstrumentNotFoundException extends TraderException{
-    
+public class InstrumentNotFoundException extends TraderException {
+
     public InstrumentNotFoundException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class InstrumentNotFoundException extends TraderException{
     public InstrumentNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

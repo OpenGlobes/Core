@@ -17,34 +17,32 @@
 package com.openglobes.core.utils;
 
 import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventSource;
+
 import java.lang.ref.Cleaner;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCloseable {
 
     private final Cleaner.Cleanable cleanable;
-    private final Cleaner cleaner = Cleaner.create();
-    private final IEventSource evt;
-    private final AtomicLong nid;
-    private final Timer tm;
+    private final Cleaner           cleaner = Cleaner.create();
+    private final IEventSource      evt;
+    private final AtomicLong        nid;
+    private final Timer             tm;
 
     public MinuteNotifier() {
-        evt = new EventSource();
-        nid = new AtomicLong(0);
-        tm = Utils.schedulePerDuration(this,
-                                       Duration.ofMinutes(1));
+        evt       = new EventSource();
+        nid       = new AtomicLong(0);
+        tm        = Utils.schedulePerDuration(this,
+                                              Duration.ofMinutes(1));
         cleanable = cleaner.register(this,
                                      new CleanAction(evt, tm));
     }
@@ -70,11 +68,11 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
     private static class CleanAction implements Runnable {
 
         private final IEventSource src;
-        private final Timer tm;
+        private final Timer        tm;
 
         CleanAction(IEventSource source, Timer timer) {
             src = source;
-            tm = timer;
+            tm  = timer;
         }
 
         @Override

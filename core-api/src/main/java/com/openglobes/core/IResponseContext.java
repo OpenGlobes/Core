@@ -16,13 +16,11 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.ResponseException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.session.ISessionCorrelator;
 
 
 /**
- *
  * @author chenh
  */
 public interface IResponseContext {
@@ -32,5 +30,5 @@ public interface IResponseContext {
     ISessionCorrelator getSessionCorrelator() throws ResponseException;
 
     ISharedContext getSharedContext() throws ResponseException;
-    
+
 }

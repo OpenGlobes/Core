@@ -21,20 +21,20 @@ import com.openglobes.core.ISharedContext;
 import com.openglobes.core.ResponseException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.session.ISessionCorrelator;
+
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class ResponseContext implements IResponseContext {
 
-    private final IConnector conn;
+    private final IConnector     conn;
     private final ISharedContext shared;
 
     public ResponseContext(IConnector connector, ISharedContext context) {
-        conn = connector;
+        conn   = connector;
         shared = context;
     }
 

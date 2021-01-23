@@ -17,7 +17,6 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
 public class InvalidFrozenBundleException extends TraderException {

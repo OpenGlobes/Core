@@ -17,10 +17,10 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.dba.IPooledDataSource;
-import com.openglobes.core.event.EventException;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.event.InvalidSubscriptionException;
+
 import java.sql.SQLException;
 
 /**
@@ -52,7 +52,6 @@ public interface ITraderDataSource extends AutoCloseable,
      * the pool is all used.
      *
      * @return {@link ITraderDataConnection}
-     *
      * @throws java.sql.SQLException            thrown on failing getting
      *                                          connection from driver manager.
      * @throws java.lang.ClassNotFoundException thrown on failing loading driver
@@ -75,7 +74,6 @@ public interface ITraderDataSource extends AutoCloseable,
      * @param clazz   Class of the specified type.
      * @param handler Event handler.
      * @param type    Data change type.
-     *
      * @throws UnknownDataChangeException   thrown when the specified data
      *                                      change type has no associated event
      *                                      source.
@@ -91,10 +89,8 @@ public interface ITraderDataSource extends AutoCloseable,
      * Get the event source associated with the specified data change type.
      *
      * @param type Data change type.
-     *
      * @return {@link  IEventSource} associated with the specified data change
-     *         type.
-     *
+     * type.
      * @throws UnknownDataChangeException thrown when no event source for the
      *                                    specifed data change type.
      */

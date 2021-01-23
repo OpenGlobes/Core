@@ -21,24 +21,24 @@ import com.openglobes.core.configuration.PluginConfiguration;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
+
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class PluginContext implements IPluginContext {
 
     private final PluginConfiguration conf;
-    private final ICore core;
-    private final IPlugin p;
+    private final ICore               core;
+    private final IPlugin             p;
 
     public PluginContext(PluginConfiguration configuration,
                          IPlugin plugin,
                          ICore core) {
         this.conf = configuration;
-        this.p = plugin;
+        this.p    = plugin;
         this.core = core;
     }
 

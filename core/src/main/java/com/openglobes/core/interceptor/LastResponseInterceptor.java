@@ -16,14 +16,14 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.trader.Response;
-import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.ISharedContext;
 import com.openglobes.core.session.SessionException;
+import com.openglobes.core.trader.Response;
+import com.openglobes.core.utils.Loggers;
+
 import java.util.logging.Level;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -39,10 +39,9 @@ public class LastResponseInterceptor extends AbstractResponseInterceptor<Respons
     public InterceptOperation onResponse(Response response, IInterceptorChain stack) {
         try {
             ctx.getSessionCorrelator()
-                    .getSessionByOrderId(response.getOrderId())
-                    .respond(response);
-        }
-        catch (SessionException ex) {
+               .getSessionByOrderId(response.getOrderId())
+               .respond(response);
+        } catch (SessionException ex) {
             Loggers.getLogger(LastResponseInterceptor.class.getCanonicalName()).log(Level.SEVERE,
                                                                                     ex.toString(),
                                                                                     ex);

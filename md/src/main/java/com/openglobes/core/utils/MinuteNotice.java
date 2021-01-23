@@ -19,22 +19,21 @@ package com.openglobes.core.utils;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MinuteNotice {
 
     private final ZonedDateTime alignTime;
-    private final Long minuteNoticeId;
+    private final Long          minuteNoticeId;
     private final ZonedDateTime timestamp;
 
     public MinuteNotice(Long minuteNoticeId,
                         ZonedDateTime alignTime,
                         ZonedDateTime timestamp) {
         this.minuteNoticeId = minuteNoticeId;
-        this.alignTime = alignTime;
-        this.timestamp = timestamp;
+        this.alignTime      = alignTime;
+        this.timestamp      = timestamp;
     }
 
     public ZonedDateTime getAlignTime() {

@@ -17,21 +17,20 @@
 package com.openglobes.core;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class CoreInstallException extends CoreException{
+public class CoreInstallException extends CoreException {
 
     private static final long serialVersionUID = 4782981093732983L;
-    
+
     public CoreInstallException(String message) {
         super(message);
     }
 
     public CoreInstallException(String message,
-                                  Throwable cause) {
-        super(message, 
+                                Throwable cause) {
+        super(message,
               cause);
     }
 
@@ -40,13 +39,13 @@ public class CoreInstallException extends CoreException{
     }
 
     public CoreInstallException(String message,
-                                  Throwable cause, 
-                                  boolean enableSuppression,
-                                  boolean writableStackTrace) {
+                                Throwable cause,
+                                boolean enableSuppression,
+                                boolean writableStackTrace) {
         super(message,
-              cause, 
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

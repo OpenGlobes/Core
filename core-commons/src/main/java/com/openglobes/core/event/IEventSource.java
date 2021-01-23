@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -31,9 +30,9 @@ public interface IEventSource extends AutoCloseable {
     <T> void subscribe(Class<T> clazz, IEventHandler<T> handler) throws InvalidSubscriptionException;
 
     Map<Class<?>, IEventHandler<?>> handlers();
-    
+
     void start();
-    
+
     @Override
     void close();
 

@@ -18,21 +18,21 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.dba.AbstractPooledConnection;
 import com.openglobes.core.dba.IPooledDataSource;
+
 import java.sql.Connection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public abstract class TraderDataConnection extends AbstractPooledConnection
         implements ITraderDataConnection {
 
-        /*
+    /*
      * This class provides an unified abstraction for trader data connection
      * implementation.
      */
-    public TraderDataConnection(Connection connection, 
+    public TraderDataConnection(Connection connection,
                                 IPooledDataSource source) {
         super(connection, source);
     }

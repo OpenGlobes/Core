@@ -18,10 +18,10 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.dba.AbstractPooledConnection;
 import com.openglobes.core.dba.IPooledDataSource;
+
 import java.sql.Connection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

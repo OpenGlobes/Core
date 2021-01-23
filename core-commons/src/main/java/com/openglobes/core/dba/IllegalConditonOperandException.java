@@ -17,21 +17,20 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class IllegalConditonOperandException extends DbaException{
+public class IllegalConditonOperandException extends DbaException {
 
     private static final long serialVersionUID = 3625738291837283L;
-    
+
     public IllegalConditonOperandException(String message) {
         super(message);
     }
 
-    public IllegalConditonOperandException(String message, 
+    public IllegalConditonOperandException(String message,
                                            Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,7 +38,7 @@ public class IllegalConditonOperandException extends DbaException{
         super(cause);
     }
 
-    public IllegalConditonOperandException(String message, 
+    public IllegalConditonOperandException(String message,
                                            Throwable cause,
                                            boolean enableSuppression,
                                            boolean writableStackTrace) {
@@ -48,5 +47,5 @@ public class IllegalConditonOperandException extends DbaException{
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

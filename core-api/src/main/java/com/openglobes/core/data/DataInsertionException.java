@@ -17,21 +17,20 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class DataInsertionException extends DataException {
 
     private static final long serialVersionUID = 2387984726927L;
-    
+
     public DataInsertionException(String message) {
         super(message);
     }
 
-    public DataInsertionException(String message, 
+    public DataInsertionException(String message,
                                   Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -40,13 +39,13 @@ public class DataInsertionException extends DataException {
     }
 
     public DataInsertionException(String message,
-                                  Throwable cause, 
-                                  boolean enableSuppression, 
+                                  Throwable cause,
+                                  boolean enableSuppression,
                                   boolean writableStackTrace) {
-        super(message, 
+        super(message,
               cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

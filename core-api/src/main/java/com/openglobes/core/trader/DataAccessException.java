@@ -17,11 +17,10 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
-public class DataAccessException extends TraderException{
-    
+public class DataAccessException extends TraderException {
+
     public DataAccessException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class DataAccessException extends TraderException{
     public DataAccessException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

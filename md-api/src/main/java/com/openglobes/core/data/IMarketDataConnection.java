@@ -17,17 +17,12 @@
 package com.openglobes.core.data;
 
 import com.openglobes.core.dba.IPooledConnection;
-import com.openglobes.core.market.HolidayTime;
-import com.openglobes.core.market.HolidayTimeSet;
-import com.openglobes.core.market.InstrumentStickSetting;
-import com.openglobes.core.market.InstrumentTime;
-import com.openglobes.core.market.WorkdayTime;
-import com.openglobes.core.market.WorkdayTimeSet;
+import com.openglobes.core.market.*;
 import com.openglobes.core.trader.TradingDay;
+
 import java.util.Collection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

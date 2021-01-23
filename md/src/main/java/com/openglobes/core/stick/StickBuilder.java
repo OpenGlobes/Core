@@ -19,6 +19,7 @@ package com.openglobes.core.stick;
 import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
 import com.openglobes.core.utils.Utils;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,25 +27,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class StickBuilder implements IStickBuilder {
 
     private final Map<Integer, IStickContext> days;
-    private Integer daysOfYr;
-    private final IStickEngine eg;
-    private ZonedDateTime endOfDay;
-    private String iid;
-    private Integer minOfDay;
+    private final IStickEngine                eg;
     private final Map<Integer, IStickContext> mins;
-    private ZonedDateTime preAlign;
+    private       Integer                     daysOfYr;
+    private       ZonedDateTime               endOfDay;
+    private       String                      iid;
+    private       Integer                     minOfDay;
+    private       ZonedDateTime               preAlign;
 
     public StickBuilder(IStickEngine engine) {
-        mins = new ConcurrentHashMap<>(512);
-        days = new ConcurrentHashMap<>(8);
-        eg = engine;
+        mins     = new ConcurrentHashMap<>(512);
+        days     = new ConcurrentHashMap<>(8);
+        eg       = engine;
         preAlign = Utils.getAlignByMinute();
     }
 
@@ -54,8 +54,8 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalDaysException(days.toString());
         }
         this.days.computeIfAbsent(days, m -> {
-                              return new StickContext(days, true);
-                          });
+            return new StickContext(days, true);
+        });
     }
 
     @Override
@@ -64,14 +64,14 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalMinutesException(minutes.toString());
         }
         mins.computeIfAbsent(minutes, m -> {
-                         return new StickContext(minutes, false);
-                     });
+            return new StickContext(minutes, false);
+        });
     }
 
     @Override
     public Collection<Stick> build(Integer minutesOfDay,
                                    Integer daysOfyear,
-                                   ZonedDateTime alignTime) throws IllegalMinutesException, 
+                                   ZonedDateTime alignTime) throws IllegalMinutesException,
                                                                    IllegalDaysException {
         synchronized (this) {
             try {
@@ -79,8 +79,7 @@ public class StickBuilder implements IStickBuilder {
                 if (minutesOfDay != null) {
                     if (minutesOfDay <= 0) {
                         throw new IllegalMinutesException(minutesOfDay.toString());
-                    }
-                    else {
+                    } else {
                         r.addAll(buildMinutesWithRest(minutesOfDay,
                                                       alignTime));
                     }
@@ -88,15 +87,13 @@ public class StickBuilder implements IStickBuilder {
                 if (daysOfyear != null) {
                     if (daysOfyear <= 0) {
                         throw new IllegalDaysException(daysOfyear.toString());
-                    }
-                    else {
+                    } else {
                         r.addAll(buildDaysWithRest(daysOfyear,
                                                    alignTime));
                     }
                 }
                 return r;
-            }
-            finally {
+            } finally {
                 /*
                  * Save pre-align time for try build.
                  */
@@ -106,7 +103,7 @@ public class StickBuilder implements IStickBuilder {
     }
 
     @Override
-    public Collection<Integer> getDays()  {
+    public Collection<Integer> getDays() {
         return days.keySet();
     }
 
@@ -139,18 +136,15 @@ public class StickBuilder implements IStickBuilder {
                      * Some sticks published, just publish the rest.
                      */
                     return buildRest();
-                }
-                else if (preAlign.isAfter(eodTime)) {
+                } else if (preAlign.isAfter(eodTime)) {
                     /*
                      * Wield thing happens.
                      */
                     throw new IllegalEodException(eodTime.toString());
-                }
-                else {
+                } else {
                     return new HashSet<>(1);
                 }
-            }
-            finally {
+            } finally {
                 /*
                  * Save EOD time for build.
                  */
@@ -175,7 +169,7 @@ public class StickBuilder implements IStickBuilder {
     }
 
     private Collection<Stick> buildDaysWithRest(Integer daysOfYear,
-                                                ZonedDateTime alignTime)  {
+                                                ZonedDateTime alignTime) {
         try {
             var r = new HashSet<Stick>(16);
             r.addAll(getSticks(daysOfYear,
@@ -192,8 +186,7 @@ public class StickBuilder implements IStickBuilder {
                                    false));
             }
             return r;
-        }
-        finally {
+        } finally {
             /*
              * Save days-of-year for building rest.
              */
@@ -202,7 +195,7 @@ public class StickBuilder implements IStickBuilder {
     }
 
     private Collection<Stick> buildMinutesWithRest(Integer minutesOfDay,
-                                                   ZonedDateTime alignTime)   {
+                                                   ZonedDateTime alignTime) {
         try {
             var r = new HashSet<Stick>(16);
             r.addAll(getSticks(minutesOfDay,
@@ -220,8 +213,7 @@ public class StickBuilder implements IStickBuilder {
             }
 
             return r;
-        }
-        finally {
+        } finally {
             /*
              * Save minutes-of-day for building rest.
              */
@@ -229,7 +221,7 @@ public class StickBuilder implements IStickBuilder {
         }
     }
 
-    private Collection<Stick> buildRest()  {
+    private Collection<Stick> buildRest() {
         var r = new HashSet<Stick>(16);
         r.addAll(getSticks(minOfDay,
                            mins,
@@ -245,15 +237,14 @@ public class StickBuilder implements IStickBuilder {
     private Collection<Stick> getSticks(Integer x,
                                         Map<Integer, IStickContext> sticks,
                                         boolean isDay,
-                                        boolean canDiv)  {
+                                        boolean canDiv) {
         var r = new HashSet<Stick>(12);
         for (var e : sticks.entrySet()) {
             if (canDiv == (x % e.getKey() == 0)) {
                 var s = e.getValue().nextStick(eg.nextStickId());
                 if (!isDay) {
                     s.setMinutes(e.getKey());
-                }
-                else {
+                } else {
                     s.setDays(e.getKey());
                 }
                 r.add(s);

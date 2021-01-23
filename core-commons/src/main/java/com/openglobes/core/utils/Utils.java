@@ -5,11 +5,7 @@
  */
 package com.openglobes.core.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -27,8 +23,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Utils {
 
-    private static final AtomicLong AUTO_INC = new AtomicLong(0);
+    private static final AtomicLong AUTO_INC     = new AtomicLong(0);
     private static final AtomicLong EXECUTION_ID = new AtomicLong();
+
+    private Utils() {
+    }
 
     @SuppressWarnings("unchecked")
 
@@ -37,8 +36,7 @@ public class Utils {
             new ObjectOutputStream(bo).writeObject(copied);
             return (T) new ObjectInputStream(
                     new ByteArrayInputStream(bo.toByteArray())).readObject();
-        }
-        catch (IOException | ClassNotFoundException ignored) {
+        } catch (IOException | ClassNotFoundException ignored) {
             return null;
         }
     }
@@ -71,7 +69,6 @@ public class Utils {
      * @param now       now'time.
      * @param rangeFrom exclusive begin of the time rane.
      * @param rangeTo   inclusive end of the time range.
-     *
      * @return {@code true} is the specifed now is in the time range.
      */
     public static boolean inRange(LocalTime now,
@@ -79,11 +76,9 @@ public class Utils {
                                   LocalTime rangeTo) {
         if (rangeFrom.isBefore(rangeTo)) {
             return now.isAfter(rangeFrom) && (!now.isAfter(rangeTo));
-        }
-        else if (rangeFrom.isAfter(rangeTo)) {
+        } else if (rangeFrom.isAfter(rangeTo)) {
             return now.isAfter(rangeFrom) || (!now.isAfter(rangeTo));
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -98,7 +93,6 @@ public class Utils {
     }
 
     /**
-     *
      * @return
      */
     public static UUID nextUuid() {
@@ -111,18 +105,17 @@ public class Utils {
      *
      * @param task     timer task.
      * @param duration duration between two tasks
-     *
      * @return timer.
      */
     public static Timer schedulePerDuration(TimerTask task, Duration duration) {
-        var now = ZonedDateTime.now();
+        var now      = ZonedDateTime.now();
         var calendar = Calendar.getInstance();
         /*
          * Move time to next begin, may have fractional seconds of a minute.
          */
         var s = ZonedDateTime.of(now.toLocalDate(),
-                             LocalTime.of(0, 0),
-                             now.getZone());
+                                 LocalTime.of(0, 0),
+                                 now.getZone());
         while (s.isBefore(now)) {
             s = s.plus(duration);
         }
@@ -141,8 +134,5 @@ public class Utils {
                    calendar.getTime(),
                    duration.toMillis());
         return r;
-    }
-
-    private Utils() {
     }
 }

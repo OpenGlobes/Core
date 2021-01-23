@@ -17,11 +17,10 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
-public class InvalidAmountException extends TraderException{
-    
+public class InvalidAmountException extends TraderException {
+
     public InvalidAmountException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class InvalidAmountException extends TraderException{
     public InvalidAmountException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

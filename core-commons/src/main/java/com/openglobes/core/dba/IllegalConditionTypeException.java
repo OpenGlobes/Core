@@ -17,19 +17,18 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class IllegalConditionTypeException extends DbaException {
 
     private static final long serialVersionUID = 27647819382873283L;
-    
+
     public IllegalConditionTypeException(String message) {
         super(message);
     }
 
-    public IllegalConditionTypeException(String message, 
+    public IllegalConditionTypeException(String message,
                                          Throwable cause) {
         super(message,
               cause);
@@ -43,10 +42,10 @@ public class IllegalConditionTypeException extends DbaException {
                                          Throwable cause,
                                          boolean enableSuppression,
                                          boolean writableStackTrace) {
-        super(message, 
-              cause, 
+        super(message,
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

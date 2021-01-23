@@ -20,16 +20,15 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InvalidTableWithUnsupportedFieldTypes {
 
     private BigDecimal anualBonus;
-    private Long invalidTableWithUnsupportedFieldTypesId;
-    private String name;
-    private Instant timestamp;
+    private Long       invalidTableWithUnsupportedFieldTypesId;
+    private String     name;
+    private Instant    timestamp;
 
     public InvalidTableWithUnsupportedFieldTypes() {
     }

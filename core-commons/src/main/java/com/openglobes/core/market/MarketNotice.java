@@ -20,16 +20,15 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MarketNotice {
 
-    private Long marketNoticeId;
+    private Long          marketNoticeId;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Integer type;
+    private LocalDate     tradingDay;
+    private Integer       type;
 
     public MarketNotice() {
     }

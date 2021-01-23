@@ -20,10 +20,10 @@ import com.openglobes.core.IRequestContext;
 import com.openglobes.core.RequestException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.context.ResponseContext;
+
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -42,8 +42,7 @@ public class SessionFactory implements ISessionFactory {
             var shared = context.getSharedContext();
             return new Session(context,
                                new ResponseContext(connector, shared));
-        }
-        catch (RequestException ex) {
+        } catch (RequestException ex) {
             throw new AcquireInformationException(ex.getMessage(),
                                                   ex);
         }

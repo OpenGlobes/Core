@@ -17,21 +17,20 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class DataQueryException extends DataException {
 
     private static final long serialVersionUID = 2149283982983L;
-    
+
     public DataQueryException(String message) {
         super(message);
     }
 
-    public DataQueryException(String message, 
-                          Throwable cause) {
-        super(message, 
+    public DataQueryException(String message,
+                              Throwable cause) {
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class DataQueryException extends DataException {
         super(cause);
     }
 
-    public DataQueryException(String message, 
-                          Throwable cause, 
-                          boolean enableSuppression,
-                          boolean writableStackTrace) {
+    public DataQueryException(String message,
+                              Throwable cause,
+                              boolean enableSuppression,
+                              boolean writableStackTrace) {
         super(message,
-              cause, 
-              enableSuppression, 
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

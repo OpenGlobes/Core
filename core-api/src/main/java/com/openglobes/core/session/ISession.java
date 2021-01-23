@@ -19,7 +19,6 @@ package com.openglobes.core.session;
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

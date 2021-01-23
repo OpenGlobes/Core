@@ -19,7 +19,6 @@ package com.openglobes.core.session;
 import com.openglobes.core.trader.Request;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

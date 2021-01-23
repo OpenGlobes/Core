@@ -17,19 +17,18 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.o
  */
 public class NoFieldException extends DbaException {
 
     private static final long serialVersionUID = 3567910938872983L;
-    
+
     public NoFieldException(String message) {
         super(message);
     }
 
-    public NoFieldException(String message, 
+    public NoFieldException(String message,
                             Throwable cause) {
         super(message,
               cause);
@@ -39,14 +38,14 @@ public class NoFieldException extends DbaException {
         super(cause);
     }
 
-    public NoFieldException(String message, 
-                            Throwable cause, 
-                            boolean enableSuppression, 
+    public NoFieldException(String message,
+                            Throwable cause,
+                            boolean enableSuppression,
                             boolean writableStackTrace) {
         super(message,
               cause,
-              enableSuppression, 
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

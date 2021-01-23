@@ -15,12 +15,12 @@
  */
 package com.lmax.disruptor;
 
+import com.lmax.disruptor.util.ThreadHints;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.lmax.disruptor.util.ThreadHints;
 
 /**
  * Variation of the {@link BlockingWaitStrategy} that attempts to elide conditional wake-ups when
@@ -28,29 +28,23 @@ import com.lmax.disruptor.util.ThreadHints;
  * wait strategy should be considered experimental as I have not full proved the correctness of
  * the lock elision code.
  */
-public final class LiteBlockingWaitStrategy implements WaitStrategy
-{
-    private final Lock lock = new ReentrantLock();
-    private final Condition processorNotifyCondition = lock.newCondition();
-    private final AtomicBoolean signalNeeded = new AtomicBoolean(false);
+public final class LiteBlockingWaitStrategy implements WaitStrategy {
+    private final Lock          lock                     = new ReentrantLock();
+    private final Condition     processorNotifyCondition = lock.newCondition();
+    private final AtomicBoolean signalNeeded             = new AtomicBoolean(false);
 
     @Override
     public long waitFor(long sequence, Sequence cursorSequence, Sequence dependentSequence, SequenceBarrier barrier)
-        throws AlertException, InterruptedException
-    {
+            throws AlertException, InterruptedException {
         long availableSequence;
-        if (cursorSequence.get() < sequence)
-        {
+        if (cursorSequence.get() < sequence) {
             lock.lock();
 
-            try
-            {
-                do
-                {
+            try {
+                do {
                     signalNeeded.getAndSet(true);
 
-                    if (cursorSequence.get() >= sequence)
-                    {
+                    if (cursorSequence.get() >= sequence) {
                         break;
                     }
 
@@ -58,15 +52,12 @@ public final class LiteBlockingWaitStrategy implements WaitStrategy
                     processorNotifyCondition.await();
                 }
                 while (cursorSequence.get() < sequence);
-            }
-            finally
-            {
+            } finally {
                 lock.unlock();
             }
         }
 
-        while ((availableSequence = dependentSequence.get()) < sequence)
-        {
+        while ((availableSequence = dependentSequence.get()) < sequence) {
             barrier.checkAlert();
             ThreadHints.onSpinWait();
         }
@@ -75,27 +66,21 @@ public final class LiteBlockingWaitStrategy implements WaitStrategy
     }
 
     @Override
-    public void signalAllWhenBlocking()
-    {
-        if (signalNeeded.getAndSet(false))
-        {
+    public void signalAllWhenBlocking() {
+        if (signalNeeded.getAndSet(false)) {
             lock.lock();
-            try
-            {
+            try {
                 processorNotifyCondition.signalAll();
-            }
-            finally
-            {
+            } finally {
                 lock.unlock();
             }
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "LiteBlockingWaitStrategy{" +
-            "processorNotifyCondition=" + processorNotifyCondition +
-            '}';
+               "processorNotifyCondition=" + processorNotifyCondition +
+               '}';
     }
 }

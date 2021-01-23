@@ -17,21 +17,20 @@
 package com.openglobes.core.data;
 
 /**
- *
  * @author Hongbao Chen
- * @since  1.0
+ * @since 1.0
  */
-public class DataRemovalException extends DataException{
+public class DataRemovalException extends DataException {
 
     private static final long serialVersionUID = 1138700198200311L;
-    
+
     public DataRemovalException(String message) {
         super(message);
     }
 
-    public DataRemovalException(String message, 
+    public DataRemovalException(String message,
                                 Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class DataRemovalException extends DataException{
         super(cause);
     }
 
-    public DataRemovalException(String message, 
-                                Throwable cause, 
+    public DataRemovalException(String message,
+                                Throwable cause,
                                 boolean enableSuppression,
                                 boolean writableStackTrace) {
         super(message,
-              cause, 
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

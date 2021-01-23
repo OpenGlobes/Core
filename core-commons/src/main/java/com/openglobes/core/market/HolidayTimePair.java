@@ -19,15 +19,14 @@ package com.openglobes.core.market;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class HolidayTimePair {
 
-    private Long holidayTimeId;
-    private Long holidayTimePairId;
-    private Long holidayTimeSetId;
+    private Long          holidayTimeId;
+    private Long          holidayTimePairId;
+    private Long          holidayTimeSetId;
     private ZonedDateTime timestamp;
 
     public HolidayTimePair() {

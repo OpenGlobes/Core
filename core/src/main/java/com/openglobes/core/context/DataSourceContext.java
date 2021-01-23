@@ -18,21 +18,21 @@ package com.openglobes.core.context;
 
 import com.openglobes.core.configuration.DataSourceConfiguration;
 import com.openglobes.core.data.ITraderDataSource;
+
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class DataSourceContext implements IDataSourceContext {
 
     private final DataSourceConfiguration conf;
-    private final ITraderDataSource source;
+    private final ITraderDataSource       source;
 
     public DataSourceContext(DataSourceConfiguration configuration,
                              ITraderDataSource source) {
-        this.conf = configuration;
+        this.conf   = configuration;
         this.source = source;
     }
 

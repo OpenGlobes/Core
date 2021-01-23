@@ -21,7 +21,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -31,11 +30,9 @@ public interface IPooledDataSource {
      * Find next available SQL connection.
      *
      * @return SQL connection.
-     *
      * @throws SQLException           thrown on failing getting connection from
      *                                {@link DriverManager}.
      * @throws ClassNotFoundException thrown on failing loading driver class.
-     *
      */
     Connection getSqlConnection() throws SQLException,
                                          ClassNotFoundException;
@@ -45,7 +42,6 @@ public interface IPooledDataSource {
      * {@link IDataConnection} object and return available for new connection.
      *
      * @param connection SQl connection.
-     *
      * @throws UnknownConnectionException thrown when the specified connection
      *                                    is not created by the datasource.
      */

@@ -20,7 +20,6 @@ import com.openglobes.core.market.Stick;
 import com.openglobes.core.market.Tick;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

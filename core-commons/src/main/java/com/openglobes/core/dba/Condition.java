@@ -9,21 +9,20 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 class Condition<T> implements ICondition<T> {
 
-    private final MetaField meta;
-    private final String sqlv;
+    private final MetaField     meta;
+    private final String        sqlv;
     private final ConditionType t;
-    private T v0;
-    private T v1;
+    private       T             v0;
+    private       T             v1;
 
     Condition(T value, ConditionType type) throws IllegalConditionTypeException,
-                                                          IllegalConditonOperandException,
-                                                          UnsupportedFieldTypeException {
+                                                  IllegalConditonOperandException,
+                                                  UnsupportedFieldTypeException {
         if (type != ConditionType.NOT) {
             throw new IllegalConditionTypeException("Expect NOT but found " + type + ".");
         }
@@ -31,40 +30,40 @@ class Condition<T> implements ICondition<T> {
             throw new IllegalConditonOperandException("NOT type only applies to ICondition.");
         }
         meta = null;
-        v0 = value;
-        t = type;
+        v0   = value;
+        t    = type;
         sqlv = stringValue(v0);
     }
 
-    Condition(Field field, ConditionType type) throws IllegalConditionTypeException, 
+    Condition(Field field, ConditionType type) throws IllegalConditionTypeException,
                                                       IllegalFieldCharacterException,
                                                       UnsupportedFieldTypeException {
-        if (type != ConditionType.IS_NULL && 
+        if (type != ConditionType.IS_NULL &&
             type != ConditionType.IS_NOT_NULL) {
             throw new IllegalConditionTypeException("Expect IS_NULL/IS_NOT_NULL but found " + type + ".");
         }
         meta = DbaUtils.inspectField(field);
-        t = type;
+        t    = type;
         sqlv = stringValue(type);
     }
 
     Condition(Field field, T value, ConditionType type) throws IllegalFieldCharacterException,
-                                                                       UnsupportedFieldTypeException {
+                                                               UnsupportedFieldTypeException {
         meta = DbaUtils.inspectField(field);
-        v0 = value;
-        t = type;
+        v0   = value;
+        t    = type;
         sqlv = stringValue(v0);
     }
 
     Condition(T c0, T c1, ConditionType type) throws IllegalConditionTypeException,
-                                                             IllegalConditonOperandException {
+                                                     IllegalConditonOperandException {
         if (type != ConditionType.AND && type != ConditionType.OR) {
             throw new IllegalConditionTypeException("Expect AND/OR but found " + type + ".");
         }
         this.meta = null;
-        v0 = c0;
-        v1 = c1;
-        t = type;
+        v0        = c0;
+        v1        = c1;
+        t         = type;
         this.sqlv = stringValue(v0, v1);
     }
 
@@ -92,11 +91,9 @@ class Condition<T> implements ICondition<T> {
         Objects.requireNonNull(v);
         if (v instanceof Number) {
             return "" + v;
-        }
-        else if (v instanceof String) {
+        } else if (v instanceof String) {
             return "'" + v + "'";
-        }
-        else if (v instanceof Condition) {
+        } else if (v instanceof Condition) {
             return ((Condition) v).getSql();
         }
         throw new UnsupportedFieldTypeException(v.getClass().getCanonicalName());

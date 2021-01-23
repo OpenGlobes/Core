@@ -19,6 +19,7 @@ package com.openglobes.core.trader;
 import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.event.IEventSource;
+
 import java.util.Collection;
 import java.util.Properties;
 
@@ -56,7 +57,7 @@ public interface ITraderEngine {
 
     void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException;
 
-    void request(Request request, Instrument instrument, Properties properties, int requestId) ;
+    void request(Request request, Instrument instrument, Properties properties, int requestId);
 
     void setInitProperties(int traderId, Properties properties) throws UnknownTraderIdException;
 

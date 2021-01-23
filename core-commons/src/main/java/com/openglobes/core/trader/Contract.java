@@ -27,19 +27,19 @@ import java.time.ZonedDateTime;
  */
 public class Contract {
 
-    private Double closeAmount;
-    private LocalDate closeTradingDay;
-    private Long contractId;
-    private Integer direction;
-    private String instrumentId;
-    private Double openAmount;
+    private Double        closeAmount;
+    private LocalDate     closeTradingDay;
+    private Long          contractId;
+    private Integer       direction;
+    private String        instrumentId;
+    private Double        openAmount;
     private ZonedDateTime openTimestamp;
-    private LocalDate openTradingDay;
-    private Integer status;
-    private String tag;
+    private LocalDate     openTradingDay;
+    private Integer       status;
+    private String        tag;
     private ZonedDateTime timestamp;
-    private Long tradeId;
-    private Integer traderId;
+    private Long          tradeId;
+    private Integer       traderId;
 
     public Contract() {
     }

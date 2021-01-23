@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

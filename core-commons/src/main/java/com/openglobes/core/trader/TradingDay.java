@@ -9,16 +9,15 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class TradingDay {
 
-    private LocalDate actionDay;
+    private LocalDate     actionDay;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Long tradingDayId;
+    private LocalDate     tradingDay;
+    private Long          tradingDayId;
 
     public TradingDay() {
     }

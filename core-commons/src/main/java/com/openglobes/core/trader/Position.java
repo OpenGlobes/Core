@@ -32,29 +32,29 @@ import java.time.ZonedDateTime;
  */
 public class Position {
 
-    private Double amount;
-    private Double closeProfit;
-    private Double commission;
-    private Integer direction;
-    private Long frozenCloseVolumn;
-    private Double frozenCommission;
-    private Double frozenMargin;
-    private Long frozenOpenVolumn;
-    private String instrumentId;
-    private Double margin;
-    private Double todayOpenAmount;
-    private Double todayOpenMargin;
-    private Long todayOpenVolumn;
-    private Double positionProfit;
-    private Double preAmount;
-    private Double preMargin;
-    private Long preVolumn;
+    private Double        amount;
+    private Double        closeProfit;
+    private Double        commission;
+    private Integer       direction;
+    private Long          frozenCloseVolumn;
+    private Double        frozenCommission;
+    private Double        frozenMargin;
+    private Long          frozenOpenVolumn;
+    private String        instrumentId;
+    private Double        margin;
+    private Double        todayOpenAmount;
+    private Double        todayOpenMargin;
+    private Long          todayOpenVolumn;
+    private Double        positionProfit;
+    private Double        preAmount;
+    private Double        preMargin;
+    private Long          preVolumn;
     private ZonedDateTime timestamp;
-    private Double todayAmount;
-    private Double todayMargin;
-    private Long todayVolumn;
-    private LocalDate tradingDay;
-    private Long volumn;
+    private Double        todayAmount;
+    private Double        todayMargin;
+    private Long          todayVolumn;
+    private LocalDate     tradingDay;
+    private Long          volumn;
 
     public Position() {
     }

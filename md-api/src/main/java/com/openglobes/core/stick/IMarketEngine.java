@@ -18,10 +18,10 @@ package com.openglobes.core.stick;
 
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.IEventSource;
+
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

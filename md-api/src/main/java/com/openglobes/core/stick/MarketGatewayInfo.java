@@ -20,14 +20,13 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class MarketGatewayInfo {
 
-    private LocalDate actionDay;
-    private LocalDate tradingDay;
+    private LocalDate     actionDay;
+    private LocalDate     tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public MarketGatewayInfo() {

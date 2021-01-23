@@ -17,20 +17,19 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class UnsupportedFieldTypeException extends DbaException {
 
     private static final long serialVersionUID = 2763981630989173L;
-    
+
     public UnsupportedFieldTypeException(String message) {
         super(message);
     }
 
-    public UnsupportedFieldTypeException(String message, 
-                                    Throwable cause) {
+    public UnsupportedFieldTypeException(String message,
+                                         Throwable cause) {
         super(message,
               cause);
     }
@@ -39,14 +38,14 @@ public class UnsupportedFieldTypeException extends DbaException {
         super(cause);
     }
 
-    public UnsupportedFieldTypeException(String message, 
-                                    Throwable cause, 
-                                    boolean enableSuppression, 
-                                    boolean writableStackTrace) {
+    public UnsupportedFieldTypeException(String message,
+                                         Throwable cause,
+                                         boolean enableSuppression,
+                                         boolean writableStackTrace) {
         super(message,
               cause,
-              enableSuppression, 
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

@@ -17,14 +17,13 @@
 package com.openglobes.core.dba;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class FieldAccessException extends DbaException {
 
     private static final long serialVersionUID = 4378098098461211L;
-    
+
     public FieldAccessException(String message) {
         super(message);
     }
@@ -40,5 +39,5 @@ public class FieldAccessException extends DbaException {
     public FieldAccessException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

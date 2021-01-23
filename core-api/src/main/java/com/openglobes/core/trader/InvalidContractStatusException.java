@@ -17,11 +17,10 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author chenh
  */
 public class InvalidContractStatusException extends TraderException {
-    
+
     public InvalidContractStatusException(String message) {
         super(message);
     }
@@ -37,5 +36,5 @@ public class InvalidContractStatusException extends TraderException {
     public InvalidContractStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-    
+
 }

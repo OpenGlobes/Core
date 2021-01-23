@@ -19,14 +19,13 @@ package com.openglobes.core.context;
 import com.openglobes.core.ServiceStatus;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ContextException extends ServiceStatus{
+public class ContextException extends ServiceStatus {
 
     private static final long serialVersionUID = 214538760988L;
-    
+
     public ContextException(Integer code, String msg) {
         super(code, msg);
     }
@@ -34,5 +33,5 @@ public class ContextException extends ServiceStatus{
     public ContextException(Integer code, String message, Throwable cause) {
         super(code, message, cause);
     }
-    
+
 }

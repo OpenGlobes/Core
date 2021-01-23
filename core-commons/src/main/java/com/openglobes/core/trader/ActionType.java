@@ -6,14 +6,13 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class ActionType {
 
     public static final int DELETE = (0x81);
-    public static final int NEW = (0x80);
+    public static final int NEW    = (0x80);
 
     private ActionType() {
     }

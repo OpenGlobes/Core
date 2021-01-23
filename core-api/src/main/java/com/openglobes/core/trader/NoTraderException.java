@@ -17,21 +17,20 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class NoTraderException extends TraderException{
+public class NoTraderException extends TraderException {
 
     private static final long serialVersionUID = 1L;
-    
+
     public NoTraderException(String message) {
         super(message);
     }
 
     public NoTraderException(String message,
                              Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class NoTraderException extends TraderException{
         super(cause);
     }
 
-    public NoTraderException(String message, 
-                             Throwable cause, 
-                             boolean enableSuppression, 
+    public NoTraderException(String message,
+                             Throwable cause,
+                             boolean enableSuppression,
                              boolean writableStackTrace) {
         super(message,
               cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

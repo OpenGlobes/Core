@@ -16,27 +16,25 @@
  */
 package com.openglobes.core.utils;
 
+import javax.management.ServiceNotFoundException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.ServiceLoader;
-import javax.management.ServiceNotFoundException;
+import java.util.*;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class ServiceSelector {
 
+    private ServiceSelector() {
+    }
+
     public static <T> T selectService(Class<T> clazz,
-                               String implClass,
-                               Collection<File> fileOrDir) throws ServiceNotFoundException {
+                                      String implClass,
+                                      Collection<File> fileOrDir) throws ServiceNotFoundException {
         var jars = getAllJars(fileOrDir);
         return selectClass(clazz,
                            implClass,
@@ -44,15 +42,14 @@ public class ServiceSelector {
     }
 
     public static <T> T selectService(Class<T> clazz,
-                               String implClass,
-                               File... fileOrDir) throws ServiceNotFoundException {
+                                      String implClass,
+                                      File... fileOrDir) throws ServiceNotFoundException {
         var jars = getAllJars(Arrays.asList(fileOrDir));
         try {
             var cl = URLClassLoader.newInstance(getURLs(jars));
             return loadObject(ServiceLoader.load(clazz, cl),
                               implClass);
-        }
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             throw new ServiceNotFoundException(implClass);
         }
     }
@@ -62,8 +59,7 @@ public class ServiceSelector {
         fileOrDir.stream().filter(f -> !(f == null)).forEachOrdered(f -> {
             if (f.isFile()) {
                 files.add(f);
-            }
-            else {
+            } else {
                 files.addAll(Arrays.asList(getJarsInDirectory(f)));
             }
         });
@@ -111,12 +107,8 @@ public class ServiceSelector {
             var cl = URLClassLoader.newInstance(getURLs(jars));
             return loadObject(ServiceLoader.load(clazz, cl),
                               implClass);
-        }
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             throw new ServiceNotFoundException(implClass);
         }
-    }
-
-    private ServiceSelector() {
     }
 }

@@ -21,8 +21,7 @@ package com.lmax.disruptor;
  * @param <T> event implementation storing the data for sharing during exchange or parallel coordination of an event.
  * @see WorkerPool
  */
-public interface WorkHandler<T>
-{
+public interface WorkHandler<T> {
     /**
      * Callback to indicate a unit of work needs to be processed.
      *

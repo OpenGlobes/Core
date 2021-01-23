@@ -16,21 +16,21 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.ISharedContext;
 import com.openglobes.core.interceptor.IInterceptorChain;
 import com.openglobes.core.interceptor.InterceptorChain;
 import com.openglobes.core.session.SessionCorrelator;
+import com.openglobes.core.utils.Loggers;
+
 import java.util.logging.Handler;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class SharedContext implements ISharedContext {
 
-    private final SessionCorrelator corr = new SessionCorrelator();
+    private final SessionCorrelator corr         = new SessionCorrelator();
     private final IInterceptorChain interceptors = new InterceptorChain();
 
     @Override

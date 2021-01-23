@@ -18,10 +18,10 @@ package com.openglobes.core;
 
 import com.openglobes.core.interceptor.IInterceptorChain;
 import com.openglobes.core.session.ISessionCorrelator;
+
 import java.util.logging.Handler;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

@@ -20,24 +20,23 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Stick {
 
-    private Double closePrice;
-    private Integer days;
-    private Double highPrice;
-    private String instrumentId;
-    private Double lowPrice;
-    private Integer minutes;
-    private Long openInsterest;
-    private Double openPrice;
-    private Long stickId;
+    private Double        closePrice;
+    private Integer       days;
+    private Double        highPrice;
+    private String        instrumentId;
+    private Double        lowPrice;
+    private Integer       minutes;
+    private Long          openInsterest;
+    private Double        openPrice;
+    private Long          stickId;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
-    private Long volumn;
+    private LocalDate     tradingDay;
+    private Long          volumn;
 
     public Stick() {
     }

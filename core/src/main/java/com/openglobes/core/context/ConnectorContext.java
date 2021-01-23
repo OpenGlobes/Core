@@ -23,27 +23,27 @@ import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
 import com.openglobes.core.session.ISessionFactory;
 import com.openglobes.core.session.SessionFactory;
+
 import java.util.Objects;
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class ConnectorContext implements IConnectorContext {
 
     private final ConnectorConfiguration conf;
-    private final IConnector conn;
-    private final IRequestContext ctx;
-    private ISessionFactory factory;
+    private final IConnector             conn;
+    private final IRequestContext        ctx;
+    private       ISessionFactory        factory;
 
     public ConnectorContext(ConnectorConfiguration configuration,
                             IConnector connector,
                             IRequestContext context) {
-        conf = configuration;
+        conf      = configuration;
         this.conn = connector;
-        this.ctx = context;
+        this.ctx  = context;
     }
 
     @Override

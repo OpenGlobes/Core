@@ -17,21 +17,20 @@
 package com.openglobes.core.session;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InvalidSessionResponseException extends SessionException{
+public class InvalidSessionResponseException extends SessionException {
 
     private static final long serialVersionUID = 3241232356563L;
-    
+
     public InvalidSessionResponseException(String message) {
         super(message);
     }
 
-    public InvalidSessionResponseException(String message, 
-                                    Throwable cause) {
-        super(message, 
+    public InvalidSessionResponseException(String message,
+                                           Throwable cause) {
+        super(message,
               cause);
     }
 
@@ -39,14 +38,14 @@ public class InvalidSessionResponseException extends SessionException{
         super(cause);
     }
 
-    public InvalidSessionResponseException(String message, 
-                                    Throwable cause,
-                                    boolean enableSuppression, 
-                                    boolean writableStackTrace) {
-        super(message, 
-              cause, 
+    public InvalidSessionResponseException(String message,
+                                           Throwable cause,
+                                           boolean enableSuppression,
+                                           boolean writableStackTrace) {
+        super(message,
+              cause,
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

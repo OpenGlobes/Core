@@ -16,19 +16,19 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.trader.ITraderGateway;
 import com.openglobes.core.configuration.GatewayConfiguration;
+import com.openglobes.core.trader.ITraderGateway;
+
 import java.util.Properties;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class GatewayContext implements IGatewayContext {
 
     private final GatewayConfiguration conf;
-    private final ITraderGateway gate;
+    private final ITraderGateway       gate;
 
     public GatewayContext(GatewayConfiguration configuration,
                           ITraderGateway gateway) {

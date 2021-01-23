@@ -17,20 +17,20 @@
 package com.openglobes.core.session;
 
 import com.openglobes.core.trader.Request;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- *
  * @author Hongbao
  * @since 1.0
  */
 public class SessionCorrelator implements ISessionCorrelator {
 
     private final Map<Long, ISession> map = new ConcurrentHashMap<>(128);
-    private final AtomicLong uId = new AtomicLong(0);
+    private final AtomicLong          uId = new AtomicLong(0);
 
     public SessionCorrelator() {
     }

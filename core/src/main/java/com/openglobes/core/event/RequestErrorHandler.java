@@ -16,16 +16,14 @@
  */
 package com.openglobes.core.event;
 
-import com.openglobes.core.event.IEvent;
-import com.openglobes.core.event.IEventHandler;
+import com.openglobes.core.interceptor.IInterceptorChain;
+import com.openglobes.core.interceptor.InterceptorException;
 import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.utils.Loggers;
-import com.openglobes.core.interceptor.InterceptorException;
+
 import java.util.logging.Level;
-import com.openglobes.core.interceptor.IInterceptorChain;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -42,8 +40,7 @@ public class RequestErrorHandler implements IEventHandler<EngineRequestError> {
         try {
             var rsp = event.get();
             interceptors.respond(EngineRequestError.class, rsp);
-        }
-        catch (InterceptorException ex) {
+        } catch (InterceptorException ex) {
             Loggers.getLogger(ResponseHandler.class.getCanonicalName()).log(Level.SEVERE,
                                                                             ex.toString(),
                                                                             ex);

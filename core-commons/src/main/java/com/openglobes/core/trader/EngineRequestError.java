@@ -17,15 +17,14 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class EngineRequestError {
 
     private Throwable exception;
-    private Request request;
-    private int requestId;
+    private Request   request;
+    private int       requestId;
 
     public EngineRequestError() {
     }

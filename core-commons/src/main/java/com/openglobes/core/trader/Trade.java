@@ -28,18 +28,18 @@ import java.time.ZonedDateTime;
  */
 public class Trade {
 
-    private Integer action;
-    private Integer direction;
-    private String instrumentId;
-    private Integer offset;
-    private Long orderId;
-    private Double price;
-    private Long quantity;
-    private String signature;
+    private Integer       action;
+    private Integer       direction;
+    private String        instrumentId;
+    private Integer       offset;
+    private Long          orderId;
+    private Double        price;
+    private Long          quantity;
+    private String        signature;
     private ZonedDateTime timestamp;
-    private Long tradeId;
-    private Integer traderId;
-    private LocalDate tradingDay;
+    private Long          tradeId;
+    private Integer       traderId;
+    private LocalDate     tradingDay;
 
     public Trade() {
     }

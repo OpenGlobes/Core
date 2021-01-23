@@ -19,11 +19,10 @@ package com.openglobes.core.session;
 import com.openglobes.core.connector.IConnector;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface ISessionFactory {
-    
+
     ISession createSession(IConnector connector) throws AcquireInformationException;
 }

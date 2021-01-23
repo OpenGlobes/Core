@@ -20,19 +20,18 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InstrumentMinuteNotice {
 
     private final ZonedDateTime alignTime;
-    private final String instrumentId;
-    private final Long instrumentMinuteNoticeId;
-    private final Integer minuteOfTradingDay;
-    private final Integer minutes;
+    private final String        instrumentId;
+    private final Long          instrumentMinuteNoticeId;
+    private final Integer       minuteOfTradingDay;
+    private final Integer       minutes;
     private final ZonedDateTime timestamp;
-    private final LocalDate tradingDay;
+    private final LocalDate     tradingDay;
 
     public InstrumentMinuteNotice(Long instrumentMinuteNoticeId,
                                   String instrumentId,
@@ -41,13 +40,13 @@ public class InstrumentMinuteNotice {
                                   ZonedDateTime alignTime,
                                   ZonedDateTime timestamp,
                                   LocalDate tradingDay) {
-        this.alignTime = alignTime;
-        this.instrumentId = instrumentId;
+        this.alignTime                = alignTime;
+        this.instrumentId             = instrumentId;
         this.instrumentMinuteNoticeId = instrumentMinuteNoticeId;
-        this.minuteOfTradingDay = minuteOfTradingDay;
-        this.minutes = minutes;
-        this.timestamp = timestamp;
-        this.tradingDay = tradingDay;
+        this.minuteOfTradingDay       = minuteOfTradingDay;
+        this.minutes                  = minutes;
+        this.timestamp                = timestamp;
+        this.tradingDay               = tradingDay;
     }
 
     public ZonedDateTime getAlignTime() {

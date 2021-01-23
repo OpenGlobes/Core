@@ -27,14 +27,14 @@ import java.time.ZonedDateTime;
  */
 public class Commission {
 
-    private Double commission;
-    private Long commissionId;
-    private Long contractId;
-    private Long orderId;
-    private Integer status;
-    private String tag;
+    private Double        commission;
+    private Long          commissionId;
+    private Long          contractId;
+    private Long          orderId;
+    private Integer       status;
+    private String        tag;
     private ZonedDateTime timestamp;
-    private LocalDate tradingDay;
+    private LocalDate     tradingDay;
 
     public Commission() {
     }

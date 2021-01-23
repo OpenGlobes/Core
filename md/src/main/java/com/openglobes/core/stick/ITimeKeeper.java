@@ -19,7 +19,6 @@ package com.openglobes.core.stick;
 import java.time.ZonedDateTime;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -30,5 +29,5 @@ public interface ITimeKeeper {
     boolean isEnd(ZonedDateTime now);
 
     boolean isWorking(ZonedDateTime now);
-    
+
 }

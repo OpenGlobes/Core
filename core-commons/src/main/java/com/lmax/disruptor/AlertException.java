@@ -21,8 +21,7 @@ package com.lmax.disruptor;
  * It does not fill in a stack trace for performance reasons.
  */
 @SuppressWarnings("serial")
-public final class AlertException extends Exception
-{
+public final class AlertException extends Exception {
     /**
      * Pre-allocated exception to avoid garbage generation
      */
@@ -31,8 +30,7 @@ public final class AlertException extends Exception
     /**
      * Private constructor so only a single instance exists.
      */
-    private AlertException()
-    {
+    private AlertException() {
     }
 
     /**
@@ -41,8 +39,7 @@ public final class AlertException extends Exception
      * @return this instance.
      */
     @Override
-    public Throwable fillInStackTrace()
-    {
+    public Throwable fillInStackTrace() {
         return this;
     }
 }
