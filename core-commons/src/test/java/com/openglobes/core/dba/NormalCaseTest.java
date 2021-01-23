@@ -48,6 +48,7 @@ public class NormalCaseTest extends Facilities {
 
     @Test
     @Order(0)
+    @DisplayName("IQuery::insert()")
     public void insertion() {
         try {
             assertEquals(1,
@@ -82,6 +83,7 @@ public class NormalCaseTest extends Facilities {
 
     @Test
     @Order(1)
+    @DisplayName("IQuery::remove()")
     public void removal() {
         try {
             assertEquals(1,
@@ -125,6 +127,7 @@ public class NormalCaseTest extends Facilities {
 
     @Test
     @Order(2)
+    @DisplayName("IQuery::update()")
     public void update() {
         var x = new Request();
         try {
