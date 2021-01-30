@@ -30,7 +30,6 @@ public class Utils {
     }
 
     @SuppressWarnings("unchecked")
-
     public static <T> T copy(T copied) {
         try (ByteArrayOutputStream bo = new ByteArrayOutputStream()) {
             new ObjectOutputStream(bo).writeObject(copied);
@@ -41,7 +40,13 @@ public class Utils {
         }
     }
 
-    public static ZonedDateTime getAlignByMinute() {
+    /**
+     * Get current time and round to the closest minute. The seconds
+     * and nano seconds are all zero.
+     *
+     * @return current rounded time to minute.
+     */
+    public static ZonedDateTime getRoundedTimeByMinute() {
         ZonedDateTime n = ZonedDateTime.now();
         ZonedDateTime r = ZonedDateTime.of(n.getYear(),
                                            n.getMonthValue(),

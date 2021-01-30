@@ -130,12 +130,12 @@ public class TimeKeeper implements ITimeKeeper {
     }
 
     protected boolean isWorkBegin(ZonedDateTime now) {
-        var n = Utils.getAlignByMinute().toLocalTime();
+        var n = Utils.getRoundedTimeByMinute().toLocalTime();
         return n.compareTo(workday.get(0).getFromTime()) == 0;
     }
 
     protected boolean isWorkEnd(ZonedDateTime now) {
-        var n = Utils.getAlignByMinute().toLocalTime();
+        var n = Utils.getRoundedTimeByMinute().toLocalTime();
         return n.compareTo(workday.get(workday.size() - 1).getToTime()) == 0;
     }
 

@@ -45,7 +45,7 @@ public class StickBuilder implements IStickBuilder {
         mins     = new ConcurrentHashMap<>(512);
         days     = new ConcurrentHashMap<>(8);
         eg       = engine;
-        preAlign = Utils.getAlignByMinute();
+        preAlign = Utils.getRoundedTimeByMinute();
     }
 
     @Override

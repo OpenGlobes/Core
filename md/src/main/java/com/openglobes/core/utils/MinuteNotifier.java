@@ -61,7 +61,7 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier, AutoCl
     public void run() {
         evt.publish(MinuteNotice.class,
                     new MinuteNotice(nid.incrementAndGet(),
-                                     Utils.getAlignByMinute(),
+                                     Utils.getRoundedTimeByMinute(),
                                      ZonedDateTime.now()));
     }
 

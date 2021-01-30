@@ -5,6 +5,8 @@ import com.openglobes.core.trader.Request;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsTest {
@@ -30,7 +32,25 @@ class UtilsTest {
     }
 
     @Test
-    void getAlignByMinute() {
+    void getRoundedTimeByMinute() {
+        var n = Utils.getRoundedTimeByMinute();
+        var c = ZonedDateTime.now();
+
+        assertEquals(0,
+                     n.getSecond(),
+                     "Seconds should be zero.");
+        assertEquals(0,
+                     n.getNano(),
+                     "Nanos should be zero.");
+        if (c.getSecond() >= 30) {
+            assertEquals(c.plusMinutes(1).getMinute(),
+                         n.getMinute(),
+                         "Round up.");
+        } else {
+            assertEquals(c.getMinute(),
+                         n.getMinute(),
+                         "Rond down.");
+        }
     }
 
     @Test
