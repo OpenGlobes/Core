@@ -16,13 +16,14 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class HolidayTimeSet {
+public class HolidayTimeSet implements Serializable {
 
     private Long          holidayTimeSetId;
     private String        name;

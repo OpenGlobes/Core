@@ -5,11 +5,13 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ActionType {
+public class ActionType implements Serializable {
 
     public static final int DELETE = (0x81);
     public static final int NEW    = (0x80);

@@ -16,11 +16,13 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class EngineRequestError {
+public class EngineRequestError implements Serializable {
 
     private Throwable exception;
     private Request   request;

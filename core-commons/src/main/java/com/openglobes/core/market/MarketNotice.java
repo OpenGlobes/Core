@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -23,7 +24,7 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class MarketNotice {
+public class MarketNotice implements Serializable {
 
     private Long          marketNoticeId;
     private ZonedDateTime timestamp;

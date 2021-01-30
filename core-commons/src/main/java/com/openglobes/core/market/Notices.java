@@ -16,11 +16,13 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
+
 /**
  * @author HongbaoChen
  * @since 1.0
  */
-public class Notices {
+public class Notices implements Serializable {
 
     public static final int MARKET_INIT            = 0x1;
     public static final int MARKET_SETTLE          = 0x2;

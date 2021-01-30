@@ -16,13 +16,15 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * Ratio type.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class RatioType {
+public class RatioType implements Serializable {
 
     public static final int BY_MONEY  = (0x50);
     public static final int BY_VOLUMN = (0x51);

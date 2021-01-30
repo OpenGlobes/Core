@@ -16,13 +16,14 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class WorkdayTimePair {
+public class WorkdayTimePair implements Serializable {
 
     private ZonedDateTime timestamp;
     private Long          workdayTimeId;

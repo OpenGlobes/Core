@@ -16,13 +16,15 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * Fee status.
  *
  * @author Hongbao Chen
  * @sine 1.0
  */
-public class FeeStatus {
+public class FeeStatus implements Serializable {
 
     public static final int DEALED  = (0x21);
     public static final int FORZEN  = (0x20);

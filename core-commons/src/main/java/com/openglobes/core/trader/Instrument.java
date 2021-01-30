@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -25,7 +26,7 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Instrument {
+public class Instrument implements Serializable {
 
     private Double        commissionCloseRatio;
     private Double        commissionCloseTodayRatio;

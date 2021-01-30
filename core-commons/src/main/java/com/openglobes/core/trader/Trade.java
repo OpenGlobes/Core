@@ -16,17 +16,18 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- * Reponse for a filled trade corresponding to the {@link OrderRequest} denoted
+ * Reponse for a filled trade corresponding to the {@link Request} denoted
  * by the order ID whose volumn should not exceed the total volumn of the order.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Trade {
+public class Trade implements Serializable {
 
     private Integer       action;
     private Integer       direction;

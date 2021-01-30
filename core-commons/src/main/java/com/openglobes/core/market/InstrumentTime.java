@@ -16,11 +16,13 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class InstrumentTime {
+public class InstrumentTime implements Serializable {
 
     private Long   holidayTimeSetId;
     private String instrumentId;

@@ -5,15 +5,17 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Offset {
+public class Offset implements Serializable  {
 
+    public static final int OPEN        = (0x90);
     public static final int CLOSE       = (0x91);
     public static final int CLOSE_TODAY = (0x92);
-    public static final int OPEN        = (0x90);
 
     private Offset() {
     }

@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
@@ -23,7 +24,7 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class WorkdayTime {
+public class WorkdayTime implements Serializable {
 
     private Integer       dayRank;
     private LocalTime     fromTime;

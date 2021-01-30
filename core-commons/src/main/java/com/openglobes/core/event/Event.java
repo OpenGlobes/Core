@@ -18,6 +18,7 @@ package com.openglobes.core.event;
 
 import com.openglobes.core.utils.Utils;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 /**
@@ -25,7 +26,8 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Event<T> implements IEvent<T> {
+public class Event<T> implements IEvent<T>,
+                                 Serializable {
 
     private final Long          seq;
     private final ZonedDateTime ts;

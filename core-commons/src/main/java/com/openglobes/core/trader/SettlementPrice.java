@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -23,7 +24,7 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class SettlementPrice {
+public class SettlementPrice implements Serializable {
 
     private String        instrumentId;
     private Double        settlementPrice;

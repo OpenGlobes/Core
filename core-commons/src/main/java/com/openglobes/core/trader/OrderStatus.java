@@ -16,13 +16,15 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * Order status.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class OrderStatus {
+public class OrderStatus implements Serializable {
 
     public static final int ACCEPTED   = (0x63);
     public static final int ALL_TRADED = (0x60);

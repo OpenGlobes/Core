@@ -5,11 +5,13 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Direction {
+public class Direction implements Serializable {
 
     public static final int BUY  = (0xA0);
     public static final int SELL = (0xA1);

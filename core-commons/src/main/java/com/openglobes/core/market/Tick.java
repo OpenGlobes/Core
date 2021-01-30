@@ -5,6 +5,7 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
@@ -12,7 +13,7 @@ import java.time.ZonedDateTime;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Tick {
+public class Tick implements Serializable {
 
     private Double        askPrice;
     private Long          askVolumn;

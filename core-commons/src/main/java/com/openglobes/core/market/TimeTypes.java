@@ -16,11 +16,13 @@
  */
 package com.openglobes.core.market;
 
+import java.io.Serializable;
+
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public class TimeTypes {
+public class TimeTypes implements Serializable {
 
     public static final int PRE_DAY = 0x1;
     public static final int END_DAY = 0x2;

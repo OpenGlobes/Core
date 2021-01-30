@@ -16,13 +16,15 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * Contract status.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class ContractStatus {
+public class ContractStatus implements Serializable {
     public static final int CLOSED  = (0x43);
     public static final int CLOSING = (0x42);
     public static final int OPEN    = (0x41);

@@ -16,13 +16,15 @@
  */
 package com.openglobes.core.trader;
 
+import java.io.Serializable;
+
 /**
  * Request to insert an new order Integero trading counter.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Request {
+public class Request implements Serializable {
 
     private Integer action;
     private Integer direction;
