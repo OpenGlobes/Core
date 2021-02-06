@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.event;
+package com.openglobes.core.utils;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -25,12 +25,12 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class EasyCondition {
+public class QuickCondition {
 
     private final Condition c;
     private final Lock      l;
 
-    public EasyCondition() {
+    public QuickCondition() {
         l = new ReentrantLock();
         c = l.newCondition();
     }

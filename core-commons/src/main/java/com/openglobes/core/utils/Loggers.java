@@ -17,7 +17,10 @@
 package com.openglobes.core.utils;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -29,7 +32,34 @@ import java.util.logging.SimpleFormatter;
  */
 public class Loggers {
 
-    private static final Map<Handler, Object> handlers = new ConcurrentHashMap<>(64);
+    private static final Map<Handler, Object>     handlers = new ConcurrentHashMap<>(64);
+    private static final Map<String, Logger>      loggers  = new ConcurrentHashMap<>(64);
+    private static final BlockingQueue<LogRecord> logs     = new LinkedBlockingQueue<>();
+    private static final SimpleFormatter          format   = new SimpleFormatter();
+
+    private static final Thread d = new Thread(() -> {
+        do {
+            blockingPublishLogs();
+        } while (!Thread.currentThread().isInterrupted());
+        flushLogs();
+    });
+
+    private static void blockingPublishLogs() {
+        try {
+            LogRecord l = null;
+            while ((l = logs.poll(1, TimeUnit.DAYS)) != null) {
+                publishLog(l);
+            }
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private static void flushLogs() {
+        LogRecord l = null;
+        while ((l = logs.poll()) != null) {
+            publishLog(l);
+        }
+    }
 
     private Loggers() {
     }
@@ -39,51 +69,46 @@ public class Loggers {
     }
 
     public static Logger getLogger(Object name) {
-        var r = Logger.getLogger(name.toString());
-        r.setUseParentHandlers(false);
-        r.addHandler(new CollectiveHandler());
-        return r;
+        return loggers.computeIfAbsent(name.toString(),
+                                       key -> {
+                                           var x = Logger.getLogger(key);
+                                           x.setUseParentHandlers(false);
+                                           x.addHandler(new Handler() {
+                                               @Override
+                                               public void publish(LogRecord record) {
+                                                   if (!logs.offer(record)) {
+                                                       System.err.println("Fail appending new log record.\n"
+                                                                          + format.format(record));
+                                                   }
+                                               }
+
+                                               @Override
+                                               public void flush() {
+                                                   flushLogs();
+                                               }
+
+                                               @Override
+                                               public void close() throws SecurityException {
+                                                   handlers.forEach((k, v) -> {
+                                                       k.close();
+                                                   });
+                                               }
+                                           });
+                                           return x;
+                                       });
+    }
+
+    private static void publishLog(LogRecord record) {
+        if (handlers.isEmpty()) {
+            System.err.println(format.format(record));
+        } else {
+            handlers.keySet().forEach(h -> {
+                h.publish(record);
+            });
+        }
     }
 
     public static void removeLogHandler(Handler handler) {
         handlers.remove(handler);
-    }
-
-    private static class CollectiveHandler extends Handler {
-
-        private final SimpleFormatter format;
-
-        CollectiveHandler() {
-            format = new SimpleFormatter();
-        }
-
-        @Override
-        public void close() throws SecurityException {
-            handlers.keySet().forEach(h -> {
-                h.close();
-            });
-        }
-
-        @Override
-        public void flush() {
-            handlers.keySet().forEach(h -> {
-                h.flush();
-            });
-        }
-
-        @Override
-        public void publish(LogRecord record) {
-            publishLog(record);
-        }
-
-        private void publishLog(LogRecord record) {
-            if (handlers.isEmpty()) {
-                System.err.println(format.format(record));
-            } else {
-                handlers.keySet().forEach(h -> {
-                    h.publish(record);
-                });
-            }
-        }
     }
 }
