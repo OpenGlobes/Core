@@ -35,23 +35,34 @@ public class ServiceSelector {
     public static <T> T selectService(Class<T> clazz,
                                       String implClass,
                                       Collection<File> fileOrDir) throws ServiceNotFoundException {
-        var jars = getAllJars(fileOrDir);
         return selectClass(clazz,
                            implClass,
-                           jars);
+                           fileOrDir);
     }
 
     public static <T> T selectService(Class<T> clazz,
                                       String implClass,
                                       File... fileOrDir) throws ServiceNotFoundException {
-        var jars = getAllJars(Arrays.asList(fileOrDir));
-        try {
-            var cl = URLClassLoader.newInstance(getURLs(jars));
-            return loadObject(ServiceLoader.load(clazz, cl),
-                              implClass);
-        } catch (MalformedURLException ex) {
-            throw new ServiceNotFoundException(implClass);
-        }
+        return selectService(clazz,
+                             implClass,
+                             Arrays.asList(fileOrDir));
+    }
+
+    public static ClassLoader getClassLoader(Collection<File> fileOrDir) throws MalformedURLException {
+        return URLClassLoader.newInstance(getURLs(getAllJars(fileOrDir)),
+                                          URLClassLoader.getSystemClassLoader());
+    }
+
+    public static ClassLoader getClassLoader(File... fileOrDir) throws MalformedURLException {
+        return getClassLoader(Arrays.asList(fileOrDir));
+    }
+
+    public static <T> T selectService(Class<T> clazz,
+                                      String implClass,
+                                      ClassLoader loader) {
+        return loadObject(ServiceLoader.load(clazz,
+                                             loader),
+                          implClass);
     }
 
     private static File[] getAllJars(Collection<File> fileOrDir) {
@@ -96,16 +107,17 @@ public class ServiceSelector {
                 break;
             }
         }
-        Objects.requireNonNull(obj, clazz);
+        Objects.requireNonNull(obj,
+                               clazz);
         return obj;
     }
 
     private static <T> T selectClass(Class<T> clazz,
                                      String implClass,
-                                     File[] jars) throws ServiceNotFoundException {
+                                     Collection<File> fileOrDir) throws ServiceNotFoundException {
         try {
-            var cl = URLClassLoader.newInstance(getURLs(jars));
-            return loadObject(ServiceLoader.load(clazz, cl),
+            return loadObject(ServiceLoader.load(clazz,
+                                                 getClassLoader(fileOrDir)),
                               implClass);
         } catch (MalformedURLException ex) {
             throw new ServiceNotFoundException(implClass);

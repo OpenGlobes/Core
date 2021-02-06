@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Utils Tests")
 class UtilsTest {
 
     @Test
