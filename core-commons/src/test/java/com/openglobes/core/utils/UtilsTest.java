@@ -5,7 +5,10 @@ import com.openglobes.core.trader.Request;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,19 +45,14 @@ class UtilsTest {
         assertEquals(0,
                      n.getNano(),
                      "Nanos should be zero.");
-        if (c.getSecond() >= 30) {
-            assertEquals(c.plusMinutes(1).getMinute(),
-                         n.getMinute(),
-                         "Round up.");
-        } else {
-            assertEquals(c.getMinute(),
-                         n.getMinute(),
-                         "Rond down.");
-        }
+        assertTrue(c.plusMinutes(1).getMinute() == n.getMinute() || c.getMinute() == n.getMinute(),
+                   "Round minute failed.");
     }
 
     @Test
     void getExecutionId() {
+        assertTrue(Utils.getExecutionId() > 0,
+                   "Execution ID should be positive.");
     }
 
     @Test
@@ -63,13 +61,19 @@ class UtilsTest {
 
     @Test
     void nextId() {
-    }
-
-    @Test
-    void nextUuid() {
+        assertTrue(Utils.nextId() > 0,
+                   "ID should be positive.");
     }
 
     @Test
     void schedulePerDuration() {
+        var r = Utils.schedulePerDuration(new TimerTask() {
+                                              @Override
+                                              public void run() {
+                                              }
+                                          },
+                                          Duration.ofHours(1));
+        r.purge();
+        r.cancel();
     }
 }

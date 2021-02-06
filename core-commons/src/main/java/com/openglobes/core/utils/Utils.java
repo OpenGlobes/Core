@@ -60,8 +60,11 @@ public class Utils {
     }
 
     public synchronized static long getExecutionId() {
-        if (EXECUTION_ID.get() == 0L) {
+        while (EXECUTION_ID.get() == 0L) {
             var n = nextUuid().getLeastSignificantBits() >> 32;
+            if (n < 0) {
+                n = -n;
+            }
             EXECUTION_ID.set(n);
         }
         return EXECUTION_ID.get();
@@ -94,7 +97,10 @@ public class Utils {
      * @return auto-incremental ID
      */
     public static Long nextId() {
-        return (getExecutionId() << 32) + AUTO_INC.incrementAndGet();
+        /*
+         * Ensure ID positive.
+         */
+        return (getExecutionId() << 31) + AUTO_INC.incrementAndGet();
     }
 
     /**
