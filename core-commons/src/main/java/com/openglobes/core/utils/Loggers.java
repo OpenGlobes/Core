@@ -16,6 +16,8 @@
  */
 package com.openglobes.core.utils;
 
+import com.openglobes.core.event.*;
+
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,32 +34,21 @@ import java.util.logging.SimpleFormatter;
  */
 public class Loggers {
 
-    private static final Map<Handler, Object>     handlers = new ConcurrentHashMap<>(64);
-    private static final Map<String, Logger>      loggers  = new ConcurrentHashMap<>(64);
-    private static final BlockingQueue<LogRecord> logs     = new LinkedBlockingQueue<>();
-    private static final SimpleFormatter          format   = new SimpleFormatter();
+    private static final Map<Handler, Object> handlers = new ConcurrentHashMap<>(64);
+    private static final Map<String, Logger>  loggers  = new ConcurrentHashMap<>(64);
+    private static final IEventSource         events   = new EventSource();
+    private static final SimpleFormatter      format   = new SimpleFormatter();
 
-    private static final Thread d = new Thread(() -> {
-        do {
-            blockingPublishLogs();
-        } while (!Thread.currentThread().isInterrupted());
-        flushLogs();
-    });
-
-    private static void blockingPublishLogs() {
+    static {
         try {
-            LogRecord l = null;
-            while ((l = logs.poll(1, TimeUnit.DAYS)) != null) {
-                publishLog(l);
-            }
-        } catch (InterruptedException ignored) {
-        }
-    }
-
-    private static void flushLogs() {
-        LogRecord l = null;
-        while ((l = logs.poll()) != null) {
-            publishLog(l);
+            events.subscribe(LogRecord.class, event -> {
+                var l = event.get();
+                if (l != null) {
+                    publishLog(l);
+                }
+            });
+        } catch (InvalidSubscriptionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,15 +67,15 @@ public class Loggers {
                                            x.addHandler(new Handler() {
                                                @Override
                                                public void publish(LogRecord record) {
-                                                   if (!logs.offer(record)) {
-                                                       System.err.println("Fail appending new log record.\n"
-                                                                          + format.format(record));
-                                                   }
+                                                   events.publish(LogRecord.class,
+                                                                  record);
                                                }
 
                                                @Override
                                                public void flush() {
-                                                   flushLogs();
+                                                   handlers.forEach((k, v) -> {
+                                                       k.flush();
+                                                   });
                                                }
 
                                                @Override
