@@ -177,7 +177,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private void dealClose(Commission commission,
                            Margin margin,
                            Contract contract,
-                           Trade response,
+                           Trade trade,
                            ITraderDataConnection conn) throws InstrumentNotFoundException,
                                                               IllegalContractStatusException {
         requireStatus(commission.getStatus(),
@@ -200,11 +200,12 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Update contract.
              */
-            var price      = response.getPrice();
-            var instrument = getInstrument(response.getInstrumentId());
+            var price      = trade.getPrice();
+            var instrument = getInstrument(trade.getInstrumentId());
             var amount     = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setCloseAmount(amount);
             contract.setStatus(ContractStatus.CLOSED);
+            contract.setCloseTradingDay(trade.getTradingDay());
             conn.updateContract(contract);
         } catch (DataUpdateException ex) {
 

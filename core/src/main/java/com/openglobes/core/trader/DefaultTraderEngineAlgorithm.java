@@ -779,7 +779,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         long   tradedVolumn = 0L;
         for (var c : contracts) {
             if (!Objects.equals(c.getDirection(), order.getDirection())
-                || c.getInstrumentId().equals(order.getInstrumentId())) {
+                || !c.getInstrumentId().equals(order.getInstrumentId())) {
                 throw new IllegalContractException("Unexpected values.");
             }
             amount += c.getOpenAmount();
@@ -814,7 +814,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         order.setOffset(request.getOffset());
         order.setOrderId(request.getOrderId());
         order.setQuantity(request.getQuantity());
+        order.setPrice(request.getPrice());
         order.setTraderId(request.getTraderId());
+        order.setTradingDay(request.getTradingDay());
     }
 
     private void setTrades(Order order,
@@ -825,7 +827,6 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
         var ts = new LinkedList<>(trades);
         ts.sort(Comparator.comparing(Trade::getTimestamp));
-        order.setTradingDay(ts.getFirst().getTradingDay());
         order.setInsertTimestamp(ts.getFirst().getTimestamp());
         order.setUpdateTimestamp(ts.getLast().getTimestamp());
     }
