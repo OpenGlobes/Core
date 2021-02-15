@@ -9,10 +9,7 @@ import java.io.*;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -31,6 +28,7 @@ public class Utils {
 
     @SuppressWarnings("unchecked")
     public static <T> T copy(T copied) {
+        Objects.requireNonNull(copied);
         try (ByteArrayOutputStream bo = new ByteArrayOutputStream()) {
             new ObjectOutputStream(bo).writeObject(copied);
             return (T) new ObjectInputStream(
@@ -71,13 +69,13 @@ public class Utils {
     }
 
     /**
-     * Test the now's time in the specified range denoted by the range
-     * {@code (from, to]}, which is an exclusive begin to the inclusive end.
+     * Test now is in the specified time range denoted by the range
+     * {@code (from, to]}, which is an exclusive begin to an inclusive end.
      *
-     * @param now       now'time.
+     * @param now       now's time.
      * @param rangeFrom exclusive begin of the time rane.
      * @param rangeTo   inclusive end of the time range.
-     * @return {@code true} is the specifed now is in the time range.
+     * @return {@code true} if the specifed now is in the time range.
      */
     public static boolean inRange(LocalTime now,
                                   LocalTime rangeFrom,

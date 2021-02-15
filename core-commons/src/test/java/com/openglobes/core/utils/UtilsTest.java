@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +58,39 @@ class UtilsTest {
     }
 
     @Test
+    @DisplayName("Test Utils.inRange method.")
     void inRange() {
+        assertThrows(NullPointerException.class, () -> {
+            Utils.inRange(null,
+                          null,
+                          null);
+        });
+        var t0 = LocalTime.of(12, 21, 1, 563);
+        var t1 = LocalTime.of(12, 22, 1);
+        var e0 = LocalTime.of(12, 21);
+        var e1 = LocalTime.of(12, 21, 1, 564);
+        var e2 = LocalTime.of(12, 22, 1, 1);
+
+        assertFalse(Utils.inRange(e0,
+                                  t0,
+                                  t1),
+                    "Time before begin  should not be in range.");
+        assertFalse(Utils.inRange(t0,
+                                  t0,
+                                  t1),
+                    "Begin time should not be in range.");
+        assertTrue(Utils.inRange(e1,
+                                  t0,
+                                  t1),
+                    "Time between begin and end should be in range.");
+        assertTrue(Utils.inRange(t1,
+                                 t0,
+                                 t1),
+                   "End time should be in range.");
+        assertFalse(Utils.inRange(e2,
+                                  t0,
+                                  t1),
+                    "Time after end should not be in range.");
     }
 
     @Test
