@@ -823,8 +823,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         if (trades.isEmpty()) {
             return;
         }
-        var ts = new LinkedList<Trade>(trades);
-        ts.sort((Trade o1, Trade o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
+        var ts = new LinkedList<>(trades);
+        ts.sort(Comparator.comparing(Trade::getTimestamp));
         order.setTradingDay(ts.getFirst().getTradingDay());
         order.setInsertTimestamp(ts.getFirst().getTimestamp());
         order.setUpdateTimestamp(ts.getLast().getTimestamp());

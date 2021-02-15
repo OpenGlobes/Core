@@ -58,7 +58,6 @@ class UtilsTest {
     }
 
     @Test
-    @DisplayName("Test Utils.inRange method.")
     void inRange() {
         assertThrows(NullPointerException.class, () -> {
             Utils.inRange(null,

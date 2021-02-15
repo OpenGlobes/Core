@@ -397,6 +397,10 @@ public class TraderEngine implements ITraderEngine {
             if (null == ctx.getRequest().getAction()) {
                 throw new InvalidRequestActionException("Action null ptr.");
             }
+            var day = conn.getTradingDay();
+            Objects.requireNonNull(day,
+                                   "Trading day unavailable.");
+            ctx.getRequest().setTradingDay(day.getTradingDay());
             if (ctx.getRequest().getAction() == ActionType.DELETE) {
                 synchronized (this) {
                     forDelete(ctx.getRequest(),
@@ -595,8 +599,8 @@ public class TraderEngine implements ITraderEngine {
         return (a.getBalance() - a.getMargin() - a.getFrozenMargin() - a.getFrozenCommission());
     }
 
-    private Collection<Contract> getContractsByOrderResponses(Collection<Trade> rsps) throws ContractNotFoundException,
-                                                                                             DataAccessException {
+    private Collection<Contract> getContractsByTrades(Collection<Trade> rsps) throws ContractNotFoundException,
+                                                                                     DataAccessException {
         final var cs = new HashSet<Contract>(128);
         try (var conn = ds.getConnection()) {
             for (var r : rsps) {
@@ -917,33 +921,49 @@ public class TraderEngine implements ITraderEngine {
                                                             IllegalContractException,
                                                             QuantityOverflowException {
         try (var conn = ds.getConnection()) {
-            var rs = conn.getRequests();
+            var rs         = conn.getRequests();
+            var tradingDay = conn.getTradingDay().getTradingDay();
             Objects.requireNonNull(rs);
             for (var r : rs) {
-                var orderId = r.getOrderId();
-                Objects.requireNonNull(orderId);
-                var trades = conn.getTradesByOrderId(orderId);
-                Objects.requireNonNull(trades);
-                var ctrs = getContractsByOrderResponses(trades);
-                Objects.requireNonNull(ctrs);
-                var cals = conn.getResponseByOrderId(orderId);
-                Objects.requireNonNull(cals);
-                Order o = algo.getOrder(r,
-                                        ctrs,
-                                        trades,
-                                        cals);
-                var s = o.getStatus();
-                if (s == OrderStatus.ACCEPTED
-                    || s == OrderStatus.QUEUED
-                    || s == OrderStatus.UNQUEUED) {
-                    deleteOrderRequest(r);
+                if (!r.getTradingDay().equals(tradingDay)) {
+                    continue;
                 }
+                settleRequest(r,
+                              conn);
             }
             // Clear everyday to avoid mem leak.
             clearInternals();
         } catch (DataQueryException | ClassNotFoundException | SQLException ex) {
             throw new DataAccessException(ex.getMessage(),
                                           ex);
+        }
+    }
+
+    private void settleRequest(Request r,
+                               ITraderDataConnection conn) throws DataQueryException,
+                                                                  ContractNotFoundException,
+                                                                  DataAccessException,
+                                                                  QuantityOverflowException,
+                                                                  IllegalContractException,
+                                                                  UnknownTraderIdException,
+                                                                  UnknownOrderIdException {
+        var orderId = r.getOrderId();
+        Objects.requireNonNull(orderId);
+        var trades = conn.getTradesByOrderId(orderId);
+        Objects.requireNonNull(trades);
+        var ctrs = getContractsByTrades(trades);
+        Objects.requireNonNull(ctrs);
+        var cals = conn.getResponseByOrderId(orderId);
+        Objects.requireNonNull(cals);
+        Order o = algo.getOrder(r,
+                                ctrs,
+                                trades,
+                                cals);
+        var s = o.getStatus();
+        if (s == OrderStatus.ACCEPTED
+            || s == OrderStatus.QUEUED
+            || s == OrderStatus.UNQUEUED) {
+            deleteOrderRequest(r);
         }
     }
 

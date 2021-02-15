@@ -20,7 +20,7 @@ import com.openglobes.core.GatewayRuntimeException;
 import com.openglobes.core.ServiceRuntimeStatus;
 
 /**
- * Handler for trading responses from {@link ITraderService}.
+ * Handler for trading responses from {@link ITraderGateway}.
  *
  * @author Hongbao Chen
  * @since 1.0

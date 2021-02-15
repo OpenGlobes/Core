@@ -17,29 +17,49 @@
 package com.openglobes.core.trader;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 /**
- * Request to insert an new order Integero trading counter.
+ * Request to insert an new order to trading counter.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Request implements Serializable {
 
-    private Integer action;
-    private Integer direction;
-    private String  exchangeId;
-    private String  instrumentId;
-    private Integer offset;
-    private Long    orderId;
-    private Double  price;
-    private Long    quantity;
-    private Long    requestId;
-    private String  signature;
-    private String  tag;
-    private Integer traderId;
+    private Integer       action;
+    private Integer       direction;
+    private String        exchangeId;
+    private String        instrumentId;
+    private Integer       offset;
+    private Long          orderId;
+    private Double        price;
+    private Long          quantity;
+    private Long          requestId;
+    private String        signature;
+    private String        tag;
+    private Integer       traderId;
+    private LocalDate     tradingDay;
+    private ZonedDateTime updateTimestamp;
 
     public Request() {
+    }
+
+    public LocalDate getTradingDay() {
+        return tradingDay;
+    }
+
+    public void setTradingDay(LocalDate tradingDay) {
+        this.tradingDay = tradingDay;
+    }
+
+    public ZonedDateTime getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public void setUpdateTimestamp(ZonedDateTime updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
     }
 
     public Integer getAction() {
