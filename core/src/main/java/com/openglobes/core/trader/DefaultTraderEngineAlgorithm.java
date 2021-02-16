@@ -800,8 +800,6 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                     order.setDeleteTimestamp(r.getTimestamp());
                     order.setDeleted(Boolean.TRUE);
                     order.setStatus(OrderStatus.DELETED);
-                    order.setStatusCode(r.getStatusCode());
-                    order.setStatusMessage(r.getStatusMessage());
                     return;
                 }
             }

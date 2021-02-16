@@ -39,8 +39,6 @@ public class Order implements Serializable {
     private Double        price;
     private Long          quantity;
     private Integer       status;
-    private Integer       statusCode;
-    private String        statusMessage;
     private Long          tradedVolumn;
     private Integer       traderId;
     private LocalDate     tradingDay;
@@ -132,22 +130,6 @@ public class Order implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public Integer getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(Integer statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public void setStatusMessage(String statusMessage) {
-        this.statusMessage = statusMessage;
     }
 
     public Long getTradedVolumn() {
