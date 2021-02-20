@@ -191,13 +191,11 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                 throw new InvalidContractDirectionException(c.getInstrumentId());
             }
             if (direction == Direction.BUY) {
-                p = lp.computeIfAbsent(c.getInstrumentId(), k -> {
-                    return initPosition(c, tradingDay);
-                });
+                p = lp.computeIfAbsent(c.getInstrumentId(),
+                                       k -> initPosition(c, tradingDay));
             } else {
-                p = sp.computeIfAbsent(c.getInstrumentId(), k -> {
-                    return initPosition(c, tradingDay);
-                });
+                p = sp.computeIfAbsent(c.getInstrumentId(),
+                                       k -> initPosition(c, tradingDay));
             }
             var id = c.getInstrumentId();
             if (id.isBlank()) {
@@ -399,7 +397,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private void addPreContract(Position p, Contract c, Margin margin) {
+    private void addPreContract(Position p,
+                                Contract c,
+                                Margin margin) {
         if (p.getPreAmount() == null) {
             p.setPreAmount(c.getOpenAmount());
         } else {
@@ -470,7 +470,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             p.setTodayAmount(p.getTodayAmount() + c.getOpenAmount());
         }
         var volumn = getProperVolumn(c.getStatus(),
-                                     ContractStatus.OPEN);
+                                     ContractStatus.OPEN,
+                                     ContractStatus.CLOSING);
         if (p.getTodayVolumn() == null) {
             p.setTodayVolumn(volumn);
         } else {
@@ -548,7 +549,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                      c,
                                      margin);
                 break;
-            case ContractStatus.OPEN: // OPEN
+            case ContractStatus.OPEN:
                 addOpenContract(p,
                                 c,
                                 commissions,
@@ -704,12 +705,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     }
 
     private long getProperVolumn(Integer status,
-                                 Integer wantedStatus) throws IllegalContractStatusException {
-        if (Objects.equals(status, wantedStatus)) {
-            return 1L;
-        } else {
-            throw new IllegalContractStatusException("Unexpected contract status.");
+                                 Integer... wantedStatuses) throws IllegalContractStatusException {
+        for (var s : wantedStatuses) {
+            if (Objects.equals(status, s)) {
+                return 1L;
+            }
         }
+        throw new IllegalContractStatusException("Unexpected contract status " + status + ".");
     }
 
     private double getProperWithdraw(Collection<Withdraw> withdraws) throws InvalidAmountException {
@@ -757,8 +759,11 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         p0.setPreMargin(0.0D);
         p0.setPreVolumn(0L);
         p0.setTodayAmount(0.0D);
+        p0.setTodayOpenAmount(0.0D);
         p0.setTodayMargin(0.0D);
+        p0.setTodayOpenMargin(0.0D);
         p0.setTodayVolumn(0L);
+        p0.setTodayOpenVolumn(0L);
         p0.setTradingDay(tradingDay);
         p0.setDirection(c.getDirection());
         p0.setVolumn(0L);

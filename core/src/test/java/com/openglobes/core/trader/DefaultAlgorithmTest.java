@@ -3,6 +3,12 @@ package com.openglobes.core.trader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultAlgorithmTest extends AlgorithmData {
@@ -126,6 +132,59 @@ class DefaultAlgorithmTest extends AlgorithmData {
 
     @Test
     void getPositions() {
+        var day = LocalDate.now();
+        var sp  = new HashMap<String, SettlementPrice>();
+
+        var sp0 = new SettlementPrice();
+        sp0.setInstrumentId("c2105");
+        sp0.setTimestamp(ZonedDateTime.now());
+        sp0.setTradingDay(day);
+        sp0.setSettlementPrice(2970.0);
+        sp0.setSettlementPriceId(1L);
+        sp.put(sp0.getInstrumentId(),
+               sp0);
+        assertDoesNotThrow(() -> {
+            var positions = algorithm().getPositions(contracts(),
+                                                     commissions(),
+                                                     margins(),
+                                                     sp,
+                                                     instruments(),
+                                                     day);
+            assertEquals(2,
+                         positions.size());
+
+            var buy = getPosition(Direction.BUY,
+                                  positions);
+            assertEquals(2,
+                         buy.getVolumn());
+            assertEquals(2,
+                         buy.getPreVolumn());
+            assertEquals(0,
+                         buy.getTodayVolumn());
+            assertEquals(0,
+                         buy.getTodayOpenVolumn());
+
+            var sell = getPosition(Direction.SELL,
+                                   positions);
+            assertEquals(3,
+                         sell.getVolumn());
+            assertEquals(1,
+                         sell.getPreVolumn());
+            assertEquals(2,
+                         sell.getTodayVolumn());
+            assertEquals(2,
+                         sell.getTodayOpenVolumn());
+        });
+    }
+
+    private Position getPosition(Integer direction,
+                                 Collection<Position> positions) {
+        for (var p : positions) {
+            if (p.getDirection().equals(direction)) {
+                return p;
+            }
+        }
+        throw new NullPointerException("Position not found.");
     }
 
     private void testTradedOrder(Long orderId) {

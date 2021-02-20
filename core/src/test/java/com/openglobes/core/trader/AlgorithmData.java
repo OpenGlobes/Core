@@ -18,6 +18,8 @@ public class AlgorithmData {
     private final Collection<Response> responses = new HashSet<>();
     private final ITraderEngineAlgorithm algorithm = new DefaultTraderEngineAlgorithm();
     private final Map<Long, Request> requests = new HashMap<>();
+    private final Collection<Commission> commissions = new HashSet<>();
+    private final Collection<Margin> margins = new HashSet<>();
 
     protected AlgorithmData() {
         setDeposits();
@@ -27,6 +29,150 @@ public class AlgorithmData {
         setTrades();
         setContracts();
         setResponses();
+        setCommissions();
+        setMargins();
+    }
+
+    private void setMargins() {
+        // Order ID = 1L
+        var r = requests().get(1L);
+        var m = new Margin();
+
+        m.setContractId(1L);
+        m.setStatus(FeeStatus.DEALED);
+        m.setTimestamp(ZonedDateTime.now());
+        m.setTag(r.getTag());
+        m.setOrderId(r.getOrderId());
+        m.setTradingDay(r.getTradingDay());
+        m.setMarginId(1L);
+        m.setMargin(algorithm().getMargin(r.getPrice(),
+                                          instrument(r.getInstrumentId())));
+        margins.add(m);
+
+        m = Utils.copy(m);
+        m.setContractId(2L);
+        m.setMarginId(2L);
+        margins.add(m);
+
+        // OrderID = 2L
+        r = requests().get(2L);
+        m = new Margin();
+
+        m.setContractId(3L);
+        m.setTimestamp(ZonedDateTime.now());
+        m.setTag(r.getTag());
+        m.setOrderId(r.getOrderId());
+        m.setTradingDay(r.getTradingDay());
+        m.setStatus(FeeStatus.DEALED);
+        m.setMarginId(3L);
+        m.setMargin(algorithm().getMargin(r.getPrice(),
+                                          instrument(r.getInstrumentId())));
+        margins.add(m);
+
+        // Order ID = 3L
+        r = requests().get(3L);
+        m = new Margin();
+
+        m.setContractId(4L);
+        m.setTimestamp(ZonedDateTime.now());
+        m.setTag(r.getTag());
+        m.setOrderId(r.getOrderId());
+        m.setTradingDay(r.getTradingDay());
+        m.setStatus(FeeStatus.DEALED);
+        m.setMarginId(4L);
+        m.setMargin(algorithm().getMargin(r.getPrice(),
+                                          instrument(r.getInstrumentId())));
+        margins.add(m);
+
+        m = Utils.copy(m);
+        m.setContractId(5L);
+        m.setMarginId(5L);
+        margins.add(m);
+    }
+
+    private void setCommissions() {
+        // Order ID = 1L
+        var r = requests().get(1L);
+        var c = new Commission();
+
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(1L);
+        c.setCommissionId(1L);
+        c.setCommission(algorithm().getCommission(r.getPrice(),
+                                                  instrument(r.getInstrumentId()),
+                                                  r.getDirection(),
+                                                  r.getOffset()));
+        commissions.add(c);
+
+        c = Utils.copy(c);
+        c.setCommissionId(2L);
+        c.setContractId(2L);
+        commissions.add(c);
+
+        // OrderID = 2L
+        r = requests().get(2L);
+        c = new Commission();
+
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(3L);
+        c.setCommissionId(3L);
+        c.setCommission(algorithm().getCommission(r.getPrice(),
+                                                  instrument(r.getInstrumentId()),
+                                                  r.getDirection(),
+                                                  r.getOffset()));
+        commissions.add(c);
+
+        // Order ID = 3L
+        r = requests().get(3L);
+        c = new Commission();
+
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(4L);
+        c.setCommissionId(4L);
+        c.setCommission(algorithm().getCommission(r.getPrice(),
+                                                  instrument(r.getInstrumentId()),
+                                                  r.getDirection(),
+                                                  r.getOffset()));
+        commissions.add(c);
+
+        c = Utils.copy(c);
+        c.setCommissionId(5L);
+        c.setContractId(5L);
+        commissions.add(c);
+
+        // Order ID = 4L
+        r = requests().get(4L);
+        c = new Commission();
+
+        c.setStatus(FeeStatus.FORZEN);
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getDirection(),
+                                                r.getOffset()));
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(3L);
+        c.setCommissionId(6L);
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        commissions.add(c);
+
+        c = Utils.copy(c);
+        c.setContractId(4L);
+        c.setCommissionId(7L);
+        commissions.add(c);
     }
 
     protected Collection<Trade> getTradesByOrderId(Long orderId) {
@@ -401,6 +547,22 @@ public class AlgorithmData {
 
     protected Instrument instrument(String instrumentId) {
         return instruments.get(instrumentId);
+    }
+
+    protected Collection<Commission> commissions() {
+        return commissions;
+    }
+
+    protected Collection<Margin> margins() {
+        return margins;
+    }
+
+    protected Collection<Contract> contracts() {
+        return contracts;
+    }
+
+    protected Map<String, Instrument> instruments() {
+        return instruments;
     }
 
     protected ITraderEngineAlgorithm algorithm() {
