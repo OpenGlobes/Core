@@ -19,7 +19,6 @@ package com.openglobes.core;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.session.ISessionCorrelator;
 
-
 /**
  * @author chenh
  */

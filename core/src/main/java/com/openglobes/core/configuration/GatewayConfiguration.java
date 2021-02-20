@@ -28,8 +28,8 @@ import java.util.Map;
 @XmlRootElement(name = "Gateway")
 public class GatewayConfiguration {
 
-    private String              classCanonicalName;
-    private String              name;
+    private String classCanonicalName;
+    private String name;
     private Map<String, String> properties;
 
     public GatewayConfiguration() {

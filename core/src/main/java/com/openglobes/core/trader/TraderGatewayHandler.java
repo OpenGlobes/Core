@@ -155,7 +155,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
                                                        conn);
         int count = 0;
-        var it    = bs.iterator();
+        var it = bs.iterator();
         while (count < trade.getQuantity() && it.hasNext()) {
             var b = it.next();
             var s = b.getContract().getStatus();
@@ -200,9 +200,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Update contract.
              */
-            var price      = trade.getPrice();
+            var price = trade.getPrice();
             var instrument = getInstrument(trade.getInstrumentId());
-            var amount     = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setCloseAmount(amount);
             contract.setStatus(ContractStatus.CLOSED);
             contract.setCloseTradingDay(trade.getTradingDay());
@@ -285,9 +285,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
             /*
              * Update contract.
              */
-            var price      = trade.getPrice();
+            var price = trade.getPrice();
             var instrument = getInstrument(trade.getInstrumentId());
-            var amount     = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
+            var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setOpenAmount(amount);
             contract.setStatus(ContractStatus.OPEN);
             contract.setTradeId(trade.getTradeId());
@@ -412,7 +412,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                                                       ITraderDataConnection conn) throws DataQueryException,
                                                                                          InvalidFrozenBundleException {
         final var map = new HashMap<Long, FrozenBundle>(128);
-        var       ms  = conn.getMarginsByOrderId(orderId);
+        var ms = conn.getMarginsByOrderId(orderId);
         Objects.requireNonNull(ms);
         var cs = conn.getCommissionsByOrderId(orderId);
         Objects.requireNonNull(cs);
@@ -495,7 +495,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         Collection<FrozenBundle> bs = getFrozenBundles(trade.getOrderId(),
                                                        conn);
         int count = 0;
-        var it    = bs.iterator();
+        var it = bs.iterator();
         while (count < trade.getQuantity()
                && it.hasNext()) {
             var b = it.next();
@@ -508,7 +508,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                      b.getContract(),
                      trade,
                      conn
-                    );
+            );
             ++count;
         }
         if (count < trade.getQuantity()) {
@@ -593,14 +593,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private class FrozenBundle {
 
-        private final Contract   contract;
-        private final Margin     margin;
-        private       Commission commission;
+        private final Contract contract;
+        private final Margin margin;
+        private Commission commission;
 
         FrozenBundle(Commission commission, Margin margin, Contract contract) {
             this.commission = commission;
-            this.margin     = margin;
-            this.contract   = contract;
+            this.margin = margin;
+            this.contract = contract;
         }
 
         Commission getCommission() {

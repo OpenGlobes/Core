@@ -124,9 +124,9 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<HolidayTime> getHolidayTimesByTimeSetId(Long holidayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(HolidayTimePair.class,
-                                    Queries.equals(HolidayTimePair.class.getDeclaredField("holidayTimeSetId"),
-                                                   holidayTimeSetId),
-                                    HolidayTimePair::new);
+                                Queries.equals(HolidayTimePair.class.getDeclaredField("holidayTimeSetId"),
+                                               holidayTimeSetId),
+                                HolidayTimePair::new);
             var r = new HashSet<HolidayTime>(8);
             for (var p : pairs) {
                 r.add(callGetSingle(HolidayTime.class,
@@ -270,9 +270,9 @@ public class DefaultMarketDataConnection extends MarketDataConnection {
     public Collection<WorkdayTime> getWorkdayTimesByTimeSetId(Long workdayTimeSetId) throws DataQueryException {
         try {
             var pairs = callGetMany(WorkdayTimePair.class,
-                                    Queries.equals(WorkdayTimePair.class.getDeclaredField("workdayTimeSetId"),
-                                                   workdayTimeSetId),
-                                    WorkdayTimePair::new);
+                                Queries.equals(WorkdayTimePair.class.getDeclaredField("workdayTimeSetId"),
+                                               workdayTimeSetId),
+                                WorkdayTimePair::new);
             var r = new HashSet<WorkdayTime>(16);
             for (var p : pairs) {
                 r.add(callGetSingle(WorkdayTime.class,

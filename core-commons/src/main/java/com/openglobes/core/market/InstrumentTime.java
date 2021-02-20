@@ -24,10 +24,10 @@ import java.io.Serializable;
  */
 public class InstrumentTime implements Serializable {
 
-    private Long   holidayTimeSetId;
+    private Long holidayTimeSetId;
     private String instrumentId;
-    private Long   instrumentTimeId;
-    private Long   workdayTimeSetId;
+    private Long instrumentTimeId;
+    private Long workdayTimeSetId;
 
     public InstrumentTime() {
     }

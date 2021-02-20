@@ -7,12 +7,13 @@ import com.lmax.disruptor.WorkerPool;
 import java.util.concurrent.Executor;
 
 class WorkerPoolInfo<T> implements ConsumerInfo {
-    private final WorkerPool<T>   workerPool;
+
+    private final WorkerPool<T> workerPool;
     private final SequenceBarrier sequenceBarrier;
-    private       boolean         endOfChain = true;
+    private boolean endOfChain = true;
 
     WorkerPoolInfo(final WorkerPool<T> workerPool, final SequenceBarrier sequenceBarrier) {
-        this.workerPool      = workerPool;
+        this.workerPool = workerPool;
         this.sequenceBarrier = sequenceBarrier;
     }
 

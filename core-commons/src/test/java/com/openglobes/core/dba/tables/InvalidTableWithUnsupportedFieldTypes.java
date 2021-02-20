@@ -26,9 +26,9 @@ import java.time.Instant;
 public class InvalidTableWithUnsupportedFieldTypes {
 
     private BigDecimal anualBonus;
-    private Long       invalidTableWithUnsupportedFieldTypesId;
-    private String     name;
-    private Instant    timestamp;
+    private Long invalidTableWithUnsupportedFieldTypesId;
+    private String name;
+    private Instant timestamp;
 
     public InvalidTableWithUnsupportedFieldTypes() {
     }

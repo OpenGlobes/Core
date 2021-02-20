@@ -28,19 +28,19 @@ import java.time.ZonedDateTime;
  */
 public class Response implements Serializable {
 
-    private Integer       action;
-    private Integer       direction;
-    private String        instrumentId;
-    private Integer       offset;
-    private Long          orderId;
-    private Long          responseId;
-    private String        signature;
-    private Integer       status;
-    private Integer       statusCode;
-    private String        statusMessage;
+    private Integer action;
+    private Integer direction;
+    private String instrumentId;
+    private Integer offset;
+    private Long orderId;
+    private Long responseId;
+    private String signature;
+    private Integer status;
+    private Integer statusCode;
+    private String statusMessage;
     private ZonedDateTime timestamp;
-    private Integer       traderId;
-    private LocalDate     tradingDay;
+    private Integer traderId;
+    private LocalDate tradingDay;
 
     public Response() {
     }

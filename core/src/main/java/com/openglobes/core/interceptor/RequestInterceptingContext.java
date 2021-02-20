@@ -29,17 +29,17 @@ public class RequestInterceptingContext {
 
     private final Instrument instrument;
     private final Properties props;
-    private final Request    req;
-    private final int        reqId;
+    private final Request req;
+    private final int reqId;
 
     public RequestInterceptingContext(Request request,
                                       Instrument instrument,
                                       Properties properties,
                                       int requestId) {
-        this.req        = request;
-        this.props      = properties;
+        this.req = request;
+        this.props = properties;
         this.instrument = instrument;
-        this.reqId      = requestId;
+        this.reqId = requestId;
     }
 
     public Instrument getInstrument() {

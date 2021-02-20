@@ -25,8 +25,8 @@ import java.io.Serializable;
 public class EngineRequestError implements Serializable {
 
     private Throwable exception;
-    private Request   request;
-    private int       requestId;
+    private Request request;
+    private int requestId;
 
     public EngineRequestError() {
     }

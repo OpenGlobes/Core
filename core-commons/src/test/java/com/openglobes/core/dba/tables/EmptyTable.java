@@ -21,6 +21,7 @@ package com.openglobes.core.dba.tables;
  * @since 1.0
  */
 public class EmptyTable {
+
     /*
      * No field in this table.
      * See what the library would do to this table.

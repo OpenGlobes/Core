@@ -28,18 +28,18 @@ import java.util.Map;
 @XmlRootElement(name = "Connector")
 public class ConnectorConfiguration {
 
-    private String              classCanonicalName;
-    private String              ip;
-    private String              name;
-    private Integer             port;
+    private String classCanonicalName;
+    private String ip;
+    private String name;
+    private Integer port;
     private Map<String, String> properties;
 
     public ConnectorConfiguration() {
         properties = new HashMap<>(16);
     }
 
-    @XmlElement(name = "ClassCanonicalName"
-            , required = true)
+    @XmlElement(name = "ClassCanonicalName",
+                required = true)
     public String getClassCanonicalName() {
         return classCanonicalName;
     }

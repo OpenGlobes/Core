@@ -38,12 +38,12 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                               Collection<Deposit> deposits,
                               Collection<Withdraw> withdraws,
                               Collection<Position> positions) throws InvalidAmountException {
-        double closeProfit      = 0D;
-        double positionProfit   = 0D;
-        double frozenMargin     = 0D;
+        double closeProfit = 0D;
+        double positionProfit = 0D;
+        double frozenMargin = 0D;
         double frozenCommission = 0D;
-        double margin           = 0D;
-        double commission       = 0D;
+        double margin = 0D;
+        double commission = 0D;
         Objects.requireNonNull(positions);
         for (var p : positions) {
             requireNotNulls(p.getCloseProfit(),
@@ -59,9 +59,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             margin += p.getMargin();
             commission += p.getCommission();
         }
-        double deposit  = getProperDeposit(deposits);
+        double deposit = getProperDeposit(deposits);
         double withdraw = getProperWithdraw(withdraws);
-        var    r        = initAccount(pre);
+        var r = initAccount(pre);
         r.setCloseProfit(closeProfit);
         r.setCommission(commission);
         r.setDeposit(deposit);
@@ -71,7 +71,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         r.setPositionProfit(positionProfit);
         r.setWithdraw(withdraw);
         var balance = r.getPreBalance() + r.getDeposit() - r.getWithdraw()
-                      + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
+                  + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
         r.setBalance(balance);
         return r;
     }
@@ -213,7 +213,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         /*
          * Store margins/commissions in map for constant access time.
          */
-        final var map  = new HashMap<Long, Margin>(64);
+        final var map = new HashMap<Long, Margin>(64);
         final var cmap = new HashMap<Long, Set<Commission>>(64);
         margins.forEach(m -> {
             map.put(m.getContractId(), m);
@@ -225,7 +225,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
         for (var c : contracts) {
             Position p;
-            var      direction = c.getDirection();
+            var direction = c.getDirection();
             if (direction == null) {
                 throw new InvalidContractDirectionException(c.getInstrumentId());
             }
@@ -245,13 +245,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                 throw new InvalidContractIdException("Contract ID null ptr.");
             }
             var margin = findMargin(cid,
-                                    map);
+                                map);
             var commission = findCommission(cid,
-                                            cmap);
+                                        cmap);
             var price = findPriceProperty(id,
-                                          prices);
+                                      prices);
             var instrument = findInstrumentProperty(id,
-                                                    instruments);
+                                                instruments);
             if (c.getOpenTradingDay().isBefore(tradingDay)) {
                 addPrePosition(p,
                                c,
@@ -283,16 +283,16 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                    Contract c,
                                    Collection<Commission> commissions) throws InvalidCommissionException {
         var closeProfit = getProperProfit(c.getOpenAmount(),
-                                          c.getCloseAmount(),
-                                          c.getDirection());
+                                      c.getCloseAmount(),
+                                      c.getDirection());
         if (p.getCloseProfit() == null) {
             p.setCloseProfit(closeProfit);
         } else {
             p.setCloseProfit(p.getCloseProfit() + closeProfit);
         }
         var commission = getProperCommission(c.getContractId(),
-                                             commissions,
-                                             FeeStatus.DEALED);
+                                         commissions,
+                                         FeeStatus.DEALED);
         if (p.getCommission() == null) {
             p.setCommission(commission);
         } else {
@@ -509,16 +509,16 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             p.setTodayAmount(p.getTodayAmount() + c.getOpenAmount());
         }
         var volumn = getProperVolumn(c.getStatus(),
-                                     ContractStatus.OPEN,
-                                     ContractStatus.CLOSING);
+                                 ContractStatus.OPEN,
+                                 ContractStatus.CLOSING);
         if (p.getTodayVolumn() == null) {
             p.setTodayVolumn(volumn);
         } else {
             p.setTodayVolumn(p.getTodayVolumn() + volumn);
         }
         var m = getProperMargin(c.getContractId(),
-                                margin,
-                                FeeStatus.DEALED);
+                            margin,
+                            FeeStatus.DEALED);
         if (p.getTodayMargin() == null) {
             p.setTodayMargin(m);
         } else {
@@ -823,8 +823,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
     private void setVolumnAmount(Order order,
                                  Collection<Contract> contracts) throws IllegalContractException {
-        double amount       = 0D;
-        long   tradedVolumn = 0L;
+        double amount = 0D;
+        long tradedVolumn = 0L;
         for (var c : contracts) {
             if (!Objects.equals(c.getDirection(), order.getDirection())
                 || !c.getInstrumentId().equals(order.getInstrumentId())) {
@@ -842,7 +842,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                  Map<String, Instrument> instruments) throws WrongOrderIdException,
                                                                              InstrumentNotFoundException {
         double amount = 0.0D;
-        long   volumn = 0L;
+        long volumn = 0L;
         for (var t : trades) {
             if (!t.getOrderId().equals(order.getOrderId())) {
                 throw new WrongOrderIdException("Expect order ID " + order.getOrderId()

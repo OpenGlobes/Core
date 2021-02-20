@@ -24,9 +24,9 @@ import java.lang.reflect.Field;
  */
 public class MetaField {
 
-    private Field  field;
+    private Field field;
     private String name;
-    private int    type;
+    private int type;
 
     public MetaField() {
     }

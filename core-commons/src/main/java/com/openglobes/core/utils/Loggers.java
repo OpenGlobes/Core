@@ -35,18 +35,18 @@ import java.util.logging.SimpleFormatter;
 public class Loggers {
 
     private static final Map<Handler, Object> handlers = new ConcurrentHashMap<>(64);
-    private static final Map<String, Logger>  loggers  = new ConcurrentHashMap<>(64);
-    private static final IEventSource         events   = new EventSource();
-    private static final SimpleFormatter      format   = new SimpleFormatter();
+    private static final Map<String, Logger> loggers = new ConcurrentHashMap<>(64);
+    private static final IEventSource events = new EventSource();
+    private static final SimpleFormatter format = new SimpleFormatter();
 
     static {
         try {
             events.subscribe(LogRecord.class, event -> {
-                var l = event.get();
-                if (l != null) {
-                    publishLog(l);
-                }
-            });
+                         var l = event.get();
+                         if (l != null) {
+                             publishLog(l);
+                         }
+                     });
         } catch (InvalidSubscriptionException e) {
             e.printStackTrace();
         }

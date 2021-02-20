@@ -26,13 +26,13 @@ import java.util.Map;
  */
 public class DataSourceConfiguration {
 
-    private String              classCanonicalName;
-    private String              driverClass;
-    private String              name;
-    private String              password;
+    private String classCanonicalName;
+    private String driverClass;
+    private String name;
+    private String password;
     private Map<String, String> properties;
-    private String              url;
-    private String              username;
+    private String url;
+    private String username;
 
     public DataSourceConfiguration() {
         properties = new HashMap<>(16);

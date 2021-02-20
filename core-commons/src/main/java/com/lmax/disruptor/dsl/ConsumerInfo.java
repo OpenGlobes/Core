@@ -6,6 +6,7 @@ import com.lmax.disruptor.SequenceBarrier;
 import java.util.concurrent.Executor;
 
 interface ConsumerInfo {
+
     Sequence[] getSequences();
 
     SequenceBarrier getBarrier();

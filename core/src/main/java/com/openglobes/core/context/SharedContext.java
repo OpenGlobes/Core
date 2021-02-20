@@ -30,7 +30,7 @@ import java.util.logging.Handler;
  */
 public class SharedContext implements ISharedContext {
 
-    private final SessionCorrelator corr         = new SessionCorrelator();
+    private final SessionCorrelator corr = new SessionCorrelator();
     private final IInterceptorChain interceptors = new InterceptorChain();
 
     @Override

@@ -59,10 +59,10 @@ class UtilsTest {
     @Test
     void inRange() {
         assertThrows(NullPointerException.class, () -> {
-            Utils.inRange(LocalTime.now(),
-                          null,
-                          null);
-        });
+                 Utils.inRange(LocalTime.now(),
+                               null,
+                               null);
+             });
         var t0 = LocalTime.of(12, 21, 1, 563);
         var t1 = LocalTime.of(12, 22, 1);
         var e0 = LocalTime.of(12, 21);
@@ -78,9 +78,9 @@ class UtilsTest {
                                   t1),
                     "Begin time should not be in range.");
         assertTrue(Utils.inRange(e1,
-                                  t0,
-                                  t1),
-                    "Time between begin and end should be in range.");
+                                 t0,
+                                 t1),
+                   "Time between begin and end should be in range.");
         assertTrue(Utils.inRange(t1,
                                  t0,
                                  t1),
@@ -100,11 +100,11 @@ class UtilsTest {
     @Test
     void schedulePerDuration() {
         var r = Utils.schedulePerDuration(new TimerTask() {
-                                              @Override
-                                              public void run() {
-                                              }
-                                          },
-                                          Duration.ofHours(1));
+            @Override
+            public void run() {
+            }
+        },
+                                      Duration.ofHours(1));
         r.purge();
         r.cancel();
     }

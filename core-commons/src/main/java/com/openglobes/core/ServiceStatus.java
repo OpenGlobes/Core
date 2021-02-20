@@ -28,19 +28,19 @@ public class ServiceStatus extends Exception {
 
     private static final long serialVersionUID = 3452774387640193L;
 
-    private final Integer       code;
-    private final Long          serviceStatusId;
+    private final Integer code;
+    private final Long serviceStatusId;
     private final ZonedDateTime timestamp = ZonedDateTime.now();
 
     public ServiceStatus(Integer code, String msg) {
         super(msg);
         this.serviceStatusId = Utils.nextId();
-        this.code            = code;
+        this.code = code;
     }
 
     public ServiceStatus(Integer code, String message, Throwable cause) {
         super(message, cause);
-        this.code            = code;
+        this.code = code;
         this.serviceStatusId = Utils.nextId();
     }
 

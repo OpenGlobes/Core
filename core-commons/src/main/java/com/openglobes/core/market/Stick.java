@@ -26,18 +26,18 @@ import java.time.ZonedDateTime;
  */
 public class Stick implements Serializable {
 
-    private Double        closePrice;
-    private Integer       days;
-    private Double        highPrice;
-    private String        instrumentId;
-    private Double        lowPrice;
-    private Integer       minutes;
-    private Long          openInsterest;
-    private Double        openPrice;
-    private Long          stickId;
+    private Double closePrice;
+    private Integer days;
+    private Double highPrice;
+    private String instrumentId;
+    private Double lowPrice;
+    private Integer minutes;
+    private Long openInsterest;
+    private Double openPrice;
+    private Long stickId;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
-    private Long          volumn;
+    private LocalDate tradingDay;
+    private Long volumn;
 
     public Stick() {
     }

@@ -21,6 +21,7 @@ package com.openglobes.core.dba.tables;
  * @since 1.0
  */
 public class InvalidTableWithoutId {
+
     private String name;
 
     public InvalidTableWithoutId() {

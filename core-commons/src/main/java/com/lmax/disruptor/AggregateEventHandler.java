@@ -16,16 +16,20 @@
 package com.lmax.disruptor;
 
 /**
- * An aggregate collection of {@link EventHandler}s that get called in sequence for each event.
+ * An aggregate collection of {@link EventHandler}s that get called in sequence
+ * for each event.
  *
- * @param <T> event implementation storing the data for sharing during exchange or parallel coordination of an event.
+ * @param <T> event implementation storing the data for sharing during exchange
+ * or parallel coordination of an event.
  */
 public final class AggregateEventHandler<T>
         implements EventHandler<T>, LifecycleAware {
+
     private final EventHandler<T>[] eventHandlers;
 
     /**
-     * Construct an aggregate collection of {@link EventHandler}s to be called in sequence.
+     * Construct an aggregate collection of {@link EventHandler}s to be called
+     * in sequence.
      *
      * @param eventHandlers to be called in sequence.
      */

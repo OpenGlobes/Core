@@ -26,12 +26,12 @@ import java.io.Serializable;
  */
 public class OrderStatus implements Serializable {
 
-    public static final int ACCEPTED   = (0x63);
+    public static final int ACCEPTED = (0x63);
     public static final int ALL_TRADED = (0x60);
-    public static final int DELETED    = (0x64);
-    public static final int QUEUED     = (0x61);
-    public static final int REJECTED   = (0x65);
-    public static final int UNQUEUED   = (0x62);
+    public static final int DELETED = (0x64);
+    public static final int QUEUED = (0x61);
+    public static final int REJECTED = (0x65);
+    public static final int UNQUEUED = (0x62);
 
     private OrderStatus() {
     }

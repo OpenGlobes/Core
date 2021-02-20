@@ -33,18 +33,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StickBuilder implements IStickBuilder {
 
     private final Map<Integer, IStickContext> days;
-    private final IStickEngine                eg;
+    private final IStickEngine eg;
     private final Map<Integer, IStickContext> mins;
-    private       Integer                     daysOfYr;
-    private       ZonedDateTime               endOfDay;
-    private       String                      iid;
-    private       Integer                     minOfDay;
-    private       ZonedDateTime               preAlign;
+    private Integer daysOfYr;
+    private ZonedDateTime endOfDay;
+    private String iid;
+    private Integer minOfDay;
+    private ZonedDateTime preAlign;
 
     public StickBuilder(IStickEngine engine) {
-        mins     = new ConcurrentHashMap<>(512);
-        days     = new ConcurrentHashMap<>(8);
-        eg       = engine;
+        mins = new ConcurrentHashMap<>(512);
+        days = new ConcurrentHashMap<>(8);
+        eg = engine;
         preAlign = Utils.getRoundedTimeByMinute();
     }
 
@@ -54,8 +54,8 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalDaysException(days.toString());
         }
         this.days.computeIfAbsent(days, m -> {
-            return new StickContext(days, true);
-        });
+                              return new StickContext(days, true);
+                          });
     }
 
     @Override
@@ -64,8 +64,8 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalMinutesException(minutes.toString());
         }
         mins.computeIfAbsent(minutes, m -> {
-            return new StickContext(minutes, false);
-        });
+                         return new StickContext(minutes, false);
+                     });
     }
 
     @Override

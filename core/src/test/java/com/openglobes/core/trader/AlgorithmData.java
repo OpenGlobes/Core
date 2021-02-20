@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class AlgorithmData {
+
     private final Collection<Deposit> deposits = new HashSet<>();
     private final Collection<Withdraw> withdraws = new HashSet<>();
     private final Map<String, Instrument> instruments = new HashMap<>();
@@ -255,7 +256,7 @@ public class AlgorithmData {
                 return c;
             }
         }
-        throw new NullPointerException("Contract not found: "  + contractId + ".");
+        throw new NullPointerException("Contract not found: " + contractId + ".");
     }
 
     private void setResponses() {

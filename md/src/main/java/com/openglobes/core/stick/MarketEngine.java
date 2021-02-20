@@ -41,14 +41,14 @@ import java.util.logging.Level;
 public class MarketEngine implements IMarketEngine {
 
     private final Map<Integer, MarketGatewayContext> gates;
-    private final IMinuteNotifier                    minNotifier;
-    private       IMarketDataSource                  ds;
-    private       IStickEngine                       eg;
-    private       TickHandler                        gateHandler;
-    private       InstrumentNotifier                 instNotifier;
+    private final IMinuteNotifier minNotifier;
+    private IMarketDataSource ds;
+    private IStickEngine eg;
+    private TickHandler gateHandler;
+    private InstrumentNotifier instNotifier;
 
     public MarketEngine() {
-        gates       = new ConcurrentHashMap<>(16);
+        gates = new ConcurrentHashMap<>(16);
         minNotifier = new MinuteNotifier();
     }
 
@@ -108,7 +108,7 @@ public class MarketEngine implements IMarketEngine {
             /*
              * Connect stick engine to ticks.
              */
-            eg          = StickEngine.create(ds);
+            eg = StickEngine.create(ds);
             gateHandler = new TickHandler(eg);
             /*
              * Connect stick engine to notices.

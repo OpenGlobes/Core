@@ -26,9 +26,9 @@ import java.time.ZonedDateTime;
 public class WorkdayTimePair implements Serializable {
 
     private ZonedDateTime timestamp;
-    private Long          workdayTimeId;
-    private Long          workdayTimePairId;
-    private Long          workdayTimeSetId;
+    private Long workdayTimeId;
+    private Long workdayTimePairId;
+    private Long workdayTimeSetId;
 
     public WorkdayTimePair() {
     }

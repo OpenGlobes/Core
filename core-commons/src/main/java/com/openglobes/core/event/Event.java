@@ -29,14 +29,14 @@ import java.time.ZonedDateTime;
 public class Event<T> implements IEvent<T>,
                                  Serializable {
 
-    private final Long          seq;
+    private final Long seq;
     private final ZonedDateTime ts;
-    private       Class<T>      c;
-    private       T             o;
+    private Class<T> c;
+    private T o;
 
     public Event() {
         seq = Utils.nextId();
-        ts  = ZonedDateTime.now();
+        ts = ZonedDateTime.now();
     }
 
     @Override

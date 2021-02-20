@@ -30,11 +30,11 @@ import java.util.Objects;
  */
 public class ResponseContext implements IResponseContext {
 
-    private final IConnector     conn;
+    private final IConnector conn;
     private final ISharedContext shared;
 
     public ResponseContext(IConnector connector, ISharedContext context) {
-        conn   = connector;
+        conn = connector;
         shared = context;
     }
 

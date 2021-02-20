@@ -20,39 +20,43 @@ import sun.misc.Unsafe;
 
 import java.util.concurrent.locks.LockSupport;
 
-
 /**
- * <p>Coordinator for claiming sequences for access to a data structure while tracking dependent {@link Sequence}s.
- * Suitable for use for sequencing across multiple publisher threads.</p>
+ * <p>
+ * Coordinator for claiming sequences for access to a data structure while
+ * tracking dependent {@link Sequence}s. Suitable for use for sequencing across
+ * multiple publisher threads.</p>
  *
- * <p> * Note on {@link Sequencer#getCursor()}:  With this sequencer the cursor value is updated after the call
- * to {@link Sequencer#next()}, to determine the highest available sequence that can be read, then
+ * <p>
+ * Note on {@link Sequencer#getCursor()}: With this sequencer the cursor value
+ * is updated after the call to {@link Sequencer#next()}, to determine the
+ * highest available sequence that can be read, then
  * {@link Sequencer#getHighestPublishedSequence(long, long)} should be used.</p>
  */
 public final class MultiProducerSequencer extends AbstractSequencer {
+
     private static final Unsafe UNSAFE = Util.getUnsafe();
-    private static final long   BASE   = UNSAFE.arrayBaseOffset(int[].class);
-    private static final long   SCALE  = UNSAFE.arrayIndexScale(int[].class);
+    private static final long BASE = UNSAFE.arrayBaseOffset(int[].class);
+    private static final long SCALE = UNSAFE.arrayIndexScale(int[].class);
 
     private final Sequence gatingSequenceCache = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
 
     // availableBuffer tracks the state of each ringbuffer slot
     // see below for more details on the approach
     private final int[] availableBuffer;
-    private final int   indexMask;
-    private final int   indexShift;
+    private final int indexMask;
+    private final int indexShift;
 
     /**
      * Construct a Sequencer with the selected wait strategy and buffer size.
      *
-     * @param bufferSize   the size of the buffer that this will sequence over.
+     * @param bufferSize the size of the buffer that this will sequence over.
      * @param waitStrategy for those waiting on sequences.
      */
     public MultiProducerSequencer(int bufferSize, final WaitStrategy waitStrategy) {
         super(bufferSize, waitStrategy);
         availableBuffer = new int[bufferSize];
-        indexMask       = bufferSize - 1;
-        indexShift      = Util.log2(bufferSize);
+        indexMask = bufferSize - 1;
+        indexShift = Util.log2(bufferSize);
         initialiseAvailableBuffer();
     }
 
@@ -65,7 +69,7 @@ public final class MultiProducerSequencer extends AbstractSequencer {
     }
 
     private boolean hasAvailableCapacity(Sequence[] gatingSequences, final int requiredCapacity, long cursorValue) {
-        long wrapPoint            = (cursorValue + requiredCapacity) - bufferSize;
+        long wrapPoint = (cursorValue + requiredCapacity) - bufferSize;
         long cachedGatingSequence = gatingSequenceCache.get();
 
         if (wrapPoint > cachedGatingSequence || cachedGatingSequence > cursorValue) {
@@ -110,9 +114,9 @@ public final class MultiProducerSequencer extends AbstractSequencer {
 
         do {
             current = cursor.get();
-            next    = current + n;
+            next = current + n;
 
-            long wrapPoint            = next - bufferSize;
+            long wrapPoint = next - bufferSize;
             long cachedGatingSequence = gatingSequenceCache.get();
 
             if (wrapPoint > cachedGatingSequence || cachedGatingSequence > current) {
@@ -127,8 +131,7 @@ public final class MultiProducerSequencer extends AbstractSequencer {
             } else if (cursor.compareAndSet(current, next)) {
                 break;
             }
-        }
-        while (true);
+        } while (true);
 
         return next;
     }
@@ -155,13 +158,12 @@ public final class MultiProducerSequencer extends AbstractSequencer {
 
         do {
             current = cursor.get();
-            next    = current + n;
+            next = current + n;
 
             if (!hasAvailableCapacity(gatingSequences, n, current)) {
                 throw InsufficientCapacityException.INSTANCE;
             }
-        }
-        while (!cursor.compareAndSet(current, next));
+        } while (!cursor.compareAndSet(current, next));
 
         return next;
     }
@@ -207,21 +209,21 @@ public final class MultiProducerSequencer extends AbstractSequencer {
     /**
      * The below methods work on the availableBuffer flag.
      * <p>
-     * The prime reason is to avoid a shared sequence object between publisher threads.
-     * (Keeping single pointers tracking start and end would require coordination
-     * between the threads).
+     * The prime reason is to avoid a shared sequence object between publisher
+     * threads. (Keeping single pointers tracking start and end would require
+     * coordination between the threads).
      * <p>
-     * --  Firstly we have the constraint that the delta between the cursor and minimum
-     * gating sequence will never be larger than the buffer size (the code in
-     * next/tryNext in the Sequence takes care of that).
-     * -- Given that; take the sequence value and mask off the lower portion of the
-     * sequence as the index into the buffer (indexMask). (aka modulo operator)
-     * -- The upper portion of the sequence becomes the value to check for availability.
-     * ie: it tells us how many times around the ring buffer we've been (aka division)
-     * -- Because we can't wrap without the gating sequences moving forward (i.e. the
-     * minimum gating sequence is effectively our last available position in the
-     * buffer), when we have new data and successfully claimed a slot we can simply
-     * write over the top.
+     * -- Firstly we have the constraint that the delta between the cursor and
+     * minimum gating sequence will never be larger than the buffer size (the
+     * code in next/tryNext in the Sequence takes care of that). -- Given that;
+     * take the sequence value and mask off the lower portion of the sequence as
+     * the index into the buffer (indexMask). (aka modulo operator) -- The upper
+     * portion of the sequence becomes the value to check for availability. ie:
+     * it tells us how many times around the ring buffer we've been (aka
+     * division) -- Because we can't wrap without the gating sequences moving
+     * forward (i.e. the minimum gating sequence is effectively our last
+     * available position in the buffer), when we have new data and successfully
+     * claimed a slot we can simply write over the top.
      */
     private void setAvailable(final long sequence) {
         setAvailableBufferValue(calculateIndex(sequence), calculateAvailabilityFlag(sequence));
@@ -237,8 +239,8 @@ public final class MultiProducerSequencer extends AbstractSequencer {
      */
     @Override
     public boolean isAvailable(long sequence) {
-        int  index         = calculateIndex(sequence);
-        int  flag          = calculateAvailabilityFlag(sequence);
+        int index = calculateIndex(sequence);
+        int flag = calculateAvailabilityFlag(sequence);
         long bufferAddress = (index * SCALE) + BASE;
         return UNSAFE.getIntVolatile(availableBuffer, bufferAddress) == flag;
     }

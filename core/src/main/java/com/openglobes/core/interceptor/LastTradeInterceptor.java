@@ -39,8 +39,8 @@ public class LastTradeInterceptor extends AbstractResponseInterceptor<Trade> {
     public InterceptOperation onResponse(Trade response, IInterceptorChain stack) {
         try {
             ctx.getSessionCorrelator()
-               .getSessionByOrderId(response.getOrderId())
-               .respond(response);
+                    .getSessionByOrderId(response.getOrderId())
+                    .respond(response);
         } catch (SessionException ex) {
             Loggers.getLogger(LastTradeInterceptor.class.getCanonicalName()).log(Level.SEVERE,
                                                                                  ex.toString(),

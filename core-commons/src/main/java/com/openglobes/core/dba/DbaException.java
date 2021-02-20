@@ -37,5 +37,4 @@ public class DbaException extends Exception {
               writableStackTrace);
     }
 
-
 }

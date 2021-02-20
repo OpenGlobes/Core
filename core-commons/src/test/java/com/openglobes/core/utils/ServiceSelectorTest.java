@@ -23,16 +23,16 @@ class ServiceSelectorTest {
                                       InterruptedException,
                                       ClassNotFoundException {
         File root = new File("target/sample");
-        var  r    = prepareJar(root);
+        var r = prepareJar(root);
         var loader = ServiceSelector.getClassLoader(r);
         Class<?> cls = Class.forName("test.IEcho",
                                      false,
                                      loader);
         assertDoesNotThrow(() -> {
-                               ServiceSelector.selectService(cls,
-                                                             "test.Echo",
-                                                             loader);
-                           },
+            ServiceSelector.selectService(cls,
+                                          "test.Echo",
+                                          loader);
+        },
                            "Service loader failed.");
     }
 
@@ -45,7 +45,7 @@ class ServiceSelectorTest {
 
     private File createJar(File root) throws IOException,
                                              InterruptedException {
-        var j   = new File(root.getParentFile().getAbsolutePath() + "/echo-1.0.jar");
+        var j = new File(root.getParentFile().getAbsolutePath() + "/echo-1.0.jar");
         var cmd = "jar cf " + j.getAbsolutePath() + " -C " + root.getAbsolutePath() + " .";
         cmd = cmd.replace('\\', '/');
         Process pr = Runtime.getRuntime().exec(cmd);
@@ -80,29 +80,29 @@ class ServiceSelectorTest {
 
     private String[] prepareSources(File root) throws IOException {
         // Prepare source somehow.
-        String interfaceSource = "package test;\n" +
-                                 "public interface IEcho {\n" +
-                                 "    void echo();\n" +
-                                 "}";
-        String implSource = "package test;\n" +
-                            "public class Echo implements IEcho {\n" +
-                            "    public Echo() {}\n" +
-                            "    public void echo() {\n" +
-                            "        System.out.println(\"Hi, Echo!\");\n" +
-                            "    }\n" +
-                            "}";
+        String interfaceSource = "package test;\n"
+                                 + "public interface IEcho {\n"
+                                 + "    void echo();\n"
+                                 + "}";
+        String implSource = "package test;\n"
+                            + "public class Echo implements IEcho {\n"
+                            + "    public Echo() {}\n"
+                            + "    public void echo() {\n"
+                            + "        System.out.println(\"Hi, Echo!\");\n"
+                            + "    }\n"
+                            + "}";
 
         // Save source in .java file.
         File interfaceFile = new File(root, "test/IEcho.java");
-        File implFile      = new File(root, "test/Echo.java");
+        File implFile = new File(root, "test/Echo.java");
         writeJavaSources(interfaceSource,
                          interfaceFile);
         writeJavaSources(implSource,
                          implFile);
 
         return new String[]{
-                interfaceFile.getPath(),
-                implFile.getPath()
+            interfaceFile.getPath(),
+            implFile.getPath()
         };
     }
 }

@@ -25,8 +25,8 @@ import java.time.ZonedDateTime;
  */
 public class HolidayTimeSet implements Serializable {
 
-    private Long          holidayTimeSetId;
-    private String        name;
+    private Long holidayTimeSetId;
+    private String name;
     private ZonedDateTime timestamp;
 
     public HolidayTimeSet() {

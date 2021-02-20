@@ -35,7 +35,7 @@ public interface IStickBuilder {
      *
      * @param tick tick.
      * @throws IllegalInstrumentIdException thrown when the specified tick
-     *                                      doesn't belong to this builder.
+     * doesn't belong to this builder.
      */
     void update(Tick tick) throws IllegalInstrumentIdException;
 
@@ -63,8 +63,8 @@ public interface IStickBuilder {
      * The method is synchronized on {@code this} object.
      *
      * @param minutesOfDay minute-of-trading day.
-     * @param daysOfyear   days-of-year.
-     * @param alignTime    current align time on minute.
+     * @param daysOfyear days-of-year.
+     * @param alignTime current align time on minute.
      * @return collection of sticks that should be emitted on the specifed
      * minutes-of-day of days-of-year.
      * @throws com.openglobes.core.stick.IllegalMinutesException
@@ -91,7 +91,7 @@ public interface IStickBuilder {
      * The method is synchronized on {@code this} object.
      *
      * @param endOfDayTime time for building all sticks at the end of trading
-     *                     day.
+     * day.
      * @return collection of sticks that should be emitted at the specified
      * time.
      * @throws IllegalEodException thrown when fail building sticks.s

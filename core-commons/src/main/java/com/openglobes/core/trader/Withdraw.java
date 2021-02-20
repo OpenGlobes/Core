@@ -15,10 +15,10 @@ import java.time.ZonedDateTime;
  */
 public class Withdraw implements Serializable {
 
-    private Double        amount;
+    private Double amount;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
-    private Long          withdrawId;
+    private LocalDate tradingDay;
+    private Long withdrawId;
 
     public Withdraw() {
     }

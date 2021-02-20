@@ -37,16 +37,16 @@ import java.util.logging.Level;
  */
 public class EventSource implements IEventSource {
 
-    private final Cleaner.Cleanable               cleanable;
-    private final Cleaner                         cleaner = Cleaner.create();
-    private final Map<Class<?>, Disruptor<?>>     disruptors;
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
+    private final Map<Class<?>, Disruptor<?>> disruptors;
     private final Map<Class<?>, IEventHandler<?>> handlers;
 
     public EventSource() {
-        handlers   = new ConcurrentHashMap<>(64);
+        handlers = new ConcurrentHashMap<>(64);
         disruptors = new ConcurrentHashMap<>(64);
-        cleanable  = cleaner.register(this,
-                                      new CleanAction(disruptors));
+        cleanable = cleaner.register(this,
+                                     new CleanAction(disruptors));
     }
 
     @Override

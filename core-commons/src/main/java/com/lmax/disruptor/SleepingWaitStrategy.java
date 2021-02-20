@@ -24,15 +24,16 @@ import java.util.concurrent.locks.LockSupport;
  * {@link com.lmax.disruptor.EventProcessor}s are waiting on a barrier.
  * <p>
  * This strategy is a good compromise between performance and CPU resource.
- * Latency spikes can occur after quiet periods.  It will also reduce the impact
+ * Latency spikes can occur after quiet periods. It will also reduce the impact
  * on the producing thread as it will not need signal any conditional variables
  * to wake up the event handling thread.
  */
 public final class SleepingWaitStrategy implements WaitStrategy {
-    private static final int  DEFAULT_RETRIES = 200;
-    private static final long DEFAULT_SLEEP   = 100;
 
-    private final int  retries;
+    private static final int DEFAULT_RETRIES = 200;
+    private static final long DEFAULT_SLEEP = 100;
+
+    private final int retries;
     private final long sleepTimeNs;
 
     public SleepingWaitStrategy() {
@@ -44,7 +45,7 @@ public final class SleepingWaitStrategy implements WaitStrategy {
     }
 
     public SleepingWaitStrategy(int retries, long sleepTimeNs) {
-        this.retries     = retries;
+        this.retries = retries;
         this.sleepTimeNs = sleepTimeNs;
     }
 
@@ -53,7 +54,7 @@ public final class SleepingWaitStrategy implements WaitStrategy {
             final long sequence, Sequence cursor, final Sequence dependentSequence, final SequenceBarrier barrier)
             throws AlertException {
         long availableSequence;
-        int  counter = retries;
+        int counter = retries;
 
         while ((availableSequence = dependentSequence.get()) < sequence) {
             counter = applyWaitMethod(barrier, counter);

@@ -18,16 +18,20 @@ package com.lmax.disruptor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * No operation version of a {@link EventProcessor} that simply tracks a {@link Sequence}.
+ * No operation version of a {@link EventProcessor} that simply tracks a
+ * {@link Sequence}.
  * <p>
- * This is useful in tests or for pre-filling a {@link RingBuffer} from a publisher.
+ * This is useful in tests or for pre-filling a {@link RingBuffer} from a
+ * publisher.
  */
 public final class NoOpEventProcessor implements EventProcessor {
+
     private final SequencerFollowingSequence sequence;
-    private final AtomicBoolean              running = new AtomicBoolean(false);
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
-     * Construct a {@link EventProcessor} that simply tracks a {@link Sequence} object.
+     * Construct a {@link EventProcessor} that simply tracks a {@link Sequence}
+     * object.
      *
      * @param sequencer to track.
      */
@@ -61,6 +65,7 @@ public final class NoOpEventProcessor implements EventProcessor {
      * Sequence that follows (by wrapping) another sequence
      */
     private static final class SequencerFollowingSequence extends Sequence {
+
         private final RingBuffer<?> sequencer;
 
         private SequencerFollowingSequence(final RingBuffer<?> sequencer) {

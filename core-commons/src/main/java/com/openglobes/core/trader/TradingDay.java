@@ -15,10 +15,10 @@ import java.time.ZonedDateTime;
  */
 public class TradingDay implements Serializable {
 
-    private LocalDate     actionDay;
+    private LocalDate actionDay;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
-    private Long          tradingDayId;
+    private LocalDate tradingDay;
+    private Long tradingDayId;
 
     public TradingDay() {
     }

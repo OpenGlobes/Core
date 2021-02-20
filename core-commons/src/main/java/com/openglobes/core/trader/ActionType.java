@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ActionType implements Serializable {
 
     public static final int DELETE = (0x81);
-    public static final int NEW    = (0x80);
+    public static final int NEW = (0x80);
 
     private ActionType() {
     }

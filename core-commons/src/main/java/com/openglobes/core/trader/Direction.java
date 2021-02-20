@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public class Direction implements Serializable {
 
-    public static final int BUY  = (0xA0);
+    public static final int BUY = (0xA0);
     public static final int SELL = (0xA1);
 
     private Direction() {

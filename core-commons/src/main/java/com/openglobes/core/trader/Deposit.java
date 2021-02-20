@@ -15,10 +15,10 @@ import java.time.ZonedDateTime;
  */
 public class Deposit implements Serializable {
 
-    private Double        amount;
-    private Long          depositId;
+    private Double amount;
+    private Long depositId;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
+    private LocalDate tradingDay;
 
     public Deposit() {
     }

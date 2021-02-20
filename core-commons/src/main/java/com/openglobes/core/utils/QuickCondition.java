@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class QuickCondition {
 
     private final Condition c;
-    private final Lock      l;
+    private final Lock l;
 
     public QuickCondition() {
         l = new ReentrantLock();

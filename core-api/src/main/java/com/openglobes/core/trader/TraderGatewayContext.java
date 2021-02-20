@@ -27,17 +27,17 @@ import java.util.Properties;
  */
 public class TraderGatewayContext {
 
-    private final ZonedDateTime         registerTimestamp;
-    private       Boolean               enabled;
-    private       ITraderEngine         engine;
-    private       ITraderGatewayHandler handler;
-    private       Properties            initProperties;
-    private       String                note;
-    private       Properties            settleProperties;
-    private       Properties            startProperties;
-    private       ITraderGateway        trader;
-    private       Integer               traderId;
-    private       ZonedDateTime         updateTimestamp;
+    private final ZonedDateTime registerTimestamp;
+    private Boolean enabled;
+    private ITraderEngine engine;
+    private ITraderGatewayHandler handler;
+    private Properties initProperties;
+    private String note;
+    private Properties settleProperties;
+    private Properties startProperties;
+    private ITraderGateway trader;
+    private Integer traderId;
+    private ZonedDateTime updateTimestamp;
 
     public TraderGatewayContext() {
         registerTimestamp = ZonedDateTime.now();

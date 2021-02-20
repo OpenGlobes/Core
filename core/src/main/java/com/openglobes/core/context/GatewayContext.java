@@ -28,7 +28,7 @@ import java.util.Properties;
 public class GatewayContext implements IGatewayContext {
 
     private final GatewayConfiguration conf;
-    private final ITraderGateway       gate;
+    private final ITraderGateway gate;
 
     public GatewayContext(GatewayConfiguration configuration,
                           ITraderGateway gateway) {

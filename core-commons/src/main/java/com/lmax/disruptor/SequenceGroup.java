@@ -20,16 +20,19 @@ import com.lmax.disruptor.util.Util;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
- * A {@link Sequence} group that can dynamically have {@link Sequence}s added and removed while being
- * thread safe.
+ * A {@link Sequence} group that can dynamically have {@link Sequence}s added
+ * and removed while being thread safe.
  * <p>
- * The {@link SequenceGroup#get()} and {@link SequenceGroup#set(long)} methods are lock free and can be
- * concurrently be called with the {@link SequenceGroup#add(Sequence)} and {@link SequenceGroup#remove(Sequence)}.
+ * The {@link SequenceGroup#get()} and {@link SequenceGroup#set(long)} methods
+ * are lock free and can be concurrently be called with the
+ * {@link SequenceGroup#add(Sequence)} and
+ * {@link SequenceGroup#remove(Sequence)}.
  */
 public final class SequenceGroup extends Sequence {
-    private static final AtomicReferenceFieldUpdater<SequenceGroup, Sequence[]> SEQUENCE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
-    private volatile     Sequence[]                                             sequences        = new Sequence[0];
+
+    private static final AtomicReferenceFieldUpdater<SequenceGroup, Sequence[]> SEQUENCE_UPDATER
+                                                                                = AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
+    private volatile Sequence[] sequences = new Sequence[0];
 
     /**
      * Default Constructor
@@ -62,8 +65,9 @@ public final class SequenceGroup extends Sequence {
     }
 
     /**
-     * Add a {@link Sequence} into this aggregate.  This should only be used during
-     * initialisation.  Use {@link SequenceGroup#addWhileRunning(Cursored, Sequence)}
+     * Add a {@link Sequence} into this aggregate. This should only be used
+     * during initialisation. Use
+     * {@link SequenceGroup#addWhileRunning(Cursored, Sequence)}
      *
      * @param sequence to be added to the aggregate.
      * @see SequenceGroup#addWhileRunning(Cursored, Sequence)
@@ -77,8 +81,7 @@ public final class SequenceGroup extends Sequence {
             newSequences = new Sequence[oldSize + 1];
             System.arraycopy(oldSequences, 0, newSequences, 0, oldSize);
             newSequences[oldSize] = sequence;
-        }
-        while (!SEQUENCE_UPDATER.compareAndSet(this, oldSequences, newSequences));
+        } while (!SEQUENCE_UPDATER.compareAndSet(this, oldSequences, newSequences));
     }
 
     /**
@@ -101,12 +104,13 @@ public final class SequenceGroup extends Sequence {
     }
 
     /**
-     * Adds a sequence to the sequence group after threads have started to publish to
-     * the Disruptor.  It will set the sequences to cursor value of the ringBuffer
-     * just after adding them.  This should prevent any nasty rewind/wrapping effects.
+     * Adds a sequence to the sequence group after threads have started to
+     * publish to the Disruptor. It will set the sequences to cursor value of
+     * the ringBuffer just after adding them. This should prevent any nasty
+     * rewind/wrapping effects.
      *
-     * @param cursored The data structure that the owner of this sequence group will
-     *                 be pulling it's events from.
+     * @param cursored The data structure that the owner of this sequence group
+     * will be pulling it's events from.
      * @param sequence The sequence to add.
      */
     public void addWhileRunning(Cursored cursored, Sequence sequence) {

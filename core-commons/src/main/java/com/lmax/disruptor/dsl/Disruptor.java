@@ -24,10 +24,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * <p>A DSL-style API for setting up the disruptor pattern around a ring buffer
+ * <p>
+ * A DSL-style API for setting up the disruptor pattern around a ring buffer
  * (aka the Builder pattern).</p>
  *
- * <p>A simple example of setting up the disruptor with two event handlers that
+ * <p>
+ * A simple example of setting up the disruptor with two event handlers that
  * must process events in order:</p>
  * <pre>
  * <code>Disruptor&lt;MyEvent&gt; disruptor = new Disruptor&lt;MyEvent&gt;(MyEvent.FACTORY, 32, Executors.newCachedThreadPool());
@@ -42,21 +44,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @param <T> the type of event used.
  */
 public class Disruptor<T> {
-    private final RingBuffer<T>               ringBuffer;
-    private final Executor                    executor;
-    private final ConsumerRepository<T>       consumerRepository = new ConsumerRepository<>();
-    private final AtomicBoolean               started            = new AtomicBoolean(false);
-    private       ExceptionHandler<? super T> exceptionHandler   = new ExceptionHandlerWrapper<>();
+
+    private final RingBuffer<T> ringBuffer;
+    private final Executor executor;
+    private final ConsumerRepository<T> consumerRepository = new ConsumerRepository<>();
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    private ExceptionHandler<? super T> exceptionHandler = new ExceptionHandlerWrapper<>();
 
     /**
-     * Create a new Disruptor. Will default to {@link com.lmax.disruptor.BlockingWaitStrategy} and
+     * Create a new Disruptor. Will default to
+     * {@link com.lmax.disruptor.BlockingWaitStrategy} and
      * {@link ProducerType}.MULTI
      *
-     * @param eventFactory   the factory to create events in the ring buffer.
+     * @param eventFactory the factory to create events in the ring buffer.
      * @param ringBufferSize the size of the ring buffer.
-     * @param executor       an {@link Executor} to execute event processors.
-     * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as a the ThreadFactory
-     * is able to report errors when it is unable to construct a thread to run a producer.
+     * @param executor an {@link Executor} to execute event processors.
+     * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as
+     * a the ThreadFactory is able to report errors when it is unable to
+     * construct a thread to run a producer.
      */
     @Deprecated
     public Disruptor(final EventFactory<T> eventFactory, final int ringBufferSize, final Executor executor) {
@@ -66,13 +71,14 @@ public class Disruptor<T> {
     /**
      * Create a new Disruptor.
      *
-     * @param eventFactory   the factory to create events in the ring buffer.
+     * @param eventFactory the factory to create events in the ring buffer.
      * @param ringBufferSize the size of the ring buffer, must be power of 2.
-     * @param executor       an {@link Executor} to execute event processors.
-     * @param producerType   the claim strategy to use for the ring buffer.
-     * @param waitStrategy   the wait strategy to use for the ring buffer.
-     * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as a the ThreadFactory
-     * is able to report errors when it is unable to construct a thread to run a producer.
+     * @param executor an {@link Executor} to execute event processors.
+     * @param producerType the claim strategy to use for the ring buffer.
+     * @param waitStrategy the wait strategy to use for the ring buffer.
+     * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as
+     * a the ThreadFactory is able to report errors when it is unable to
+     * construct a thread to run a producer.
      */
     @Deprecated
     public Disruptor(
@@ -85,12 +91,14 @@ public class Disruptor<T> {
     }
 
     /**
-     * Create a new Disruptor. Will default to {@link com.lmax.disruptor.BlockingWaitStrategy} and
+     * Create a new Disruptor. Will default to
+     * {@link com.lmax.disruptor.BlockingWaitStrategy} and
      * {@link ProducerType}.MULTI
      *
-     * @param eventFactory   the factory to create events in the ring buffer.
+     * @param eventFactory the factory to create events in the ring buffer.
      * @param ringBufferSize the size of the ring buffer.
-     * @param threadFactory  a {@link ThreadFactory} to create threads to for processors.
+     * @param threadFactory a {@link ThreadFactory} to create threads to for
+     * processors.
      */
     public Disruptor(final EventFactory<T> eventFactory, final int ringBufferSize, final ThreadFactory threadFactory) {
         this(RingBuffer.createMultiProducer(eventFactory, ringBufferSize), new BasicExecutor(threadFactory));
@@ -99,11 +107,12 @@ public class Disruptor<T> {
     /**
      * Create a new Disruptor.
      *
-     * @param eventFactory   the factory to create events in the ring buffer.
+     * @param eventFactory the factory to create events in the ring buffer.
      * @param ringBufferSize the size of the ring buffer, must be power of 2.
-     * @param threadFactory  a {@link ThreadFactory} to create threads for processors.
-     * @param producerType   the claim strategy to use for the ring buffer.
-     * @param waitStrategy   the wait strategy to use for the ring buffer.
+     * @param threadFactory a {@link ThreadFactory} to create threads for
+     * processors.
+     * @param producerType the claim strategy to use for the ring buffer.
+     * @param waitStrategy the wait strategy to use for the ring buffer.
      */
     public Disruptor(
             final EventFactory<T> eventFactory,
@@ -121,21 +130,28 @@ public class Disruptor<T> {
      */
     private Disruptor(final RingBuffer<T> ringBuffer, final Executor executor) {
         this.ringBuffer = ringBuffer;
-        this.executor   = executor;
+        this.executor = executor;
     }
 
     /**
-     * <p>Set up event handlers to handle events from the ring buffer. These handlers will process events
-     * as soon as they become available, in parallel.</p>
+     * <p>
+     * Set up event handlers to handle events from the ring buffer. These
+     * handlers will process events as soon as they become available, in
+     * parallel.</p>
      *
-     * <p>This method can be used as the start of a chain. For example if the handler <code>A</code> must
-     * process events before handler <code>B</code>:</p>
+     * <p>
+     * This method can be used as the start of a chain. For example if the
+     * handler <code>A</code> must process events before handler
+     * <code>B</code>:</p>
      * <pre><code>dw.handleEventsWith(A).then(B);</code></pre>
      *
-     * <p>This call is additive, but generally should only be called once when setting up the Disruptor instance</p>
+     * <p>
+     * This call is additive, but generally should only be called once when
+     * setting up the Disruptor instance</p>
      *
      * @param handlers the event handlers that will process events.
-     * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
+     * @return a {@link EventHandlerGroup} that can be used to chain
+     * dependencies.
      */
     @SuppressWarnings("varargs")
     @SafeVarargs
@@ -144,22 +160,33 @@ public class Disruptor<T> {
     }
 
     /**
-     * <p>Set up custom event processors to handle events from the ring buffer. The Disruptor will
-     * automatically start these processors when {@link #start()} is called.</p>
+     * <p>
+     * Set up custom event processors to handle events from the ring buffer. The
+     * Disruptor will automatically start these processors when {@link #start()}
+     * is called.</p>
      *
-     * <p>This method can be used as the start of a chain. For example if the handler <code>A</code> must
-     * process events before handler <code>B</code>:</p>
+     * <p>
+     * This method can be used as the start of a chain. For example if the
+     * handler <code>A</code> must process events before handler
+     * <code>B</code>:</p>
      * <pre><code>dw.handleEventsWith(A).then(B);</code></pre>
      *
-     * <p>Since this is the start of the chain, the processor factories will always be passed an empty <code>Sequence</code>
-     * array, so the factory isn't necessary in this case. This method is provided for consistency with
-     * {@link EventHandlerGroup#handleEventsWith(EventProcessorFactory...)} and {@link EventHandlerGroup#then(EventProcessorFactory...)}
-     * which do have barrier sequences to provide.</p>
+     * <p>
+     * Since this is the start of the chain, the processor factories will always
+     * be passed an empty <code>Sequence</code> array, so the factory isn't
+     * necessary in this case. This method is provided for consistency with
+     * {@link EventHandlerGroup#handleEventsWith(EventProcessorFactory...)} and
+     * {@link EventHandlerGroup#then(EventProcessorFactory...)} which do have
+     * barrier sequences to provide.</p>
      *
-     * <p>This call is additive, but generally should only be called once when setting up the Disruptor instance</p>
+     * <p>
+     * This call is additive, but generally should only be called once when
+     * setting up the Disruptor instance</p>
      *
-     * @param eventProcessorFactories the event processor factories to use to create the event processors that will process events.
-     * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
+     * @param eventProcessorFactories the event processor factories to use to
+     * create the event processors that will process events.
+     * @return a {@link EventHandlerGroup} that can be used to chain
+     * dependencies.
      */
     @SafeVarargs
     public final EventHandlerGroup<T> handleEventsWith(final EventProcessorFactory<T>... eventProcessorFactories) {
@@ -168,15 +195,20 @@ public class Disruptor<T> {
     }
 
     /**
-     * <p>Set up custom event processors to handle events from the ring buffer. The Disruptor will
-     * automatically start this processors when {@link #start()} is called.</p>
+     * <p>
+     * Set up custom event processors to handle events from the ring buffer. The
+     * Disruptor will automatically start this processors when {@link #start()}
+     * is called.</p>
      *
-     * <p>This method can be used as the start of a chain. For example if the processor <code>A</code> must
-     * process events before handler <code>B</code>:</p>
+     * <p>
+     * This method can be used as the start of a chain. For example if the
+     * processor <code>A</code> must process events before handler
+     * <code>B</code>:</p>
      * <pre><code>dw.handleEventsWith(A).then(B);</code></pre>
      *
      * @param processors the event processors that will process events.
-     * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
+     * @return a {@link EventHandlerGroup} that can be used to chain
+     * dependencies.
      */
     public EventHandlerGroup<T> handleEventsWith(final EventProcessor... processors) {
         for (final EventProcessor processor : processors) {
@@ -193,14 +225,15 @@ public class Disruptor<T> {
         return new EventHandlerGroup<>(this, consumerRepository, Util.getSequencesFor(processors));
     }
 
-
     /**
-     * Set up a {@link WorkerPool} to distribute an event to one of a pool of work handler threads.
-     * Each event will only be processed by one of the work handlers.
-     * The Disruptor will automatically start this processors when {@link #start()} is called.
+     * Set up a {@link WorkerPool} to distribute an event to one of a pool of
+     * work handler threads. Each event will only be processed by one of the
+     * work handlers. The Disruptor will automatically start this processors
+     * when {@link #start()} is called.
      *
      * @param workHandlers the work handlers that will process events.
-     * @return a {@link EventHandlerGroup} that can be used to chain dependencies.
+     * @return a {@link EventHandlerGroup} that can be used to chain
+     * dependencies.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -209,21 +242,32 @@ public class Disruptor<T> {
     }
 
     /**
-     * <p>Specify an exception handler to be used for any future event handlers.</p>
+     * <p>
+     * Specify an exception handler to be used for any future event
+     * handlers.</p>
      *
-     * <p>Note that only event handlers set up after calling this method will use the exception handler.</p>
+     * <p>
+     * Note that only event handlers set up after calling this method will use
+     * the exception handler.</p>
      *
-     * @param exceptionHandler the exception handler to use for any future {@link EventProcessor}.
-     * @deprecated This method only applies to future event handlers. Use setDefaultExceptionHandler instead which applies to existing and new event handlers.
+     * @param exceptionHandler the exception handler to use for any future
+     * {@link EventProcessor}.
+     * @deprecated This method only applies to future event handlers. Use
+     * setDefaultExceptionHandler instead which applies to existing and new
+     * event handlers.
      */
     public void handleExceptionsWith(final ExceptionHandler<? super T> exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
     }
 
     /**
-     * <p>Specify an exception handler to be used for event handlers and worker pools created by this Disruptor.</p>
+     * <p>
+     * Specify an exception handler to be used for event handlers and worker
+     * pools created by this Disruptor.</p>
      *
-     * <p>The exception handler will be used by existing and future event handlers and worker pools created by this Disruptor instance.</p>
+     * <p>
+     * The exception handler will be used by existing and future event handlers
+     * and worker pools created by this Disruptor instance.</p>
      *
      * @param exceptionHandler the exception handler to use.
      */
@@ -240,22 +284,28 @@ public class Disruptor<T> {
      * Override the default exception handler for a specific handler.
      * <pre>disruptorWizard.handleExceptionsIn(eventHandler).with(exceptionHandler);</pre>
      *
-     * @param eventHandler the event handler to set a different exception handler for.
-     * @return an ExceptionHandlerSetting dsl object - intended to be used by chaining the with method call.
+     * @param eventHandler the event handler to set a different exception
+     * handler for.
+     * @return an ExceptionHandlerSetting dsl object - intended to be used by
+     * chaining the with method call.
      */
     public ExceptionHandlerSetting<T> handleExceptionsFor(final EventHandler<T> eventHandler) {
         return new ExceptionHandlerSetting<>(eventHandler, consumerRepository);
     }
 
     /**
-     * <p>Create a group of event handlers to be used as a dependency.
-     * For example if the handler <code>A</code> must process events before handler <code>B</code>:</p>
+     * <p>
+     * Create a group of event handlers to be used as a dependency. For example
+     * if the handler <code>A</code> must process events before handler
+     * <code>B</code>:</p>
      *
      * <pre><code>dw.after(A).handleEventsWith(B);</code></pre>
      *
-     * @param handlers the event handlers, previously set up with {@link #handleEventsWith(com.lmax.disruptor.EventHandler[])},
-     *                 that will form the barrier for subsequent handlers or processors.
-     * @return an {@link EventHandlerGroup} that can be used to setup a dependency barrier over the specified event handlers.
+     * @param handlers the event handlers, previously set up with
+     * {@link #handleEventsWith(com.lmax.disruptor.EventHandler[])}, that will
+     * form the barrier for subsequent handlers or processors.
+     * @return an {@link EventHandlerGroup} that can be used to setup a
+     * dependency barrier over the specified event handlers.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -271,9 +321,11 @@ public class Disruptor<T> {
     /**
      * Create a group of event processors to be used as a dependency.
      *
-     * @param processors the event processors, previously set up with {@link #handleEventsWith(com.lmax.disruptor.EventProcessor...)},
-     *                   that will form the barrier for subsequent handlers or processors.
-     * @return an {@link EventHandlerGroup} that can be used to setup a {@link SequenceBarrier} over the specified event processors.
+     * @param processors the event processors, previously set up with
+     * {@link #handleEventsWith(com.lmax.disruptor.EventProcessor...)}, that
+     * will form the barrier for subsequent handlers or processors.
+     * @return an {@link EventHandlerGroup} that can be used to setup a
+     * {@link SequenceBarrier} over the specified event processors.
      * @see #after(com.lmax.disruptor.EventHandler[])
      */
     public EventHandlerGroup<T> after(final EventProcessor... processors) {
@@ -296,9 +348,9 @@ public class Disruptor<T> {
     /**
      * Publish an event to the ring buffer.
      *
-     * @param <A>             Class of the user supplied argument.
+     * @param <A> Class of the user supplied argument.
      * @param eventTranslator the translator that will load data into the event.
-     * @param arg             A single argument to load into the event
+     * @param arg A single argument to load into the event
      */
     public <A> void publishEvent(final EventTranslatorOneArg<T, A> eventTranslator, final A arg) {
         ringBuffer.publishEvent(eventTranslator, arg);
@@ -307,9 +359,10 @@ public class Disruptor<T> {
     /**
      * Publish a batch of events to the ring buffer.
      *
-     * @param <A>             Class of the user supplied argument.
+     * @param <A> Class of the user supplied argument.
      * @param eventTranslator the translator that will load data into the event.
-     * @param arg             An array single arguments to load into the events. One Per event.
+     * @param arg An array single arguments to load into the events. One Per
+     * event.
      */
     public <A> void publishEvents(final EventTranslatorOneArg<T, A> eventTranslator, final A[] arg) {
         ringBuffer.publishEvents(eventTranslator, arg);
@@ -318,11 +371,11 @@ public class Disruptor<T> {
     /**
      * Publish an event to the ring buffer.
      *
-     * @param <A>             Class of the user supplied argument.
-     * @param <B>             Class of the user supplied argument.
+     * @param <A> Class of the user supplied argument.
+     * @param <B> Class of the user supplied argument.
      * @param eventTranslator the translator that will load data into the event.
-     * @param arg0            The first argument to load into the event
-     * @param arg1            The second argument to load into the event
+     * @param arg0 The first argument to load into the event
+     * @param arg1 The second argument to load into the event
      */
     public <A, B> void publishEvent(final EventTranslatorTwoArg<T, A, B> eventTranslator, final A arg0, final B arg1) {
         ringBuffer.publishEvent(eventTranslator, arg0, arg1);
@@ -332,24 +385,29 @@ public class Disruptor<T> {
      * Publish an event to the ring buffer.
      *
      * @param eventTranslator the translator that will load data into the event.
-     * @param <A>             Class of the user supplied argument.
-     * @param <B>             Class of the user supplied argument.
-     * @param <C>             Class of the user supplied argument.
-     * @param arg0            The first argument to load into the event
-     * @param arg1            The second argument to load into the event
-     * @param arg2            The third argument to load into the event
+     * @param <A> Class of the user supplied argument.
+     * @param <B> Class of the user supplied argument.
+     * @param <C> Class of the user supplied argument.
+     * @param arg0 The first argument to load into the event
+     * @param arg1 The second argument to load into the event
+     * @param arg2 The third argument to load into the event
      */
     public <A, B, C> void publishEvent(final EventTranslatorThreeArg<T, A, B, C> eventTranslator, final A arg0, final B arg1, final C arg2) {
         ringBuffer.publishEvent(eventTranslator, arg0, arg1, arg2);
     }
 
     /**
-     * <p>Starts the event processors and returns the fully configured ring buffer.</p>
+     * <p>
+     * Starts the event processors and returns the fully configured ring
+     * buffer.</p>
      *
-     * <p>The ring buffer is set up to prevent overwriting any entry that is yet to
+     * <p>
+     * The ring buffer is set up to prevent overwriting any entry that is yet to
      * be processed by the slowest event processor.</p>
      *
-     * <p>This method must only be called once after all event processors have been added.</p>
+     * <p>
+     * This method must only be called once after all event processors have been
+     * added.</p>
      *
      * @return the configured ring buffer.
      */
@@ -363,7 +421,8 @@ public class Disruptor<T> {
     }
 
     /**
-     * Calls {@link com.lmax.disruptor.EventProcessor#halt()} on all of the event processors created via this disruptor.
+     * Calls {@link com.lmax.disruptor.EventProcessor#halt()} on all of the
+     * event processors created via this disruptor.
      */
     public void halt() {
         for (final ConsumerInfo consumerInfo : consumerRepository) {
@@ -372,12 +431,15 @@ public class Disruptor<T> {
     }
 
     /**
-     * <p>Waits until all events currently in the disruptor have been processed by all event processors
-     * and then halts the processors.  It is critical that publishing to the ring buffer has stopped
-     * before calling this method, otherwise it may never return.</p>
+     * <p>
+     * Waits until all events currently in the disruptor have been processed by
+     * all event processors and then halts the processors. It is critical that
+     * publishing to the ring buffer has stopped before calling this method,
+     * otherwise it may never return.</p>
      *
-     * <p>This method will not shutdown the executor, nor will it await the final termination of the
-     * processor threads.</p>
+     * <p>
+     * This method will not shutdown the executor, nor will it await the final
+     * termination of the processor threads.</p>
      */
     public void shutdown() {
         try {
@@ -388,13 +450,16 @@ public class Disruptor<T> {
     }
 
     /**
-     * <p>Waits until all events currently in the disruptor have been processed by all event processors
-     * and then halts the processors.</p>
+     * <p>
+     * Waits until all events currently in the disruptor have been processed by
+     * all event processors and then halts the processors.</p>
      *
-     * <p>This method will not shutdown the executor, nor will it await the final termination of the
-     * processor threads.</p>
+     * <p>
+     * This method will not shutdown the executor, nor will it await the final
+     * termination of the processor threads.</p>
      *
-     * @param timeout  the amount of time to wait for all events to be processed. <code>-1</code> will give an infinite timeout
+     * @param timeout the amount of time to wait for all events to be processed.
+     * <code>-1</code> will give an infinite timeout
      * @param timeUnit the unit the timeOut is specified in
      * @throws TimeoutException if a timeout occurs before shutdown completes.
      */
@@ -410,8 +475,9 @@ public class Disruptor<T> {
     }
 
     /**
-     * The {@link RingBuffer} used by this Disruptor.  This is useful for creating custom
-     * event processors if the behaviour of {@link BatchEventProcessor} is not suitable.
+     * The {@link RingBuffer} used by this Disruptor. This is useful for
+     * creating custom event processors if the behaviour of
+     * {@link BatchEventProcessor} is not suitable.
      *
      * @return the ring buffer used by this Disruptor.
      */
@@ -450,8 +516,8 @@ public class Disruptor<T> {
     }
 
     /**
-     * Get the {@link SequenceBarrier} used by a specific handler. Note that the {@link SequenceBarrier}
-     * may be shared by multiple event handlers.
+     * Get the {@link SequenceBarrier} used by a specific handler. Note that the
+     * {@link SequenceBarrier} may be shared by multiple event handlers.
      *
      * @param handler the handler to get the barrier for.
      * @return the SequenceBarrier used by <i>handler</i>.
@@ -488,14 +554,14 @@ public class Disruptor<T> {
             final EventHandler<? super T>[] eventHandlers) {
         checkNotStarted();
 
-        final Sequence[]      processorSequences = new Sequence[eventHandlers.length];
-        final SequenceBarrier barrier            = ringBuffer.newBarrier(barrierSequences);
+        final Sequence[] processorSequences = new Sequence[eventHandlers.length];
+        final SequenceBarrier barrier = ringBuffer.newBarrier(barrierSequences);
 
         for (int i = 0, eventHandlersLength = eventHandlers.length; i < eventHandlersLength; i++) {
             final EventHandler<? super T> eventHandler = eventHandlers[i];
 
-            final BatchEventProcessor<T> batchEventProcessor =
-                    new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
+            final BatchEventProcessor<T> batchEventProcessor
+                                         = new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
 
             if (exceptionHandler != null) {
                 batchEventProcessor.setExceptionHandler(exceptionHandler);
@@ -533,8 +599,7 @@ public class Disruptor<T> {
     EventHandlerGroup<T> createWorkerPool(
             final Sequence[] barrierSequences, final WorkHandler<? super T>[] workHandlers) {
         final SequenceBarrier sequenceBarrier = ringBuffer.newBarrier(barrierSequences);
-        final WorkerPool<T>   workerPool      = new WorkerPool<>(ringBuffer, sequenceBarrier, exceptionHandler, workHandlers);
-
+        final WorkerPool<T> workerPool = new WorkerPool<>(ringBuffer, sequenceBarrier, exceptionHandler, workHandlers);
 
         consumerRepository.add(workerPool, sequenceBarrier);
 
@@ -559,10 +624,10 @@ public class Disruptor<T> {
 
     @Override
     public String toString() {
-        return "Disruptor{" +
-               "ringBuffer=" + ringBuffer +
-               ", started=" + started +
-               ", executor=" + executor +
-               '}';
+        return "Disruptor{"
+               + "ringBuffer=" + ringBuffer
+               + ", started=" + started
+               + ", executor=" + executor
+               + '}';
     }
 }

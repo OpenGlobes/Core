@@ -27,12 +27,12 @@ import java.time.ZonedDateTime;
  */
 public class WorkdayTime implements Serializable {
 
-    private Integer       dayRank;
-    private LocalTime     fromTime;
+    private Integer dayRank;
+    private LocalTime fromTime;
     private ZonedDateTime timestamp;
-    private LocalTime     toTime;
-    private DayOfWeek     dayOfWeek;
-    private Long          workdayTimeId;
+    private LocalTime toTime;
+    private DayOfWeek dayOfWeek;
+    private Long workdayTimeId;
 
     public WorkdayTime() {
     }

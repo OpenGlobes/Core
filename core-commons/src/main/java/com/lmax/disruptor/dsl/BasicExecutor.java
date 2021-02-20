@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
 public class BasicExecutor implements Executor {
+
     private final ThreadFactory factory;
     private final Queue<Thread> threads = new ConcurrentLinkedQueue<>();
 
@@ -30,9 +31,9 @@ public class BasicExecutor implements Executor {
 
     @Override
     public String toString() {
-        return "BasicExecutor{" +
-               "threads=" + dumpThreadInfo() +
-               '}';
+        return "BasicExecutor{"
+               + "threads=" + dumpThreadInfo()
+               + '}';
     }
 
     private String dumpThreadInfo() {

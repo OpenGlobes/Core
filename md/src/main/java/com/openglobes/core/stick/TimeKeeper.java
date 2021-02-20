@@ -34,8 +34,8 @@ import java.util.Objects;
  */
 public class TimeKeeper implements ITimeKeeper {
 
-    final         Long              holidayTimeSetId;
-    final         Long              workdayTimeSetId;
+    final Long holidayTimeSetId;
+    final Long workdayTimeSetId;
     private final List<HolidayTime> holidays;
     private final List<WorkdayTime> workdays;
 
@@ -45,8 +45,8 @@ public class TimeKeeper implements ITimeKeeper {
                        Collection<HolidayTime> holidays) {
         this.holidayTimeSetId = holidayTimeSetId;
         this.workdayTimeSetId = workdayTimeSetId;
-        this.holidays         = new LinkedList<>(holidays);
-        this.workdays         = new LinkedList<>(workday);
+        this.holidays = new LinkedList<>(holidays);
+        this.workdays = new LinkedList<>(workday);
         setup();
     }
 
@@ -144,13 +144,5 @@ public class TimeKeeper implements ITimeKeeper {
     protected boolean isWorkEnd(ZonedDateTime now) {
         return now.toLocalTime().compareTo(workdays.get(workdays.size() - 1).getToTime()) == 0;
     }
-
-
-
-
-
-
-
-
 
 }

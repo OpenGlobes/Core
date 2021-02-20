@@ -28,19 +28,19 @@ import java.time.ZonedDateTime;
  */
 public class Request implements Serializable {
 
-    private Integer       action;
-    private Integer       direction;
-    private String        exchangeId;
-    private String        instrumentId;
-    private Integer       offset;
-    private Long          orderId;
-    private Double        price;
-    private Long          quantity;
-    private Long          requestId;
-    private String        signature;
-    private String        tag;
-    private Integer       traderId;
-    private LocalDate     tradingDay;
+    private Integer action;
+    private Integer direction;
+    private String exchangeId;
+    private String instrumentId;
+    private Integer offset;
+    private Long orderId;
+    private Double price;
+    private Long quantity;
+    private Long requestId;
+    private String signature;
+    private String tag;
+    private Integer traderId;
+    private LocalDate tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public Request() {

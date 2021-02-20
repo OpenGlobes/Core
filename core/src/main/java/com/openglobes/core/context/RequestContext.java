@@ -30,12 +30,12 @@ import java.util.Objects;
  */
 public class RequestContext implements IRequestContext {
 
-    private final ITraderEngine  eg;
+    private final ITraderEngine eg;
     private final ISharedContext shared;
 
     public RequestContext(ITraderEngine engine, ISharedContext context) {
         shared = context;
-        eg     = engine;
+        eg = engine;
     }
 
     @Override

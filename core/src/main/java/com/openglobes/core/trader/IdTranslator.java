@@ -33,15 +33,15 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class IdTranslator {
 
-    private final HashMap<Long, Long>      destDownCounts;
-    private final HashMap<Long, Long>      dests;
-    private final AtomicLong               id = new AtomicLong(0);
+    private final HashMap<Long, Long> destDownCounts;
+    private final HashMap<Long, Long> dests;
+    private final AtomicLong id = new AtomicLong(0);
     private final HashMap<Long, Set<Long>> srcs;
 
     public IdTranslator() {
-        dests          = new HashMap<>(1024);
+        dests = new HashMap<>(1024);
         destDownCounts = new HashMap<>(1024);
-        srcs           = new HashMap<>(1024);
+        srcs = new HashMap<>(1024);
     }
 
     public void clear() {

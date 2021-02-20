@@ -31,8 +31,8 @@ import java.util.Map;
  */
 class Query implements IQuery {
 
-    private final String                    PRIMARY_KEY = "PRIMARY KEY";
-    private final Connection                conn;
+    private final String PRIMARY_KEY = "PRIMARY KEY";
+    private final Connection conn;
     private final Map<String, MetaTable<?>> meta;
 
     Query(Connection connection) {
@@ -124,7 +124,7 @@ class Query implements IQuery {
             throw new NoFieldException(meta.getName());
         } else {
             String sql = "";
-            int    i   = 0;
+            int i = 0;
             while (i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
                 String sqlField = buildFieldWithKey(f,
@@ -257,10 +257,10 @@ class Query implements IQuery {
         if (meta.fields().isEmpty()) {
             throw new NoFieldException(meta.getName());
         }
-        var    sql    = "INSERT INTO " + meta.getName();
+        var sql = "INSERT INTO " + meta.getName();
         String fields = "";
         String values = "";
-        int    i      = -1;
+        int i = -1;
         try {
             while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
@@ -296,9 +296,9 @@ class Query implements IQuery {
                                                  DatabaseMetaData dbMeta) throws SQLException {
         var t = new HashMap<String, Integer>(128);
         var cs = dbMeta.getColumns("",
-                                   "",
-                                   name,
-                                   "%");
+                               "",
+                               name,
+                               "%");
         while (cs.next()) {
             t.put(cs.getString("COLUMN_NAME"),
                   cs.getInt("DATA_TYPE"));
@@ -319,7 +319,7 @@ class Query implements IQuery {
             throw new NoFieldException(meta.getName());
         }
         var sql = "UPDATE " + meta.getName() + " SET ";
-        int i   = -1;
+        int i = -1;
         try {
             while (++i < meta.fields().size() - 1) {
                 var f = meta.fields().get(i);
@@ -396,7 +396,7 @@ class Query implements IQuery {
                           ResultSet rs) throws SQLException,
                                                FieldInjectionException {
         var fd = field.getField();
-        var n  = field.getName();
+        var n = field.getName();
         DbaUtils.enableAccess(fd);
         try {
             switch (field.getType()) {

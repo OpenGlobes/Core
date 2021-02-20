@@ -24,5 +24,6 @@ import com.openglobes.core.dba.IPooledDataSource;
  */
 public interface IMarketDataSource extends AutoCloseable,
                                            IPooledDataSource {
+
     IMarketDataConnection getConnection() throws DataException;
 }

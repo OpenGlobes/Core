@@ -28,15 +28,15 @@ import java.util.List;
 @XmlRootElement(name = "Core")
 public class CoreConfiguration {
 
-    private List<ConnectorConfiguration>  connectors;
+    private List<ConnectorConfiguration> connectors;
     private List<DataSourceConfiguration> dataSources;
-    private List<GatewayConfiguration>    gates;
-    private List<PluginConfiguration>     plugins;
+    private List<GatewayConfiguration> gates;
+    private List<PluginConfiguration> plugins;
 
     public CoreConfiguration() {
-        gates       = new LinkedList<>();
-        plugins     = new LinkedList<>();
-        connectors  = new LinkedList<>();
+        gates = new LinkedList<>();
+        plugins = new LinkedList<>();
+        connectors = new LinkedList<>();
         dataSources = new LinkedList<>();
     }
 

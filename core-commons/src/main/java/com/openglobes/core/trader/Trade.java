@@ -21,26 +21,26 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 /**
- * Reponse for a filled trade corresponding to the {@link Request} denoted
- * by the order ID whose volumn should not exceed the total volumn of the order.
+ * Reponse for a filled trade corresponding to the {@link Request} denoted by
+ * the order ID whose volumn should not exceed the total volumn of the order.
  *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class Trade implements Serializable {
 
-    private Integer       action;
-    private Integer       direction;
-    private String        instrumentId;
-    private Integer       offset;
-    private Long          orderId;
-    private Double        price;
-    private Long          quantity;
-    private String        signature;
+    private Integer action;
+    private Integer direction;
+    private String instrumentId;
+    private Integer offset;
+    private Long orderId;
+    private Double price;
+    private Long quantity;
+    private String signature;
     private ZonedDateTime timestamp;
-    private Long          tradeId;
-    private Integer       traderId;
-    private LocalDate     tradingDay;
+    private Long tradeId;
+    private Integer traderId;
+    private LocalDate tradingDay;
 
     public Trade() {
     }

@@ -45,19 +45,20 @@ import java.util.logging.Logger;
  */
 public class Core implements ICore {
 
-    private final ITraderEngineAlgorithm        algo;
-    private final ITraderEngine                 engine;
-    private final IRequestContext               reqCtx;
-    private final ISharedContext                sharedCtx;
-    private       Collection<IConnectorContext> connectors;
-    private       IDataSourceContext            ds;
-    private       Collection<IGatewayContext>   gates;
-    private       Collection<IPluginContext>    plugins;
+    private final ITraderEngineAlgorithm algo;
+    private final ITraderEngine engine;
+    private final IRequestContext reqCtx;
+    private final ISharedContext sharedCtx;
+    private Collection<IConnectorContext> connectors;
+    private IDataSourceContext ds;
+    private Collection<IGatewayContext> gates;
+    private Collection<IPluginContext> plugins;
+
     public Core() {
         sharedCtx = new SharedContext();
-        engine    = new TraderEngine();
-        reqCtx    = new RequestContext(engine, sharedCtx);
-        algo      = new DefaultTraderEngineAlgorithm();
+        engine = new TraderEngine();
+        reqCtx = new RequestContext(engine, sharedCtx);
+        algo = new DefaultTraderEngineAlgorithm();
     }
 
     public static ICore create() {
@@ -222,8 +223,8 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var conn = ServiceSelector.selectService(IConnector.class,
-                                                         c.getClassCanonicalName(),
-                                                         jars);
+                                                     c.getClassCanonicalName(),
+                                                     jars);
                 installConnector(new ConnectorContext(c,
                                                       conn,
                                                       reqCtx));
@@ -240,8 +241,8 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var d = ServiceSelector.selectService(ITraderDataSource.class,
-                                                      c.getClassCanonicalName(),
-                                                      jars);
+                                                  c.getClassCanonicalName(),
+                                                  jars);
                 installDataSource(new DataSourceContext(c,
                                                         d));
                 break;
@@ -257,8 +258,8 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var gate = ServiceSelector.selectService(ITraderGateway.class,
-                                                         c.getClassCanonicalName(),
-                                                         jars);
+                                                     c.getClassCanonicalName(),
+                                                     jars);
                 installGateway(new GatewayContext(c,
                                                   gate));
             } catch (ServiceNotFoundException ex) {
@@ -293,8 +294,8 @@ public class Core implements ICore {
         for (var c : confs) {
             try {
                 var p = ServiceSelector.selectService(IPlugin.class,
-                                                      c.getClassCanonicalName(),
-                                                      jars);
+                                                  c.getClassCanonicalName(),
+                                                  jars);
                 installPlugin(new PluginContext(c,
                                                 p,
                                                 this));

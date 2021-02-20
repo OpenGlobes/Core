@@ -36,8 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EventSourceTest {
 
-    private final Long    sleepMilli = 100L;
-    private final Integer total      = 100;
+    private final Long sleepMilli = 100L;
+    private final Integer total = 100;
 
     public EventSourceTest() {
     }
@@ -74,8 +74,8 @@ public class EventSourceTest {
         try (EventSource source = new EventSource()) {
             final AtomicLong seq0 = new AtomicLong(0);
             final AtomicLong seq1 = new AtomicLong(0);
-            final var        req  = new SingleEventHandler<Request>();
-            final var        rsp  = new SingleEventHandler<Response>();
+            final var req = new SingleEventHandler<Request>();
+            final var rsp = new SingleEventHandler<Response>();
             try {
                 source.subscribe(Request.class,
                                  req);
@@ -126,9 +126,9 @@ public class EventSourceTest {
     @DisplayName("Multiple producers, single consumer.")
     public void multiProducerSingleConsumer() {
         try (EventSource source = new EventSource()) {
-            final ExecutorService es          = Executors.newCachedThreadPool();
-            final var             req         = new SingleEventHandler<Request>();
-            final Integer         threadCount = 10;
+            final ExecutorService es = Executors.newCachedThreadPool();
+            final var req = new SingleEventHandler<Request>();
+            final Integer threadCount = 10;
             try {
                 source.subscribe(Request.class,
                                  req);
@@ -181,8 +181,8 @@ public class EventSourceTest {
         try (EventSource source = new EventSource()) {
             final AtomicLong seq0 = new AtomicLong(0);
             final AtomicLong seq1 = new AtomicLong(0);
-            final var        req  = new SingleEventHandler<Request>();
-            final var        rsp  = new SingleEventHandler<Response>();
+            final var req = new SingleEventHandler<Request>();
+            final var rsp = new SingleEventHandler<Response>();
             try {
                 source.subscribe(Request.class,
                                  req);
@@ -234,7 +234,7 @@ public class EventSourceTest {
     public void singleProducerSingleConsumer() {
         try (EventSource source = new EventSource()) {
             final AtomicLong sequence = new AtomicLong(0);
-            final var        req      = new SingleEventHandler<Request>();
+            final var req = new SingleEventHandler<Request>();
             try {
                 source.subscribe(Request.class,
                                  req);
@@ -277,7 +277,7 @@ public class EventSourceTest {
 
     private class SingleEventHandler<T> implements IEventHandler<T> {
 
-        private final AtomicInteger           count = new AtomicInteger(0);
+        private final AtomicInteger count = new AtomicInteger(0);
         private final Map<String, AtomicLong> m;
 
         SingleEventHandler() {
@@ -290,22 +290,22 @@ public class EventSourceTest {
 
         @Override
         public void handle(IEvent<T> event) {
-            var    r = event.get();
+            var r = event.get();
             String instrumentId;
-            Long   orderId;
+            Long orderId;
             if (r instanceof Request) {
                 instrumentId = ((Request) r).getInstrumentId();
-                orderId      = ((Request) r).getOrderId();
+                orderId = ((Request) r).getOrderId();
             } else if (r instanceof Response) {
                 instrumentId = ((Response) r).getInstrumentId();
-                orderId      = ((Response) r).getOrderId();
+                orderId = ((Response) r).getOrderId();
             } else {
                 return;
             }
             var v = m.computeIfAbsent(instrumentId,
-                                      k -> {
-                                          return new AtomicLong(0);
-                                      });
+                                  k -> {
+                                      return new AtomicLong(0);
+                                  });
             assertEquals(v.get() + 1,
                          orderId);
             v.set(orderId);

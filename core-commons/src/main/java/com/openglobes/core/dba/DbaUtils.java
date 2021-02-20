@@ -92,9 +92,9 @@ public class DbaUtils {
 
     public static MetaField inspectField(Field f) throws IllegalFieldCharacterException,
                                                          UnsupportedFieldTypeException {
-        MetaField info   = new MetaField();
-        var       names  = split(f.getName());
-        var       prefix = "FIELD_";
+        MetaField info = new MetaField();
+        var names = split(f.getName());
+        var prefix = "FIELD_";
         if (names.size() == 1) {
             info.setName(prefix + names.get(0).toUpperCase());
         } else if (names.size() > 1) {
@@ -112,7 +112,7 @@ public class DbaUtils {
     public static List<MetaField> inspectFields(Class<?> clazz) throws IllegalFieldCharacterException,
                                                                        UnsupportedFieldTypeException {
         var fs = clazz.getDeclaredFields();
-        var r  = new LinkedList<MetaField>();
+        var r = new LinkedList<MetaField>();
         for (var f : fs) {
             var info = inspectField(f);
             if (info != null) {

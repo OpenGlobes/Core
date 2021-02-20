@@ -23,15 +23,17 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Variation of the {@link BlockingWaitStrategy} that attempts to elide conditional wake-ups when
- * the lock is uncontended.  Shows performance improvements on microbenchmarks.  However this
- * wait strategy should be considered experimental as I have not full proved the correctness of
- * the lock elision code.
+ * Variation of the {@link BlockingWaitStrategy} that attempts to elide
+ * conditional wake-ups when the lock is uncontended. Shows performance
+ * improvements on microbenchmarks. However this wait strategy should be
+ * considered experimental as I have not full proved the correctness of the lock
+ * elision code.
  */
 public final class LiteBlockingWaitStrategy implements WaitStrategy {
-    private final Lock          lock                     = new ReentrantLock();
-    private final Condition     processorNotifyCondition = lock.newCondition();
-    private final AtomicBoolean signalNeeded             = new AtomicBoolean(false);
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition processorNotifyCondition = lock.newCondition();
+    private final AtomicBoolean signalNeeded = new AtomicBoolean(false);
 
     @Override
     public long waitFor(long sequence, Sequence cursorSequence, Sequence dependentSequence, SequenceBarrier barrier)
@@ -50,8 +52,7 @@ public final class LiteBlockingWaitStrategy implements WaitStrategy {
 
                     barrier.checkAlert();
                     processorNotifyCondition.await();
-                }
-                while (cursorSequence.get() < sequence);
+                } while (cursorSequence.get() < sequence);
             } finally {
                 lock.unlock();
             }
@@ -79,8 +80,8 @@ public final class LiteBlockingWaitStrategy implements WaitStrategy {
 
     @Override
     public String toString() {
-        return "LiteBlockingWaitStrategy{" +
-               "processorNotifyCondition=" + processorNotifyCondition +
-               '}';
+        return "LiteBlockingWaitStrategy{"
+               + "processorNotifyCondition=" + processorNotifyCondition
+               + '}';
     }
 }

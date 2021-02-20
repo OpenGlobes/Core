@@ -34,13 +34,13 @@ import java.util.logging.Level;
 public abstract class AbstractPooledDataSource implements AutoCloseable,
                                                           IPooledDataSource {
 
-    private static final Cleaner                  cleaner = Cleaner.create();
-    private final        Cleaner.Cleanable        cleanable;
-    private final        Map<Connection, Boolean> free    = new HashMap<>(128);
-    private final        Properties               props;
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
+    private final Map<Connection, Boolean> free = new HashMap<>(128);
+    private final Properties props;
 
     protected AbstractPooledDataSource() {
-        props     = new Properties();
+        props = new Properties();
         cleanable = cleaner.register(this, new CleanAction(free));
     }
 
@@ -101,9 +101,9 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
                     connection.close();
                 } catch (SQLException se) {
                     Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
-                           .log(Level.SEVERE,
-                                se.getMessage() + "(" + se.getErrorCode() + ")",
-                                se);
+                            .log(Level.SEVERE,
+                                 se.getMessage() + "(" + se.getErrorCode() + ")",
+                                 se);
                 } finally {
                     free.remove(connection);
                 }

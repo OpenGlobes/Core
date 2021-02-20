@@ -31,18 +31,18 @@ import java.util.logging.Level;
 public abstract class AbstractPooledConnection implements AutoCloseable,
                                                           IPooledConnection {
 
-    private static final Cleaner           cleaner = Cleaner.create();
-    private final        Cleaner.Cleanable cleanable;
-    private final        Connection        conn;
-    private final        IPooledDataSource src;
-    private              Boolean           exAutoCommit;
+    private static final Cleaner cleaner = Cleaner.create();
+    private final Cleaner.Cleanable cleanable;
+    private final Connection conn;
+    private final IPooledDataSource src;
+    private Boolean exAutoCommit;
 
     public AbstractPooledConnection(Connection connection,
                                     IPooledDataSource source) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(source);
-        conn      = connection;
-        src       = source;
+        conn = connection;
+        src = source;
         cleanable = cleaner.register(this, new CleanAction(conn, src));
     }
 
@@ -97,12 +97,12 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
 
     private static class CleanAction implements Runnable {
 
-        private final Connection        conn;
+        private final Connection conn;
         private final IPooledDataSource src;
 
         CleanAction(Connection connection, IPooledDataSource source) {
             conn = connection;
-            src  = source;
+            src = source;
         }
 
         @Override

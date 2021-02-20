@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Utils {
 
-    private static final AtomicLong AUTO_INC     = new AtomicLong(0);
+    private static final AtomicLong AUTO_INC = new AtomicLong(0);
     private static final AtomicLong EXECUTION_ID = new AtomicLong();
 
     private Utils() {
@@ -39,8 +39,8 @@ public class Utils {
     }
 
     /**
-     * Get current time and round to the closest minute. The seconds
-     * and nano seconds are all zero.
+     * Get current time and round to the closest minute. The seconds and nano
+     * seconds are all zero.
      *
      * @return current rounded time to minute.
      */
@@ -72,9 +72,9 @@ public class Utils {
      * Test now is in the specified time range denoted by the range
      * {@code (from, to]}, which is an exclusive begin to an inclusive end.
      *
-     * @param now       now's time.
+     * @param now now's time.
      * @param rangeFrom exclusive begin of the time rane.
-     * @param rangeTo   inclusive end of the time range.
+     * @param rangeTo inclusive end of the time range.
      * @return {@code true} if the specifed now is in the time range.
      */
     public static boolean inRange(LocalTime now,
@@ -124,19 +124,19 @@ public class Utils {
      * Schedule task to run from the begin of next time when some durations past
      * since the begin of day, and repeats for every duration.
      *
-     * @param task     timer task.
+     * @param task timer task.
      * @param duration duration between two tasks
      * @return timer.
      */
     public static Timer schedulePerDuration(TimerTask task, Duration duration) {
-        var now      = ZonedDateTime.now();
+        var now = ZonedDateTime.now();
         var calendar = Calendar.getInstance();
         /*
          * Move time to next begin, may have fractional seconds of a minute.
          */
         var s = ZonedDateTime.of(now.toLocalDate(),
-                                 LocalTime.of(0, 0),
-                                 now.getZone());
+                             LocalTime.of(0, 0),
+                             now.getZone());
         while (s.isBefore(now)) {
             s = s.plus(duration);
         }

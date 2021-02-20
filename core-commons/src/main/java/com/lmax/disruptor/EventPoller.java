@@ -4,19 +4,20 @@ package com.lmax.disruptor;
  * Experimental poll-based interface for the Disruptor.
  */
 public class EventPoller<T> {
+
     private final DataProvider<T> dataProvider;
-    private final Sequencer       sequencer;
-    private final Sequence        sequence;
-    private final Sequence        gatingSequence;
+    private final Sequencer sequencer;
+    private final Sequence sequence;
+    private final Sequence gatingSequence;
 
     public EventPoller(
             final DataProvider<T> dataProvider,
             final Sequencer sequencer,
             final Sequence sequence,
             final Sequence gatingSequence) {
-        this.dataProvider   = dataProvider;
-        this.sequencer      = sequencer;
-        this.sequence       = sequence;
+        this.dataProvider = dataProvider;
+        this.sequencer = sequencer;
+        this.sequence = sequence;
         this.gatingSequence = gatingSequence;
     }
 
@@ -39,23 +40,22 @@ public class EventPoller<T> {
     }
 
     public PollState poll(final Handler<T> eventHandler) throws Exception {
-        final long currentSequence   = sequence.get();
-        long       nextSequence      = currentSequence + 1;
+        final long currentSequence = sequence.get();
+        long nextSequence = currentSequence + 1;
         final long availableSequence = sequencer.getHighestPublishedSequence(nextSequence, gatingSequence.get());
 
         if (nextSequence <= availableSequence) {
             boolean processNextEvent;
-            long    processedSequence = currentSequence;
+            long processedSequence = currentSequence;
 
             try {
                 do {
                     final T event = dataProvider.get(nextSequence);
-                    processNextEvent  = eventHandler.onEvent(event, nextSequence, nextSequence == availableSequence);
+                    processNextEvent = eventHandler.onEvent(event, nextSequence, nextSequence == availableSequence);
                     processedSequence = nextSequence;
                     nextSequence++;
 
-                }
-                while (nextSequence <= availableSequence & processNextEvent);
+                } while (nextSequence <= availableSequence & processNextEvent);
             } finally {
                 sequence.set(processedSequence);
             }
@@ -77,6 +77,7 @@ public class EventPoller<T> {
     }
 
     public interface Handler<T> {
+
         boolean onEvent(T event, long sequence, boolean endOfBatch) throws Exception;
     }
 }

@@ -36,17 +36,18 @@ import java.util.concurrent.atomic.AtomicLong;
 public class StickEngine implements IStickEngine, AutoCloseable {
 
     private final Map<String, IStickBuilder> builders;
-    private final Cleaner.Cleanable          cleanable;
-    private final Cleaner                    cleaner = Cleaner.create();
-    private final IEventSource               evt;
-    private final AtomicLong                 sid;
-    private final IMarketDataSource          src;
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
+    private final IEventSource evt;
+    private final AtomicLong sid;
+    private final IMarketDataSource src;
+
     private StickEngine(IMarketDataSource source) throws StickException,
                                                          DataException {
-        evt       = new EventSource();
-        src       = source;
-        builders  = new ConcurrentHashMap<>(512);
-        sid       = new AtomicLong(getInitStickId());
+        evt = new EventSource();
+        src = source;
+        builders = new ConcurrentHashMap<>(512);
+        sid = new AtomicLong(getInitStickId());
         cleanable = cleaner.register(this,
                                      new CleanAction(evt));
         setup();
@@ -176,9 +177,9 @@ public class StickEngine implements IStickEngine, AutoCloseable {
         try (var conn = src.getConnection()) {
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
-                                                 k -> {
-                                                     return new StickBuilder(this);
-                                                 });
+                                             k -> {
+                                                 return new StickBuilder(this);
+                                             });
                 b.addMinutes(setting.getMinutes());
             }
             for (var b : builders.values()) {

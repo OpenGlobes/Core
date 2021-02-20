@@ -31,14 +31,14 @@ import java.util.Properties;
 public class PluginContext implements IPluginContext {
 
     private final PluginConfiguration conf;
-    private final ICore               core;
-    private final IPlugin             p;
+    private final ICore core;
+    private final IPlugin p;
 
     public PluginContext(PluginConfiguration configuration,
                          IPlugin plugin,
                          ICore core) {
         this.conf = configuration;
-        this.p    = plugin;
+        this.p = plugin;
         this.core = core;
     }
 

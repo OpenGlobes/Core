@@ -28,18 +28,18 @@ import java.time.ZonedDateTime;
  */
 public class Instrument implements Serializable {
 
-    private Double        commissionCloseYdRatio;
-    private Double        commissionCloseTodayRatio;
-    private Double        commissionOpenRatio;
-    private Integer       commissionType;
-    private LocalDate     endDate;
-    private String        exchangeId;
-    private String        instrumentId;
-    private Double        marginRatio;
-    private Integer       marginType;
-    private Long          multiple;
-    private Double        priceTick;
-    private LocalDate     startDate;
+    private Double commissionCloseYdRatio;
+    private Double commissionCloseTodayRatio;
+    private Double commissionOpenRatio;
+    private Integer commissionType;
+    private LocalDate endDate;
+    private String exchangeId;
+    private String instrumentId;
+    private Double marginRatio;
+    private Integer marginType;
+    private Long multiple;
+    private Double priceTick;
+    private LocalDate startDate;
     private ZonedDateTime timestamp;
 
     public Instrument() {

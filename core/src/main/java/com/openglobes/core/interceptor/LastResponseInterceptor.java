@@ -39,8 +39,8 @@ public class LastResponseInterceptor extends AbstractResponseInterceptor<Respons
     public InterceptOperation onResponse(Response response, IInterceptorChain stack) {
         try {
             ctx.getSessionCorrelator()
-               .getSessionByOrderId(response.getOrderId())
-               .respond(response);
+                    .getSessionByOrderId(response.getOrderId())
+                    .respond(response);
         } catch (SessionException ex) {
             Loggers.getLogger(LastResponseInterceptor.class.getCanonicalName()).log(Level.SEVERE,
                                                                                     ex.toString(),

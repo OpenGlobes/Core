@@ -27,6 +27,7 @@ import java.security.PrivilegedExceptionAction;
  * Set of common functions used by the Disruptor
  */
 public final class Util {
+
     private static final Unsafe THE_UNSAFE;
 
     static {
@@ -57,23 +58,26 @@ public final class Util {
     }
 
     /**
-     * Get the minimum sequence from an array of {@link com.lmax.disruptor.Sequence}s.
+     * Get the minimum sequence from an array of
+     * {@link com.lmax.disruptor.Sequence}s.
      *
      * @param sequences to compare.
-     * @return the minimum sequence found or Long.MAX_VALUE if the array is empty.
+     * @return the minimum sequence found or Long.MAX_VALUE if the array is
+     * empty.
      */
     public static long getMinimumSequence(final Sequence[] sequences) {
         return getMinimumSequence(sequences, Long.MAX_VALUE);
     }
 
     /**
-     * Get the minimum sequence from an array of {@link com.lmax.disruptor.Sequence}s.
+     * Get the minimum sequence from an array of
+     * {@link com.lmax.disruptor.Sequence}s.
      *
      * @param sequences to compare.
-     * @param minimum   an initial default minimum.  If the array is empty this value will be
-     *                  returned.
-     * @return the smaller of minimum sequence value found in {@code sequences} and {@code minimum};
-     * {@code minimum} if {@code sequences} is empty
+     * @param minimum an initial default minimum. If the array is empty this
+     * value will be returned.
+     * @return the smaller of minimum sequence value found in {@code sequences}
+     * and {@code minimum}; {@code minimum} if {@code sequences} is empty
      */
     public static long getMinimumSequence(final Sequence[] sequences, long minimum) {
         for (int i = 0, n = sequences.length; i < n; i++) {
@@ -100,8 +104,8 @@ public final class Util {
     }
 
     /**
-     * Get a handle on the Unsafe instance, used for accessing low-level concurrency
-     * and memory constructs.
+     * Get a handle on the Unsafe instance, used for accessing low-level
+     * concurrency and memory constructs.
      *
      * @return The Unsafe
      */
@@ -110,8 +114,8 @@ public final class Util {
     }
 
     /**
-     * Calculate the log base 2 of the supplied integer, essentially reports the location
-     * of the highest bit.
+     * Calculate the log base 2 of the supplied integer, essentially reports the
+     * location of the highest bit.
      *
      * @param i Value to calculate log2 for.
      * @return The log2 value

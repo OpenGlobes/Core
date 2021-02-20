@@ -28,20 +28,20 @@ import java.time.ZonedDateTime;
  */
 public class Order implements Serializable {
 
-    private Double        amount;
+    private Double amount;
     private ZonedDateTime deleteTimestamp;
-    private Boolean       deleted;
-    private Integer       direction;
+    private Boolean deleted;
+    private Integer direction;
     private ZonedDateTime insertTimestamp;
-    private String        instrumentId;
-    private Integer       offset;
-    private Long          orderId;
-    private Double        price;
-    private Long          quantity;
-    private Integer       status;
-    private Long          tradedVolumn;
-    private Integer       traderId;
-    private LocalDate     tradingDay;
+    private String instrumentId;
+    private Integer offset;
+    private Long orderId;
+    private Double price;
+    private Long quantity;
+    private Integer status;
+    private Long tradedVolumn;
+    private Integer traderId;
+    private LocalDate tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public Order() {

@@ -27,13 +27,14 @@ import java.util.List;
 public class MetaTable<T> {
 
     private final List<MetaField> fields;
-    private final String          name;
-    private final Class<T>        type;
+    private final String name;
+    private final Class<T> type;
+
     private MetaTable(Class<T> clazz) throws IllegalFieldCharacterException,
                                              UnsupportedFieldTypeException {
-        type   = clazz;
+        type = clazz;
         fields = new LinkedList<>();
-        name   = buildTableName(clazz.getSimpleName());
+        name = buildTableName(clazz.getSimpleName());
         parseFields(type);
     }
 

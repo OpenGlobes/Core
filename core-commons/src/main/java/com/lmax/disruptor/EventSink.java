@@ -1,22 +1,21 @@
 package com.lmax.disruptor;
 
 public interface EventSink<E> {
+
     /**
-     * Publishes an event to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.
+     * Publishes an event to the ring buffer. It handles claiming the next
+     * sequence, getting the current (uninitialised) event from the ring buffer
+     * and publishing the claimed sequence after translation.
      *
      * @param translator The user specified translation for the event
      */
     void publishEvent(EventTranslator<E> translator);
 
     /**
-     * Attempts to publish an event to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.  Will return false if specified capacity
-     * was not available.
+     * Attempts to publish an event to the ring buffer. It handles claiming the
+     * next sequence, getting the current (uninitialised) event from the ring
+     * buffer and publishing the claimed sequence after translation. Will return
+     * false if specified capacity was not available.
      *
      * @param translator The user specified translation for the event
      * @return true if the value was published, false if there was insufficient
@@ -27,9 +26,9 @@ public interface EventSink<E> {
     /**
      * Allows one user supplied argument.
      *
-     * @param <A>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
+     * @param arg0 A user supplied argument.
      * @see #publishEvent(EventTranslator)
      */
     <A> void publishEvent(EventTranslatorOneArg<E, A> translator, A arg0);
@@ -37,9 +36,9 @@ public interface EventSink<E> {
     /**
      * Allows one user supplied argument.
      *
-     * @param <A>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
+     * @param arg0 A user supplied argument.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvent(EventTranslator)
@@ -49,11 +48,11 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
-     * @param arg1       A user supplied argument.
+     * @param arg0 A user supplied argument.
+     * @param arg1 A user supplied argument.
      * @see #publishEvent(EventTranslator)
      */
     <A, B> void publishEvent(EventTranslatorTwoArg<E, A, B> translator, A arg0, B arg1);
@@ -61,11 +60,11 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
-     * @param arg1       A user supplied argument.
+     * @param arg0 A user supplied argument.
+     * @param arg1 A user supplied argument.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvent(EventTranslator)
@@ -75,13 +74,13 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
-     * @param <C>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
-     * @param arg1       A user supplied argument.
-     * @param arg2       A user supplied argument.
+     * @param arg0 A user supplied argument.
+     * @param arg1 A user supplied argument.
+     * @param arg2 A user supplied argument.
      * @see #publishEvent(EventTranslator)
      */
     <A, B, C> void publishEvent(EventTranslatorThreeArg<E, A, B, C> translator, A arg0, B arg1, C arg2);
@@ -89,13 +88,13 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
-     * @param <C>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
-     * @param arg1       A user supplied argument.
-     * @param arg2       A user supplied argument.
+     * @param arg0 A user supplied argument.
+     * @param arg1 A user supplied argument.
+     * @param arg2 A user supplied argument.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvent(EventTranslator)
@@ -106,7 +105,7 @@ public interface EventSink<E> {
      * Allows a variable number of user supplied arguments
      *
      * @param translator The user specified translation for the event
-     * @param args       User supplied arguments.
+     * @param args User supplied arguments.
      * @see #publishEvent(EventTranslator)
      */
     void publishEvent(EventTranslatorVararg<E> translator, Object... args);
@@ -115,7 +114,7 @@ public interface EventSink<E> {
      * Allows a variable number of user supplied arguments
      *
      * @param translator The user specified translation for the event
-     * @param args       User supplied arguments.
+     * @param args User supplied arguments.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvent(EventTranslator)
@@ -123,43 +122,45 @@ public interface EventSink<E> {
     boolean tryPublishEvent(EventTranslatorVararg<E> translator, Object... args);
 
     /**
-     * <p>Publishes multiple events to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.</p>
+     * <p>
+     * Publishes multiple events to the ring buffer. It handles claiming the
+     * next sequence, getting the current (uninitialised) event from the ring
+     * buffer and publishing the claimed sequence after translation.</p>
      *
-     * <p>With this call the data that is to be inserted into the ring
-     * buffer will be a field (either explicitly or captured anonymously),
-     * therefore this call will require an instance of the translator
-     * for each value that is to be inserted into the ring buffer.</p>
+     * <p>
+     * With this call the data that is to be inserted into the ring buffer will
+     * be a field (either explicitly or captured anonymously), therefore this
+     * call will require an instance of the translator for each value that is to
+     * be inserted into the ring buffer.</p>
      *
      * @param translators The user specified translation for each event
      */
     void publishEvents(EventTranslator<E>[] translators);
 
     /**
-     * <p>Publishes multiple events to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.</p>
+     * <p>
+     * Publishes multiple events to the ring buffer. It handles claiming the
+     * next sequence, getting the current (uninitialised) event from the ring
+     * buffer and publishing the claimed sequence after translation.</p>
      *
-     * <p>With this call the data that is to be inserted into the ring
-     * buffer will be a field (either explicitly or captured anonymously),
-     * therefore this call will require an instance of the translator
-     * for each value that is to be inserted into the ring buffer.</p>
+     * <p>
+     * With this call the data that is to be inserted into the ring buffer will
+     * be a field (either explicitly or captured anonymously), therefore this
+     * call will require an instance of the translator for each value that is to
+     * be inserted into the ring buffer.</p>
      *
-     * @param translators   The user specified translation for each event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch
+     * @param translators The user specified translation for each event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch
      */
     void publishEvents(EventTranslator<E>[] translators, int batchStartsAt, int batchSize);
 
     /**
-     * Attempts to publish multiple events to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.  Will return false if specified capacity
-     * was not available.
+     * Attempts to publish multiple events to the ring buffer. It handles
+     * claiming the next sequence, getting the current (uninitialised) event
+     * from the ring buffer and publishing the claimed sequence after
+     * translation. Will return false if specified capacity was not available.
      *
      * @param translators The user specified translation for the event
      * @return true if the value was published, false if there was insufficient
@@ -168,26 +169,26 @@ public interface EventSink<E> {
     boolean tryPublishEvents(EventTranslator<E>[] translators);
 
     /**
-     * Attempts to publish multiple events to the ring buffer.  It handles
-     * claiming the next sequence, getting the current (uninitialised)
-     * event from the ring buffer and publishing the claimed sequence
-     * after translation.  Will return false if specified capacity
-     * was not available.
+     * Attempts to publish multiple events to the ring buffer. It handles
+     * claiming the next sequence, getting the current (uninitialised) event
+     * from the ring buffer and publishing the claimed sequence after
+     * translation. Will return false if specified capacity was not available.
      *
-     * @param translators   The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch
-     * @return true if all the values were published, false if there was insufficient
-     * capacity.
+     * @param translators The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch
+     * @return true if all the values were published, false if there was
+     * insufficient capacity.
      */
     boolean tryPublishEvents(EventTranslator<E>[] translators, int batchStartsAt, int batchSize);
 
     /**
      * Allows one user supplied argument per event.
      *
-     * @param <A>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       A user supplied argument.
+     * @param arg0 A user supplied argument.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A> void publishEvents(EventTranslatorOneArg<E, A> translator, A[] arg0);
@@ -195,11 +196,12 @@ public interface EventSink<E> {
     /**
      * Allows one user supplied argument per event.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param translator    The user specified translation for each event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch
-     * @param arg0          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param translator The user specified translation for each event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch
+     * @param arg0 An array of user supplied arguments, one element per event.
      * @see #publishEvents(EventTranslator[])
      */
     <A> void publishEvents(EventTranslatorOneArg<E, A> translator, int batchStartsAt, int batchSize, A[] arg0);
@@ -207,9 +209,9 @@ public interface EventSink<E> {
     /**
      * Allows one user supplied argument.
      *
-     * @param <A>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
      * @param translator The user specified translation for each event
-     * @param arg0       An array of user supplied arguments, one element per event.
+     * @param arg0 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvents(com.lmax.disruptor.EventTranslator[])
@@ -219,11 +221,12 @@ public interface EventSink<E> {
     /**
      * Allows one user supplied argument.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param translator    The user specified translation for each event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch
-     * @param arg0          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param translator The user specified translation for each event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch
+     * @param arg0 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvents(EventTranslator[])
@@ -233,11 +236,11 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       An array of user supplied arguments, one element per event.
-     * @param arg1       An array of user supplied arguments, one element per event.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B> void publishEvents(EventTranslatorTwoArg<E, A, B> translator, A[] arg0, B[] arg1);
@@ -245,13 +248,14 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param <B>           Class of the user supplied argument
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch.
-     * @param arg0          An array of user supplied arguments, one element per event.
-     * @param arg1          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
      * @see #publishEvents(EventTranslator[])
      */
     <A, B> void publishEvents(
@@ -261,11 +265,11 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       An array of user supplied arguments, one element per event.
-     * @param arg1       An array of user supplied arguments, one element per event.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvents(com.lmax.disruptor.EventTranslator[])
@@ -275,13 +279,14 @@ public interface EventSink<E> {
     /**
      * Allows two user supplied arguments per event.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param <B>           Class of the user supplied argument
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch.
-     * @param arg0          An array of user supplied arguments, one element per event.
-     * @param arg1          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #tryPublishEvents(EventTranslator[])
@@ -293,13 +298,13 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
-     * @param <C>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       An array of user supplied arguments, one element per event.
-     * @param arg1       An array of user supplied arguments, one element per event.
-     * @param arg2       An array of user supplied arguments, one element per event.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
+     * @param arg2 An array of user supplied arguments, one element per event.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B, C> void publishEvents(EventTranslatorThreeArg<E, A, B, C> translator, A[] arg0, B[] arg1, C[] arg2);
@@ -307,15 +312,16 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param <B>           Class of the user supplied argument
-     * @param <C>           Class of the user supplied argument
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The number of elements in the batch.
-     * @param arg0          An array of user supplied arguments, one element per event.
-     * @param arg1          An array of user supplied arguments, one element per event.
-     * @param arg2          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The number of elements in the batch.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
+     * @param arg2 An array of user supplied arguments, one element per event.
      * @see #publishEvents(EventTranslator[])
      */
     <A, B, C> void publishEvents(
@@ -325,13 +331,13 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A>        Class of the user supplied argument
-     * @param <B>        Class of the user supplied argument
-     * @param <C>        Class of the user supplied argument
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
      * @param translator The user specified translation for the event
-     * @param arg0       An array of user supplied arguments, one element per event.
-     * @param arg1       An array of user supplied arguments, one element per event.
-     * @param arg2       An array of user supplied arguments, one element per event.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
+     * @param arg2 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
@@ -341,15 +347,16 @@ public interface EventSink<E> {
     /**
      * Allows three user supplied arguments per event.
      *
-     * @param <A>           Class of the user supplied argument
-     * @param <B>           Class of the user supplied argument
-     * @param <C>           Class of the user supplied argument
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch.
-     * @param arg0          An array of user supplied arguments, one element per event.
-     * @param arg1          An array of user supplied arguments, one element per event.
-     * @param arg2          An array of user supplied arguments, one element per event.
+     * @param <A> Class of the user supplied argument
+     * @param <B> Class of the user supplied argument
+     * @param <C> Class of the user supplied argument
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch.
+     * @param arg0 An array of user supplied arguments, one element per event.
+     * @param arg1 An array of user supplied arguments, one element per event.
+     * @param arg2 An array of user supplied arguments, one element per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvents(EventTranslator[])
@@ -362,7 +369,7 @@ public interface EventSink<E> {
      * Allows a variable number of user supplied arguments per event.
      *
      * @param translator The user specified translation for the event
-     * @param args       User supplied arguments, one Object[] per event.
+     * @param args User supplied arguments, one Object[] per event.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     void publishEvents(EventTranslatorVararg<E> translator, Object[]... args);
@@ -370,10 +377,11 @@ public interface EventSink<E> {
     /**
      * Allows a variable number of user supplied arguments per event.
      *
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch
-     * @param args          User supplied arguments, one Object[] per event.
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch
+     * @param args User supplied arguments, one Object[] per event.
      * @see #publishEvents(EventTranslator[])
      */
     void publishEvents(EventTranslatorVararg<E> translator, int batchStartsAt, int batchSize, Object[]... args);
@@ -382,7 +390,7 @@ public interface EventSink<E> {
      * Allows a variable number of user supplied arguments per event.
      *
      * @param translator The user specified translation for the event
-     * @param args       User supplied arguments, one Object[] per event.
+     * @param args User supplied arguments, one Object[] per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
@@ -392,10 +400,11 @@ public interface EventSink<E> {
     /**
      * Allows a variable number of user supplied arguments per event.
      *
-     * @param translator    The user specified translation for the event
-     * @param batchStartsAt The first element of the array which is within the batch.
-     * @param batchSize     The actual size of the batch.
-     * @param args          User supplied arguments, one Object[] per event.
+     * @param translator The user specified translation for the event
+     * @param batchStartsAt The first element of the array which is within the
+     * batch.
+     * @param batchSize The actual size of the batch.
+     * @param args User supplied arguments, one Object[] per event.
      * @return true if the value was published, false if there was insufficient
      * capacity.
      * @see #publishEvents(EventTranslator[])

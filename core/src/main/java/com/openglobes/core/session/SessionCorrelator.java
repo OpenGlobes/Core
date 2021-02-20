@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SessionCorrelator implements ISessionCorrelator {
 
     private final Map<Long, ISession> map = new ConcurrentHashMap<>(128);
-    private final AtomicLong          uId = new AtomicLong(0);
+    private final AtomicLong uId = new AtomicLong(0);
 
     public SessionCorrelator() {
     }

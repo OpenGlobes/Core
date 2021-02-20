@@ -21,20 +21,21 @@ import com.lmax.disruptor.EventProcessor;
 import com.lmax.disruptor.ExceptionHandler;
 
 /**
- * A support class used as part of setting an exception handler for a specific event handler.
- * For example:
+ * A support class used as part of setting an exception handler for a specific
+ * event handler. For example:
  * <pre><code>disruptorWizard.handleExceptionsIn(eventHandler).with(exceptionHandler);</code></pre>
  *
  * @param <T> the type of event being handled.
  */
 public class ExceptionHandlerSetting<T> {
-    private final EventHandler<T>       eventHandler;
+
+    private final EventHandler<T> eventHandler;
     private final ConsumerRepository<T> consumerRepository;
 
     ExceptionHandlerSetting(
             final EventHandler<T> eventHandler,
             final ConsumerRepository<T> consumerRepository) {
-        this.eventHandler       = eventHandler;
+        this.eventHandler = eventHandler;
         this.consumerRepository = consumerRepository;
     }
 
@@ -51,8 +52,8 @@ public class ExceptionHandlerSetting<T> {
             consumerRepository.getBarrierFor(eventHandler).alert();
         } else {
             throw new RuntimeException(
-                    "EventProcessor: " + eventProcessor + " is not a BatchEventProcessor " +
-                    "and does not support exception handlers");
+                    "EventProcessor: " + eventProcessor + " is not a BatchEventProcessor "
+                    + "and does not support exception handlers");
         }
     }
 }

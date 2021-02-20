@@ -25,10 +25,10 @@ import java.time.ZonedDateTime;
  */
 public class InstrumentStickSetting implements Serializable {
 
-    private Integer       days;
-    private String        instrumentId;
-    private Long          instrumentStickSettingId;
-    private Integer       minutes;
+    private Integer days;
+    private String instrumentId;
+    private Long instrumentStickSettingId;
+    private Integer minutes;
     private ZonedDateTime timestamp;
 
     public InstrumentStickSetting() {

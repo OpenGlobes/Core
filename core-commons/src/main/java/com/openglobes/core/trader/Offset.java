@@ -11,12 +11,12 @@ import java.io.Serializable;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class Offset implements Serializable  {
+public class Offset implements Serializable {
 
-    public static final int OPEN        = (0x90);
-    public static final int CLOSE_YD    = (0x91);
+    public static final int OPEN = (0x90);
+    public static final int CLOSE_YD = (0x91);
     public static final int CLOSE_TODAY = (0x92);
-    public static final int CLOSE_AUTO  = (0x93);
+    public static final int CLOSE_AUTO = (0x93);
 
     private Offset() {
     }

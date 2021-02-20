@@ -45,22 +45,22 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                            IInstrumentNotifier,
                                            AutoCloseable {
 
-    private final Cleaner.Cleanable            cleanable;
-    private final Cleaner                      cleaner = Cleaner.create();
-    private final IMarketDataSource            ds;
-    private final IEventSource                 evt;
-    private final Map<String, AtomicInteger>   minCounters;
-    private final Map<String, Integer>         preTypes;
+    private final Cleaner.Cleanable cleanable;
+    private final Cleaner cleaner = Cleaner.create();
+    private final IMarketDataSource ds;
+    private final IEventSource evt;
+    private final Map<String, AtomicInteger> minCounters;
+    private final Map<String, Integer> preTypes;
     private final Map<TimeKeeper, Set<String>> times;
 
     private InstrumentNotifier(IMarketDataSource source) throws DataException {
-        ds          = source;
-        evt         = new EventSource();
-        times       = new HashMap<>(512);
-        preTypes    = new HashMap<>(512);
+        ds = source;
+        evt = new EventSource();
+        times = new HashMap<>(512);
+        preTypes = new HashMap<>(512);
         minCounters = new HashMap<>(512);
-        cleanable   = cleaner.register(this,
-                                       new CleanAction(evt));
+        cleanable = cleaner.register(this,
+                                     new CleanAction(evt));
         setup();
     }
 
@@ -84,11 +84,11 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         instruments.forEach(time -> {
             try (var conn = ds.getConnection()) {
                 var set = times.computeIfAbsent(TimeKeeper.create(time.getWorkdayTimeSetId(),
-                                                                  time.getHolidayTimeSetId(),
-                                                                  conn),
-                                                key -> {
-                                                    return new HashSet<>(12);
-                                                });
+                                                              time.getHolidayTimeSetId(),
+                                                              conn),
+                                            key -> {
+                                                return new HashSet<>(12);
+                                            });
                 set.add(time.getInstrumentId());
             } catch (NoHolidayException | NoWorkdayException | DataException ex) {
                 Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
@@ -131,10 +131,10 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                             keeper,
                             instruments);
                 var type = getType(min.getAlignTime(),
-                                   keeper);
+                               keeper);
                 instruments.forEach(instrumentId -> {
                     var pre = preTypes.getOrDefault(instrumentId,
-                                                    Notices.INSTRUMENT_NO_TRADE);
+                                                Notices.INSTRUMENT_NO_TRADE);
                     if (!Objects.equals(pre, type)) {
                         preTypes.put(instrumentId, type);
                         sendInstrumentNotice(instrumentId,
@@ -173,7 +173,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
             if (keeper.isRegularTrading(now)) {
                 instruments.forEach(instrumentId -> {
                     var c = minCounters.computeIfAbsent(instrumentId,
-                                                        key -> new AtomicInteger(0));
+                                                    key -> new AtomicInteger(0));
                     c.addAndGet(plus);
                 });
             }
@@ -218,7 +218,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         synchronized (minCounters) {
             return minCounters.computeIfAbsent(instrumentId,
                                                key -> new AtomicInteger(1))
-                              .get();
+                    .get();
         }
     }
 

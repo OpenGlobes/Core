@@ -7,14 +7,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Variation of the {@link TimeoutBlockingWaitStrategy} that attempts to elide conditional wake-ups
- * when the lock is uncontended.
+ * Variation of the {@link TimeoutBlockingWaitStrategy} that attempts to elide
+ * conditional wake-ups when the lock is uncontended.
  */
 public class LiteTimeoutBlockingWaitStrategy implements WaitStrategy {
-    private final Lock          lock                     = new ReentrantLock();
-    private final Condition     processorNotifyCondition = lock.newCondition();
-    private final AtomicBoolean signalNeeded             = new AtomicBoolean(false);
-    private final long          timeoutInNanos;
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition processorNotifyCondition = lock.newCondition();
+    private final AtomicBoolean signalNeeded = new AtomicBoolean(false);
+    private final long timeoutInNanos;
 
     public LiteTimeoutBlockingWaitStrategy(final long timeout, final TimeUnit units) {
         timeoutInNanos = units.toNanos(timeout);
@@ -68,8 +69,8 @@ public class LiteTimeoutBlockingWaitStrategy implements WaitStrategy {
 
     @Override
     public String toString() {
-        return "LiteTimeoutBlockingWaitStrategy{" +
-               "processorNotifyCondition=" + processorNotifyCondition +
-               '}';
+        return "LiteTimeoutBlockingWaitStrategy{"
+               + "processorNotifyCondition=" + processorNotifyCondition
+               + '}';
     }
 }

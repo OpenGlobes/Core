@@ -27,12 +27,12 @@ import java.time.ZonedDateTime;
 public class InstrumentMinuteNotice implements Serializable {
 
     private final ZonedDateTime alignTime;
-    private final String        instrumentId;
-    private final Long          instrumentMinuteNoticeId;
-    private final Integer       minuteOfTradingDay;
-    private final Integer       minutes;
+    private final String instrumentId;
+    private final Long instrumentMinuteNoticeId;
+    private final Integer minuteOfTradingDay;
+    private final Integer minutes;
     private final ZonedDateTime timestamp;
-    private final LocalDate     tradingDay;
+    private final LocalDate tradingDay;
 
     public InstrumentMinuteNotice(Long instrumentMinuteNoticeId,
                                   String instrumentId,
@@ -41,13 +41,13 @@ public class InstrumentMinuteNotice implements Serializable {
                                   ZonedDateTime alignTime,
                                   ZonedDateTime timestamp,
                                   LocalDate tradingDay) {
-        this.alignTime                = alignTime;
-        this.instrumentId             = instrumentId;
+        this.alignTime = alignTime;
+        this.instrumentId = instrumentId;
         this.instrumentMinuteNoticeId = instrumentMinuteNoticeId;
-        this.minuteOfTradingDay       = minuteOfTradingDay;
-        this.minutes                  = minutes;
-        this.timestamp                = timestamp;
-        this.tradingDay               = tradingDay;
+        this.minuteOfTradingDay = minuteOfTradingDay;
+        this.minutes = minutes;
+        this.timestamp = timestamp;
+        this.tradingDay = tradingDay;
     }
 
     public ZonedDateTime getAlignTime() {

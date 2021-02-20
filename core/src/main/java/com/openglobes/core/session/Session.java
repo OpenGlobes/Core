@@ -39,15 +39,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class Session implements ISession {
 
-    private final IdMapper         map;
-    private final IRequestContext  req;
+    private final IdMapper map;
+    private final IRequestContext req;
     private final IResponseContext rsp;
-    private       boolean          disposed;
+    private boolean disposed;
 
     Session(IRequestContext request, IResponseContext response) {
-        req      = request;
-        rsp      = response;
-        map      = new IdMapper();
+        req = request;
+        rsp = response;
+        map = new IdMapper();
         disposed = true;
     }
 
@@ -159,11 +159,11 @@ class Session implements ISession {
         try {
             adjuestDestId(request);
             req.getSharedContext().getInterceptorStack()
-               .request(RequestInterceptingContext.class,
-                        new RequestInterceptingContext(request,
-                                                       getInstrument(request.getInstrumentId()),
-                                                       properties,
-                                                       Utils.nextId().intValue()));
+                    .request(RequestInterceptingContext.class,
+                             new RequestInterceptingContext(request,
+                                                            getInstrument(request.getInstrumentId()),
+                                                            properties,
+                                                            Utils.nextId().intValue()));
         } catch (RequestException | InterceptorException ex) {
             throw new ForwardRequestException(ex.getMessage(),
                                               ex);
@@ -188,7 +188,7 @@ class Session implements ISession {
 
         IdMapper() {
             toDest = new ConcurrentHashMap<>(1024);
-            toSrc  = new ConcurrentHashMap<>(1024);
+            toSrc = new ConcurrentHashMap<>(1024);
         }
 
         public void correlate(Long srcId, Long destId) {

@@ -25,8 +25,8 @@ import java.time.ZonedDateTime;
  */
 public class MarketGatewayInfo {
 
-    private LocalDate     actionDay;
-    private LocalDate     tradingDay;
+    private LocalDate actionDay;
+    private LocalDate tradingDay;
     private ZonedDateTime updateTimestamp;
 
     public MarketGatewayInfo() {

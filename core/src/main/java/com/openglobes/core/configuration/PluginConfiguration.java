@@ -28,8 +28,8 @@ import java.util.Map;
 @XmlRootElement(name = "Plugin")
 public class PluginConfiguration {
 
-    private String              classCanonicalName;
-    private String              name;
+    private String classCanonicalName;
+    private String name;
     private Map<String, String> properties;
 
     public PluginConfiguration() {

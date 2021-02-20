@@ -4,6 +4,7 @@ import com.lmax.disruptor.ExceptionHandler;
 import com.lmax.disruptor.FatalExceptionHandler;
 
 public class ExceptionHandlerWrapper<T> implements ExceptionHandler<T> {
+
     private ExceptionHandler<? super T> delegate = new FatalExceptionHandler();
 
     public void switchTo(final ExceptionHandler<? super T> exceptionHandler) {

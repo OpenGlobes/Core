@@ -25,9 +25,9 @@ import java.time.ZonedDateTime;
  */
 public class WorkdayTimeSet implements Serializable {
 
-    private String        name;
+    private String name;
     private ZonedDateTime timestamp;
-    private Long          workdayTimeSetId;
+    private Long workdayTimeSetId;
 
     public WorkdayTimeSet() {
     }

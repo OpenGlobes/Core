@@ -28,19 +28,19 @@ public class ServiceRuntimeStatus extends RuntimeException {
 
     private static final long serialVersionUID = 3452774387640193L;
 
-    private final Integer       code;
-    private final Long          serviceRuntimeStatusId;
+    private final Integer code;
+    private final Long serviceRuntimeStatusId;
     private final ZonedDateTime timestamp = ZonedDateTime.now();
 
     public ServiceRuntimeStatus(Integer code, String msg) {
         super(msg);
         this.serviceRuntimeStatusId = Utils.nextId();
-        this.code                   = code;
+        this.code = code;
     }
 
     public ServiceRuntimeStatus(Integer code, String message, Throwable cause) {
         super(message, cause);
-        this.code                   = code;
+        this.code = code;
         this.serviceRuntimeStatusId = Utils.nextId();
     }
 

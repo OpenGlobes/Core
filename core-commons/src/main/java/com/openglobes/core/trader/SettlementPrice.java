@@ -26,11 +26,11 @@ import java.time.ZonedDateTime;
  */
 public class SettlementPrice implements Serializable {
 
-    private String        instrumentId;
-    private Double        settlementPrice;
-    private Long          settlementPriceId;
+    private String instrumentId;
+    private Double settlementPrice;
+    private Long settlementPriceId;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
+    private LocalDate tradingDay;
 
     public SettlementPrice() {
     }

@@ -20,16 +20,18 @@ import com.lmax.disruptor.*;
 import java.util.*;
 
 /**
- * Provides a repository mechanism to associate {@link EventHandler}s with {@link EventProcessor}s
+ * Provides a repository mechanism to associate {@link EventHandler}s with
+ * {@link EventProcessor}s
  *
  * @param <T> the type of the {@link EventHandler}
  */
 class ConsumerRepository<T> implements Iterable<ConsumerInfo> {
-    private final Map<EventHandler<?>, EventProcessorInfo<T>> eventProcessorInfoByEventHandler =
-            new IdentityHashMap<>();
-    private final Map<Sequence, ConsumerInfo>                 eventProcessorInfoBySequence     =
-            new IdentityHashMap<>();
-    private final Collection<ConsumerInfo>                    consumerInfos                    = new ArrayList<>();
+
+    private final Map<EventHandler<?>, EventProcessorInfo<T>> eventProcessorInfoByEventHandler
+                                                              = new IdentityHashMap<>();
+    private final Map<Sequence, ConsumerInfo> eventProcessorInfoBySequence
+                                              = new IdentityHashMap<>();
+    private final Collection<ConsumerInfo> consumerInfos = new ArrayList<>();
 
     public void add(
             final EventProcessor eventprocessor,

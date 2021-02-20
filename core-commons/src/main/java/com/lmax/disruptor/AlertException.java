@@ -16,12 +16,14 @@
 package com.lmax.disruptor;
 
 /**
- * Used to alert {@link EventProcessor}s waiting at a {@link SequenceBarrier} of status changes.
+ * Used to alert {@link EventProcessor}s waiting at a {@link SequenceBarrier} of
+ * status changes.
  * <p>
  * It does not fill in a stack trace for performance reasons.
  */
 @SuppressWarnings("serial")
 public final class AlertException extends Exception {
+
     /**
      * Pre-allocated exception to avoid garbage generation
      */
@@ -34,7 +36,8 @@ public final class AlertException extends Exception {
     }
 
     /**
-     * Overridden so the stack trace is not filled in for this exception for performance reasons.
+     * Overridden so the stack trace is not filled in for this exception for
+     * performance reasons.
      *
      * @return this instance.
      */

@@ -43,26 +43,26 @@ public class InterceptorChain implements IInterceptorChain {
         return Integer.compare(o1.getPosition(), o2.getPosition());
     };
 
-    private final List<InterceptorContext>          chain;
-    private final Queue<EngineRequestError>         errors;
-    private final ReentrantReadWriteLock            lock;
-    private final Condition                         qCond;
-    private final Lock                              qLock;
+    private final List<InterceptorContext> chain;
+    private final Queue<EngineRequestError> errors;
+    private final ReentrantReadWriteLock lock;
+    private final Condition qCond;
+    private final Lock qLock;
     private final Queue<RequestInterceptingContext> requests;
-    private final Queue<Response>                   responses;
-    private final Queue<Trade>                      trades;
-    private final Worker                            worker;
+    private final Queue<Response> responses;
+    private final Queue<Trade> trades;
+    private final Worker worker;
 
     public InterceptorChain() {
-        qLock     = new ReentrantLock();
-        qCond     = qLock.newCondition();
-        lock      = new ReentrantReadWriteLock();
-        chain     = new LinkedList<>();
-        requests  = new LinkedList<>();
+        qLock = new ReentrantLock();
+        qCond = qLock.newCondition();
+        lock = new ReentrantReadWriteLock();
+        chain = new LinkedList<>();
+        requests = new LinkedList<>();
         responses = new LinkedList<>();
-        trades    = new LinkedList<>();
-        errors    = new LinkedList<>();
-        worker    = new Worker(this);
+        trades = new LinkedList<>();
+        errors = new LinkedList<>();
+        worker = new Worker(this);
     }
 
     @Override
@@ -205,18 +205,18 @@ public class InterceptorChain implements IInterceptorChain {
     private static class InterceptorContext {
 
         private final IInterceptor<?, ?> intc;
-        private final int                pos;
-        private final Class<?>           reqClz;
-        private final Class<?>           rspClz;
+        private final int pos;
+        private final Class<?> reqClz;
+        private final Class<?> rspClz;
 
         InterceptorContext(int pos,
                            Class<?> reqClz,
                            Class<?> rspClz,
                            IInterceptor<?, ?> intc) {
-            this.intc   = intc;
+            this.intc = intc;
             this.reqClz = reqClz;
             this.rspClz = rspClz;
-            this.pos    = pos;
+            this.pos = pos;
         }
 
         public IInterceptor<?, ?> getInterceptor() {
@@ -239,13 +239,13 @@ public class InterceptorChain implements IInterceptorChain {
     private class Worker implements Runnable {
 
         private final IInterceptorChain c;
-        private final ExecutorService   es;
-        private final Future<?>         future;
+        private final ExecutorService es;
+        private final Future<?> future;
 
         Worker(IInterceptorChain chain) {
-            this.c  = chain;
+            this.c = chain;
             this.es = Executors.newCachedThreadPool();
-            future  = es.submit(this);
+            future = es.submit(this);
         }
 
         @Override
@@ -312,8 +312,8 @@ public class InterceptorChain implements IInterceptorChain {
                                         T request,
                                         int timeout,
                                         TimeUnit unit) {
-            var  nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
-            long s0    = System.nanoTime();
+            var nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
+            long s0 = System.nanoTime();
             for (var i = 0; i < chain.size(); ++i) {
                 var interceptor = chain.get(i);
                 if (interceptor.getRequestClass() == clazz) {
@@ -325,9 +325,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                   .log(Level.SEVERE,
-                                        "Interceptor request chaining run out of time({0}ns)",
-                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                    .log(Level.SEVERE,
+                                         "Interceptor request chaining run out of time({0}ns)",
+                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();
@@ -340,8 +340,8 @@ public class InterceptorChain implements IInterceptorChain {
                                          R object,
                                          int timeout,
                                          TimeUnit unit) {
-            var  nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
-            long s0    = System.nanoTime();
+            var nanos = TimeUnit.NANOSECONDS.convert(timeout, unit);
+            long s0 = System.nanoTime();
             for (var i = chain.size() - 1; i >= 0; --i) {
                 var interceptor = chain.get(i);
                 if (interceptor.getResponseClass() == clazz) {
@@ -353,9 +353,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                   .log(Level.SEVERE,
-                                        "Interceptor response chaining run out of time({0}ns)",
-                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                    .log(Level.SEVERE,
+                                         "Interceptor response chaining run out of time({0}ns)",
+                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();

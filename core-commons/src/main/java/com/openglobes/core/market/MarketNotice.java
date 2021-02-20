@@ -26,10 +26,10 @@ import java.time.ZonedDateTime;
  */
 public class MarketNotice implements Serializable {
 
-    private Long          marketNoticeId;
+    private Long marketNoticeId;
     private ZonedDateTime timestamp;
-    private LocalDate     tradingDay;
-    private Integer       type;
+    private LocalDate tradingDay;
+    private Integer type;
 
     public MarketNotice() {
     }

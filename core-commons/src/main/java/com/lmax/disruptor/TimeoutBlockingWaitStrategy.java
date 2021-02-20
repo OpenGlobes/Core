@@ -6,9 +6,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TimeoutBlockingWaitStrategy implements WaitStrategy {
-    private final Lock      lock                     = new ReentrantLock();
+
+    private final Lock lock = new ReentrantLock();
     private final Condition processorNotifyCondition = lock.newCondition();
-    private final long      timeoutInNanos;
+    private final long timeoutInNanos;
 
     public TimeoutBlockingWaitStrategy(final long timeout, final TimeUnit units) {
         timeoutInNanos = units.toNanos(timeout);
@@ -58,8 +59,8 @@ public class TimeoutBlockingWaitStrategy implements WaitStrategy {
 
     @Override
     public String toString() {
-        return "TimeoutBlockingWaitStrategy{" +
-               "processorNotifyCondition=" + processorNotifyCondition +
-               '}';
+        return "TimeoutBlockingWaitStrategy{"
+               + "processorNotifyCondition=" + processorNotifyCondition
+               + '}';
     }
 }

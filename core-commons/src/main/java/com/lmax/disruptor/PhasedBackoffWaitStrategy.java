@@ -18,33 +18,38 @@ package com.lmax.disruptor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>Phased wait strategy for waiting {@link EventProcessor}s on a barrier.</p>
+ * <p>
+ * Phased wait strategy for waiting {@link EventProcessor}s on a barrier.</p>
  *
- * <p>This strategy can be used when throughput and low-latency are not as important as CPU resource.
- * Spins, then yields, then waits using the configured fallback WaitStrategy.</p>
+ * <p>
+ * This strategy can be used when throughput and low-latency are not as
+ * important as CPU resource. Spins, then yields, then waits using the
+ * configured fallback WaitStrategy.</p>
  */
 public final class PhasedBackoffWaitStrategy implements WaitStrategy {
-    private static final int          SPIN_TRIES = 10000;
-    private final        long         spinTimeoutNanos;
-    private final        long         yieldTimeoutNanos;
-    private final        WaitStrategy fallbackStrategy;
+
+    private static final int SPIN_TRIES = 10000;
+    private final long spinTimeoutNanos;
+    private final long yieldTimeoutNanos;
+    private final WaitStrategy fallbackStrategy;
 
     public PhasedBackoffWaitStrategy(
             long spinTimeout,
             long yieldTimeout,
             TimeUnit units,
             WaitStrategy fallbackStrategy) {
-        this.spinTimeoutNanos  = units.toNanos(spinTimeout);
+        this.spinTimeoutNanos = units.toNanos(spinTimeout);
         this.yieldTimeoutNanos = spinTimeoutNanos + units.toNanos(yieldTimeout);
-        this.fallbackStrategy  = fallbackStrategy;
+        this.fallbackStrategy = fallbackStrategy;
     }
 
     /**
-     * Construct {@link PhasedBackoffWaitStrategy} with fallback to {@link BlockingWaitStrategy}
+     * Construct {@link PhasedBackoffWaitStrategy} with fallback to
+     * {@link BlockingWaitStrategy}
      *
-     * @param spinTimeout  The maximum time in to busy spin for.
+     * @param spinTimeout The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units        Time units used for the timeout values.
+     * @param units Time units used for the timeout values.
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLock(
@@ -57,11 +62,12 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
     }
 
     /**
-     * Construct {@link PhasedBackoffWaitStrategy} with fallback to {@link LiteBlockingWaitStrategy}
+     * Construct {@link PhasedBackoffWaitStrategy} with fallback to
+     * {@link LiteBlockingWaitStrategy}
      *
-     * @param spinTimeout  The maximum time in to busy spin for.
+     * @param spinTimeout The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units        Time units used for the timeout values.
+     * @param units Time units used for the timeout values.
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLiteLock(
@@ -74,11 +80,12 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
     }
 
     /**
-     * Construct {@link PhasedBackoffWaitStrategy} with fallback to {@link SleepingWaitStrategy}
+     * Construct {@link PhasedBackoffWaitStrategy} with fallback to
+     * {@link SleepingWaitStrategy}
      *
-     * @param spinTimeout  The maximum time in to busy spin for.
+     * @param spinTimeout The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units        Time units used for the timeout values.
+     * @param units Time units used for the timeout values.
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withSleep(
@@ -95,7 +102,7 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
             throws AlertException, InterruptedException, TimeoutException {
         long availableSequence;
         long startTime = 0;
-        int  counter   = SPIN_TRIES;
+        int counter = SPIN_TRIES;
 
         do {
             if ((availableSequence = dependentSequence.get()) >= sequence) {
@@ -115,8 +122,7 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
                 }
                 counter = SPIN_TRIES;
             }
-        }
-        while (true);
+        } while (true);
     }
 
     @Override

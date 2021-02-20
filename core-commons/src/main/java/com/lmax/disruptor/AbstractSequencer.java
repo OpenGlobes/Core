@@ -21,23 +21,25 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
- * Base class for the various sequencer types (single/multi).  Provides
- * common functionality like the management of gating sequences (add/remove) and
+ * Base class for the various sequencer types (single/multi). Provides common
+ * functionality like the management of gating sequences (add/remove) and
  * ownership of the current cursor.
  */
 public abstract class AbstractSequencer implements Sequencer {
-    private static final AtomicReferenceFieldUpdater<AbstractSequencer, Sequence[]> SEQUENCE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(AbstractSequencer.class, Sequence[].class, "gatingSequences");
 
-    protected final    int          bufferSize;
-    protected final    WaitStrategy waitStrategy;
-    protected final    Sequence     cursor          = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
-    protected volatile Sequence[]   gatingSequences = new Sequence[0];
+    private static final AtomicReferenceFieldUpdater<AbstractSequencer, Sequence[]> SEQUENCE_UPDATER
+                                                                                    = AtomicReferenceFieldUpdater.newUpdater(AbstractSequencer.class, Sequence[].class, "gatingSequences");
+
+    protected final int bufferSize;
+    protected final WaitStrategy waitStrategy;
+    protected final Sequence cursor = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+    protected volatile Sequence[] gatingSequences = new Sequence[0];
 
     /**
      * Create with the specified buffer size and wait strategy.
      *
-     * @param bufferSize   The total number of entries, must be a positive power of 2.
+     * @param bufferSize The total number of entries, must be a positive power
+     * of 2.
      * @param waitStrategy The wait strategy used by this sequencer
      */
     public AbstractSequencer(int bufferSize, WaitStrategy waitStrategy) {
@@ -48,7 +50,7 @@ public abstract class AbstractSequencer implements Sequencer {
             throw new IllegalArgumentException("bufferSize must be a power of 2");
         }
 
-        this.bufferSize   = bufferSize;
+        this.bufferSize = bufferSize;
         this.waitStrategy = waitStrategy;
     }
 
@@ -101,12 +103,13 @@ public abstract class AbstractSequencer implements Sequencer {
     }
 
     /**
-     * Creates an event poller for this sequence that will use the supplied data provider and
-     * gating sequences.
+     * Creates an event poller for this sequence that will use the supplied data
+     * provider and gating sequences.
      *
-     * @param dataProvider    The data source for users of this event poller
+     * @param dataProvider The data source for users of this event poller
      * @param gatingSequences Sequence to be gated on.
-     * @return A poller that will gate on this ring buffer and the supplied sequences.
+     * @return A poller that will gate on this ring buffer and the supplied
+     * sequences.
      */
     @Override
     public <T> EventPoller<T> newPoller(DataProvider<T> dataProvider, Sequence... gatingSequences) {
@@ -115,10 +118,10 @@ public abstract class AbstractSequencer implements Sequencer {
 
     @Override
     public String toString() {
-        return "AbstractSequencer{" +
-               "waitStrategy=" + waitStrategy +
-               ", cursor=" + cursor +
-               ", gatingSequences=" + Arrays.toString(gatingSequences) +
-               '}';
+        return "AbstractSequencer{"
+               + "waitStrategy=" + waitStrategy
+               + ", cursor=" + cursor
+               + ", gatingSequences=" + Arrays.toString(gatingSequences)
+               + '}';
     }
 }

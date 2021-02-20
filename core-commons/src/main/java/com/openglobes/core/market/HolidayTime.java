@@ -25,12 +25,12 @@ import java.time.ZonedDateTime;
  */
 public class HolidayTime implements Serializable {
 
-    private Integer       dayRank;
+    private Integer dayRank;
     private ZonedDateTime fromTime;
-    private Long          holidayTimeId;
+    private Long holidayTimeId;
     private ZonedDateTime timestamp;
     private ZonedDateTime toTime;
-    private Integer       type;
+    private Integer type;
 
     public HolidayTime() {
     }

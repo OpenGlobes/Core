@@ -21,28 +21,34 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * WorkerPool contains a pool of {@link WorkProcessor}s that will consume sequences so jobs can be farmed out across a pool of workers.
- * Each of the {@link WorkProcessor}s manage and calls a {@link WorkHandler} to process the events.
+ * WorkerPool contains a pool of {@link WorkProcessor}s that will consume
+ * sequences so jobs can be farmed out across a pool of workers. Each of the
+ * {@link WorkProcessor}s manage and calls a {@link WorkHandler} to process the
+ * events.
  *
  * @param <T> event to be processed by a pool of workers
  */
 public final class WorkerPool<T> {
-    private final AtomicBoolean      started      = new AtomicBoolean(false);
-    private final Sequence           workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
-    private final RingBuffer<T>      ringBuffer;
+
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final Sequence workSequence = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+    private final RingBuffer<T> ringBuffer;
     // WorkProcessors are created to wrap each of the provided WorkHandlers
     private final WorkProcessor<?>[] workProcessors;
 
     /**
-     * Create a worker pool to enable an array of {@link WorkHandler}s to consume published sequences.
+     * Create a worker pool to enable an array of {@link WorkHandler}s to
+     * consume published sequences.
      * <p>
-     * This option requires a pre-configured {@link RingBuffer} which must have {@link RingBuffer#addGatingSequences(Sequence...)}
-     * called before the work pool is started.
+     * This option requires a pre-configured {@link RingBuffer} which must have
+     * {@link RingBuffer#addGatingSequences(Sequence...)} called before the work
+     * pool is started.
      *
-     * @param ringBuffer       of events to be consumed.
-     * @param sequenceBarrier  on which the workers will depend.
-     * @param exceptionHandler to callback when an error occurs which is not handled by the {@link WorkHandler}s.
-     * @param workHandlers     to distribute the work load across.
+     * @param ringBuffer of events to be consumed.
+     * @param sequenceBarrier on which the workers will depend.
+     * @param exceptionHandler to callback when an error occurs which is not
+     * handled by the {@link WorkHandler}s.
+     * @param workHandlers to distribute the work load across.
      */
     @SafeVarargs
     public WorkerPool(
@@ -65,13 +71,17 @@ public final class WorkerPool<T> {
     }
 
     /**
-     * Construct a work pool with an internal {@link RingBuffer} for convenience.
+     * Construct a work pool with an internal {@link RingBuffer} for
+     * convenience.
      * <p>
-     * This option does not require {@link RingBuffer#addGatingSequences(Sequence...)} to be called before the work pool is started.
+     * This option does not require
+     * {@link RingBuffer#addGatingSequences(Sequence...)} to be called before
+     * the work pool is started.
      *
-     * @param eventFactory     for filling the {@link RingBuffer}
-     * @param exceptionHandler to callback when an error occurs which is not handled by the {@link WorkHandler}s.
-     * @param workHandlers     to distribute the work load across.
+     * @param eventFactory for filling the {@link RingBuffer}
+     * @param exceptionHandler to callback when an error occurs which is not
+     * handled by the {@link WorkHandler}s.
+     * @param workHandlers to distribute the work load across.
      */
     @SafeVarargs
     public WorkerPool(
@@ -79,8 +89,8 @@ public final class WorkerPool<T> {
             final ExceptionHandler<? super T> exceptionHandler,
             final WorkHandler<? super T>... workHandlers) {
         ringBuffer = RingBuffer.createMultiProducer(eventFactory, 1024, new BlockingWaitStrategy());
-        final SequenceBarrier barrier    = ringBuffer.newBarrier();
-        final int             numWorkers = workHandlers.length;
+        final SequenceBarrier barrier = ringBuffer.newBarrier();
+        final int numWorkers = workHandlers.length;
         workProcessors = new WorkProcessor[numWorkers];
 
         for (int i = 0; i < numWorkers; i++) {
@@ -96,9 +106,11 @@ public final class WorkerPool<T> {
     }
 
     /**
-     * Get an array of {@link Sequence}s representing the progress of the workers.
+     * Get an array of {@link Sequence}s representing the progress of the
+     * workers.
      *
-     * @return an array of {@link Sequence}s representing the progress of the workers.
+     * @return an array of {@link Sequence}s representing the progress of the
+     * workers.
      */
     public Sequence[] getWorkerSequences() {
         final Sequence[] sequences = new Sequence[workProcessors.length + 1];
@@ -115,7 +127,8 @@ public final class WorkerPool<T> {
      *
      * @param executor providing threads for running the workers.
      * @return the {@link RingBuffer} used for the work queue.
-     * @throws IllegalStateException if the pool has already been started and not halted yet
+     * @throws IllegalStateException if the pool has already been started and
+     * not halted yet
      */
     public RingBuffer<T> start(final Executor executor) {
         if (!started.compareAndSet(false, true)) {
@@ -134,7 +147,8 @@ public final class WorkerPool<T> {
     }
 
     /**
-     * Wait for the {@link RingBuffer} to drain of published events then halt the workers.
+     * Wait for the {@link RingBuffer} to drain of published events then halt
+     * the workers.
      */
     public void drainAndHalt() {
         Sequence[] workerSequences = getWorkerSequences();

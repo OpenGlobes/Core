@@ -18,7 +18,8 @@ package com.lmax.disruptor.util;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * Access to a ThreadFactory instance. All threads are created with setDaemon(true).
+ * Access to a ThreadFactory instance. All threads are created with
+ * setDaemon(true).
  */
 public enum DaemonThreadFactory implements ThreadFactory {
     INSTANCE;
