@@ -265,12 +265,14 @@ public class TraderEngine implements ITraderEngine {
         callOnStatusChange(this.status);
     }
 
-    private Collection<Contract> checkAssetsClose(Request request, Instrument instrument) throws IllegalQuantityException,
-                                                                                                 QuantityOverflowException,
-                                                                                                 ContractNotFoundException,
-                                                                                                 InvalidRequestOffsetException,
-                                                                                                 InvalidRequestDirectionException,
-                                                                                                 DataAccessException {
+    private Collection<Contract> checkAssetsClose(Request request,
+                                                  Instrument instrument) throws IllegalQuantityException,
+                                                                                QuantityOverflowException,
+                                                                                ContractNotFoundException,
+                                                                                InvalidRequestOffsetException,
+                                                                                InvalidRequestDirectionException,
+                                                                                DataAccessException,
+                                                                                MarginNotFoundException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -286,15 +288,40 @@ public class TraderEngine implements ITraderEngine {
         for (int i = 0; i < request.getQuantity(); ++i) {
             var ctr = cs.get(i);
             r.add(ctr);
-            setFrozenClose(c, ctr);
+            setFrozenClose(c,
+                           ctr,
+                           getMarginByContract(ctr));
         }
         return r;
     }
 
-    private void checkAssetsOpen(Request request, Instrument instrument) throws IllegalQuantityException,
-                                                                                DataAccessException,
-                                                                                MoneyOverflowException,
-                                                                                AlgorithmException {
+    private Margin getMarginByContract(Contract contract) throws DataAccessException,
+                                                                 MarginNotFoundException {
+        Margin m = null;
+        try (ITraderDataConnection conn = ds.getConnection()) {
+            var trade = conn.getTradeById(contract.getTradeId());
+            var margins = conn.getMarginsByOrderId(trade.getOrderId());
+            for (var x : margins) {
+                if (x.getContractId().equals(contract.getContractId())) {
+                    m = x;
+                    break;
+                }
+            }
+            if (m == null) {
+                throw new MarginNotFoundException("Margin not found for contract ID: " + contract.getContractId() + ".");
+            }
+            return m;
+        } catch (DataQueryException | ClassNotFoundException | SQLException ex) {
+            throw new DataAccessException(ex.getMessage(),
+                                    ex);
+        }
+    }
+
+    private void checkAssetsOpen(Request request,
+                                 Instrument instrument) throws IllegalQuantityException,
+                                                               DataAccessException,
+                                                               MoneyOverflowException,
+                                                               AlgorithmException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -514,9 +541,8 @@ public class TraderEngine implements ITraderEngine {
                                               InvalidRequestOffsetException,
                                               InvalidRequestDirectionException,
                                               DeepCopyException,
-                                              SettlementNotFoundException,
-                                              InstrumentNotFoundException,
-                                              AlgorithmException {
+                                              AlgorithmException,
+                                              MarginNotFoundException {
         checkDataSourceAlgorithmNotNull();
         Objects.requireNonNull(instrument);
         /*
@@ -808,7 +834,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void setFrozenClose(double commission,
-                                Contract contract) throws DataAccessException {
+                                Contract contract,
+                                Margin margin) throws DataAccessException {
         ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
@@ -819,6 +846,11 @@ public class TraderEngine implements ITraderEngine {
              */
             contract.setStatus(ContractStatus.CLOSING);
             conn.updateContract(contract);
+            /*
+             * Update margin status to make it frozen.
+             */
+            margin.setStatus(FeeStatus.FORZEN);
+            conn.updateMargin(margin);
             /*
              * Add new commission for the current order, and make it frozen
              * before order is filled.
