@@ -89,6 +89,18 @@ public class Utils {
         }
     }
 
+    public static boolean inRange(ZonedDateTime now,
+                                  ZonedDateTime rangeFrom,
+                                  ZonedDateTime rangeTo) {
+        if (rangeFrom.isBefore(rangeTo)) {
+            return now.isAfter(rangeFrom) && (!now.isAfter(rangeTo));
+        } else if (rangeFrom.isAfter(rangeTo)) {
+            return now.isAfter(rangeFrom) || (!now.isAfter(rangeTo));
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Get incremental ID.
      *

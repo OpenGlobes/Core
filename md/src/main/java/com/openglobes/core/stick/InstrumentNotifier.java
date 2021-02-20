@@ -52,6 +52,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     private final Map<String, AtomicInteger>   minCounters;
     private final Map<String, Integer>         preTypes;
     private final Map<TimeKeeper, Set<String>> times;
+
     private InstrumentNotifier(IMarketDataSource source) throws DataException {
         ds          = source;
         evt         = new EventSource();
@@ -61,6 +62,40 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         cleanable   = cleaner.register(this,
                                        new CleanAction(evt));
         setup();
+    }
+
+    private void setup() throws DataException {
+        Collection<InstrumentTime> instruments = new HashSet<>(1);
+        try (var conn = ds.getConnection()) {
+            instruments = conn.getInstrumentTimes();
+        }
+        setupTimes(instruments);
+        setupCounters(instruments);
+    }
+
+    private void setupCounters(Collection<InstrumentTime> instruments) {
+        instruments.forEach(time -> {
+            minCounters.put(time.getInstrumentId(),
+                            new AtomicInteger(0));
+        });
+    }
+
+    private void setupTimes(Collection<InstrumentTime> instruments) {
+        instruments.forEach(time -> {
+            try (var conn = ds.getConnection()) {
+                var set = times.computeIfAbsent(TimeKeeper.create(time.getWorkdayTimeSetId(),
+                                                                  time.getHolidayTimeSetId(),
+                                                                  conn),
+                                                key -> {
+                                                    return new HashSet<>(12);
+                                                });
+                set.add(time.getInstrumentId());
+            } catch (NoHolidayException | NoWorkdayException | DataException ex) {
+                Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
+                                                                                   ex.toString(),
+                                                                                   ex);
+            }
+        });
     }
 
     public static InstrumentNotifier create(IMarketDataSource source) throws DataException {
@@ -78,11 +113,23 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     }
 
     @Override
+    public void reload() throws DataException {
+        times.clear();
+        try (var conn = ds.getConnection()) {
+            setupTimes(conn.getInstrumentTimes());
+        }
+    }
+
+    @Override
     public void handle(IEvent<MinuteNotice> event) {
         try (var conn = ds.getConnection()) {
             var min = event.get();
             var day = conn.getTradingDay();
             times.forEach((keeper, instruments) -> {
+                counterPlus(1,
+                            event.get().getAlignTime(),
+                            keeper,
+                            instruments);
                 var type = getType(min.getAlignTime(),
                                    keeper);
                 instruments.forEach(instrumentId -> {
@@ -118,22 +165,19 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         }
     }
 
-    @Override
-    public void reload() throws DataException {
-        times.clear();
-        try (var conn = ds.getConnection()) {
-            setupTimes(conn.getInstrumentTimes());
-        }
-    }
-
-    private Integer getMinuteOfTradingDay(String instrumentId) {
+    private void counterPlus(int plus,
+                             ZonedDateTime now,
+                             TimeKeeper keeper,
+                             Set<String> instruments) {
         synchronized (minCounters) {
-            return minCounters.get(instrumentId).incrementAndGet();
+            if (keeper.isRegularTrading(now)) {
+                instruments.forEach(instrumentId -> {
+                    var c = minCounters.computeIfAbsent(instrumentId,
+                                                        key -> new AtomicInteger(0));
+                    c.addAndGet(plus);
+                });
+            }
         }
-    }
-
-    private Integer getMinutes() {
-        return 1;
     }
 
     private Integer getType(ZonedDateTime now,
@@ -142,36 +186,11 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
             return Notices.INSTRUMENT_BEGIN_TRADE;
         } else if (keeper.isEnd(now)) {
             return Notices.INSTRUMENT_END_TRADE;
-        } else if (keeper.isWorking(now)) {
+        } else if (keeper.isTrading(now)) {
             return Notices.INSTRUMENT_TRADE;
         } else {
             return Notices.INSTRUMENT_NO_TRADE;
         }
-    }
-
-    private void setupCounters(Collection<InstrumentTime> instruments) {
-        instruments.forEach(time -> {
-            minCounters.put(time.getInstrumentId(),
-                            new AtomicInteger(0));
-        });
-    }
-
-    private void setupTimes(Collection<InstrumentTime> instruments) {
-        instruments.forEach(time -> {
-            try (var conn = ds.getConnection()) {
-                var set = times.computeIfAbsent(TimeKeeper.create(time.getWorkdayTimeSetId(),
-                                                                  time.getHolidayTimeSetId(),
-                                                                  conn),
-                                                key -> {
-                                                    return new HashSet<>(12);
-                                                });
-                set.add(time.getInstrumentId());
-            } catch (NoHolidayException | NoWorkdayException | DataException ex) {
-                Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
-                                                                                   ex.toString(),
-                                                                                   ex);
-            }
-        });
     }
 
     private void resetEndOfTrade() {
@@ -195,6 +214,18 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                                tradingDay));
     }
 
+    private Integer getMinuteOfTradingDay(String instrumentId) {
+        synchronized (minCounters) {
+            return minCounters.computeIfAbsent(instrumentId,
+                                               key -> new AtomicInteger(1))
+                              .get();
+        }
+    }
+
+    private Integer getMinutes() {
+        return 1;
+    }
+
     private void sendInstrumentNotice(String instrumentId,
                                       Integer type,
                                       MinuteNotice notice,
@@ -206,15 +237,6 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                          notice.getAlignTime(),
                                          ZonedDateTime.now(),
                                          tradingDay));
-    }
-
-    private void setup() throws DataException {
-        Collection<InstrumentTime> instruments = new HashSet<>(1);
-        try (var conn = ds.getConnection()) {
-            instruments = conn.getInstrumentTimes();
-        }
-        setupTimes(instruments);
-        setupCounters(instruments);
     }
 
     private static class CleanAction implements Runnable {

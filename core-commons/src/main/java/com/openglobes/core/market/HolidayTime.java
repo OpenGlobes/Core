@@ -17,7 +17,6 @@
 package com.openglobes.core.market;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -27,13 +26,29 @@ import java.time.ZonedDateTime;
 public class HolidayTime implements Serializable {
 
     private Integer       dayRank;
-    private LocalTime     fromTime;
+    private ZonedDateTime fromTime;
     private Long          holidayTimeId;
     private ZonedDateTime timestamp;
-    private LocalTime     toTime;
+    private ZonedDateTime toTime;
     private Integer       type;
 
     public HolidayTime() {
+    }
+
+    public ZonedDateTime getFromTime() {
+        return fromTime;
+    }
+
+    public void setFromTime(ZonedDateTime fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public ZonedDateTime getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(ZonedDateTime toTime) {
+        this.toTime = toTime;
     }
 
     public Integer getDayRank() {
@@ -42,14 +57,6 @@ public class HolidayTime implements Serializable {
 
     public void setDayRank(Integer dayRank) {
         this.dayRank = dayRank;
-    }
-
-    public LocalTime getFromTime() {
-        return fromTime;
-    }
-
-    public void setFromTime(LocalTime fromTime) {
-        this.fromTime = fromTime;
     }
 
     public Long getHolidayTimeId() {
@@ -66,14 +73,6 @@ public class HolidayTime implements Serializable {
 
     public void setTimestamp(ZonedDateTime timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public LocalTime getToTime() {
-        return toTime;
-    }
-
-    public void setToTime(LocalTime toTime) {
-        this.toTime = toTime;
     }
 
     public Integer getType() {

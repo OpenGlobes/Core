@@ -9,7 +9,6 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +59,7 @@ class UtilsTest {
     @Test
     void inRange() {
         assertThrows(NullPointerException.class, () -> {
-            Utils.inRange(null,
+            Utils.inRange(LocalTime.now(),
                           null,
                           null);
         });

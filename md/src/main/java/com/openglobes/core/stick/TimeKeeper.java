@@ -36,17 +36,29 @@ public class TimeKeeper implements ITimeKeeper {
 
     final         Long              holidayTimeSetId;
     final         Long              workdayTimeSetId;
-    private final List<HolidayTime> holiday;
-    private final List<WorkdayTime> workday;
+    private final List<HolidayTime> holidays;
+    private final List<WorkdayTime> workdays;
+
     private TimeKeeper(Long workdayTimeSetId,
                        Collection<WorkdayTime> workday,
                        Long holidayTimeSetId,
-                       Collection<HolidayTime> holiday) {
+                       Collection<HolidayTime> holidays) {
         this.holidayTimeSetId = holidayTimeSetId;
         this.workdayTimeSetId = workdayTimeSetId;
-        this.holiday          = new LinkedList<>(holiday);
-        this.workday          = new LinkedList<>(workday);
+        this.holidays         = new LinkedList<>(holidays);
+        this.workdays         = new LinkedList<>(workday);
         setup();
+    }
+
+    private void setup() {
+        workdays.sort((WorkdayTime o1, WorkdayTime o2) -> {
+            var r = o1.getDayRank().compareTo(o2.getDayRank());
+            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
+        });
+        holidays.sort((HolidayTime o1, HolidayTime o2) -> {
+            var r = o1.getDayRank().compareTo(o2.getDayRank());
+            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
+        });
     }
 
     public static TimeKeeper create(Long holidayTimeSetId,
@@ -72,6 +84,11 @@ public class TimeKeeper implements ITimeKeeper {
     }
 
     @Override
+    public boolean isBegin(ZonedDateTime now) {
+        return isWorkBegin(now) && (!inHoliday(now));
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -87,13 +104,18 @@ public class TimeKeeper implements ITimeKeeper {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean isTrading(ZonedDateTime now) {
+        return inWorkTime(now) && (!inHoliday(now));
     }
 
     @Override
-    public boolean isBegin(ZonedDateTime now) {
-        return isWorkBegin(now) && (!inHoliday(now));
+    public boolean isRegularTrading(ZonedDateTime now) {
+        return inWorkTime(now);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
@@ -101,42 +123,34 @@ public class TimeKeeper implements ITimeKeeper {
         return isWorkEnd(now) && (!inHoliday(now));
     }
 
-    @Override
-    public boolean isWorking(ZonedDateTime now) {
-        return inWorkTime(now) && !inHoliday(now);
-    }
-
-    private void setup() {
-        workday.sort((WorkdayTime o1, WorkdayTime o2) -> {
-            var r = o1.getDayRank().compareTo(o2.getDayRank());
-            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
-        });
-        holiday.sort((HolidayTime o1, HolidayTime o2) -> {
-            var r = o1.getDayRank().compareTo(o2.getDayRank());
-            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
-        });
+    protected boolean inWorkTime(ZonedDateTime now) {
+        return workdays.stream().anyMatch(wt -> Utils.inRange(now.toLocalTime(),
+                                                              wt.getFromTime(),
+                                                              wt.getToTime())
+                                                && now.getDayOfWeek() == wt.getDayOfWeek());
     }
 
     protected boolean inHoliday(ZonedDateTime now) {
-        return holiday.stream().anyMatch(hd -> Utils.inRange(now.toLocalTime(),
-                                                             hd.getFromTime(),
-                                                             hd.getToTime()));
-    }
-
-    protected boolean inWorkTime(ZonedDateTime now) {
-        return workday.stream().anyMatch(wt -> Utils.inRange(now.toLocalTime(),
-                                                             wt.getFromTime(),
-                                                             wt.getToTime()));
+        return holidays.stream().anyMatch(hd -> Utils.inRange(now,
+                                                              hd.getFromTime(),
+                                                              hd.getToTime()));
     }
 
     protected boolean isWorkBegin(ZonedDateTime now) {
         var n = Utils.getRoundedTimeByMinute().toLocalTime();
-        return n.compareTo(workday.get(0).getFromTime()) == 0;
+        return n.compareTo(workdays.get(0).getFromTime()) == 0;
     }
 
     protected boolean isWorkEnd(ZonedDateTime now) {
-        var n = Utils.getRoundedTimeByMinute().toLocalTime();
-        return n.compareTo(workday.get(workday.size() - 1).getToTime()) == 0;
+        return now.toLocalTime().compareTo(workdays.get(workdays.size() - 1).getToTime()) == 0;
     }
+
+
+
+
+
+
+
+
 
 }

@@ -28,6 +28,7 @@ public interface ITimeKeeper {
 
     boolean isEnd(ZonedDateTime now);
 
-    boolean isWorking(ZonedDateTime now);
+    boolean isTrading(ZonedDateTime now);
 
+    boolean isRegularTrading(ZonedDateTime now);
 }

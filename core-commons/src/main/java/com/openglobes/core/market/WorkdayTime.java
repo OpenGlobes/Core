@@ -17,6 +17,7 @@
 package com.openglobes.core.market;
 
 import java.io.Serializable;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 
@@ -30,10 +31,18 @@ public class WorkdayTime implements Serializable {
     private LocalTime     fromTime;
     private ZonedDateTime timestamp;
     private LocalTime     toTime;
-    private Integer       type;
+    private DayOfWeek     dayOfWeek;
     private Long          workdayTimeId;
 
     public WorkdayTime() {
+    }
+
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
     }
 
     public Integer getDayRank() {
@@ -66,14 +75,6 @@ public class WorkdayTime implements Serializable {
 
     public void setToTime(LocalTime toTime) {
         this.toTime = toTime;
-    }
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
     }
 
     public Long getWorkdayTimeId() {
