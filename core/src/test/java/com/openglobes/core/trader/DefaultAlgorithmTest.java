@@ -185,19 +185,25 @@ class DefaultAlgorithmTest extends AlgorithmData {
                          sell.getPreVolumn());
             assertEquals(2,
                          sell.getTodayVolumn());
-            assertEquals(2,
+            assertEquals(3,
                          sell.getTodayOpenVolumn());
 
             /*
              * Closing today's contracts requires commission.
              */
             r = requests().get(4L);
-            assertEquals(algorithm().getCommission(r.getPrice(),
-                                                   instrument(r.getInstrumentId()),
-                                                   r.getOffset(),
-                                                   getContractById(4L),
-                                                   r.getTradingDay()),
+            var comm = algorithm().getCommission(r.getPrice(),
+                                                 instrument(r.getInstrumentId()),
+                                                 r.getOffset(),
+                                                 getContractById(4L),
+                                                 r.getTradingDay());
+            assertEquals(comm,
                          sell.getFrozenCommission());
+            /*
+             * Open 3, Close 1.
+             */
+            assertEquals(comm * 4,
+                         sell.getCommission());
         });
     }
 

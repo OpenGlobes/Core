@@ -90,6 +90,21 @@ public class AlgorithmData {
         m.setContractId(5L);
         m.setMarginId(5L);
         margins.add(m);
+
+        // Order ID = 6L
+        r = requests().get(6L);
+        m = new Margin();
+
+        m.setContractId(6L);
+        m.setTimestamp(ZonedDateTime.now());
+        m.setTag(r.getTag());
+        m.setOrderId(r.getOrderId());
+        m.setTradingDay(r.getTradingDay());
+        m.setStatus(FeeStatus.REMOVED);
+        m.setMarginId(6L);
+        m.setMargin(algorithm().getMargin(r.getPrice(),
+                                          instrument(r.getInstrumentId())));
+        margins.add(m);
     }
 
     private void setCommissions() {
@@ -162,6 +177,42 @@ public class AlgorithmData {
                                                 instrument(r.getInstrumentId()),
                                                 r.getOffset(),
                                                 getContractById(2L),
+                                                r.getTradingDay()));
+        commissions.add(c);
+
+        // Order ID = 6L
+        r = requests().get(6L);
+        c = new Commission();
+
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(6L);
+        c.setCommissionId(9L);
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getOffset(),
+                                                getContractById(6L),
+                                                r.getTradingDay()));
+        commissions.add(c);
+
+        // Order ID = 7L
+        r = requests().get(7L);
+        c = new Commission();
+
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(6L);
+        c.setCommissionId(10L);
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getOffset(),
+                                                getContractById(6L),
                                                 r.getTradingDay()));
         commissions.add(c);
     }
@@ -328,6 +379,58 @@ public class AlgorithmData {
         r.setStatusMessage("ALL_TRADED");
         r.setTimestamp(r.getTimestamp().plusSeconds(1));
         responses.add(r);
+
+        // Order ID = 6L
+        r = new Response();
+
+        r.setAction(ActionType.NEW);
+        r.setDirection(Direction.SELL);
+        r.setOffset(Offset.OPEN);
+        r.setSignature(Utils.nextUuid().toString());
+        r.setStatus(OrderStatus.ACCEPTED);
+        r.setInstrumentId("c2105");
+        r.setOrderId(6L);
+        r.setResponseId(11L);
+        r.setStatusMessage("ACCEPTED");
+        r.setTimestamp(ZonedDateTime.now().minusMinutes(1));
+        r.setTraderId(3);
+        r.setTradingDay(LocalDate.now());
+        responses.add(r);
+
+        r = Utils.copy(r);
+
+        r.setTraderId(3);
+        r.setResponseId(12L);
+        r.setStatus(OrderStatus.ALL_TRADED);
+        r.setStatusMessage("ALL_TRADED");
+        r.setTimestamp(r.getTimestamp().plusSeconds(1));
+        responses.add(r);
+
+        // Order ID = 7L
+        r = new Response();
+
+        r.setAction(ActionType.NEW);
+        r.setDirection(Direction.BUY);
+        r.setOffset(Offset.CLOSE_TODAY);
+        r.setSignature(Utils.nextUuid().toString());
+        r.setStatus(OrderStatus.ACCEPTED);
+        r.setInstrumentId("c2105");
+        r.setOrderId(7L);
+        r.setResponseId(13L);
+        r.setStatusMessage("ACCEPTED");
+        r.setTimestamp(ZonedDateTime.now().minusMinutes(1));
+        r.setTraderId(3);
+        r.setTradingDay(LocalDate.now());
+        responses.add(r);
+
+        r = Utils.copy(r);
+
+        r.setTraderId(3);
+        r.setResponseId(14L);
+        r.setStatus(OrderStatus.ALL_TRADED);
+        r.setStatusMessage("ALL_TRADED");
+        r.setTimestamp(r.getTimestamp().plusSeconds(1));
+        responses.add(r);
     }
 
     private void setTrades() {
@@ -392,6 +495,38 @@ public class AlgorithmData {
         t.setTradingDay(LocalDate.now());
         t.setTradeId(4L);
         t.setPrice(2945.0);
+        t.setQuantity(1L);
+        t.setSignature(Utils.nextUuid().toString());
+        trades.add(t);
+
+        // Order ID = 6L
+        t = Utils.copy(t);
+        t.setAction(ActionType.NEW);
+        t.setDirection(Direction.SELL);
+        t.setOffset(Offset.OPEN);
+        t.setInstrumentId("c2105");
+        t.setOrderId(6L);
+        t.setTraderId(3);
+        t.setTimestamp(ZonedDateTime.now().minusMinutes(1));
+        t.setTradingDay(LocalDate.now());
+        t.setTradeId(5L);
+        t.setPrice(2955.0);
+        t.setQuantity(1L);
+        t.setSignature(Utils.nextUuid().toString());
+        trades.add(t);
+
+        // Order ID = 7L
+        t = Utils.copy(t);
+        t.setAction(ActionType.NEW);
+        t.setDirection(Direction.BUY);
+        t.setOffset(Offset.CLOSE_TODAY);
+        t.setInstrumentId("c2105");
+        t.setOrderId(7L);
+        t.setTraderId(3);
+        t.setTimestamp(ZonedDateTime.now().minusMinutes(1));
+        t.setTradingDay(LocalDate.now());
+        t.setTradeId(6L);
+        t.setPrice(2950.0);
         t.setQuantity(1L);
         t.setSignature(Utils.nextUuid().toString());
         trades.add(t);
@@ -461,6 +596,25 @@ public class AlgorithmData {
         c = Utils.copy(c);
         c.setContractId(5L);
         c.setStatus(ContractStatus.OPEN);
+        contracts.add(c);
+
+        // Order ID = 6L
+        c = new Contract();
+        c.setInstrumentId("c2105");
+        c.setDirection(Direction.SELL);
+        c.setTimestamp(ZonedDateTime.now().minusMinutes(6));
+        c.setTag("sell-open-request");
+        c.setContractId(6L);
+        c.setCloseAmount(null);
+        c.setCloseTradingDay(null);
+        c.setOpenAmount(29550.0);
+        c.setOpenTimestamp(ZonedDateTime.now().minusMinutes(7));
+        c.setOpenTradingDay(LocalDate.now());
+        c.setCloseAmount(29500.0);
+        c.setCloseTradingDay(LocalDate.now());
+        c.setStatus(ContractStatus.CLOSED);
+        c.setTradeId(5L);
+        c.setTraderId(3);
         contracts.add(c);
     }
 
@@ -556,6 +710,44 @@ public class AlgorithmData {
         r.setExchangeId("DCE");
         r.setInstrumentId("c2105");
         r.setRequestId(5L);
+        r.setTradingDay(LocalDate.now());
+        requests.put(r.getRequestId(),
+                     r);
+
+        r = new Request();
+
+        r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(3));
+        r.setTag("sell-open-request");
+        r.setSignature(Utils.nextUuid().toString());
+        r.setQuantity(1L);
+        r.setPrice(2955.0);
+        r.setTraderId(null);
+        r.setDirection(Direction.SELL);
+        r.setOrderId(6L);
+        r.setOffset(Offset.OPEN);
+        r.setAction(ActionType.NEW);
+        r.setExchangeId("DCE");
+        r.setInstrumentId("c2105");
+        r.setRequestId(6L);
+        r.setTradingDay(LocalDate.now());
+        requests.put(r.getRequestId(),
+                     r);
+
+        r = new Request();
+
+        r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(1));
+        r.setTag("sell-open-request");
+        r.setSignature(Utils.nextUuid().toString());
+        r.setQuantity(1L);
+        r.setPrice(2950.0);
+        r.setTraderId(null);
+        r.setDirection(Direction.BUY);
+        r.setOrderId(7L);
+        r.setOffset(Offset.CLOSE_TODAY);
+        r.setAction(ActionType.NEW);
+        r.setExchangeId("DCE");
+        r.setInstrumentId("c2105");
+        r.setRequestId(7L);
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);
