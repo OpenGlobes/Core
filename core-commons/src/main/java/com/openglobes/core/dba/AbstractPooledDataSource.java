@@ -95,7 +95,8 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
                 free.put(connection, Boolean.TRUE);
             } catch (SQLException ex) {
                 /*
-                 * Close the connection if we fail restoring its auto-commit state.
+                 * Close the connection if we fail restoring its auto-commit
+                 * state.
                  */
                 try {
                     connection.close();

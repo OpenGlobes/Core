@@ -15,8 +15,9 @@ public interface Sequenced {
      * of available capacity.
      *
      * @param requiredCapacity in the buffer
+     *
      * @return true if the buffer has the capacity to allocate the next sequence
-     * otherwise false.
+     *         otherwise false.
      */
     boolean hasAvailableCapacity(int requiredCapacity);
 
@@ -49,6 +50,7 @@ public interface Sequenced {
      * </pre>
      *
      * @param n the number of sequences to claim
+     *
      * @return the highest claimed sequence value
      */
     long next(int n);
@@ -59,8 +61,9 @@ public interface Sequenced {
      * slots available.
      *
      * @return the claimed sequence value
+     *
      * @throws InsufficientCapacityException thrown if there is no space
-     * available in the ring buffer.
+     *                                       available in the ring buffer.
      */
     long tryNext() throws InsufficientCapacityException;
 
@@ -71,9 +74,11 @@ public interface Sequenced {
      * {@link Sequencer#next()} for a description on how to use this method.
      *
      * @param n the number of sequences to claim
+     *
      * @return the claimed sequence value
+     *
      * @throws InsufficientCapacityException thrown if there is no space
-     * available in the ring buffer.
+     *                                       available in the ring buffer.
      */
     long tryNext(int n) throws InsufficientCapacityException;
 

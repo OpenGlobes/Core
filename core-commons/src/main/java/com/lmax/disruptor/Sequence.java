@@ -38,7 +38,7 @@ class RhsPadding extends Value {
  * Concurrent sequence class used for tracking the progress of the ring buffer
  * and event processors. Support a number of concurrent operations including CAS
  * and order writes.
- *
+ * <p>
  * <p>
  * Also attempts to be more efficient with regards to false sharing by adding
  * padding around the volatile field.
@@ -108,7 +108,8 @@ public class Sequence extends RhsPadding {
      * Perform a compare and set operation on the sequence.
      *
      * @param expectedValue The expected current value.
-     * @param newValue The value to update to.
+     * @param newValue      The value to update to.
+     *
      * @return true if the operation succeeds, false otherwise.
      */
     public boolean compareAndSet(final long expectedValue, final long newValue) {
@@ -128,6 +129,7 @@ public class Sequence extends RhsPadding {
      * Atomically add the supplied value.
      *
      * @param increment The value to add to the sequence.
+     *
      * @return The value after the increment.
      */
     public long addAndGet(final long increment) {

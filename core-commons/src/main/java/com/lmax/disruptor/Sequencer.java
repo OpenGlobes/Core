@@ -39,6 +39,7 @@ public interface Sequencer extends Cursored, Sequenced {
      * non-blocking.
      *
      * @param sequence of the buffer to check
+     *
      * @return true if the sequence is available for use, false if not
      */
     boolean isAvailable(long sequence);
@@ -55,6 +56,7 @@ public interface Sequencer extends Cursored, Sequenced {
      * Remove the specified sequence from this sequencer.
      *
      * @param sequence to be removed.
+     *
      * @return <tt>true</tt> if this sequence was found, <tt>false</tt>
      * otherwise.
      */
@@ -66,8 +68,10 @@ public interface Sequencer extends Cursored, Sequenced {
      * of sequences to track.
      *
      * @param sequencesToTrack All of the sequences that the newly constructed
-     * barrier will wait on.
+     *                         barrier will wait on.
+     *
      * @return A sequence barrier that will track the specified sequences.
+     *
      * @see SequenceBarrier
      */
     SequenceBarrier newBarrier(Sequence... sequencesToTrack);
@@ -77,7 +81,7 @@ public interface Sequencer extends Cursored, Sequenced {
      * this ringBuffer.
      *
      * @return The minimum gating sequence or the cursor sequence if no
-     * sequences have been added.
+     *         sequences have been added.
      */
     long getMinimumSequence();
 
@@ -91,10 +95,11 @@ public interface Sequencer extends Cursored, Sequenced {
      * value that is 1 higher than the last sequence that was successfully
      * processed.
      *
-     * @param nextSequence The sequence to start scanning from.
+     * @param nextSequence      The sequence to start scanning from.
      * @param availableSequence The sequence to scan to.
+     *
      * @return The highest value that can be safely read, will be at least
-     * <code>nextSequence - 1</code>.
+     *         <code>nextSequence - 1</code>.
      */
     long getHighestPublishedSequence(long nextSequence, long availableSequence);
 

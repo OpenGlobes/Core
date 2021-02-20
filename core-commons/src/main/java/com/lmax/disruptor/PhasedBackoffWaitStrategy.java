@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>
  * Phased wait strategy for waiting {@link EventProcessor}s on a barrier.</p>
- *
+ * <p>
  * <p>
  * This strategy can be used when throughput and low-latency are not as
  * important as CPU resource. Spins, then yields, then waits using the
@@ -47,9 +47,10 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * Construct {@link PhasedBackoffWaitStrategy} with fallback to
      * {@link BlockingWaitStrategy}
      *
-     * @param spinTimeout The maximum time in to busy spin for.
+     * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units Time units used for the timeout values.
+     * @param units        Time units used for the timeout values.
+     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLock(
@@ -65,9 +66,10 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * Construct {@link PhasedBackoffWaitStrategy} with fallback to
      * {@link LiteBlockingWaitStrategy}
      *
-     * @param spinTimeout The maximum time in to busy spin for.
+     * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units Time units used for the timeout values.
+     * @param units        Time units used for the timeout values.
+     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLiteLock(
@@ -83,9 +85,10 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * Construct {@link PhasedBackoffWaitStrategy} with fallback to
      * {@link SleepingWaitStrategy}
      *
-     * @param spinTimeout The maximum time in to busy spin for.
+     * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
-     * @param units Time units used for the timeout values.
+     * @param units        Time units used for the timeout values.
+     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withSleep(

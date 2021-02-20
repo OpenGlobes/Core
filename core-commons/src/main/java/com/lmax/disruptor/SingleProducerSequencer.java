@@ -46,7 +46,7 @@ abstract class SingleProducerSequencerFields extends SingleProducerSequencerPad 
  * Coordinator for claiming sequences for access to a data structure while
  * tracking dependent {@link Sequence}s. Not safe for use from multiple threads
  * as it does not implement any barriers.</p>
- *
+ * <p>
  * <p>
  * Note on {@link Sequencer#getCursor()}: With this sequencer the cursor value
  * is updated after the call to {@link Sequencer#publish(long)} is made.</p>
@@ -58,7 +58,7 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
     /**
      * Construct a Sequencer with the selected wait strategy and buffer size.
      *
-     * @param bufferSize the size of the buffer that this will sequence over.
+     * @param bufferSize   the size of the buffer that this will sequence over.
      * @param waitStrategy for those waiting on sequences.
      */
     public SingleProducerSequencer(int bufferSize, WaitStrategy waitStrategy) {

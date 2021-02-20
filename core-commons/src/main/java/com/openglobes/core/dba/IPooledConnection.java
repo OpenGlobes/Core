@@ -36,7 +36,7 @@ public interface IPooledConnection {
      * Commit all queries after calling {@link transaction()}.
      *
      * @throws SQLException thrown when failing to commit the underlying
-     * {@link java.sql.Connection}.
+     *                      {@link java.sql.Connection}.
      */
     void commit() throws SQLException;
 
@@ -44,7 +44,7 @@ public interface IPooledConnection {
      * Rollback all queries after calling {@link transaction()}.
      *
      * @throws SQLException thrown when failing to rollback the underlying
-     * {@link java.sql.Connection}.
+     *                      {@link java.sql.Connection}.
      */
     void rollback() throws SQLException;
 
@@ -53,7 +53,7 @@ public interface IPooledConnection {
      * commited by calling {@link commit()}.
      *
      * @throws SQLException thrown when failing to start a transaction for the
-     * underlying {@link java.sql.Connection}.
+     *                      underlying {@link java.sql.Connection}.
      */
     void transaction() throws SQLException;
 

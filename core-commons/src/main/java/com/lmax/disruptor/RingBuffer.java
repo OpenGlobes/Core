@@ -85,7 +85,7 @@ abstract class RingBufferFields<E> extends RingBufferPad {
  * event being exchanged between event producer and {@link EventProcessor}s.
  *
  * @param <E> implementation storing the data for sharing during exchange or
- * parallel coordination of an event.
+ *            parallel coordination of an event.
  */
 public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored, EventSequencer<E>, EventSink<E> {
 
@@ -96,10 +96,11 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Construct a RingBuffer with the full option set.
      *
      * @param eventFactory to newInstance entries for filling the RingBuffer
-     * @param sequencer sequencer to handle the ordering of events moving
-     * through the RingBuffer.
+     * @param sequencer    sequencer to handle the ordering of events moving
+     *                     through the RingBuffer.
+     *
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a
-     * power of 2
+     *                                  power of 2
      */
     RingBuffer(
             EventFactory<E> eventFactory,
@@ -111,14 +112,16 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Create a new multiple producer RingBuffer with the specified wait
      * strategy.
      *
-     * @param <E> Class of the event stored in the ring buffer.
-     * @param factory used to create the events within the ring buffer.
-     * @param bufferSize number of elements to create within the ring buffer.
+     * @param <E>          Class of the event stored in the ring buffer.
+     * @param factory      used to create the events within the ring buffer.
+     * @param bufferSize   number of elements to create within the ring buffer.
      * @param waitStrategy used to determine how to wait for new elements to
-     * become available.
+     *                     become available.
+     *
      * @return a constructed ring buffer.
+     *
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a
-     * power of 2
+     *                                  power of 2
      * @see MultiProducerSequencer
      */
     public static <E> RingBuffer<E> createMultiProducer(
@@ -134,12 +137,14 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Create a new multiple producer RingBuffer using the default wait strategy
      * {@link BlockingWaitStrategy}.
      *
-     * @param <E> Class of the event stored in the ring buffer.
-     * @param factory used to create the events within the ring buffer.
+     * @param <E>        Class of the event stored in the ring buffer.
+     * @param factory    used to create the events within the ring buffer.
      * @param bufferSize number of elements to create within the ring buffer.
+     *
      * @return a constructed ring buffer.
+     *
      * @throws IllegalArgumentException if <tt>bufferSize</tt> is less than 1 or
-     * not a power of 2
+     *                                  not a power of 2
      * @see MultiProducerSequencer
      */
     public static <E> RingBuffer<E> createMultiProducer(EventFactory<E> factory, int bufferSize) {
@@ -149,14 +154,16 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     /**
      * Create a new single producer RingBuffer with the specified wait strategy.
      *
-     * @param <E> Class of the event stored in the ring buffer.
-     * @param factory used to create the events within the ring buffer.
-     * @param bufferSize number of elements to create within the ring buffer.
+     * @param <E>          Class of the event stored in the ring buffer.
+     * @param factory      used to create the events within the ring buffer.
+     * @param bufferSize   number of elements to create within the ring buffer.
      * @param waitStrategy used to determine how to wait for new elements to
-     * become available.
+     *                     become available.
+     *
      * @return a constructed ring buffer.
+     *
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a
-     * power of 2
+     *                                  power of 2
      * @see SingleProducerSequencer
      */
     public static <E> RingBuffer<E> createSingleProducer(
@@ -172,12 +179,14 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Create a new single producer RingBuffer using the default wait strategy
      * {@link BlockingWaitStrategy}.
      *
-     * @param <E> Class of the event stored in the ring buffer.
-     * @param factory used to create the events within the ring buffer.
+     * @param <E>        Class of the event stored in the ring buffer.
+     * @param factory    used to create the events within the ring buffer.
      * @param bufferSize number of elements to create within the ring buffer.
+     *
      * @return a constructed ring buffer.
+     *
      * @throws IllegalArgumentException if <tt>bufferSize</tt> is less than 1 or
-     * not a power of 2
+     *                                  not a power of 2
      * @see MultiProducerSequencer
      */
     public static <E> RingBuffer<E> createSingleProducer(EventFactory<E> factory, int bufferSize) {
@@ -188,15 +197,17 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Create a new Ring Buffer with the specified producer type (SINGLE or
      * MULTI)
      *
-     * @param <E> Class of the event stored in the ring buffer.
+     * @param <E>          Class of the event stored in the ring buffer.
      * @param producerType producer type to use {@link ProducerType}.
-     * @param factory used to create events within the ring buffer.
-     * @param bufferSize number of elements to create within the ring buffer.
+     * @param factory      used to create events within the ring buffer.
+     * @param bufferSize   number of elements to create within the ring buffer.
      * @param waitStrategy used to determine how to wait for new elements to
-     * become available.
+     *                     become available.
+     *
      * @return a constructed ring buffer.
+     *
      * @throws IllegalArgumentException if bufferSize is less than 1 or not a
-     * power of 2
+     *                                  power of 2
      */
     public static <E> RingBuffer<E> create(
             ProducerType producerType,
@@ -216,13 +227,13 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     /**
      * <p>
      * Get the event for a given sequence in the RingBuffer.</p>
-     *
+     * <p>
      * <p>
      * This call has 2 uses. Firstly use this call when publishing to a ring
      * buffer. After calling {@link RingBuffer#next()} use this call to get hold
      * of the preallocated event to fill with data before calling
      * {@link RingBuffer#publish(long)}.</p>
-     *
+     * <p>
      * <p>
      * Secondly use this call when consuming data from the ring buffer. After
      * calling {@link SequenceBarrier#waitFor(long)} call this method with any
@@ -231,6 +242,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * {@link SequenceBarrier#waitFor(long)} method.</p>
      *
      * @param sequence for the event
+     *
      * @return the event for the given sequence
      */
     @Override
@@ -253,6 +265,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * </pre>
      *
      * @return The next sequence to publish to.
+     *
      * @see RingBuffer#publish(long)
      * @see RingBuffer#get(long)
      */
@@ -266,7 +279,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * caller to claim the next n sequences.
      *
      * @param n number of slots to claim
+     *
      * @return sequence number of the highest slot claimed
+     *
      * @see Sequencer#next(int)
      */
     @Override
@@ -294,8 +309,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * {@link InsufficientCapacityException}.</p>
      *
      * @return The next sequence to publish to.
+     *
      * @throws InsufficientCapacityException if the necessary space in the ring
-     * buffer is not available
+     *                                       buffer is not available
      * @see RingBuffer#publish(long)
      * @see RingBuffer#get(long)
      */
@@ -309,9 +325,11 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * caller to attempt to claim the next n sequences.
      *
      * @param n number of slots to claim
+     *
      * @return sequence number of the highest slot claimed
+     *
      * @throws InsufficientCapacityException if the necessary space in the ring
-     * buffer is not available
+     *                                       buffer is not available
      */
     @Override
     public long tryNext(int n) throws InsufficientCapacityException {
@@ -324,8 +342,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * used in controlled circumstances. E.g. during initialisation.
      *
      * @param sequence The sequence to reset too.
+     *
      * @throws IllegalStateException If any gating sequences have already been
-     * specified.
+     *                               specified.
      */
     @Deprecated
     public void resetTo(long sequence) {
@@ -339,6 +358,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * in controlled circumstances, e.g. during initialisation.
      *
      * @param sequence The sequence to claim.
+     *
      * @return The preallocated event.
      */
     public E claimAndGetPreallocated(long sequence) {
@@ -353,7 +373,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * in a race condition and broken code.
      *
      * @param sequence The sequence to identify the entry.
+     *
      * @return If the value can be read or not.
+     *
      * @deprecated Please don't use this method. It probably won't do what you
      * think that it does.
      */
@@ -377,7 +399,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * this ringBuffer.
      *
      * @return The minimum gating sequence or the cursor sequence if no
-     * sequences have been added.
+     *         sequences have been added.
      */
     public long getMinimumGatingSequence() {
         return sequencer.getMinimumSequence();
@@ -387,6 +409,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * Remove the specified sequence from this ringBuffer.
      *
      * @param sequence to be removed.
+     *
      * @return <tt>true</tt> if this sequence was found, <tt>false</tt>
      * otherwise.
      */
@@ -400,7 +423,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * of sequences to track.
      *
      * @param sequencesToTrack the additional sequences to track
+     *
      * @return A sequence barrier that will track the specified sequences.
+     *
      * @see SequenceBarrier
      */
     public SequenceBarrier newBarrier(Sequence... sequencesToTrack) {
@@ -412,8 +437,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * sequences.
      *
      * @param gatingSequences to be gated on.
+     *
      * @return A poller that will gate on this ring buffer and the supplied
-     * sequences.
+     *         sequences.
      */
     public EventPoller<E> newPoller(Sequence... gatingSequences) {
         return sequencer.newPoller(this, gatingSequences);
@@ -446,8 +472,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      * if this ring buffer is set up to handle multiple producers.
      *
      * @param requiredCapacity The capacity to check for.
+     *
      * @return <tt>true</tt> If the specified <tt>requiredCapacity</tt> is
-     * available
+     *         available
      * <tt>false</tt> if not.
      */
     public boolean hasAvailableCapacity(int requiredCapacity) {
@@ -890,6 +917,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      *
      * @param lo the lowest sequence number to be published
      * @param hi the highest sequence number to be published
+     *
      * @see Sequencer#next(int)
      */
     @Override

@@ -72,9 +72,10 @@ public class Utils {
      * Test now is in the specified time range denoted by the range
      * {@code (from, to]}, which is an exclusive begin to an inclusive end.
      *
-     * @param now now's time.
+     * @param now       now's time.
      * @param rangeFrom exclusive begin of the time rane.
-     * @param rangeTo inclusive end of the time range.
+     * @param rangeTo   inclusive end of the time range.
+     *
      * @return {@code true} if the specifed now is in the time range.
      */
     public static boolean inRange(LocalTime now,
@@ -124,8 +125,9 @@ public class Utils {
      * Schedule task to run from the begin of next time when some durations past
      * since the begin of day, and repeats for every duration.
      *
-     * @param task timer task.
+     * @param task     timer task.
      * @param duration duration between two tasks
+     *
      * @return timer.
      */
     public static Timer schedulePerDuration(TimerTask task, Duration duration) {

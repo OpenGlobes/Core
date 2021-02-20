@@ -70,6 +70,7 @@ public final class SequenceGroup extends Sequence {
      * {@link SequenceGroup#addWhileRunning(Cursored, Sequence)}
      *
      * @param sequence to be added to the aggregate.
+     *
      * @see SequenceGroup#addWhileRunning(Cursored, Sequence)
      */
     public void add(final Sequence sequence) {
@@ -88,6 +89,7 @@ public final class SequenceGroup extends Sequence {
      * Remove the first occurrence of the {@link Sequence} from this aggregate.
      *
      * @param sequence to be removed from this aggregate.
+     *
      * @return true if the sequence was removed otherwise false.
      */
     public boolean remove(final Sequence sequence) {
@@ -110,7 +112,7 @@ public final class SequenceGroup extends Sequence {
      * rewind/wrapping effects.
      *
      * @param cursored The data structure that the owner of this sequence group
-     * will be pulling it's events from.
+     *                 will be pulling it's events from.
      * @param sequence The sequence to add.
      */
     public void addWhileRunning(Cursored cursored, Sequence sequence) {

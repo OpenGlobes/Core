@@ -21,12 +21,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>
  * A {@link WorkProcessor} wraps a single {@link WorkHandler}, effectively
  * consuming the sequence and ensuring appropriate barriers.</p>
- *
+ * <p>
  * <p>
  * Generally, this will be used as part of a {@link WorkerPool}.</p>
  *
  * @param <T> event implementation storing the details for the work to
- * processed.
+ *            processed.
  */
 public final class WorkProcessor<T>
         implements EventProcessor {
@@ -51,12 +51,13 @@ public final class WorkProcessor<T>
     /**
      * Construct a {@link WorkProcessor}.
      *
-     * @param ringBuffer to which events are published.
-     * @param sequenceBarrier on which it is waiting.
-     * @param workHandler is the delegate to which events are dispatched.
+     * @param ringBuffer       to which events are published.
+     * @param sequenceBarrier  on which it is waiting.
+     * @param workHandler      is the delegate to which events are dispatched.
      * @param exceptionHandler to be called back when an error occurs
-     * @param workSequence from which to claim the next event to be worked on.
-     * It should always be initialised as {@link Sequencer#INITIAL_CURSOR_VALUE}
+     * @param workSequence     from which to claim the next event to be worked
+     *                         on.
+     *                         It should always be initialised as {@link Sequencer#INITIAL_CURSOR_VALUE}
      */
     public WorkProcessor(
             final RingBuffer<T> ringBuffer,

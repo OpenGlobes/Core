@@ -20,12 +20,13 @@ package com.lmax.disruptor;
  * RingBuffer.
  *
  * @param <T> event implementation storing the data for sharing during exchange
- * or parallel coordination of an event.
+ *            or parallel coordination of an event.
  */
 public interface EventFactory<T> {
 
     /*
-     * Implementations should instantiate an event object, with all memory already allocated where possible.
+     * Implementations should instantiate an event object, with all memory
+     * already allocated where possible.
      */
     T newInstance();
 }

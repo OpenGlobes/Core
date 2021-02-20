@@ -30,7 +30,7 @@ public final class FixedSequenceGroup extends Sequence {
      * Constructor
      *
      * @param sequences the list of sequences to be tracked under this sequence
-     * group
+     *                  group
      */
     public FixedSequenceGroup(Sequence[] sequences) {
         this.sequences = Arrays.copyOf(sequences, sequences.length);

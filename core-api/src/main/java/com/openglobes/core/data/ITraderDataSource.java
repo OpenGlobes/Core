@@ -52,10 +52,12 @@ public interface ITraderDataSource extends AutoCloseable,
      * the pool is all used.
      *
      * @return {@link ITraderDataConnection}
-     * @throws java.sql.SQLException thrown on failing getting connection from
-     * driver manager.
+     *
+     * @throws java.sql.SQLException            thrown on failing getting
+     *                                          connection from
+     *                                          driver manager.
      * @throws java.lang.ClassNotFoundException thrown on failing loading driver
-     * class.
+     *                                          class.
      */
     ITraderDataConnection getConnection() throws SQLException,
                                                  ClassNotFoundException;
@@ -70,14 +72,16 @@ public interface ITraderDataSource extends AutoCloseable,
      * Add {@link IEventHandler<T>} for the specified class on the specified
      * {@link DataChangeType} type.
      *
-     * @param <T> Type of event to listen on.
-     * @param clazz Class of the specified type.
+     * @param <T>     Type of event to listen on.
+     * @param clazz   Class of the specified type.
      * @param handler Event handler.
-     * @param type Data change type.
-     * @throws UnknownDataChangeException thrown when the specified data change
-     * type has no associated event source.
+     * @param type    Data change type.
+     *
+     * @throws UnknownDataChangeException   thrown when the specified data
+     *                                      change
+     *                                      type has no associated event source.
      * @throws InvalidSubscriptionException thrown on failing subscribing to
-     * event source.
+     *                                      event source.
      */
     <T> void addListener(Class<T> clazz,
                          IEventHandler<T> handler,
@@ -88,10 +92,12 @@ public interface ITraderDataSource extends AutoCloseable,
      * Get the event source associated with the specified data change type.
      *
      * @param type Data change type.
+     *
      * @return {@link  IEventSource} associated with the specified data change
-     * type.
+     *         type.
+     *
      * @throws UnknownDataChangeException thrown when no event source for the
-     * specifed data change type.
+     *                                    specifed data change type.
      */
     IEventSource getEventSource(DataChangeType type) throws UnknownDataChangeException;
 }

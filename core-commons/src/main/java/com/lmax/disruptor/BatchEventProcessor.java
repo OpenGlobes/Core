@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * shutdown.
  *
  * @param <T> event implementation storing the data for sharing during exchange
- * or parallel coordination of an event.
+ *            or parallel coordination of an event.
  */
 public final class BatchEventProcessor<T>
         implements EventProcessor {
@@ -50,9 +50,9 @@ public final class BatchEventProcessor<T>
      * progress by updating its sequence when the
      * {@link EventHandler#onEvent(Object, long, boolean)} method returns.
      *
-     * @param dataProvider to which events are published.
+     * @param dataProvider    to which events are published.
      * @param sequenceBarrier on which it is waiting.
-     * @param eventHandler is the delegate to which events are dispatched.
+     * @param eventHandler    is the delegate to which events are dispatched.
      */
     public BatchEventProcessor(
             final DataProvider<T> dataProvider,
@@ -106,7 +106,7 @@ public final class BatchEventProcessor<T>
      * It is ok to have another thread rerun this method after a halt().
      *
      * @throws IllegalStateException if this object instance is already running
-     * in a thread
+     *                               in a thread
      */
     @Override
     public void run() {

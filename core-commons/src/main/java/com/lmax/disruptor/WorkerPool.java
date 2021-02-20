@@ -44,11 +44,11 @@ public final class WorkerPool<T> {
      * {@link RingBuffer#addGatingSequences(Sequence...)} called before the work
      * pool is started.
      *
-     * @param ringBuffer of events to be consumed.
-     * @param sequenceBarrier on which the workers will depend.
+     * @param ringBuffer       of events to be consumed.
+     * @param sequenceBarrier  on which the workers will depend.
      * @param exceptionHandler to callback when an error occurs which is not
-     * handled by the {@link WorkHandler}s.
-     * @param workHandlers to distribute the work load across.
+     *                         handled by the {@link WorkHandler}s.
+     * @param workHandlers     to distribute the work load across.
      */
     @SafeVarargs
     public WorkerPool(
@@ -78,10 +78,10 @@ public final class WorkerPool<T> {
      * {@link RingBuffer#addGatingSequences(Sequence...)} to be called before
      * the work pool is started.
      *
-     * @param eventFactory for filling the {@link RingBuffer}
+     * @param eventFactory     for filling the {@link RingBuffer}
      * @param exceptionHandler to callback when an error occurs which is not
-     * handled by the {@link WorkHandler}s.
-     * @param workHandlers to distribute the work load across.
+     *                         handled by the {@link WorkHandler}s.
+     * @param workHandlers     to distribute the work load across.
      */
     @SafeVarargs
     public WorkerPool(
@@ -110,7 +110,7 @@ public final class WorkerPool<T> {
      * workers.
      *
      * @return an array of {@link Sequence}s representing the progress of the
-     * workers.
+     *         workers.
      */
     public Sequence[] getWorkerSequences() {
         final Sequence[] sequences = new Sequence[workProcessors.length + 1];
@@ -126,9 +126,11 @@ public final class WorkerPool<T> {
      * Start the worker pool processing events in sequence.
      *
      * @param executor providing threads for running the workers.
+     *
      * @return the {@link RingBuffer} used for the work queue.
+     *
      * @throws IllegalStateException if the pool has already been started and
-     * not halted yet
+     *                               not halted yet
      */
     public RingBuffer<T> start(final Executor executor) {
         if (!started.compareAndSet(false, true)) {

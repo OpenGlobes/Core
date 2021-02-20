@@ -7,6 +7,7 @@ package com.openglobes.core.dba;
 
 /**
  * @param <T>
+ *
  * @author Hongbao Chen
  * @since 1.0
  */

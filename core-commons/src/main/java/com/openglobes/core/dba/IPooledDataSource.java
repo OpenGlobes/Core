@@ -30,8 +30,9 @@ public interface IPooledDataSource {
      * Find next available SQL connection.
      *
      * @return SQL connection.
-     * @throws SQLException thrown on failing getting connection from
-     * {@link DriverManager}.
+     *
+     * @throws SQLException           thrown on failing getting connection from
+     *                                {@link DriverManager}.
      * @throws ClassNotFoundException thrown on failing loading driver class.
      */
     Connection getSqlConnection() throws SQLException,
@@ -42,8 +43,9 @@ public interface IPooledDataSource {
      * {@link IDataConnection} object and return available for new connection.
      *
      * @param connection SQl connection.
+     *
      * @throws UnknownConnectionException thrown when the specified connection
-     * is not created by the datasource.
+     *                                    is not created by the datasource.
      */
     void ungetSqlConnection(Connection connection) throws UnknownConnectionException;
 
@@ -77,7 +79,7 @@ public interface IPooledDataSource {
      * and the rest of properties are directly passed to method.
      *
      * @param properties properties for JDBC connection including dedicated
-     * properies for URL and driver class.
+     *                   properies for URL and driver class.
      */
     void open(Properties properties);
 
