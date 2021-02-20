@@ -87,6 +87,7 @@ class DefaultAlgorithmTest extends AlgorithmData {
     }
 
     @Test
+    @DisplayName("Test request that closes both today and yesterday contracts, and is accepted.")
     void testAcceptedOrder() {
         var r      = requests().get(4L);
         var trades = getTradesByOrderId(r.getOrderId());
@@ -97,7 +98,8 @@ class DefaultAlgorithmTest extends AlgorithmData {
             var order = algorithm().getOrder(r,
                                              cs,
                                              trades,
-                                             rs);
+                                             rs,
+                                             instruments());
             assertEquals(OrderStatus.ACCEPTED,
                          order.getStatus());
             assertEquals(r.getQuantity(),
@@ -124,7 +126,7 @@ class DefaultAlgorithmTest extends AlgorithmData {
     }
 
     @Test
-    @DisplayName("Test request whose volumn is now all closing.")
+    @DisplayName("Test request whose volumn is now all closed.")
     void testTradedOrder2() {
         testTradedOrder(2L);
     }
@@ -133,6 +135,24 @@ class DefaultAlgorithmTest extends AlgorithmData {
     @DisplayName("Test request whose volumn is now partially closing.")
     void testTradedOrder3() {
         testTradedOrder(3L);
+    }
+
+    @Test
+    @DisplayName("Test request that closes contracts for yesterday, all traded.")
+    void testTradedOrder5() {
+        testTradedOrder(5L);
+    }
+
+    @Test
+    @DisplayName("Test request opens contracts for today, all traded.")
+    void testTradedOrder6() {
+        testTradedOrder(6L);
+    }
+
+    @Test
+    @DisplayName("Test request closes contracts for today, all traded.")
+    void testTradedOrder7() {
+        testTradedOrder(7L);
     }
 
     @Test
@@ -227,7 +247,8 @@ class DefaultAlgorithmTest extends AlgorithmData {
             var order = algorithm().getOrder(r,
                                              cs,
                                              trades,
-                                             rs);
+                                             rs,
+                                             instruments());
             assertEquals(OrderStatus.ALL_TRADED,
                          order.getStatus());
             assertEquals(r.getQuantity(),

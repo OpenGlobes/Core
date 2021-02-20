@@ -57,8 +57,11 @@ public interface ITraderEngineAlgorithm {
     Order getOrder(Request request,
                    Collection<Contract> contracts,
                    Collection<Trade> trades,
-                   Collection<Response> responses) throws IllegalContractException,
-                                                          QuantityOverflowException;
+                   Collection<Response> responses,
+                   Map<String, Instrument> instruments) throws IllegalContractException,
+                                                               QuantityOverflowException,
+                                                               InstrumentNotFoundException,
+                                                               WrongOrderIdException;
 
     double getAmount(double price,
                      Instrument instrument);

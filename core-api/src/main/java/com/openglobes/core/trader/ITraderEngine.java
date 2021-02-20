@@ -45,6 +45,8 @@ public interface ITraderEngine {
 
     Instrument getRelatedInstrument(String instrumentId);
 
+    Collection<Instrument> getRelatedInstruments();
+
     ServiceRuntimeStatus getStatus();
 
     TraderGatewayContext getTraderGatewayContext(int traderId) throws UnknownTraderIdException;

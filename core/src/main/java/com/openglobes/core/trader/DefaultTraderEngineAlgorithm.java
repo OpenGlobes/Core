@@ -162,18 +162,27 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     public Order getOrder(Request request,
                           Collection<Contract> contracts,
                           Collection<Trade> trades,
-                          Collection<Response> responses) throws IllegalContractException,
-                                                                 QuantityOverflowException {
+                          Collection<Response> responses,
+                          Map<String, Instrument> instruments) throws IllegalContractException,
+                                                                      QuantityOverflowException,
+                                                                      InstrumentNotFoundException,
+                                                                      WrongOrderIdException {
         var r = new Order();
         /*
          * Don't change the order of calls.
          */
         setRequests(r,
                     request);
-        setContracts(r,
-                     contracts);
-        setTrades(r,
-                  trades);
+        if (request.getOffset() == Offset.OPEN) {
+            setVolumnAmount(r,
+                            contracts);
+        } else {
+            setVolumnAmount(r,
+                            trades,
+                            instruments);
+        }
+        setTimes(r,
+                 trades);
         setDeleted(r,
                    responses);
         setOrderStatus(r);
@@ -812,8 +821,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private void setContracts(Order order,
-                              Collection<Contract> contracts) throws IllegalContractException {
+    private void setVolumnAmount(Order order,
+                                 Collection<Contract> contracts) throws IllegalContractException {
         double amount       = 0D;
         long   tradedVolumn = 0L;
         for (var c : contracts) {
@@ -826,6 +835,29 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
         order.setAmount(amount);
         order.setTradedVolumn(tradedVolumn);
+    }
+
+    private void setVolumnAmount(Order order,
+                                 Collection<Trade> trades,
+                                 Map<String, Instrument> instruments) throws WrongOrderIdException,
+                                                                             InstrumentNotFoundException {
+        double amount = 0.0D;
+        long   volumn = 0L;
+        for (var t : trades) {
+            if (!t.getOrderId().equals(order.getOrderId())) {
+                throw new WrongOrderIdException("Expect order ID " + order.getOrderId()
+                                                + " but found " + t.getOrderId() + ".");
+            }
+            var instrument = instruments.get(t.getInstrumentId());
+            if (instrument == null) {
+                throw new InstrumentNotFoundException("Instrument not found for " + t.getInstrumentId() + ".");
+            }
+            amount += getAmount(t.getPrice(),
+                                instrument);
+            volumn += t.getQuantity();
+        }
+        order.setAmount(amount);
+        order.setTradedVolumn(volumn);
     }
 
     private void setDeleted(Order order,
@@ -856,8 +888,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         order.setTradingDay(request.getTradingDay());
     }
 
-    private void setTrades(Order order,
-                           Collection<Trade> trades) {
+    private void setTimes(Order order,
+                          Collection<Trade> trades) {
         Objects.requireNonNull(trades);
         if (trades.isEmpty()) {
             return;

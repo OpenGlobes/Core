@@ -52,7 +52,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void enableTrader(int traderId, boolean enabled) throws UnknownTraderIdException {
+    public void enableTrader(int traderId,
+                             boolean enabled) throws UnknownTraderIdException {
         var i = getTraderGatewayContext(traderId);
         i.setEnabled(enabled);
     }
@@ -90,6 +91,11 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
+    public Collection<Instrument> getRelatedInstruments() {
+        return new HashSet<>(instruments.values());
+    }
+
+    @Override
     public ServiceRuntimeStatus getStatus() {
         return status;
     }
@@ -123,15 +129,6 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException {
-        Objects.requireNonNull(trader);
-        if (traders.containsKey(traderId)) {
-            throw new DuplicatedTraderIdException(Integer.toString(traderId));
-        }
-        addTrader(traderId, trader);
-    }
-
-    @Override
     public void renew(Properties properties) throws TraderRenewException {
         changeStatus(TraderEngineStatuses.INITIALIZING);
         checkDataSourceAlgorithmNotNull();
@@ -142,6 +139,15 @@ public class TraderEngine implements ITraderEngine {
             throw new TraderRenewException(ex.getMessage(),
                                            ex);
         }
+    }
+
+    @Override
+    public void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException {
+        Objects.requireNonNull(trader);
+        if (traders.containsKey(traderId)) {
+            throw new DuplicatedTraderIdException(Integer.toString(traderId));
+        }
+        addTrader(traderId, trader);
     }
 
     @Override
@@ -216,6 +222,31 @@ public class TraderEngine implements ITraderEngine {
         traders.remove(traderId);
     }
 
+    private void changeStatus(TraderEngineStatuses enums) {
+        this.status = buildStatus(enums);
+        callOnStatusChange(this.status);
+    }
+
+    private ServiceRuntimeStatus buildStatus(TraderEngineStatuses enums) {
+        return new ServiceRuntimeStatus(enums.code(), enums.message());
+    }
+
+    private void callOnStatusChange(ServiceRuntimeStatus s) {
+        publishEvent(ServiceRuntimeStatus.class, s);
+    }
+
+    <T> void publishEvent(Class<T> clazz, T object) {
+        if (es == null || es.isEmpty()) {
+            return;
+        }
+        es.publish(clazz, object);
+    }
+
+    private void stopEach(TraderContext context) throws GatewayException {
+        Objects.requireNonNull(context);
+        context.stop();
+    }
+
     private void addTrader(int traderId, ITraderGateway trader) {
         var c = new TraderGatewayContext();
         c.setEnabled(false);
@@ -225,8 +256,11 @@ public class TraderEngine implements ITraderEngine {
         traders.put(traderId, new TraderContext(c));
     }
 
-    private ServiceRuntimeStatus buildStatus(TraderEngineStatuses enums) {
-        return new ServiceRuntimeStatus(enums.code(), enums.message());
+    private TraderContext findContextByTraderId(int traderId) throws UnknownTraderIdException {
+        if (!traders.containsKey(traderId)) {
+            throw new UnknownTraderIdException(Integer.toString(traderId));
+        }
+        return traders.get(traderId);
     }
 
     /*
@@ -235,10 +269,6 @@ public class TraderEngine implements ITraderEngine {
      */
     private void callOnException(TraderRuntimeException e) {
         publishEvent(TraderRuntimeException.class, e);
-    }
-
-    private void callOnStatusChange(ServiceRuntimeStatus s) {
-        publishEvent(ServiceRuntimeStatus.class, s);
     }
 
     private boolean canClose(Contract c, Request request) throws InvalidRequestOffsetException,
@@ -261,20 +291,15 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void changeStatus(TraderEngineStatuses enums) {
-        this.status = buildStatus(enums);
-        callOnStatusChange(this.status);
-    }
-
     private Collection<Contract> checkAssetsClose(Request request,
                                                   Instrument instrument,
                                                   LocalDate tradingDay) throws IllegalQuantityException,
-                                                                                QuantityOverflowException,
-                                                                                ContractNotFoundException,
-                                                                                InvalidRequestOffsetException,
-                                                                                InvalidRequestDirectionException,
-                                                                                DataAccessException,
-                                                                                MarginNotFoundException {
+                                                                               QuantityOverflowException,
+                                                                               ContractNotFoundException,
+                                                                               InvalidRequestOffsetException,
+                                                                               InvalidRequestDirectionException,
+                                                                               DataAccessException,
+                                                                               MarginNotFoundException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -323,9 +348,9 @@ public class TraderEngine implements ITraderEngine {
     private void checkAssetsOpen(Request request,
                                  Instrument instrument,
                                  LocalDate tradingDay) throws IllegalQuantityException,
-                                                               DataAccessException,
-                                                               MoneyOverflowException,
-                                                               AlgorithmException {
+                                                              DataAccessException,
+                                                              MoneyOverflowException,
+                                                              AlgorithmException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -453,13 +478,6 @@ public class TraderEngine implements ITraderEngine {
                                                                          ex.getMessage(),
                                                                          ex);
         }
-    }
-
-    private TraderContext findContextByTraderId(int traderId) throws UnknownTraderIdException {
-        if (!traders.containsKey(traderId)) {
-            throw new UnknownTraderIdException(Integer.toString(traderId));
-        }
-        return traders.get(traderId);
     }
 
     private TraderContext findContextRandomly(Request request) throws NoTraderException {
@@ -987,7 +1005,9 @@ public class TraderEngine implements ITraderEngine {
                                                             UnknownTraderIdException,
                                                             UnknownOrderIdException,
                                                             IllegalContractException,
-                                                            QuantityOverflowException {
+                                                            QuantityOverflowException,
+                                                            InstrumentNotFoundException,
+                                                            WrongOrderIdException {
         try (var conn = ds.getConnection()) {
             var rs         = conn.getRequests();
             var tradingDay = conn.getTradingDay().getTradingDay();
@@ -1014,7 +1034,9 @@ public class TraderEngine implements ITraderEngine {
                                                                   QuantityOverflowException,
                                                                   IllegalContractException,
                                                                   UnknownTraderIdException,
-                                                                  UnknownOrderIdException {
+                                                                  UnknownOrderIdException,
+                                                                  WrongOrderIdException,
+                                                                  InstrumentNotFoundException {
         var orderId = r.getOrderId();
         Objects.requireNonNull(orderId);
         var trades = conn.getTradesByOrderId(orderId);
@@ -1026,7 +1048,8 @@ public class TraderEngine implements ITraderEngine {
         Order o = algo.getOrder(r,
                                 ctrs,
                                 trades,
-                                cals);
+                                cals,
+                                instruments);
         var s = o.getStatus();
         if (s == OrderStatus.ACCEPTED
             || s == OrderStatus.QUEUED
@@ -1074,18 +1097,6 @@ public class TraderEngine implements ITraderEngine {
             context.setHandler(new TraderGatewayHandler(context));
         }
         context.start(globalStartProps);
-    }
-
-    private void stopEach(TraderContext context) throws GatewayException {
-        Objects.requireNonNull(context);
-        context.stop();
-    }
-
-    <T> void publishEvent(Class<T> clazz, T object) {
-        if (es == null || es.isEmpty()) {
-            return;
-        }
-        es.publish(clazz, object);
     }
 
 }
