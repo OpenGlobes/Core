@@ -28,7 +28,7 @@ import java.time.ZonedDateTime;
  */
 public class Instrument implements Serializable {
 
-    private Double        commissionCloseRatio;
+    private Double        commissionCloseYdRatio;
     private Double        commissionCloseTodayRatio;
     private Double        commissionOpenRatio;
     private Integer       commissionType;
@@ -45,12 +45,12 @@ public class Instrument implements Serializable {
     public Instrument() {
     }
 
-    public Double getCommissionCloseRatio() {
-        return commissionCloseRatio;
+    public Double getCommissionCloseYdRatio() {
+        return commissionCloseYdRatio;
     }
 
-    public void setCommissionCloseRatio(Double commissionCloseRatio) {
-        this.commissionCloseRatio = commissionCloseRatio;
+    public void setCommissionCloseYdRatio(Double commissionCloseYdRatio) {
+        this.commissionCloseYdRatio = commissionCloseYdRatio;
     }
 
     public Double getCommissionCloseTodayRatio() {

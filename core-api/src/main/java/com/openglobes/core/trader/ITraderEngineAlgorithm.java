@@ -68,6 +68,7 @@ public interface ITraderEngineAlgorithm {
 
     double getCommission(double price,
                          Instrument instrument,
-                         Integer direction,
-                         Integer offset);
+                         Integer offset,
+                         Contract c,
+                         LocalDate tradingDay);
 }

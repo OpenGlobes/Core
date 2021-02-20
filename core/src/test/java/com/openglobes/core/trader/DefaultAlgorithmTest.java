@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,36 +33,42 @@ class DefaultAlgorithmTest extends AlgorithmData {
         assertEquals(instrument.getCommissionOpenRatio(),
                      algorithm().getCommission(price,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.OPEN));
+                                               Offset.OPEN,
+                                               null,
+                                               null));
         assertEquals(0.0,
                      algorithm().getCommission(price,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.CLOSE));
+                                               Offset.CLOSE_YD,
+                                               null,
+                                               null));
         assertEquals(instrument.getCommissionCloseTodayRatio(),
                      algorithm().getCommission(price,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.CLOSE_TODAY));
+                                               Offset.CLOSE_TODAY,
+                                               null,
+                                               null));
 
         instrument = instrument("x2109");
         price      = 2000.0;
         assertEquals(price * instrument.getMultiple() * instrument.getCommissionOpenRatio(),
                      algorithm().getCommission(price,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.OPEN));
+                                               Offset.OPEN,
+                                               null,
+                                               null));
         assertEquals(0.0,
                      algorithm().getCommission(2000.0,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.CLOSE));
+                                               Offset.CLOSE_YD,
+                                               null,
+                                               null));
         assertEquals(price * instrument.getMultiple() * instrument.getCommissionCloseTodayRatio(),
                      algorithm().getCommission(price,
                                                instrument,
-                                               Direction.BUY,
-                                               Offset.CLOSE_TODAY));
+                                               Offset.CLOSE_TODAY,
+                                               null,
+                                               null));
     }
 
     @Test
@@ -174,6 +179,14 @@ class DefaultAlgorithmTest extends AlgorithmData {
                          sell.getTodayVolumn());
             assertEquals(2,
                          sell.getTodayOpenVolumn());
+
+            var r = requests().get(4L);
+            assertEquals(algorithm().getCommission(0.0D,
+                                                   instrument(r.getInstrumentId()),
+                                                   r.getOffset(),
+                                                   getContractById(4L),
+                                                   r.getTradingDay()),
+                         sell.getFrozenCommission());
         });
     }
 

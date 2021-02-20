@@ -104,8 +104,9 @@ public class AlgorithmData {
         c.setCommissionId(1L);
         c.setCommission(algorithm().getCommission(r.getPrice(),
                                                   instrument(r.getInstrumentId()),
-                                                  r.getDirection(),
-                                                  r.getOffset()));
+                                                  r.getOffset(),
+                                                  null,
+                                                  r.getTradingDay()));
         commissions.add(c);
 
         c = Utils.copy(c);
@@ -126,8 +127,9 @@ public class AlgorithmData {
         c.setCommissionId(3L);
         c.setCommission(algorithm().getCommission(r.getPrice(),
                                                   instrument(r.getInstrumentId()),
-                                                  r.getDirection(),
-                                                  r.getOffset()));
+                                                  r.getOffset(),
+                                                  null,
+                                                  r.getTradingDay()));
         commissions.add(c);
 
         // Order ID = 3L
@@ -143,8 +145,9 @@ public class AlgorithmData {
         c.setCommissionId(4L);
         c.setCommission(algorithm().getCommission(r.getPrice(),
                                                   instrument(r.getInstrumentId()),
-                                                  r.getDirection(),
-                                                  r.getOffset()));
+                                                  r.getOffset(),
+                                                  null,
+                                                  r.getTradingDay()));
         commissions.add(c);
 
         c = Utils.copy(c);
@@ -157,21 +160,27 @@ public class AlgorithmData {
         c = new Commission();
 
         c.setStatus(FeeStatus.FORZEN);
-        c.setCommission(algorithm.getCommission(r.getPrice(),
-                                                instrument(r.getInstrumentId()),
-                                                r.getDirection(),
-                                                r.getOffset()));
         c.setTag(r.getTag());
         c.setTimestamp(ZonedDateTime.now());
         c.setContractId(3L);
         c.setCommissionId(6L);
         c.setOrderId(r.getOrderId());
         c.setTradingDay(r.getTradingDay());
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getOffset(),
+                                                getContractById(3L),
+                                                r.getTradingDay()));
         commissions.add(c);
 
         c = Utils.copy(c);
         c.setContractId(4L);
         c.setCommissionId(7L);
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getOffset(),
+                                                getContractById(4L),
+                                                r.getTradingDay()));
         commissions.add(c);
     }
 
@@ -205,6 +214,15 @@ public class AlgorithmData {
             }
         });
         return r;
+    }
+
+    protected Contract getContractById(Long contractId) {
+        for (var c : contracts) {
+            if (contractId.equals(c.getContractId())) {
+                return c;
+            }
+        }
+        throw new NullPointerException("Contract not found: "  + contractId + ".");
     }
 
     private void setResponses() {
@@ -285,7 +303,7 @@ public class AlgorithmData {
 
         r.setAction(ActionType.NEW);
         r.setDirection(Direction.BUY);
-        r.setOffset(Offset.CLOSE);
+        r.setOffset(Offset.CLOSE_YD);
         r.setSignature(Utils.nextUuid().toString());
         r.setStatus(OrderStatus.ACCEPTED);
         r.setInstrumentId("c2105");
@@ -485,7 +503,7 @@ public class AlgorithmData {
         r.setTraderId(null);
         r.setDirection(Direction.BUY);
         r.setOrderId(4L);
-        r.setOffset(Offset.CLOSE);
+        r.setOffset(Offset.CLOSE_AUTO);
         r.setAction(ActionType.NEW);
         r.setExchangeId("DCE");
         r.setInstrumentId("c2105");
@@ -572,7 +590,7 @@ public class AlgorithmData {
     private void setInstruments() {
         Instrument i = new Instrument();
 
-        i.setCommissionCloseRatio(0.0);
+        i.setCommissionCloseYdRatio(0.0);
         i.setCommissionCloseTodayRatio(1.2);
         i.setInstrumentId("c2105");
         i.setTimestamp(ZonedDateTime.now());
@@ -606,7 +624,7 @@ public class AlgorithmData {
         i = Utils.copy(i);
         i.setInstrumentId("x2109");
         i.setCommissionOpenRatio(.09);
-        i.setCommissionCloseRatio(0.0);
+        i.setCommissionCloseYdRatio(0.0);
         i.setCommissionCloseTodayRatio(.09);
         i.setCommissionType(RatioType.BY_MONEY);
         i.setMarginRatio(1234.0);

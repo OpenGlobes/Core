@@ -27,6 +27,7 @@ import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.Utils;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -266,7 +267,8 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private Collection<Contract> checkAssetsClose(Request request,
-                                                  Instrument instrument) throws IllegalQuantityException,
+                                                  Instrument instrument,
+                                                  LocalDate tradingDay) throws IllegalQuantityException,
                                                                                 QuantityOverflowException,
                                                                                 ContractNotFoundException,
                                                                                 InvalidRequestOffsetException,
@@ -281,13 +283,14 @@ public class TraderEngine implements ITraderEngine {
             throw new QuantityOverflowException(request.getQuantity() + ">" + cs.size());
         }
         var r = new HashSet<Contract>(32);
-        var c = algo.getCommission(request.getPrice(),
-                                   instrument,
-                                   request.getDirection(),
-                                   request.getOffset());
         for (int i = 0; i < request.getQuantity(); ++i) {
             var ctr = cs.get(i);
             r.add(ctr);
+            var c = algo.getCommission(request.getPrice(),
+                                       instrument,
+                                       request.getOffset(),
+                                       ctr,
+                                       tradingDay);
             setFrozenClose(c,
                            ctr,
                            getMarginByContract(ctr));
@@ -299,7 +302,7 @@ public class TraderEngine implements ITraderEngine {
                                                                  MarginNotFoundException {
         Margin m = null;
         try (ITraderDataConnection conn = ds.getConnection()) {
-            var trade = conn.getTradeById(contract.getTradeId());
+            var trade   = conn.getTradeById(contract.getTradeId());
             var margins = conn.getMarginsByOrderId(trade.getOrderId());
             for (var x : margins) {
                 if (x.getContractId().equals(contract.getContractId())) {
@@ -313,12 +316,13 @@ public class TraderEngine implements ITraderEngine {
             return m;
         } catch (DataQueryException | ClassNotFoundException | SQLException ex) {
             throw new DataAccessException(ex.getMessage(),
-                                    ex);
+                                          ex);
         }
     }
 
     private void checkAssetsOpen(Request request,
-                                 Instrument instrument) throws IllegalQuantityException,
+                                 Instrument instrument,
+                                 LocalDate tradingDay) throws IllegalQuantityException,
                                                                DataAccessException,
                                                                MoneyOverflowException,
                                                                AlgorithmException {
@@ -330,8 +334,9 @@ public class TraderEngine implements ITraderEngine {
                                instrument);
         var c = algo.getCommission(request.getPrice(),
                                    instrument,
-                                   request.getDirection(),
-                                   request.getOffset());
+                                   request.getOffset(),
+                                   null,
+                                   tradingDay);
         var total     = request.getQuantity() * (m + c);
         var available = getAvailableMoney();
         if (available < total) {
@@ -438,7 +443,8 @@ public class TraderEngine implements ITraderEngine {
                     forNew(ctx.getRequest(),
                            ctx.getInstrument(),
                            ctx.getProperties(),
-                           ctx.getRequestId());
+                           ctx.getRequestId(),
+                           day.getTradingDay());
                 }
             }
             conn.addRequest(ctx.getRequest());
@@ -529,20 +535,21 @@ public class TraderEngine implements ITraderEngine {
     private void forNew(Request request,
                         Instrument instrument,
                         Properties properties,
-                        int requestId) throws GatewayException,
-                                              UnknownTraderIdException,
-                                              IllegalQuantityException,
-                                              DataAccessException,
-                                              MoneyOverflowException,
-                                              TraderDisabledException,
-                                              NoTraderException,
-                                              QuantityOverflowException,
-                                              ContractNotFoundException,
-                                              InvalidRequestOffsetException,
-                                              InvalidRequestDirectionException,
-                                              DeepCopyException,
-                                              AlgorithmException,
-                                              MarginNotFoundException {
+                        int requestId,
+                        LocalDate tradingDay) throws GatewayException,
+                                                     UnknownTraderIdException,
+                                                     IllegalQuantityException,
+                                                     DataAccessException,
+                                                     MoneyOverflowException,
+                                                     TraderDisabledException,
+                                                     NoTraderException,
+                                                     QuantityOverflowException,
+                                                     ContractNotFoundException,
+                                                     InvalidRequestOffsetException,
+                                                     InvalidRequestDirectionException,
+                                                     DeepCopyException,
+                                                     AlgorithmException,
+                                                     MarginNotFoundException {
         checkDataSourceAlgorithmNotNull();
         Objects.requireNonNull(instrument);
         /*
@@ -553,13 +560,15 @@ public class TraderEngine implements ITraderEngine {
         if (request.getOffset() == Offset.OPEN) {
             decideTrader(request);
             checkAssetsOpen(request,
-                            instrument);
+                            instrument,
+                            tradingDay);
             forwardNewRequest(request,
                               request.getTraderId(),
                               requestId);
         } else {
             Collection<Contract> cs = checkAssetsClose(request,
-                                                       instrument);
+                                                       instrument,
+                                                       tradingDay);
             Collection<Request> grp = group(cs,
                                             request);
             for (var r : grp) {
@@ -702,7 +711,7 @@ public class TraderEngine implements ITraderEngine {
                         if (o == null) {
                             throw new DeepCopyException(Request.class.getCanonicalName());
                         }
-                        o.setOffset(Offset.CLOSE);
+                        o.setOffset(Offset.CLOSE_YD);
                         o.setQuantity(0L);
                         o.setTraderId(c.getTraderId());
                     }

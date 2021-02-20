@@ -85,12 +85,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                instrument.getInstrumentId() + " multiple.");
         return price * multiple;
     }
-
-    @Override
-    public double getCommission(double price,
+    
+    private double getCommission(double price,
                                 Instrument instrument,
-                                Integer direction,
-                                Integer offset) {
+                                Integer offset) throws InvalidRequestOffsetException {
         Objects.requireNonNull(instrument,
                                instrument.getInstrumentId());
         var ctype = instrument.getCommissionType();
@@ -105,6 +103,38 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             return m * ratio;
         } else {
             return ratio;
+        }
+    }
+
+    @Override
+    public double getCommission(double price,
+                                Instrument instrument,
+                                Integer offset,
+                                Contract c,
+                                LocalDate tradingDay) {
+        try {
+            if (offset != Offset.CLOSE_AUTO) {
+                return getCommission(price,
+                                     instrument,
+                                     offset);
+            } else {
+                Objects.requireNonNull(c);
+                if (c.getOpenTradingDay().isBefore(tradingDay)) {
+                    return getCommission(price,
+                                         instrument,
+                                         Offset.CLOSE_YD);
+                } else {
+                    return getCommission(price,
+                                         instrument,
+                                         Offset.CLOSE_TODAY);
+                }
+            }
+        } catch (InvalidRequestOffsetException ex) {
+            /*
+             * It won't throw the exception.
+             */
+            throw new IllegalStateException("The exception shouldn't be thrown: " + ex.getMessage(),
+                                            ex);
         }
     }
 
@@ -646,16 +676,18 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     }
 
     private Double getProperCommissionRatio(Instrument instrument,
-                                            Integer offset) {
+                                            Integer offset) throws InvalidRequestOffsetException {
         Objects.requireNonNull(instrument,
                                instrument.getInstrumentId());
         if (offset == Offset.OPEN) {
             return instrument.getCommissionOpenRatio();
         } else {
-            if (offset == Offset.CLOSE) {
-                return instrument.getCommissionCloseRatio();
-            } else {
+            if (offset == Offset.CLOSE_YD) {
+                return instrument.getCommissionCloseYdRatio();
+            } else if (offset == Offset.CLOSE_TODAY) {
                 return instrument.getCommissionCloseTodayRatio();
+            } else {
+                throw new InvalidRequestOffsetException("Can't handle offset " + offset + ".");
             }
         }
     }
@@ -755,6 +787,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         p0.setInstrumentId(c.getInstrumentId());
         p0.setMargin(0.0D);
         p0.setPositionProfit(0.0D);
+        p0.setCommission(0.0D);
+        p0.setFrozenCommission(0.0D);
         p0.setPreAmount(0.0D);
         p0.setPreMargin(0.0D);
         p0.setPreVolumn(0L);
