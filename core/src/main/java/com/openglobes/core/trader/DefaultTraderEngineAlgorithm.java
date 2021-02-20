@@ -85,10 +85,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                instrument.getInstrumentId() + " multiple.");
         return price * multiple;
     }
-    
+
     private double getCommission(double price,
-                                Instrument instrument,
-                                Integer offset) throws InvalidRequestOffsetException {
+                                 Instrument instrument,
+                                 Integer offset) throws InvalidRequestOffsetException {
         Objects.requireNonNull(instrument,
                                instrument.getInstrumentId());
         var ctype = instrument.getCommissionType();
@@ -602,7 +602,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                   Map<Long, Set<Commission>> commissions) throws CommissionNotFoundException {
         var v = commissions.get(contractId);
         if (v == null) {
-            throw new CommissionNotFoundException("Contract ID:" + contractId + ".");
+            return new HashSet<>();
         }
         return v;
     }

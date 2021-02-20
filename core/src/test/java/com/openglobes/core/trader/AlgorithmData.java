@@ -49,9 +49,11 @@ public class AlgorithmData {
                                           instrument(r.getInstrumentId())));
         margins.add(m);
 
+        // Order ID = 5L
         m = Utils.copy(m);
         m.setContractId(2L);
         m.setMarginId(2L);
+        m.setStatus(FeeStatus.REMOVED);
         margins.add(m);
 
         // OrderID = 2L
@@ -91,50 +93,12 @@ public class AlgorithmData {
     }
 
     private void setCommissions() {
-        // Order ID = 1L
-        var r = requests().get(1L);
-        var c = new Commission();
-
-        c.setOrderId(r.getOrderId());
-        c.setTradingDay(r.getTradingDay());
-        c.setStatus(FeeStatus.DEALED);
-        c.setTag(r.getTag());
-        c.setTimestamp(ZonedDateTime.now());
-        c.setContractId(1L);
-        c.setCommissionId(1L);
-        c.setCommission(algorithm().getCommission(r.getPrice(),
-                                                  instrument(r.getInstrumentId()),
-                                                  r.getOffset(),
-                                                  null,
-                                                  r.getTradingDay()));
-        commissions.add(c);
-
-        c = Utils.copy(c);
-        c.setCommissionId(2L);
-        c.setContractId(2L);
-        commissions.add(c);
-
-        // OrderID = 2L
-        r = requests().get(2L);
-        c = new Commission();
-
-        c.setOrderId(r.getOrderId());
-        c.setTradingDay(r.getTradingDay());
-        c.setStatus(FeeStatus.DEALED);
-        c.setTag(r.getTag());
-        c.setTimestamp(ZonedDateTime.now());
-        c.setContractId(3L);
-        c.setCommissionId(3L);
-        c.setCommission(algorithm().getCommission(r.getPrice(),
-                                                  instrument(r.getInstrumentId()),
-                                                  r.getOffset(),
-                                                  null,
-                                                  r.getTradingDay()));
-        commissions.add(c);
+        // Order ID = 1L/2L
+        // Commission has been cleared at renew.
 
         // Order ID = 3L
-        r = requests().get(3L);
-        c = new Commission();
+        var r = requests().get(3L);
+        var c = new Commission();
 
         c.setOrderId(r.getOrderId());
         c.setTradingDay(r.getTradingDay());
@@ -180,6 +144,24 @@ public class AlgorithmData {
                                                 instrument(r.getInstrumentId()),
                                                 r.getOffset(),
                                                 getContractById(4L),
+                                                r.getTradingDay()));
+        commissions.add(c);
+
+        // Order ID = 5L
+        r = requests().get(5L);
+        c = new Commission();
+
+        c.setStatus(FeeStatus.DEALED);
+        c.setTag(r.getTag());
+        c.setTimestamp(ZonedDateTime.now());
+        c.setContractId(2L);
+        c.setCommissionId(8L);
+        c.setOrderId(r.getOrderId());
+        c.setTradingDay(r.getTradingDay());
+        c.setCommission(algorithm.getCommission(r.getPrice(),
+                                                instrument(r.getInstrumentId()),
+                                                r.getOffset(),
+                                                getContractById(2L),
                                                 r.getTradingDay()));
         commissions.add(c);
     }
@@ -320,6 +302,32 @@ public class AlgorithmData {
         r.setTraderId(3);
         r.setResponseId(8L);
         responses.add(r);
+
+        // Order ID = 5L
+        r = new Response();
+
+        r.setAction(ActionType.NEW);
+        r.setDirection(Direction.SELL);
+        r.setOffset(Offset.CLOSE_YD);
+        r.setSignature(Utils.nextUuid().toString());
+        r.setStatus(OrderStatus.ACCEPTED);
+        r.setInstrumentId("c2105");
+        r.setOrderId(5L);
+        r.setResponseId(9L);
+        r.setStatusMessage("ACCEPTED");
+        r.setTimestamp(ZonedDateTime.now().minusMinutes(3));
+        r.setTraderId(1);
+        r.setTradingDay(LocalDate.now());
+        responses.add(r);
+
+        r = Utils.copy(r);
+
+        r.setTraderId(1);
+        r.setResponseId(10L);
+        r.setStatus(OrderStatus.ALL_TRADED);
+        r.setStatusMessage("ALL_TRADED");
+        r.setTimestamp(r.getTimestamp().plusSeconds(1));
+        responses.add(r);
     }
 
     private void setTrades() {
@@ -371,6 +379,22 @@ public class AlgorithmData {
         t.setQuantity(2L);
         t.setSignature(Utils.nextUuid().toString());
         trades.add(t);
+
+        // Order ID = 5L
+        t = Utils.copy(t);
+        t.setAction(ActionType.NEW);
+        t.setDirection(Direction.SELL);
+        t.setOffset(Offset.CLOSE_YD);
+        t.setInstrumentId("c2105");
+        t.setOrderId(5L);
+        t.setTraderId(1);
+        t.setTimestamp(ZonedDateTime.now());
+        t.setTradingDay(LocalDate.now());
+        t.setTradeId(4L);
+        t.setPrice(2945.0);
+        t.setQuantity(1L);
+        t.setSignature(Utils.nextUuid().toString());
+        trades.add(t);
     }
 
     private void setContracts() {
@@ -391,8 +415,13 @@ public class AlgorithmData {
         c.setTraderId(1);
         contracts.add(c);
 
+        // Order ID = 5L
         c = Utils.copy(c);
         c.setContractId(2L);
+        c.setStatus(ContractStatus.CLOSED);
+        c.setCloseAmount(29450.0);
+        c.setCloseTradingDay(LocalDate.now());
+        c.setTimestamp(ZonedDateTime.now());
         contracts.add(c);
 
         // Order ID = 2L
@@ -508,6 +537,25 @@ public class AlgorithmData {
         r.setExchangeId("DCE");
         r.setInstrumentId("c2105");
         r.setRequestId(4L);
+        r.setTradingDay(LocalDate.now());
+        requests.put(r.getRequestId(),
+                     r);
+
+        r = new Request();
+
+        r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(3));
+        r.setTag("sell-close-request");
+        r.setSignature(Utils.nextUuid().toString());
+        r.setQuantity(1L);
+        r.setPrice(2945.0);
+        r.setTraderId(null);
+        r.setDirection(Direction.SELL);
+        r.setOrderId(5L);
+        r.setOffset(Offset.CLOSE_YD);
+        r.setAction(ActionType.NEW);
+        r.setExchangeId("DCE");
+        r.setInstrumentId("c2105");
+        r.setRequestId(5L);
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);

@@ -160,7 +160,7 @@ class DefaultAlgorithmTest extends AlgorithmData {
 
             var buy = getPosition(Direction.BUY,
                                   positions);
-            assertEquals(2,
+            assertEquals(1,
                          buy.getVolumn());
             assertEquals(2,
                          buy.getPreVolumn());
@@ -168,6 +168,14 @@ class DefaultAlgorithmTest extends AlgorithmData {
                          buy.getTodayVolumn());
             assertEquals(0,
                          buy.getTodayOpenVolumn());
+
+            var r = requests().get(5L);
+            assertEquals(algorithm().getCommission(r.getPrice(),
+                                                   instrument(r.getInstrumentId()),
+                                                   r.getOffset(),
+                                                   getContractById(2L),
+                                                   r.getTradingDay()),
+                         buy.getCommission());
 
             var sell = getPosition(Direction.SELL,
                                    positions);
@@ -180,8 +188,11 @@ class DefaultAlgorithmTest extends AlgorithmData {
             assertEquals(2,
                          sell.getTodayOpenVolumn());
 
-            var r = requests().get(4L);
-            assertEquals(algorithm().getCommission(0.0D,
+            /*
+             * Closing today's contracts requires commission.
+             */
+            r = requests().get(4L);
+            assertEquals(algorithm().getCommission(r.getPrice(),
                                                    instrument(r.getInstrumentId()),
                                                    r.getOffset(),
                                                    getContractById(4L),
