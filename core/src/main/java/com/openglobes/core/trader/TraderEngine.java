@@ -762,8 +762,8 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void initContracts(Collection<Contract> cs,
-                               ITraderDataConnection conn) throws DataAccessException {
+    private void clearContracts(Collection<Contract> cs,
+                                ITraderDataConnection conn) throws DataAccessException {
         Objects.requireNonNull(cs);
         try {
             for (var c : cs) {
@@ -800,7 +800,11 @@ public class TraderEngine implements ITraderEngine {
             conn = ds.getConnection();
             conn.transaction();
             initAccount(conn.getAccount());
-            initContracts(conn.getContractsByStatus(ContractStatus.CLOSED), conn);
+            clearContracts(conn.getContractsByStatus(ContractStatus.CLOSED),
+                           conn);
+            clearMargins(conn.getMarginsByStatus(FeeStatus.REMOVED),
+                         conn);
+            clearCommissions(conn);
             clearWithdrawDeposit(conn.getWithdraws(),
                                  conn.getDeposits(),
                                  conn);
@@ -817,6 +821,29 @@ public class TraderEngine implements ITraderEngine {
             if (conn != null) {
                 conn.close();
             }
+        }
+    }
+
+    private void clearCommissions(ITraderDataConnection conn) throws DataAccessException {
+        try {
+            for (var c : conn.getCommissions()) {
+                conn.removeCommission(c.getCommissionId());
+            }
+        } catch (DataRemovalException | DataQueryException ex) {
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
+        }
+    }
+
+    private void clearMargins(Collection<Margin> margins,
+                              ITraderDataConnection conn) throws DataAccessException {
+        try {
+            for (var m : margins) {
+                conn.removeMargin(m.getMarginId());
+            }
+        } catch (DataRemovalException ex) {
+            throw new DataAccessException(ex.getMessage(),
+                                          ex);
         }
     }
 
