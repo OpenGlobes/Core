@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 public class AlgorithmData {
-    
+
     private final Account account = new Account();
     private final ITraderEngineAlgorithm algorithm = new DefaultTraderEngineAlgorithm();
     private final Collection<Commission> commissions = new HashSet<>(8);
@@ -52,7 +52,7 @@ public class AlgorithmData {
         setSettlements();
         setAccount();
     }
-    
+
     protected Account account() {
         return account;
     }
@@ -85,30 +85,26 @@ public class AlgorithmData {
     protected Collection<Contract> getContractsByTrades(Collection<Trade> trades) {
         var r = new HashSet<Contract>(8);
         trades.forEach(tr -> {
-            contracts.stream().filter(c -> (c.getTradeId().equals(tr.getTradeId()))).forEachOrdered(c -> {
-                r.add(c);
-            });
+            contracts.stream()
+                    .filter(c -> (c.getTradeId().equals(tr.getTradeId())))
+                    .forEachOrdered(c -> r.add(c));
         });
         return r;
     }
 
     protected Collection<Response> getResponsesByOrderId(Long orderId) {
         var r = new HashSet<Response>(8);
-        responses.forEach(rs -> {
-            if (rs.getOrderId().equals(orderId)) {
-                r.add(rs);
-            }
-        });
+        responses.stream()
+                .filter(rs -> rs.getOrderId().equals(orderId))
+                .forEach(rs -> r.add(rs));
         return r;
     }
 
     protected Collection<Trade> getTradesByOrderId(Long orderId) {
         var r = new HashSet<Trade>(8);
-        trades.forEach(x -> {
-            if (x.getOrderId().equals(orderId)) {
-                r.add(x);
-            }
-        });
+        trades.stream()
+                .filter(x -> x.getOrderId().equals(orderId))
+                .forEach(x -> r.add(x));
         return r;
     }
 
