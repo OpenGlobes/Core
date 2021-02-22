@@ -103,78 +103,9 @@ class DefaultAlgorithmTest extends AlgorithmData {
     }
 
     @Test
-    @DisplayName("Test request that closes both today and yesterday contracts, and is accepted.")
-    void testAcceptedOrder() {
-        var r = requests().get(4L);
-        var trades = getTradesByOrderId(r.getOrderId());
-        var cs = getContractsByTrades(trades);
-        var rs = getResponsesByOrderId(r.getOrderId());
-
-        assertDoesNotThrow(() -> {
-            var order = algorithm().getOrder(r,
-                                         cs,
-                                         trades,
-                                         rs,
-                                         instruments());
-            assertEquals(OrderStatus.ACCEPTED,
-                         order.getStatus());
-            assertEquals(r.getQuantity(),
-                         order.getQuantity());
-            assertEquals(r.getOrderId(),
-                         order.getOrderId());
-            assertEquals(r.getDirection(),
-                         order.getDirection());
-            assertEquals(r.getOffset(),
-                         order.getOffset());
-            assertEquals(r.getPrice(),
-                         order.getPrice());
-            assertEquals(r.getInstrumentId(),
-                         order.getInstrumentId());
-            assertEquals(r.getTradingDay(),
-                         order.getTradingDay());
-        });
-    }
-
-    @Test
-    @DisplayName("Test request whose volumn is all traded.")
-    void testTradedOrder1() {
-        testTradedOrder(1L);
-    }
-
-    @Test
-    @DisplayName("Test request whose volumn is now all closed.")
-    void testTradedOrder2() {
-        testTradedOrder(2L);
-    }
-
-    @Test
-    @DisplayName("Test request whose volumn is now partially closing.")
-    void testTradedOrder3() {
-        testTradedOrder(3L);
-    }
-
-    @Test
-    @DisplayName("Test request that closes contracts for yesterday, all traded.")
-    void testTradedOrder5() {
-        testTradedOrder(5L);
-    }
-
-    @Test
-    @DisplayName("Test request opens contracts for today, all traded.")
-    void testTradedOrder6() {
-        testTradedOrder(6L);
-    }
-
-    @Test
-    @DisplayName("Test request closes contracts for today, all traded.")
-    void testTradedOrder7() {
-        testTradedOrder(7L);
-    }
-
-    @Test
     void getPositions() {
         var day = LocalDate.now();
-        var sp = new HashMap<String, SettlementPrice>();
+        var sp = new HashMap<String, SettlementPrice>(8);
 
         var sp0 = new SettlementPrice();
         sp0.setInstrumentId("c2105");
@@ -241,6 +172,75 @@ class DefaultAlgorithmTest extends AlgorithmData {
             assertEquals(comm * 4,
                          sell.getCommission());
         });
+    }
+
+    @Test
+    @DisplayName("Test request that closes both today and yesterday contracts, and is accepted.")
+    void testAcceptedOrder() {
+        var r = requests().get(4L);
+        var trades = getTradesByOrderId(r.getOrderId());
+        var cs = getContractsByTrades(trades);
+        var rs = getResponsesByOrderId(r.getOrderId());
+
+        assertDoesNotThrow(() -> {
+            var order = algorithm().getOrder(r,
+                                         cs,
+                                         trades,
+                                         rs,
+                                         instruments());
+            assertEquals(OrderStatus.ACCEPTED,
+                         order.getStatus());
+            assertEquals(r.getQuantity(),
+                         order.getQuantity());
+            assertEquals(r.getOrderId(),
+                         order.getOrderId());
+            assertEquals(r.getDirection(),
+                         order.getDirection());
+            assertEquals(r.getOffset(),
+                         order.getOffset());
+            assertEquals(r.getPrice(),
+                         order.getPrice());
+            assertEquals(r.getInstrumentId(),
+                         order.getInstrumentId());
+            assertEquals(r.getTradingDay(),
+                         order.getTradingDay());
+        });
+    }
+
+    @Test
+    @DisplayName("Test request whose volumn is all traded.")
+    void testTradedOrder1() {
+        testTradedOrder(1L);
+    }
+
+    @Test
+    @DisplayName("Test request whose volumn is now all closed.")
+    void testTradedOrder2() {
+        testTradedOrder(2L);
+    }
+
+    @Test
+    @DisplayName("Test request whose volumn is now partially closing.")
+    void testTradedOrder3() {
+        testTradedOrder(3L);
+    }
+
+    @Test
+    @DisplayName("Test request that closes contracts for yesterday, all traded.")
+    void testTradedOrder5() {
+        testTradedOrder(5L);
+    }
+
+    @Test
+    @DisplayName("Test request opens contracts for today, all traded.")
+    void testTradedOrder6() {
+        testTradedOrder(6L);
+    }
+
+    @Test
+    @DisplayName("Test request closes contracts for today, all traded.")
+    void testTradedOrder7() {
+        testTradedOrder(7L);
     }
 
     private Position getPosition(Integer direction,
