@@ -20,7 +20,6 @@ import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.IEventHandler;
 import com.openglobes.core.event.IEventSource;
 import com.openglobes.core.event.InvalidSubscriptionException;
-
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultTraderDataSource extends TraderDataSource {
+public class DefaultTraderDataSource extends AbstractDataSource {
 
     private final Map<DataChangeType, IEventSource> events;
 
@@ -47,7 +46,7 @@ public class DefaultTraderDataSource extends TraderDataSource {
     }
 
     @Override
-    public TraderDataConnection getConnection() throws SQLException,
+    public AbstractDataConnection getConnection() throws SQLException,
                                                        ClassNotFoundException {
         return new DefaultTraderDataConnection(getSqlConnection(), this);
     }

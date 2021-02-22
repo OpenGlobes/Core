@@ -31,7 +31,7 @@ import java.util.Collection;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultTraderDataConnection extends TraderDataConnection {
+public class DefaultTraderDataConnection extends AbstractDataConnection {
 
     private final IQuery query;
 
