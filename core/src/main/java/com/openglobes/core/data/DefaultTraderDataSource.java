@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultTraderDataSource extends AbstractDataSource {
+public class DefaultTraderDataSource extends AbstractTraderDataSource {
 
     private final Map<DataChangeType, IEventSource> events;
 
@@ -46,7 +46,7 @@ public class DefaultTraderDataSource extends AbstractDataSource {
     }
 
     @Override
-    public AbstractDataConnection getConnection() throws SQLException,
+    public AbstractTraderDataConnection getConnection() throws SQLException,
                                                        ClassNotFoundException {
         return new DefaultTraderDataConnection(getSqlConnection(), this);
     }

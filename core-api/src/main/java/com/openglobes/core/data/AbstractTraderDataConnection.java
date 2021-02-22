@@ -16,16 +16,23 @@
  */
 package com.openglobes.core.data;
 
-import com.openglobes.core.dba.AbstractPooledDataSource;
+import com.openglobes.core.dba.AbstractPooledConnection;
+import com.openglobes.core.dba.IPooledDataSource;
+import java.sql.Connection;
 
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class MarketDataSource extends AbstractPooledDataSource
-        implements IMarketDataSource {
+public abstract class AbstractTraderDataConnection extends AbstractPooledConnection
+        implements ITraderDataConnection {
+
     /*
-     * This class provides an unified abstraction for market data source
+     * This class provides an unified abstraction for trader data connection
      * implementation.
      */
+    public AbstractTraderDataConnection(Connection connection,
+                                IPooledDataSource source) {
+        super(connection, source);
+    }
 }

@@ -22,10 +22,10 @@ import com.openglobes.core.dba.AbstractPooledDataSource;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractDataSource extends AbstractPooledDataSource
-        implements ITraderDataSource {
+public abstract class AbstractMarketDataSource extends AbstractPooledDataSource
+        implements IMarketDataSource {
     /*
-     * This class provides an unified abstraction for trader data source
+     * This class provides an unified abstraction for market data source
      * implementation.
      */
 }

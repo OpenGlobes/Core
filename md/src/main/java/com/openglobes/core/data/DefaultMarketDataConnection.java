@@ -30,7 +30,7 @@ import java.util.HashSet;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultMarketDataConnection extends MarketDataConnection {
+public class DefaultMarketDataConnection extends AbstractMarketDataConnection {
 
     private final IQuery query;
 

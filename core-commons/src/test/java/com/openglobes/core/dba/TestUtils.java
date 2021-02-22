@@ -19,6 +19,7 @@ package com.openglobes.core.dba;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * @author Hongbao Chen
@@ -26,15 +27,24 @@ import java.sql.SQLException;
  */
 public class TestUtils {
 
-    private TestUtils() {
+    private final static Properties props = new Properties();
+
+    static {
+        props.put("USER", "sa");
+        props.put("PASSWORD", "");
     }
 
     public static Connection getDefaultConnection() {
         try {
             Class.forName("org.h2.Driver");
-            return DriverManager.getConnection("jdbc:h2:mem:default-db", "sa", "");
+            return DriverManager.getConnection("jdbc:h2:mem:default-db",
+                                               props);
         } catch (SQLException | ClassNotFoundException ex) {
             return null;
         }
     }
+
+    private TestUtils() {
+    }
+
 }

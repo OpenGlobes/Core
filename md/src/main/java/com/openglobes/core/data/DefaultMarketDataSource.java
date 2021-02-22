@@ -22,7 +22,7 @@ import java.sql.SQLException;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DefaultMarketDataSource extends MarketDataSource {
+public class DefaultMarketDataSource extends AbstractMarketDataSource {
 
     @Override
     public IMarketDataConnection getConnection() throws DataException {
