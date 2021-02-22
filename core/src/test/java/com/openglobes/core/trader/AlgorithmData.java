@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class AlgorithmData {
     
+    private final Account account = new Account();
     private final ITraderEngineAlgorithm algorithm = new DefaultTraderEngineAlgorithm();
     private final Collection<Commission> commissions = new HashSet<>(8);
     private final Collection<Contract> contracts = new HashSet<>(8);
@@ -34,6 +35,7 @@ public class AlgorithmData {
     private final Collection<Margin> margins = new HashSet<>(8);
     private final Map<Long, Request> requests = new HashMap<>(8);
     private final Collection<Response> responses = new HashSet<>(8);
+    private final Map<String, SettlementPrice> settlements = new HashMap<>(8);
     private final Collection<Trade> trades = new HashSet<>(8);
     private final Collection<Withdraw> withdraws = new HashSet<>(8);
 
@@ -47,20 +49,29 @@ public class AlgorithmData {
         setResponses();
         setCommissions();
         setMargins();
+        setSettlements();
+        setAccount();
     }
+    
+    protected Account account() {
+        return account;
+    }
+
     protected ITraderEngineAlgorithm algorithm() {
         return algorithm;
     }
+
     protected Collection<Commission> commissions() {
         return commissions;
     }
+
     protected Collection<Contract> contracts() {
         return contracts;
     }
+
     protected Collection<Deposit> deposits() {
         return deposits;
     }
-
 
     protected Contract getContractById(Long contractId) {
         for (var c : contracts) {
@@ -70,19 +81,19 @@ public class AlgorithmData {
         }
         throw new NullPointerException("Contract not found: " + contractId + ".");
     }
+
     protected Collection<Contract> getContractsByTrades(Collection<Trade> trades) {
-        var r = new HashSet<Contract>();
+        var r = new HashSet<Contract>(8);
         trades.forEach(tr -> {
-            for (var c : contracts) {
-                if (c.getTradeId().equals(tr.getTradeId())) {
-                    r.add(c);
-                }
-            }
+            contracts.stream().filter(c -> (c.getTradeId().equals(tr.getTradeId()))).forEachOrdered(c -> {
+                r.add(c);
+            });
         });
         return r;
     }
+
     protected Collection<Response> getResponsesByOrderId(Long orderId) {
-        var r = new HashSet<Response>();
+        var r = new HashSet<Response>(8);
         responses.forEach(rs -> {
             if (rs.getOrderId().equals(orderId)) {
                 r.add(rs);
@@ -90,8 +101,9 @@ public class AlgorithmData {
         });
         return r;
     }
+
     protected Collection<Trade> getTradesByOrderId(Long orderId) {
-        var r = new HashSet<Trade>();
+        var r = new HashSet<Trade>(8);
         trades.forEach(x -> {
             if (x.getOrderId().equals(orderId)) {
                 r.add(x);
@@ -99,12 +111,15 @@ public class AlgorithmData {
         });
         return r;
     }
+
     protected Instrument instrument(String instrumentId) {
         return instruments.get(instrumentId);
     }
+
     protected Map<String, Instrument> instruments() {
         return instruments;
     }
+
     protected Collection<Margin> margins() {
         return margins;
     }
@@ -113,10 +128,33 @@ public class AlgorithmData {
         return requests;
     }
 
+    protected Map<String, SettlementPrice> settlements() {
+        return settlements;
+    }
 
     protected Collection<Withdraw> withdraws() {
         return withdraws;
     }
+
+    private void setAccount() {
+        account.setAccountId(1L);
+        account.setPreBalance(1000.0D);
+        account.setPreDeposit(1000.0D);
+        account.setPreWithdraw(500.0D);
+        account.setPreMargin(0.0D);
+        account.setBalance(account.getPreBalance());
+        account.setMargin(account.getPreMargin());
+        account.setCloseProfit(0.0D);
+        account.setCommission(0.0D);
+        account.setDeposit(0.0D);
+        account.setFrozenCommission(0.0D);
+        account.setFrozenMargin(0.0D);
+        account.setPositionProfit(150.0D);
+        account.setTimestamp(ZonedDateTime.now().minusDays(1));
+        account.setTradingDay(LocalDate.now().minusDays(1));
+        account.setWithdraw(0.0D);
+    }
+
     private void setCommissions() {
         // Order ID = 1L/2L
         // Commission has been cleared at renew.
@@ -226,6 +264,7 @@ public class AlgorithmData {
                                                 r.getTradingDay()));
         commissions.add(c);
     }
+
     private void setContracts() {
         Contract c = new Contract();
         // Order ID = 1L
@@ -243,7 +282,7 @@ public class AlgorithmData {
         c.setTradeId(1L);
         c.setTraderId(1);
         contracts.add(c);
-        
+
         // Order ID = 5L
         c = Utils.copy(c);
         c.setContractId(2L);
@@ -252,7 +291,7 @@ public class AlgorithmData {
         c.setCloseTradingDay(LocalDate.now());
         c.setTimestamp(ZonedDateTime.now());
         contracts.add(c);
-        
+
         // Order ID = 2L
         c = new Contract();
         c.setInstrumentId("c2105");
@@ -269,7 +308,7 @@ public class AlgorithmData {
         c.setTradeId(2L);
         c.setTraderId(2);
         contracts.add(c);
-        
+
         // Order ID = 3L
         c = new Contract();
         c.setInstrumentId("c2105");
@@ -286,12 +325,12 @@ public class AlgorithmData {
         c.setTradeId(3L);
         c.setTraderId(3);
         contracts.add(c);
-        
+
         c = Utils.copy(c);
         c.setContractId(5L);
         c.setStatus(ContractStatus.OPEN);
         contracts.add(c);
-        
+
         // Order ID = 6L
         c = new Contract();
         c.setInstrumentId("c2105");
@@ -311,22 +350,22 @@ public class AlgorithmData {
         c.setTraderId(3);
         contracts.add(c);
     }
+
     private void setDeposits() {
         Deposit d = new Deposit();
         d.setTradingDay(LocalDate.now());
-        
+
         d.setAmount(4000.0);
         d.setTimestamp(ZonedDateTime.now());
         d.setDepositId(1L);
         deposits.add(d);
-        
+
         d = Utils.copy(d);
         d.setAmount(2500.0);
         d.setTimestamp(ZonedDateTime.now());
         d.setDepositId(2L);
         deposits.add(d);
     }
-
 
     private void setInstruments() {
         Instrument i = new Instrument();
@@ -379,11 +418,12 @@ public class AlgorithmData {
         instruments.put("x2109",
                         i);
     }
+
     private void setMargins() {
         // Order ID = 1L
         var r = requests().get(1L);
         var m = new Margin();
-        
+
         m.setContractId(1L);
         m.setStatus(FeeStatus.DEALED);
         m.setTimestamp(ZonedDateTime.now());
@@ -394,18 +434,18 @@ public class AlgorithmData {
         m.setMargin(algorithm().getMargin(r.getPrice(),
                                           instrument(r.getInstrumentId())));
         margins.add(m);
-        
+
         // Order ID = 5L
         m = Utils.copy(m);
         m.setContractId(2L);
         m.setMarginId(2L);
         m.setStatus(FeeStatus.REMOVED);
         margins.add(m);
-        
+
         // OrderID = 2L
         r = requests().get(2L);
         m = new Margin();
-        
+
         m.setContractId(3L);
         m.setTimestamp(ZonedDateTime.now());
         m.setTag(r.getTag());
@@ -416,11 +456,11 @@ public class AlgorithmData {
         m.setMargin(algorithm().getMargin(r.getPrice(),
                                           instrument(r.getInstrumentId())));
         margins.add(m);
-        
+
         // Order ID = 3L
         r = requests().get(3L);
         m = new Margin();
-        
+
         m.setContractId(4L);
         m.setTimestamp(ZonedDateTime.now());
         m.setTag(r.getTag());
@@ -431,16 +471,16 @@ public class AlgorithmData {
         m.setMargin(algorithm().getMargin(r.getPrice(),
                                           instrument(r.getInstrumentId())));
         margins.add(m);
-        
+
         m = Utils.copy(m);
         m.setContractId(5L);
         m.setMarginId(5L);
         margins.add(m);
-        
+
         // Order ID = 6L
         r = requests().get(6L);
         m = new Margin();
-        
+
         m.setContractId(6L);
         m.setTimestamp(ZonedDateTime.now());
         m.setTag(r.getTag());
@@ -452,9 +492,10 @@ public class AlgorithmData {
                                           instrument(r.getInstrumentId())));
         margins.add(m);
     }
+
     private void setRequests() {
         Request r = new Request();
-        
+
         r.setTradingDay(LocalDate.now().minusDays(1));
         r.setRequestId(1L);
         r.setInstrumentId("c2105");
@@ -471,9 +512,9 @@ public class AlgorithmData {
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(11).minusDays(1));
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(7).minusDays(1));
         r.setTag("sell-open-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -490,9 +531,9 @@ public class AlgorithmData {
         r.setTradingDay(LocalDate.now().minusDays(1));
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(11));
         r.setTag("sell-open-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -509,9 +550,9 @@ public class AlgorithmData {
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(3));
         r.setTag("buy-close-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -528,9 +569,9 @@ public class AlgorithmData {
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(3));
         r.setTag("sell-close-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -547,9 +588,9 @@ public class AlgorithmData {
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(3));
         r.setTag("sell-open-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -566,9 +607,9 @@ public class AlgorithmData {
         r.setTradingDay(LocalDate.now());
         requests.put(r.getRequestId(),
                      r);
-        
+
         r = new Request();
-        
+
         r.setUpdateTimestamp(ZonedDateTime.now().minusMinutes(1));
         r.setTag("sell-open-request");
         r.setSignature(Utils.nextUuid().toString());
@@ -586,6 +627,7 @@ public class AlgorithmData {
         requests.put(r.getRequestId(),
                      r);
     }
+
     private void setResponses() {
         var r = new Response();
 
@@ -760,6 +802,18 @@ public class AlgorithmData {
         r.setTimestamp(r.getTimestamp().plusSeconds(1));
         responses.add(r);
     }
+
+    private void setSettlements() {
+        var sp0 = new SettlementPrice();
+        sp0.setInstrumentId("c2105");
+        sp0.setTimestamp(ZonedDateTime.now());
+        sp0.setTradingDay(LocalDate.now());
+        sp0.setSettlementPrice(2970.0);
+        sp0.setSettlementPriceId(1L);
+        settlements.put(sp0.getInstrumentId(),
+                        sp0);
+    }
+
     private void setTrades() {
         Trade t = new Trade();
 
@@ -858,6 +912,7 @@ public class AlgorithmData {
         t.setSignature(Utils.nextUuid().toString());
         trades.add(t);
     }
+
     private void setWithdraws() {
         Withdraw w = new Withdraw();
         w.setTradingDay(LocalDate.now());

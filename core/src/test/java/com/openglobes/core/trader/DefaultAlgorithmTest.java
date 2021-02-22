@@ -16,20 +16,36 @@
  */
 package com.openglobes.core.trader;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultAlgorithmTest extends AlgorithmData {
 
     @Test
     void getAccount() {
+        assertDoesNotThrow(() -> {
+            Account account = algorithm().getAccount(account(),
+                                                     deposits(),
+                                                     withdraws(),
+                                                     algorithm().getPositions(contracts(),
+                                                                              commissions(),
+                                                                              margins(),
+                                                                              settlements(),
+                                                                              instruments(),
+                                                                              LocalDate.now()));
+            assertEquals(getCloseProfit(contracts()),
+                         account.getCloseProfit());
+            assertEquals(getPositionProfit(contracts(),
+                                           settlements(),
+                                           instruments()),
+                         account.getPositionProfit());
+        });
     }
 
     @Test
@@ -104,24 +120,13 @@ class DefaultAlgorithmTest extends AlgorithmData {
 
     @Test
     void getPositions() {
-        var day = LocalDate.now();
-        var sp = new HashMap<String, SettlementPrice>(8);
-
-        var sp0 = new SettlementPrice();
-        sp0.setInstrumentId("c2105");
-        sp0.setTimestamp(ZonedDateTime.now());
-        sp0.setTradingDay(day);
-        sp0.setSettlementPrice(2970.0);
-        sp0.setSettlementPriceId(1L);
-        sp.put(sp0.getInstrumentId(),
-               sp0);
         assertDoesNotThrow(() -> {
             var positions = algorithm().getPositions(contracts(),
                                                  commissions(),
                                                  margins(),
-                                                 sp,
+                                                 settlements(),
                                                  instruments(),
-                                                 day);
+                                                 LocalDate.now());
             assertEquals(2,
                          positions.size());
 
@@ -243,6 +248,26 @@ class DefaultAlgorithmTest extends AlgorithmData {
         testTradedOrder(7L);
     }
 
+    private Double getCloseProfit(Collection<Contract> contracts) {
+        final Double[] r = new Double[]{0.0D};
+        contracts.forEach(c -> {
+            if (c.getCloseAmount() == null) {
+                return;
+            }
+            if (c.getDirection() == Direction.BUY) {
+                r[0] += c.getCloseAmount() - c.getOpenAmount();
+            } else {
+                r[0] += c.getOpenAmount() - c.getCloseAmount();
+            }
+        });
+        return r[0];
+    }
+
+    private long getMultiple(String instrumentId,
+                             Map<String, Instrument> instruments) {
+        return instruments.get(instrumentId).getMultiple();
+    }
+
     private Position getPosition(Integer direction,
                                  Collection<Position> positions) {
         for (var p : positions) {
@@ -251,6 +276,32 @@ class DefaultAlgorithmTest extends AlgorithmData {
             }
         }
         throw new NullPointerException("Position not found.");
+    }
+
+    private double getPositionProfit(Collection<Contract> contracts,
+                                     Map<String, SettlementPrice> settlements,
+                                     Map<String, Instrument> instruments) {
+        final Double[] r = new Double[]{0.0D};
+        contracts.forEach(c -> {
+            double price = getSettlementPrice(c.getInstrumentId(),
+                                              settlements);
+            double amount = price * getMultiple(c.getInstrumentId(),
+                                                instruments);
+            if (c.getCloseAmount() != null) {
+                return;
+            }
+            if (c.getDirection() == Direction.BUY) {
+                r[0] += amount - c.getOpenAmount();
+            } else {
+                r[0] += c.getOpenAmount() - amount;
+            }
+        });
+        return r[0];
+    }
+
+    private double getSettlementPrice(String instrumentId,
+                                      Map<String, SettlementPrice> settlements) {
+        return settlements.get(instrumentId).getSettlementPrice();
     }
 
     private void testTradedOrder(Long orderId) {

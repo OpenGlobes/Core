@@ -28,7 +28,9 @@ import java.time.ZonedDateTime;
  */
 public class Account implements Serializable {
 
-    private Double accountId;
+    private static final long serialVersionUID = 38749288723L;
+
+    private Long accountId;
     private Double balance;
     private Double closeProfit;
     private Double commission;
@@ -48,11 +50,11 @@ public class Account implements Serializable {
     public Account() {
     }
 
-    public Double getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(Double accountId) {
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
 
