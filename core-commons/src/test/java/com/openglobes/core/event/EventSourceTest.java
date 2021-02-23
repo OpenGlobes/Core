@@ -87,10 +87,6 @@ public class EventSourceTest {
                 fail(th.getMessage());
             }
             /*
-             * Start event source.
-             */
-            source.start();
-            /*
              * Publish events.
              */
             int count = 0;
@@ -98,13 +94,17 @@ public class EventSourceTest {
                 var r = new Request();
                 r.setOrderId(seq0.incrementAndGet());
                 r.setInstrumentId("a0");
-                source.publish(Request.class,
-                               r);
+                assertDoesNotThrow(() -> {
+                    source.publish(Request.class,
+                                   r);
+                });
                 var rp = new Response();
                 rp.setOrderId(seq1.incrementAndGet());
                 rp.setInstrumentId("b0");
-                source.publish(Response.class,
-                               rp);
+                assertDoesNotThrow(() -> {
+                    source.publish(Response.class,
+                                   rp);
+                });
             }
             /*
              * Wait one second.
@@ -138,10 +138,6 @@ public class EventSourceTest {
                 fail(th.getMessage());
             }
             /*
-             * Start event source.
-             */
-            source.start();
-            /*
              * Publish events.
              */
             for (int i = 0; i < threadCount; ++i) {
@@ -152,8 +148,10 @@ public class EventSourceTest {
                         var r = new Request();
                         r.setOrderId(sequence.get());
                         r.setInstrumentId("m" + offset);
-                        source.publish(Request.class,
-                                       r);
+                        assertDoesNotThrow(() -> {
+                            source.publish(Request.class,
+                                           r);
+                        });
                     }
                 });
             }
@@ -194,10 +192,6 @@ public class EventSourceTest {
                 fail(th.getMessage());
             }
             /*
-             * Start event source.
-             */
-            source.start();
-            /*
              * Publish events.
              */
             int count = 0;
@@ -205,13 +199,17 @@ public class EventSourceTest {
                 var r = new Request();
                 r.setOrderId(seq0.incrementAndGet());
                 r.setInstrumentId("a0");
-                source.publish(Request.class,
-                               r);
+                assertDoesNotThrow(() -> {
+                    source.publish(Request.class,
+                                   r);
+                });
                 var rp = new Response();
                 rp.setOrderId(seq1.incrementAndGet());
                 rp.setInstrumentId("b0");
-                source.publish(Response.class,
-                               rp);
+                assertDoesNotThrow(() -> {
+                    source.publish(Response.class,
+                                   rp);
+                });
             }
             /*
              * Wait one second.
@@ -244,10 +242,6 @@ public class EventSourceTest {
                 fail(th.getMessage());
             }
             /*
-             * Start event source.
-             */
-            source.start();
-            /*
              * Publish events.
              */
             int count = 0;
@@ -255,8 +249,10 @@ public class EventSourceTest {
                 var r = new Request();
                 r.setOrderId(sequence.incrementAndGet());
                 r.setInstrumentId("a0");
-                source.publish(Request.class,
-                               r);
+                assertDoesNotThrow(() -> {
+                    source.publish(Request.class,
+                                   r);
+                });
             }
             /*
              * Wait one second.

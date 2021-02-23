@@ -31,12 +31,10 @@ public interface IEventSource extends AutoCloseable {
 
     Map<Class<?>, IEventHandler<?>> handlers();
 
-    void start();
-
     @Override
     void close();
 
     boolean isEmpty();
 
-    <T> void publish(Class<T> clazz, T object);
+    <T> void publish(Class<T> clazz, T object) throws NoSubscribedClassException;
 }

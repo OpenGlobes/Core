@@ -20,6 +20,7 @@ import com.openglobes.core.data.DataException;
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.event.NoSubscribedClassException;
 import com.openglobes.core.market.*;
 
 import java.lang.ref.Cleaner;
@@ -162,12 +163,20 @@ public class StickEngine implements IStickEngine, AutoCloseable {
     }
 
     private <T> void publishNotice(Class<T> clazz, T notice) {
-        evt.publish(clazz, notice);
+        try {
+            evt.publish(clazz, notice);
+        } catch (NoSubscribedClassException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void publishSticks(Collection<Stick> ss) {
         ss.forEach(s -> {
-            evt.publish(Stick.class, s);
+            try {
+                evt.publish(Stick.class, s);
+            } catch (NoSubscribedClassException ex) {
+                ex.printStackTrace();
+            }
         });
     }
 

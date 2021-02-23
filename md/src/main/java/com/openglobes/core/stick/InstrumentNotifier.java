@@ -18,10 +18,7 @@ package com.openglobes.core.stick;
 
 import com.openglobes.core.data.DataException;
 import com.openglobes.core.data.IMarketDataSource;
-import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.IEvent;
-import com.openglobes.core.event.IEventHandler;
-import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.event.*;
 import com.openglobes.core.market.InstrumentMinuteNotice;
 import com.openglobes.core.market.InstrumentNotice;
 import com.openglobes.core.market.InstrumentTime;
@@ -29,7 +26,6 @@ import com.openglobes.core.market.Notices;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
 import com.openglobes.core.utils.Utils;
-
 import java.lang.ref.Cleaner;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -204,14 +200,18 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
     private void sendInstrumentMinuteNotice(String instrumentId,
                                             MinuteNotice min,
                                             LocalDate tradingDay) {
-        evt.publish(InstrumentMinuteNotice.class,
-                    new InstrumentMinuteNotice(Utils.nextId(),
-                                               instrumentId,
-                                               getMinutes(),
-                                               getMinuteOfTradingDay(instrumentId),
-                                               min.getAlignTime(),
-                                               ZonedDateTime.now(),
-                                               tradingDay));
+        try {
+            evt.publish(InstrumentMinuteNotice.class,
+                        new InstrumentMinuteNotice(Utils.nextId(),
+                                                   instrumentId,
+                                                   getMinutes(),
+                                                   getMinuteOfTradingDay(instrumentId),
+                                                   min.getAlignTime(),
+                                                   ZonedDateTime.now(),
+                                                   tradingDay));
+        } catch (NoSubscribedClassException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private Integer getMinuteOfTradingDay(String instrumentId) {
@@ -230,13 +230,17 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                       Integer type,
                                       MinuteNotice notice,
                                       LocalDate tradingDay) {
-        evt.publish(InstrumentNotice.class,
-                    new InstrumentNotice(Utils.nextId(),
-                                         instrumentId,
-                                         type,
-                                         notice.getAlignTime(),
-                                         ZonedDateTime.now(),
-                                         tradingDay));
+        try {
+            evt.publish(InstrumentNotice.class,
+                        new InstrumentNotice(Utils.nextId(),
+                                             instrumentId,
+                                             type,
+                                             notice.getAlignTime(),
+                                             ZonedDateTime.now(),
+                                             tradingDay));
+        } catch (NoSubscribedClassException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static class CleanAction implements Runnable {

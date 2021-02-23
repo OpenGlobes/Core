@@ -18,6 +18,7 @@ package com.openglobes.core.utils;
 
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.event.NoSubscribedClassException;
 
 import java.lang.ref.Cleaner;
 import java.time.Duration;
@@ -60,10 +61,14 @@ public class MinuteNotifier extends TimerTask implements IMinuteNotifier,
 
     @Override
     public void run() {
-        evt.publish(MinuteNotice.class,
-                    new MinuteNotice(nid.incrementAndGet(),
-                                     Utils.getRoundedTimeByMinute(),
-                                     ZonedDateTime.now()));
+        try {
+            evt.publish(MinuteNotice.class,
+                        new MinuteNotice(nid.incrementAndGet(),
+                                         Utils.getRoundedTimeByMinute(),
+                                         ZonedDateTime.now()));
+        } catch (NoSubscribedClassException ex) {
+            ex.printStackTrace();
+        }
     }
 
     private static class CleanAction implements Runnable {

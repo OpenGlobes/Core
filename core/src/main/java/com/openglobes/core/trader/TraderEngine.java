@@ -19,10 +19,7 @@ package com.openglobes.core.trader;
 import com.openglobes.core.GatewayException;
 import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.*;
-import com.openglobes.core.event.EventSource;
-import com.openglobes.core.event.IEvent;
-import com.openglobes.core.event.IEventSource;
-import com.openglobes.core.event.InvalidSubscriptionException;
+import com.openglobes.core.event.*;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.Utils;
 
@@ -156,11 +153,19 @@ public class TraderEngine implements ITraderEngine {
                         Properties properties,
                         int requestId) {
         Objects.requireNonNull(request);
-        es0.publish(RequestDetail.class,
-                    new RequestDetail(request,
-                                      instrument,
-                                      properties,
-                                      requestId));
+        try {
+            es0.publish(RequestDetail.class,
+                        new RequestDetail(request,
+                                          instrument,
+                                          properties,
+                                          requestId));
+        } catch (NoSubscribedClassException ex) {
+            /*
+             * It shouldn't throw exception here unless the internal facilities
+             * are not ready.
+             */
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -239,7 +244,15 @@ public class TraderEngine implements ITraderEngine {
         if (es == null || es.isEmpty()) {
             return;
         }
-        es.publish(clazz, object);
+        try {
+            es.publish(clazz, object);
+        } catch (NoSubscribedClassException ex) {
+            /*
+             * It shouldn't throw exception here unless the internal facilities
+             * are not ready.
+             */
+            ex.printStackTrace();
+        }
     }
 
     private void stopEach(TraderContext context) throws GatewayException {

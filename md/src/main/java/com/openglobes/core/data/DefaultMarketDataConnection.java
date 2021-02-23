@@ -470,10 +470,12 @@ public class DefaultMarketDataConnection extends AbstractMarketDataConnection {
                                 T object,
                                 Field field) throws DataUpdateException {
         try {
+            DbaUtils.enableAccess(field);
             query.update(clazz,
                          object,
                          Queries.equals(field,
-                                        DbaUtils.getLong(field, object)));
+                                        DbaUtils.getLong(field, 
+                                                         object)));
         } catch (IllegalArgumentException | IllegalAccessException | SQLException | DbaException ex) {
             throw new DataUpdateException(clazz.getCanonicalName(),
                                           ex);

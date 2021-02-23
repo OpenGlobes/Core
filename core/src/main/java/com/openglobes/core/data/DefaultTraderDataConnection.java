@@ -844,7 +844,10 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
                                                  EventException,
                                                  UnknownDataChangeException {
         try {
-            query.insert(clazz, object);
+            int r = query.insert(clazz, object);
+            if (r != 1) {
+                throw new DbaException("Fail inserting record, " + r + " rows affected.");
+            }
             callOnChange(clazz,
                          object,
                          DataChangeType.CREATE);
@@ -877,8 +880,11 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
                                        Queries.equals(clazz.getDeclaredField(fieldName), id),
                                        factory),
                          DataChangeType.DELETE);
-            query.remove(clazz,
-                         Queries.equals(clazz.getDeclaredField(fieldName), id));
+            int r = query.remove(clazz,
+                                 Queries.equals(clazz.getDeclaredField(fieldName), id));
+            if (r != 1) {
+                throw new DbaException("Fail deleting record, " + r + " rows affected.");
+            }
         } catch (DbaException ex) {
             throw new DataQueryException(clazz.getCanonicalName(),
                                          ex);
@@ -892,9 +898,15 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
                                                     EventException,
                                                     UnknownDataChangeException {
         try {
-            query.update(clazz,
-                         object,
-                         Queries.equals(field, field.getLong(object)));
+            DbaUtils.enableAccess(field);
+            int r = query.update(clazz,
+                                 object,
+                                 Queries.equals(field,
+                                                DbaUtils.getLong(field,
+                                                                 object)));
+            if (r != 1) {
+                throw new DbaException("Fail updating record, " + r + " rows affected.");
+            }
             callOnChange(clazz,
                          object,
                          DataChangeType.UPDATE);

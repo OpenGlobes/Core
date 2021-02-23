@@ -22,7 +22,6 @@ import com.lmax.disruptor.TimeoutException;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import com.openglobes.core.utils.Loggers;
-
 import java.lang.ref.Cleaner;
 import java.util.Collection;
 import java.util.HashSet;
@@ -72,20 +71,15 @@ public class EventSource implements IEventSource {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> void publish(Class<T> clazz, T object) {
+    public <T> void publish(Class<T> clazz, T object) throws NoSubscribedClassException {
         var c = findDisruptor(clazz, false);
         if (c != null) {
             ((Disruptor<Event<T>>) c).publishEvent(new DefaultEventTranslator<>(),
                                                    object,
                                                    clazz);
+        } else {
+            throw new NoSubscribedClassException("No subscribed class " + clazz + ".");
         }
-    }
-
-    @Override
-    public void start() {
-        disruptors.values().forEach(v -> {
-            v.start();
-        });
     }
 
     @Override
@@ -99,6 +93,7 @@ public class EventSource implements IEventSource {
         c.handleEventsWith((Event<T> event, long sequence, boolean endOfBatch) -> {
             handler.handle(event);
         });
+        c.start();
     }
 
     @SuppressWarnings("unchecked")

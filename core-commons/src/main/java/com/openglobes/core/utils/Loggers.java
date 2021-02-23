@@ -67,8 +67,12 @@ public class Loggers {
                                            x.addHandler(new Handler() {
                                                @Override
                                                public void publish(LogRecord record) {
-                                                   events.publish(LogRecord.class,
-                                                                  record);
+                                                   try {
+                                                       events.publish(LogRecord.class,
+                                                                      record);
+                                                   } catch (NoSubscribedClassException ex) {
+                                                       ex.printStackTrace();
+                                                   }
                                                }
 
                                                @Override
