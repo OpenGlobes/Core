@@ -17,6 +17,7 @@
 package com.openglobes.core.data;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -24,6 +25,8 @@ import java.util.Properties;
  * @since 1.0
  */
 public class DataSourceData {
+
+    private static final AtomicLong id = new AtomicLong(0);
 
     private final AbstractTraderDataSource ds = new DefaultTraderDataSource();
     private final Properties props = new Properties();
@@ -35,6 +38,10 @@ public class DataSourceData {
 
     protected ITraderDataSource dataSource() {
         return ds;
+    }
+
+    protected synchronized Long getNextId() {
+        return id.incrementAndGet();
     }
 
     private void setDataSource() {

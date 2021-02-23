@@ -45,7 +45,7 @@ public class DefaultDataSourceTest extends DataSourceData {
     public void testCallbacks() {
         final var contract = new Contract();
 
-        contract.setContractId(1L);
+        contract.setContractId(getNextId());
         contract.setTimestamp(ZonedDateTime.now());
 
         assertDoesNotThrow(() -> {
@@ -82,7 +82,7 @@ public class DefaultDataSourceTest extends DataSourceData {
     public void testQuery() {
         final var contract = new Contract();
 
-        contract.setContractId(1L);
+        contract.setContractId(getNextId());
         contract.setTimestamp(ZonedDateTime.now());
 
         assertDoesNotThrow(() -> {
@@ -95,7 +95,7 @@ public class DefaultDataSourceTest extends DataSourceData {
             /*
              * Test get specified contract.
              */
-            Contract c = conn.getContractById(1L);
+            Contract c = conn.getContractById(contract.getContractId());
             assertEquals(contract.getContractId(),
                          c.getContractId());
             assertEquals(contract.getTimestamp(),
@@ -114,6 +114,66 @@ public class DefaultDataSourceTest extends DataSourceData {
                          c.getContractId());
             assertEquals(contract.getTimestamp(),
                          c.getTimestamp());
+        });
+    }
+
+    @Test
+    @DisplayName("Test connection's update.")
+    public void testUpdate() {
+        final var contract = new Contract();
+
+        contract.setContractId(getNextId());
+        contract.setTimestamp(ZonedDateTime.now());
+
+        assertDoesNotThrow(() -> {
+            var conn = dataSource().getConnection();
+            /*
+             * Add contract.
+             */
+            conn.addContract(contract);
+            /*
+             * Update contract.
+             */
+            contract.setTag("updated");
+            conn.updateContract(contract);
+            /*
+             * Test get specified contract.
+             */
+            Contract c = conn.getContractById(contract.getContractId());
+            assertEquals(contract.getContractId(),
+                         c.getContractId());
+            assertEquals(contract.getTimestamp(),
+                         c.getTimestamp());
+            assertEquals(contract.getTag(),
+                         c.getTag());
+        });
+    }
+
+    @Test
+    @DisplayName("Test connection's remove.")
+    public void testRemove() {
+        final var contract = new Contract();
+
+        contract.setContractId(getNextId());
+        contract.setTimestamp(ZonedDateTime.now());
+
+        assertDoesNotThrow(() -> {
+            var conn = dataSource().getConnection();
+            /*
+             * Add contract.
+             */
+            conn.addContract(contract);
+            /*
+             * Remove contract.
+             */
+            conn.removeContract(contract.getContractId());
+            /*
+             * Test get specified contract, specified contract should have
+             * been removed.
+             */
+            conn.getContracts().forEach(c -> {
+                assertFalse(c.getContractId().equals(contract.getContractId()));
+            });
         });
     }
 
