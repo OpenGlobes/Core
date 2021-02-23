@@ -77,6 +77,46 @@ public class DefaultDataSourceTest extends DataSourceData {
         assertTrue(changeTypes.contains(DataChangeType.DELETE));
     }
 
+    @Test
+    @DisplayName("Test connection's query.")
+    public void testQuery() {
+        final var contract = new Contract();
+
+        contract.setContractId(1L);
+        contract.setTimestamp(ZonedDateTime.now());
+
+        assertDoesNotThrow(() -> {
+            var conn = dataSource().getConnection();
+            /*
+             * Add contract.
+             */
+            conn.addContract(contract);
+
+            /*
+             * Test get specified contract.
+             */
+            Contract c = conn.getContractById(1L);
+            assertEquals(contract.getContractId(),
+                         c.getContractId());
+            assertEquals(contract.getTimestamp(),
+                         c.getTimestamp());
+            /*
+             * Check get all contracts.
+             */
+            var cs = conn.getContracts();
+            assertEquals(1,
+                         cs.size());
+            /*
+             * Check integrity of contracts.
+             */
+            c = cs.iterator().next();
+            assertEquals(contract.getContractId(),
+                         c.getContractId());
+            assertEquals(contract.getTimestamp(),
+                         c.getTimestamp());
+        });
+    }
+
     private void setupListeners() {
         assertDoesNotThrow(() -> {
             dataSource().addListener(Contract.class,
