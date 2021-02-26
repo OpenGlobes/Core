@@ -16,15 +16,18 @@
  */
 package com.openglobes.core;
 
+import com.openglobes.core.configuration.ConnectorConfiguration;
+import com.openglobes.core.configuration.DataSourceConfiguration;
+import com.openglobes.core.configuration.GatewayConfiguration;
+import com.openglobes.core.configuration.PluginConfiguration;
+import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
-import com.openglobes.core.context.IDataSourceContext;
 import com.openglobes.core.context.IGatewayContext;
+import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.trader.ITraderEngine;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
+import com.openglobes.core.trader.ITraderGateway;
 import java.util.Collection;
 
 /**
@@ -37,27 +40,23 @@ public interface ICore {
 
     void dispose() throws CoreDisposeException;
 
-    void installPlugin(IPluginContext pluginContext) throws CoreInstallException;
+    void installPlugin(IPlugin plugin, 
+                       PluginConfiguration configuration) throws CoreInstallException;
 
-    void installConnector(IConnectorContext connectorContext) throws CoreInstallException;
+    void installConnector(IConnector connector, 
+                          ConnectorConfiguration configuration) throws CoreInstallException;
 
-    void installGateway(IGatewayContext gatewayContext) throws CoreInstallException;
+    void installGateway(ITraderGateway gateway, 
+                        GatewayConfiguration configuration) throws CoreInstallException;
 
-    void installDataSource(IDataSourceContext dataSourceContext) throws CoreInstallException;
-
-    void install(String xml, File... jars) throws CoreInstallException;
-
-    void install(InputStream stream, File... jars) throws CoreInstallException;
-
-    void install(FileReader reader, File... jars) throws CoreInstallException;
+    void installDataSource(ITraderDataSource dataSource,
+                           DataSourceConfiguration configuration) throws CoreInstallException;
 
     Collection<IConnectorContext> connectors();
 
     Collection<IPluginContext> plugins();
 
     Collection<IGatewayContext> gateways();
-
-    IDataSourceContext getDataSource();
 
     IRequestContext getRequest();
 

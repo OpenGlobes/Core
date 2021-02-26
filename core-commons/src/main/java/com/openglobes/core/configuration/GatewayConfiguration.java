@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.configuration;
 
-import javax.xml.bind.annotation.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,22 +23,16 @@ import java.util.Map;
  * @author Hongbao Chen
  * @since 1.0
  */
-public class DataSourceConfiguration {
+public class GatewayConfiguration {
 
     private String classCanonicalName;
-    private String driverClass;
     private String name;
-    private String password;
     private Map<String, String> properties;
-    private String url;
-    private String username;
 
-    public DataSourceConfiguration() {
+    public GatewayConfiguration() {
         properties = new HashMap<>(16);
     }
 
-    @XmlElement(name = "ClassCanonicalName",
-                required = true)
     public String getClassCanonicalName() {
         return classCanonicalName;
     }
@@ -48,18 +41,6 @@ public class DataSourceConfiguration {
         this.classCanonicalName = classCanonicalName;
     }
 
-    @XmlElement(name = "DriverClass",
-                required = true)
-    public String getDriverClass() {
-        return driverClass;
-    }
-
-    public void setDriverClass(String driverClass) {
-        this.driverClass = driverClass;
-    }
-
-    @XmlElement(name = "Name",
-                required = true)
     public String getName() {
         return name;
     }
@@ -68,16 +49,6 @@ public class DataSourceConfiguration {
         this.name = name;
     }
 
-    @XmlElement(name = "Password")
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @XmlElement(name = "Properties")
     public Map<String, String> getProperties() {
         return properties;
     }
@@ -86,22 +57,4 @@ public class DataSourceConfiguration {
         this.properties = properties;
     }
 
-    @XmlElement(name = "Url",
-                required = true)
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @XmlElement(name = "Username")
-    public String getUserName() {
-        return username;
-    }
-
-    public void setUserName(String username) {
-        this.username = username;
-    }
 }

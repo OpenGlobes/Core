@@ -16,7 +16,10 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.configuration.*;
+import com.openglobes.core.configuration.ConnectorConfiguration;
+import com.openglobes.core.configuration.DataSourceConfiguration;
+import com.openglobes.core.configuration.GatewayConfiguration;
+import com.openglobes.core.configuration.PluginConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
@@ -27,16 +30,11 @@ import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
 import com.openglobes.core.trader.*;
-import com.openglobes.core.utils.ServiceSelector;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.management.ServiceNotFoundException;
 
 /**
  * @author Hongbao Chen
@@ -93,11 +91,6 @@ public class Core implements ICore {
     }
 
     @Override
-    public IDataSourceContext getDataSource() {
-        return ds;
-    }
-
-    @Override
     public IRequestContext getRequest() {
         return reqCtx;
     }
@@ -113,44 +106,16 @@ public class Core implements ICore {
     }
 
     @Override
-    public void install(String xml, File... jars) throws CoreInstallException {
+    public void installConnector(IConnector connector,
+                                 ConnectorConfiguration configuration) throws CoreInstallException {
+        Objects.requireNonNull(connector);
+        Objects.requireNonNull(configuration);
+        ConnectorContext cctx = new ConnectorContext(configuration,
+                                                     connector,
+                                                     getRequest());
+        connectors.add(cctx);
         try {
-            install(XmlConfiguration.load(CoreConfiguration.class, xml),
-                    jars);
-        } catch (ConfigurationException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
-        }
-    }
-
-    @Override
-    public void install(InputStream stream, File... jars) throws CoreInstallException {
-        try {
-            install(XmlConfiguration.load(CoreConfiguration.class, stream),
-                    jars);
-        } catch (ConfigurationException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
-        }
-    }
-
-    @Override
-    public void install(FileReader reader, File... jars) throws CoreInstallException {
-        try {
-            install(XmlConfiguration.load(CoreConfiguration.class, reader),
-                    jars);
-        } catch (ConfigurationException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
-        }
-    }
-
-    @Override
-    public void installConnector(IConnectorContext connectorContext) throws CoreInstallException {
-        Objects.requireNonNull(connectorContext);
-        connectors.add(connectorContext);
-        try {
-            connectorContext.get().listen(connectorContext);
+            connector.listen(cctx);
         } catch (ConnectorException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
@@ -158,35 +123,47 @@ public class Core implements ICore {
     }
 
     @Override
-    public void installDataSource(IDataSourceContext dataSourceContext) throws CoreInstallException {
-        Objects.requireNonNull(dataSourceContext);
+    public void installDataSource(ITraderDataSource dataSource,
+                                  DataSourceConfiguration configuration) throws CoreInstallException {
+        Objects.requireNonNull(dataSource);
+        Objects.requireNonNull(configuration);
         if (ds != null) {
             throw new CoreInstallException("Data source can't be reinstalled.");
         }
-        ds = dataSourceContext;
+        ds = new DataSourceContext(configuration,
+                                   dataSource);
     }
 
     @Override
-    public void installGateway(IGatewayContext gatewayContext) throws CoreInstallException {
-        Objects.requireNonNull(gatewayContext);
-        gates.add(gatewayContext);
+    public void installGateway(ITraderGateway gateway,
+                               GatewayConfiguration configuration) throws CoreInstallException {
+        Objects.requireNonNull(gateway);
+        Objects.requireNonNull(configuration);
+        GatewayContext gctx = new GatewayContext(configuration,
+                                                 gateway);
+        gates.add(gctx);
         try {
             engine.setDataSource(ds.get());
             engine.setAlgorithm(algo);
             engine.registerTrader(gates.size(),
-                                  gatewayContext.get());
-        } catch (TraderException ex) {
+                                  gateway);
+        } catch (DuplicatedTraderIdException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }
     }
 
     @Override
-    public void installPlugin(IPluginContext pluginContext) throws CoreInstallException {
-        Objects.requireNonNull(pluginContext);
-        plugins.add(pluginContext);
+    public void installPlugin(IPlugin plugin,
+                              PluginConfiguration configuration) throws CoreInstallException {
+        Objects.requireNonNull(plugin);
+        Objects.requireNonNull(configuration);
+        PluginContext pctx = new PluginContext(configuration,
+                                               plugin,
+                                               this);
+        plugins.add(pctx);
         try {
-            pluginContext.get().initialize(pluginContext);
+            plugin.initialize(pctx);
         } catch (PluginException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
@@ -203,71 +180,9 @@ public class Core implements ICore {
         try {
             installInterceptors();
             engine.start(new Properties());
-        } catch (TraderException ex) {
+        } catch (TraderStartException ex) {
             throw new CoreStartException(ex.getMessage(),
                                          ex);
-        }
-    }
-
-    private void install(CoreConfiguration configuration, File[] jars) throws CoreInstallException {
-        installConnectors(configuration.getConnectors(),
-                          jars);
-        installDataSource(configuration.getDataSources(),
-                          jars);
-        installPlugins(configuration.getPlugins(),
-                       jars);
-        installGateways(configuration.getGateways(),
-                        jars);
-    }
-
-    private void installConnectors(Collection<ConnectorConfiguration> confs,
-                                   File[] jars) throws CoreInstallException {
-        for (var c : confs) {
-            try {
-                var conn = ServiceSelector.selectService(IConnector.class,
-                                                     c.getClassCanonicalName(),
-                                                     jars);
-                installConnector(new ConnectorContext(c,
-                                                      conn,
-                                                      reqCtx));
-            } catch (ServiceNotFoundException ex) {
-                throw new CoreInstallException(ex.getMessage(),
-                                               ex
-                );
-            }
-        }
-    }
-
-    private void installDataSource(Collection<DataSourceConfiguration> confs,
-                                   File[] jars) throws CoreInstallException {
-        for (var c : confs) {
-            try {
-                var d = ServiceSelector.selectService(ITraderDataSource.class,
-                                                  c.getClassCanonicalName(),
-                                                  jars);
-                installDataSource(new DataSourceContext(c,
-                                                        d));
-                break;
-            } catch (ServiceNotFoundException ex) {
-                throw new CoreInstallException(ex.getMessage(),
-                                               ex);
-            }
-        }
-    }
-
-    private void installGateways(Collection<GatewayConfiguration> confs,
-                                 File[] jars) throws CoreInstallException {
-        for (var c : confs) {
-            try {
-                var gate = ServiceSelector.selectService(ITraderGateway.class,
-                                                     c.getClassCanonicalName(),
-                                                     jars);
-                installGateway(new GatewayContext(c,
-                                                  gate));
-            } catch (ServiceNotFoundException ex) {
-                throw new CoreInstallException(ex.getMessage(),
-                                               ex);
-            }
         }
     }
 
@@ -288,23 +203,6 @@ public class Core implements ICore {
                              new LastRequestInterceptor(reqCtx));
         } catch (InterceptorException ex) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void installPlugins(Collection<PluginConfiguration> confs,
-                                File[] jars) throws CoreInstallException {
-        for (var c : confs) {
-            try {
-                var p = ServiceSelector.selectService(IPlugin.class,
-                                                  c.getClassCanonicalName(),
-                                                  jars);
-                installPlugin(new PluginContext(c,
-                                                p,
-                                                this));
-            } catch (ServiceNotFoundException ex) {
-                throw new CoreInstallException(ex.getMessage(),
-                                               ex);
-            }
         }
     }
 }

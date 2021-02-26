@@ -16,8 +16,6 @@
  */
 package com.openglobes.core.configuration;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +23,6 @@ import java.util.Map;
  * @author Hongbao Chen
  * @since 1.0
  */
-@XmlRootElement(name = "Plugin")
 public class PluginConfiguration {
 
     private String classCanonicalName;
@@ -36,8 +33,6 @@ public class PluginConfiguration {
         properties = new HashMap<>(16);
     }
 
-    @XmlElement(name = "ClassCanonicalName",
-                required = true)
     public String getClassCanonicalName() {
         return classCanonicalName;
     }
@@ -46,8 +41,6 @@ public class PluginConfiguration {
         this.classCanonicalName = classCanonicalName;
     }
 
-    @XmlElement(name = "Name",
-                required = true)
     public String getName() {
         return name;
     }
@@ -56,7 +49,6 @@ public class PluginConfiguration {
         this.name = name;
     }
 
-    @XmlElement(name = "Properties")
     public Map<String, String> getProperties() {
         return properties;
     }

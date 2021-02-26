@@ -17,6 +17,7 @@
 package com.openglobes.core.stick;
 
 import com.openglobes.core.GatewayException;
+import com.openglobes.core.configuration.GatewayConfiguration;
 import com.openglobes.core.data.DataException;
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.IEventSource;
@@ -76,16 +77,20 @@ public class MarketEngine implements IMarketEngine {
     }
 
     @Override
-    public void registerMarket(int marketId,
+    public void installGateway(int marketId,
                                IMarketGateway gateway,
-                               Properties properties) throws DuplicatedMarketIdException {
+                               GatewayConfiguration configuration) throws DuplicatedMarketIdException {
         Objects.requireNonNull(gateway);
         if (gates.containsKey(marketId)) {
             throw new DuplicatedMarketIdException(Integer.toString(marketId));
         }
+        var props = new Properties();
+        configuration.getProperties().entrySet().forEach(entry -> {
+            props.put(entry.getKey(), entry.getValue());
+        });
         gates.put(marketId, new MarketGatewayContext(marketId,
                                                      gateway,
-                                                     properties));
+                                                     props));
     }
 
     @Override
@@ -96,7 +101,7 @@ public class MarketEngine implements IMarketEngine {
     }
 
     @Override
-    public void unregisterMarket(int marketId) throws UnknownMarketIdException {
+    public void removeGateway(int marketId) throws UnknownMarketIdException {
         if (!gates.containsKey(marketId)) {
             throw new UnknownMarketIdException(Integer.toString(marketId));
         }

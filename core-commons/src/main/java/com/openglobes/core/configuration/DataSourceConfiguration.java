@@ -16,8 +16,6 @@
  */
 package com.openglobes.core.configuration;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,19 +23,20 @@ import java.util.Map;
  * @author Hongbao Chen
  * @since 1.0
  */
-@XmlRootElement(name = "Gateway")
-public class GatewayConfiguration {
+public class DataSourceConfiguration {
 
     private String classCanonicalName;
+    private String driverClass;
     private String name;
+    private String password;
     private Map<String, String> properties;
+    private String url;
+    private String username;
 
-    public GatewayConfiguration() {
+    public DataSourceConfiguration() {
         properties = new HashMap<>(16);
     }
 
-    @XmlElement(name = "ClassCanonicalName",
-                required = true)
     public String getClassCanonicalName() {
         return classCanonicalName;
     }
@@ -46,8 +45,14 @@ public class GatewayConfiguration {
         this.classCanonicalName = classCanonicalName;
     }
 
-    @XmlElement(name = "Name",
-                required = true)
+    public String getDriverClass() {
+        return driverClass;
+    }
+
+    public void setDriverClass(String driverClass) {
+        this.driverClass = driverClass;
+    }
+
     public String getName() {
         return name;
     }
@@ -56,7 +61,14 @@ public class GatewayConfiguration {
         this.name = name;
     }
 
-    @XmlElement(name = "Properties")
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Map<String, String> getProperties() {
         return properties;
     }
@@ -65,4 +77,19 @@ public class GatewayConfiguration {
         this.properties = properties;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUserName() {
+        return username;
+    }
+
+    public void setUserName(String username) {
+        this.username = username;
+    }
 }

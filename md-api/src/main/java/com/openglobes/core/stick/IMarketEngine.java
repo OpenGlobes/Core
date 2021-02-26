@@ -16,6 +16,7 @@
  */
 package com.openglobes.core.stick;
 
+import com.openglobes.core.configuration.GatewayConfiguration;
 import com.openglobes.core.data.IMarketDataSource;
 import com.openglobes.core.event.IEventSource;
 
@@ -31,11 +32,11 @@ public interface IMarketEngine {
 
     void setDataSource(IMarketDataSource dataSource);
 
-    void registerMarket(int marketId,
+    void installGateway(int marketId,
                         IMarketGateway gateway,
-                        Properties properties) throws DuplicatedMarketIdException;
+                        GatewayConfiguration configuration) throws DuplicatedMarketIdException;
 
-    void unregisterMarket(int marketId) throws UnknownMarketIdException;
+    void removeGateway(int marketId) throws UnknownMarketIdException;
 
     void start(Properties properties) throws MarketStartException;
 
