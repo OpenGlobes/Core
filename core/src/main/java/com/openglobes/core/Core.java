@@ -80,7 +80,7 @@ public class Core implements ICore {
             for (var p : plugins) {
                 p.get().dispose();
             }
-            while (sharedCtx.getInterceptorStack().removeInterceptor() != null) {
+            while (sharedCtx.getInterceptorChain().removeInterceptor() != null) {
             }
         } catch (TraderException | ConnectorException | PluginException | InterceptorException ex) {
             throw new CoreDisposeException(ex.getMessage(),
@@ -270,7 +270,7 @@ public class Core implements ICore {
     }
 
     private void installInterceptors() {
-        var x = sharedCtx.getInterceptorStack();
+        var x = sharedCtx.getInterceptorChain();
         try {
             x.addInterceptor(-Integer.MAX_VALUE,
                              Trade.class,

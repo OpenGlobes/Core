@@ -20,6 +20,7 @@ import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Loggers;
+import com.openglobes.core.utils.QuickCondition;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -44,18 +45,18 @@ public class InterceptorChain implements IInterceptorChain {
     };
 
     private final List<InterceptorContext> chain;
+    private final QuickCondition cond;
     private final Queue<EngineRequestError> errors;
     private final ReentrantReadWriteLock lock;
-    private final Condition qCond;
-    private final Lock qLock;
     private final Queue<RequestInterceptingContext> requests;
     private final Queue<Response> responses;
+    private int timeout = 60;
     private final Queue<Trade> trades;
     private final Worker worker;
+    
 
     public InterceptorChain() {
-        qLock = new ReentrantLock();
-        qCond = qLock.newCondition();
+        cond = new QuickCondition();
         lock = new ReentrantReadWriteLock();
         chain = new LinkedList<>();
         requests = new LinkedList<>();
@@ -73,7 +74,7 @@ public class InterceptorChain implements IInterceptorChain {
         lock.writeLock().lock();
         try {
             chain.add(new InterceptorContext(position,
-                                             vClazz,
+                                             tClazz,
                                              vClazz,
                                              interceptor));
             chain.sort(c);
@@ -83,13 +84,31 @@ public class InterceptorChain implements IInterceptorChain {
     }
 
     @Override
-    public <T> void addInterceptor(int position, Class<T> clazz, AbstractRequestInterceptor<T> interceptor) throws InterceptorException {
-        addInterceptor(position, clazz, Object.class, interceptor);
+    public <T> void addInterceptor(int position,
+                                   Class<T> clazz, 
+                                   AbstractRequestInterceptor<T> interceptor) throws InterceptorException {
+        addInterceptor(position,
+                       clazz, 
+                       Object.class,
+                       interceptor);
     }
 
     @Override
-    public <R> void addInterceptor(int position, Class<R> clazz, AbstractResponseInterceptor<R> interceptor) throws InterceptorException {
-        addInterceptor(position, Object.class, clazz, interceptor);
+    public <R> void addInterceptor(int position,
+                                   Class<R> clazz,
+                                   AbstractResponseInterceptor<R> interceptor) throws InterceptorException {
+        addInterceptor(position,
+                       Object.class,
+                       clazz,
+                       interceptor);
+    }
+
+    @Override
+    public void setEachTimeout(int timeout) {
+        if (timeout <= 0) {
+            throw new java.lang.IllegalArgumentException("Negative timeout: " + timeout + ".");
+        }
+        this.timeout = timeout;
     }
 
     @Override
@@ -107,8 +126,8 @@ public class InterceptorChain implements IInterceptorChain {
 
     @Override
     public <T> void request(Class<T> clazz, T request) throws InterceptorException {
-        if (clazz == EngineRequestError.class) {
-            addError((EngineRequestError) request);
+        if (clazz == RequestInterceptingContext.class) {
+            addRequest((RequestInterceptingContext) request);
         } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
@@ -118,8 +137,8 @@ public class InterceptorChain implements IInterceptorChain {
     public <T> void respond(Class<T> clazz, T response) throws InterceptorException {
         if (clazz == Trade.class) {
             addTrade((Trade) response);
-        } else if (clazz == RequestInterceptingContext.class) {
-            addRequest((RequestInterceptingContext) response);
+        } else if (clazz == EngineRequestError.class) {
+            addError((EngineRequestError) response);
         } else if (clazz == Response.class) {
             addResponse((Response) response);
         } else {
@@ -179,26 +198,18 @@ public class InterceptorChain implements IInterceptorChain {
     }
 
     private void signal0() {
-        qLock.lock();
-        try {
-            qCond.signalAll();
-        } finally {
-            qLock.unlock();
-        }
+        cond.signalAll();
     }
 
     private boolean wait0() {
-        qLock.lock();
         try {
-            qCond.await();
+            cond.waitSignal();
             return true;
         } catch (InterruptedException ex) {
             Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                              ex.getMessage(),
                                                                              ex);
             return false;
-        } finally {
-            qLock.unlock();
         }
     }
 
@@ -257,16 +268,16 @@ public class InterceptorChain implements IInterceptorChain {
                 lock.readLock().lock();
                 try {
                     execute(Trade.class,
-                            15,
+                            timeout,
                             TimeUnit.SECONDS);
                     execute(Response.class,
-                            15,
+                            timeout,
                             TimeUnit.SECONDS);
                     execute(RequestInterceptingContext.class,
-                            15,
+                            timeout,
                             TimeUnit.SECONDS);
                     execute(EngineRequestError.class,
-                            15,
+                            timeout,
                             TimeUnit.SECONDS);
                 } finally {
                     lock.readLock().unlock();
@@ -331,6 +342,8 @@ public class InterceptorChain implements IInterceptorChain {
                             break;
                         }
                         s0 = System.nanoTime();
+                    } else {
+                        break;
                     }
                 }
             }
@@ -359,6 +372,8 @@ public class InterceptorChain implements IInterceptorChain {
                             break;
                         }
                         s0 = System.nanoTime();
+                    } else {
+                        break;
                     }
                 }
             }

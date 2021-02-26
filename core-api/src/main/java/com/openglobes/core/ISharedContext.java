@@ -29,7 +29,7 @@ public interface ISharedContext {
 
     ISessionCorrelator getSessionCorrelator();
 
-    IInterceptorChain getInterceptorStack();
+    IInterceptorChain getInterceptorChain();
 
     void addLogHandler(Handler handler);
 

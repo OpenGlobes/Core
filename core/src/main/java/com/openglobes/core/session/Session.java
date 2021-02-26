@@ -158,7 +158,7 @@ class Session implements ISession {
                                                                           ForwardRequestException {
         try {
             adjuestDestId(request);
-            req.getSharedContext().getInterceptorStack()
+            req.getSharedContext().getInterceptorChain()
                     .request(RequestInterceptingContext.class,
                              new RequestInterceptingContext(request,
                                                             getInstrument(request.getInstrumentId()),

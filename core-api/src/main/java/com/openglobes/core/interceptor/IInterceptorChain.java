@@ -33,4 +33,6 @@ public interface IInterceptorChain {
     <T> void request(Class<T> clazz, T request) throws InterceptorException;
 
     <T> void respond(Class<T> clazz, T response) throws InterceptorException;
+    
+    void setEachTimeout(int timeout);
 }
