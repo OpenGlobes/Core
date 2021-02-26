@@ -28,8 +28,6 @@ import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
 import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.ServiceSelector;
-
-import javax.management.ServiceNotFoundException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -38,6 +36,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.management.ServiceNotFoundException;
 
 /**
  * @author Hongbao Chen
@@ -45,24 +44,24 @@ import java.util.logging.Logger;
  */
 public class Core implements ICore {
 
+    public static ICore create() {
+        return new Core();
+    }
+
     private final ITraderEngineAlgorithm algo;
-    private final ITraderEngine engine;
-    private final IRequestContext reqCtx;
-    private final ISharedContext sharedCtx;
     private Collection<IConnectorContext> connectors;
     private IDataSourceContext ds;
+    private final ITraderEngine engine;
     private Collection<IGatewayContext> gates;
     private Collection<IPluginContext> plugins;
+    private final IRequestContext reqCtx;
+    private final ISharedContext sharedCtx;
 
     public Core() {
         sharedCtx = new SharedContext();
         engine = new TraderEngine();
         reqCtx = new RequestContext(engine, sharedCtx);
         algo = new DefaultTraderEngineAlgorithm();
-    }
-
-    public static ICore create() {
-        return new Core();
     }
 
     @Override
@@ -161,6 +160,9 @@ public class Core implements ICore {
     @Override
     public void installDataSource(IDataSourceContext dataSourceContext) throws CoreInstallException {
         Objects.requireNonNull(dataSourceContext);
+        if (ds != null) {
+            throw new CoreInstallException("Data source can't be reinstalled.");
+        }
         ds = dataSourceContext;
     }
 
