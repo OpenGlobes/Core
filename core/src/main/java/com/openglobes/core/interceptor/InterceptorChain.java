@@ -203,8 +203,12 @@ public class InterceptorChain implements IInterceptorChain {
 
     private boolean wait0() {
         try {
-            cond.waitSignal();
-            return true;
+            /*
+             * Don't wait infinitely.
+             * Wake up every second and check the enqueued data.
+             */
+            return cond.waitSignal(1, 
+                                   TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
             Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
                                                                              ex.getMessage(),
@@ -310,7 +314,10 @@ public class InterceptorChain implements IInterceptorChain {
             T object;
             try {
                 while ((object = pop(clazz)) != null) {
-                    execute(clazz, object, timeout, unit);
+                    execute(clazz, 
+                            object, 
+                            timeout,
+                            unit);
                 }
             } catch (InterceptorException ex) {
                 Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
