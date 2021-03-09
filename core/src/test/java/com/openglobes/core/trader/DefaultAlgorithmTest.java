@@ -195,6 +195,8 @@ class DefaultAlgorithmTest extends AlgorithmData {
                                          instruments());
             assertEquals(OrderStatus.ACCEPTED,
                          order.getStatus());
+            assertEquals(0,
+                         order.getTradedVolumn());
             assertEquals(r.getQuantity(),
                          order.getQuantity());
             assertEquals(r.getOrderId(),
@@ -318,6 +320,8 @@ class DefaultAlgorithmTest extends AlgorithmData {
                                          instruments());
             assertEquals(OrderStatus.ALL_TRADED,
                          order.getStatus());
+            assertEquals(r.getQuantity(),
+                         order.getTradedVolumn());
             assertEquals(r.getQuantity(),
                          order.getQuantity());
             assertEquals(r.getOrderId(),
