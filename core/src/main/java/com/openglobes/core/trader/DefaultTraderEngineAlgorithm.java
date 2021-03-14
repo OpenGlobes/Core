@@ -86,26 +86,6 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return price * multiple;
     }
 
-    private double getCommission(double price,
-                                 Instrument instrument,
-                                 Integer offset) throws InvalidRequestOffsetException {
-        Objects.requireNonNull(instrument,
-                               instrument.getInstrumentId());
-        var ctype = instrument.getCommissionType();
-        Objects.requireNonNull(ctype,
-                               instrument.getInstrumentId() + " commission type.");
-        var ratio = getProperCommissionRatio(instrument, offset);
-        Objects.requireNonNull(ratio,
-                               instrument.getInstrumentId() + " commission ratio.");
-        if (ctype == RatioType.BY_MONEY) {
-            double m = getAmount(price,
-                                 instrument);
-            return m * ratio;
-        } else {
-            return ratio;
-        }
-    }
-
     @Override
     public double getCommission(double price,
                                 Instrument instrument,
@@ -648,6 +628,26 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return p;
     }
 
+    private double getCommission(double price,
+                                 Instrument instrument,
+                                 Integer offset) throws InvalidRequestOffsetException {
+        Objects.requireNonNull(instrument,
+                               instrument.getInstrumentId());
+        var ctype = instrument.getCommissionType();
+        Objects.requireNonNull(ctype,
+                               instrument.getInstrumentId() + " commission type.");
+        var ratio = getProperCommissionRatio(instrument, offset);
+        Objects.requireNonNull(ratio,
+                               instrument.getInstrumentId() + " commission ratio.");
+        if (ctype == RatioType.BY_MONEY) {
+            double m = getAmount(price,
+                                 instrument);
+            return m * ratio;
+        } else {
+            return ratio;
+        }
+    }
+
     private void setOrderStatus(Order order) throws QuantityOverflowException {
         if (order.getStatus() != null) {
             return;
@@ -821,45 +821,6 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private void setVolumnAmount(Order order,
-                                 Collection<Contract> contracts) throws IllegalContractException {
-        double amount = 0D;
-        long tradedVolumn = 0L;
-        for (var c : contracts) {
-            if (!Objects.equals(c.getDirection(), order.getDirection())
-                || !c.getInstrumentId().equals(order.getInstrumentId())) {
-                throw new IllegalContractException("Unexpected values.");
-            }
-            amount += c.getOpenAmount();
-            ++tradedVolumn;
-        }
-        order.setAmount(amount);
-        order.setTradedVolumn(tradedVolumn);
-    }
-
-    private void setVolumnAmount(Order order,
-                                 Collection<Trade> trades,
-                                 Map<String, Instrument> instruments) throws WrongOrderIdException,
-                                                                             InstrumentNotFoundException {
-        double amount = 0.0D;
-        long volumn = 0L;
-        for (var t : trades) {
-            if (!t.getOrderId().equals(order.getOrderId())) {
-                throw new WrongOrderIdException("Expect order ID " + order.getOrderId()
-                                                + " but found " + t.getOrderId() + ".");
-            }
-            var instrument = instruments.get(t.getInstrumentId());
-            if (instrument == null) {
-                throw new InstrumentNotFoundException("Instrument not found for " + t.getInstrumentId() + ".");
-            }
-            amount += getAmount(t.getPrice(),
-                                instrument);
-            volumn += t.getQuantity();
-        }
-        order.setAmount(amount);
-        order.setTradedVolumn(volumn);
-    }
-
     private void setDeleted(Order order,
                             Collection<Response> responses) {
         Objects.requireNonNull(responses);
@@ -898,5 +859,44 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         ts.sort(Comparator.comparing(Trade::getTimestamp));
         order.setInsertTimestamp(ts.getFirst().getTimestamp());
         order.setUpdateTimestamp(ts.getLast().getTimestamp());
+    }
+
+    private void setVolumnAmount(Order order,
+                                 Collection<Contract> contracts) throws IllegalContractException {
+        double amount = 0D;
+        long tradedVolumn = 0L;
+        for (var c : contracts) {
+            if (!Objects.equals(c.getDirection(), order.getDirection())
+                || !c.getInstrumentId().equals(order.getInstrumentId())) {
+                throw new IllegalContractException("Unexpected values.");
+            }
+            amount += c.getOpenAmount();
+            ++tradedVolumn;
+        }
+        order.setAmount(amount);
+        order.setTradedVolumn(tradedVolumn);
+    }
+
+    private void setVolumnAmount(Order order,
+                                 Collection<Trade> trades,
+                                 Map<String, Instrument> instruments) throws WrongOrderIdException,
+                                                                             InstrumentNotFoundException {
+        double amount = 0.0D;
+        long volumn = 0L;
+        for (var t : trades) {
+            if (!t.getOrderId().equals(order.getOrderId())) {
+                throw new WrongOrderIdException("Expect order ID " + order.getOrderId()
+                                                + " but found " + t.getOrderId() + ".");
+            }
+            var instrument = instruments.get(t.getInstrumentId());
+            if (instrument == null) {
+                throw new InstrumentNotFoundException("Instrument not found for " + t.getInstrumentId() + ".");
+            }
+            amount += getAmount(t.getPrice(),
+                                instrument);
+            volumn += t.getQuantity();
+        }
+        order.setAmount(amount);
+        order.setTradedVolumn(volumn);
     }
 }

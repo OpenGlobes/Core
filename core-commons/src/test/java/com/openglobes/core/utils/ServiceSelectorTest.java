@@ -55,7 +55,7 @@ class ServiceSelectorTest {
     private File createJar(File root) throws IOException,
                                              InterruptedException {
         var j = new File(root.getParentFile().getAbsolutePath() + "/echo-1.0.jar");
-        var cmd = "jar cf " + j.getAbsolutePath() + " -C " + root.getAbsolutePath() + " .";
+        var cmd = "jar cf \"" + j.getAbsolutePath() + "\" -C \"" + root.getAbsolutePath() + "\" .";
         cmd = cmd.replace('\\', '/');
         Process pr = Runtime.getRuntime().exec(cmd);
         pr.waitFor();
