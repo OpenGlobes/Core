@@ -54,18 +54,6 @@ public class MarketEngine implements IMarketEngine {
     }
 
     @Override
-    public void dispose() throws MarketDisposeException {
-        for (var g : gates.values()) {
-            try {
-                g.getGateway().stop();
-            } catch (GatewayException ex) {
-                throw new MarketDisposeException(ex.getMessage() + "(" + ex.getCode() + ")",
-                                                 ex);
-            }
-        }
-    }
-
-    @Override
     public void setDataSource(IMarketDataSource dataSource) {
         Objects.requireNonNull(dataSource);
         ds = dataSource;
@@ -91,13 +79,6 @@ public class MarketEngine implements IMarketEngine {
         gates.put(marketId, new MarketGatewayContext(marketId,
                                                      gateway,
                                                      props));
-    }
-
-    @Override
-    public void start(Properties properties) throws MarketStartException {
-        Objects.requireNonNull(ds);
-        startFacilities();
-        startGateways(properties);
     }
 
     @Override
@@ -137,18 +118,4 @@ public class MarketEngine implements IMarketEngine {
                                                                          ex);
         }
     }
-
-    private void startGateways(Properties properties) throws MarketStartException {
-        for (var g : gates.values()) {
-            try {
-                var p = new Properties(properties);
-                p.putAll(g.getProperties());
-                g.getGateway().start(p, gateHandler);
-            } catch (GatewayException ex) {
-                throw new MarketStartException(ex.getMessage() + "(" + ex.getCode() + ")",
-                                               ex);
-            }
-        }
-    }
-
 }

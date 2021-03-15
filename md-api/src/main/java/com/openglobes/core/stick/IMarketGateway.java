@@ -26,9 +26,9 @@ import java.util.Properties;
  */
 public interface IMarketGateway {
 
-    void start(Properties properties, IMarketGatewayHandler handler) throws GatewayException;
+    void setHandler(IMarketGatewayHandler handler) throws GatewayException;
 
-    void stop() throws GatewayException;
+    void setProperties(Properties properties) throws GatewayException;
 
     void subscribe(String instrumentId) throws GatewayException;
 

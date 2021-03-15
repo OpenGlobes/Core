@@ -37,8 +37,4 @@ public interface IMarketEngine {
                         GatewayConfiguration configuration) throws DuplicatedMarketIdException;
 
     void removeGateway(int marketId) throws UnknownMarketIdException;
-
-    void start(Properties properties) throws MarketStartException;
-
-    void dispose() throws MarketDisposeException;
 }
