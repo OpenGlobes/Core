@@ -142,7 +142,7 @@ public class Core implements ICore {
             engine.setAlgorithm(algo);
             engine.registerTrader(gates.size(),
                                   gateway);
-        } catch (DuplicatedTraderIdException ex) {
+        } catch (DuplicatedTraderIdException | GatewayException ex) {
             throw new CoreInstallException(ex.getMessage(),
                                            ex);
         }

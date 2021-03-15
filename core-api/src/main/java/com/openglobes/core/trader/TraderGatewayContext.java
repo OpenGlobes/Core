@@ -31,10 +31,7 @@ public class TraderGatewayContext {
     private Boolean enabled;
     private ITraderEngine engine;
     private ITraderGatewayHandler handler;
-    private Properties initProperties;
     private String note;
-    private Properties settleProperties;
-    private Properties startProperties;
     private ITraderGateway trader;
     private Integer traderId;
     private ZonedDateTime updateTimestamp;
@@ -66,20 +63,6 @@ public class TraderGatewayContext {
         updateTimestamp();
     }
 
-    public Properties getInitProperties() {
-        return new Properties(initProperties);
-    }
-
-    public void setInitProperties(Properties initProperties) {
-        if (this.initProperties == null) {
-            this.initProperties = new Properties(initProperties);
-        } else {
-            this.initProperties.clear();
-            this.initProperties.putAll(initProperties);
-        }
-        updateTimestamp();
-    }
-
     public String getNote() {
         return note;
     }
@@ -91,34 +74,6 @@ public class TraderGatewayContext {
 
     public ZonedDateTime getRegisterTimestamp() {
         return registerTimestamp;
-    }
-
-    public Properties getSettleProperties() {
-        return new Properties(settleProperties);
-    }
-
-    public void setSettleProperties(Properties settleProperties) {
-        if (this.settleProperties == null) {
-            this.settleProperties = new Properties(settleProperties);
-        } else {
-            this.settleProperties.clear();
-            this.settleProperties.putAll(settleProperties);
-        }
-        updateTimestamp();
-    }
-
-    public Properties getStartProperties() {
-        return new Properties(startProperties);
-    }
-
-    public void setStartProperties(Properties startProperties) {
-        if (this.startProperties == null) {
-            this.startProperties = new Properties(startProperties);
-        } else {
-            this.startProperties.clear();
-            this.startProperties.putAll(startProperties);
-        }
-        updateTimestamp();
     }
 
     public ITraderGateway getTrader() {

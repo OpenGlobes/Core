@@ -30,22 +30,20 @@ import java.util.logging.Level;
 
 public class TraderEngine implements ITraderEngine {
 
-    private final IEventSource es0;
-    private final Properties globalStartProps;
-    private final HashMap<String, Instrument> instruments;
-    private final HashMap<Long, Integer> orderTraders;
+    private final IEventSource                    es0;
+    private final HashMap<String, Instrument>     instruments;
+    private final HashMap<Long, Integer>          orderTraders;
     private final HashMap<Integer, TraderContext> traders;
-    private ITraderEngineAlgorithm algo;
-    private ITraderDataSource ds;
-    private IEventSource es;
-    private ServiceRuntimeStatus status;
+    private       ITraderEngineAlgorithm          algo;
+    private       ITraderDataSource               ds;
+    private       IEventSource                    es;
+    private       ServiceRuntimeStatus            status;
 
     public TraderEngine() {
-        traders = new HashMap<>(32);
+        traders      = new HashMap<>(32);
         orderTraders = new HashMap<>(1024);
-        instruments = new HashMap<>(512);
-        globalStartProps = new Properties();
-        es0 = new EventSource();
+        instruments  = new HashMap<>(512);
+        es0          = new EventSource();
     }
 
     @Override
@@ -139,7 +137,9 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException {
+    public void registerTrader(int traderId,
+                               ITraderGateway trader) throws DuplicatedTraderIdException,
+                                                             GatewayException {
         Objects.requireNonNull(trader);
         if (traders.containsKey(traderId)) {
             throw new DuplicatedTraderIdException(Integer.toString(traderId));
@@ -166,21 +166,6 @@ public class TraderEngine implements ITraderEngine {
              */
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    public void setInitProperties(int traderId, Properties properties) throws UnknownTraderIdException {
-        getTraderGatewayContext(traderId).setInitProperties(properties);
-    }
-
-    @Override
-    public void setSettleProperties(int traderId, Properties properties) throws UnknownTraderIdException {
-        getTraderGatewayContext(traderId).setSettleProperties(properties);
-    }
-
-    @Override
-    public void setStartProperties(int traderId, Properties properties) throws UnknownTraderIdException {
-        getTraderGatewayContext(traderId).setStartProperties(properties);
     }
 
     @Override
@@ -220,13 +205,15 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void addTrader(int traderId, ITraderGateway trader) {
+    private void addTrader(int traderId, ITraderGateway trader) throws GatewayException {
         var c = new TraderGatewayContext();
         c.setEnabled(false);
         c.setEngine(this);
         c.setTrader(trader);
         c.setTraderId(traderId);
-        traders.put(traderId, new TraderContext(c));
+        var trCtx = new TraderContext(c);
+        trader.setHandler(new TraderGatewayHandler(trCtx));
+        traders.put(traderId, trCtx);
     }
 
     private TraderContext findContextByTraderId(int traderId) throws UnknownTraderIdException {
@@ -249,7 +236,7 @@ public class TraderEngine implements ITraderEngine {
         if (c.getStatus() != ContractStatus.OPEN) {
             return false;
         }
-        var offset = request.getOffset();
+        var offset    = request.getOffset();
         var direction = request.getDirection();
         if (null == offset) {
             throw new InvalidRequestOffsetException("Offset null ptr.");
@@ -285,10 +272,10 @@ public class TraderEngine implements ITraderEngine {
             var ctr = cs.get(i);
             r.add(ctr);
             var c = algo.getCommission(request.getPrice(),
-                                   instrument,
-                                   request.getOffset(),
-                                   ctr,
-                                   tradingDay);
+                                       instrument,
+                                       request.getOffset(),
+                                       ctr,
+                                       tradingDay);
             setFrozenClose(c,
                            ctr,
                            getMarginByContract(ctr));
@@ -300,7 +287,7 @@ public class TraderEngine implements ITraderEngine {
                                                                  MarginNotFoundException {
         Margin m = null;
         try (ITraderDataConnection conn = ds.getConnection()) {
-            var trade = conn.getTradeById(contract.getTradeId());
+            var trade   = conn.getTradeById(contract.getTradeId());
             var margins = conn.getMarginsByOrderId(trade.getOrderId());
             for (var x : margins) {
                 if (x.getContractId().equals(contract.getContractId())) {
@@ -329,13 +316,13 @@ public class TraderEngine implements ITraderEngine {
         }
         var a = algo.getAmount(request.getPrice(), instrument);
         var m = algo.getMargin(request.getPrice(),
-                           instrument);
+                               instrument);
         var c = algo.getCommission(request.getPrice(),
-                               instrument,
-                               request.getOffset(),
-                               null,
-                               tradingDay);
-        var total = request.getQuantity() * (m + c);
+                                   instrument,
+                                   request.getOffset(),
+                                   null,
+                                   tradingDay);
+        var total     = request.getQuantity() * (m + c);
         var available = getAvailableMoney();
         if (available < total) {
             throw new MoneyOverflowException(total + ">" + available);
@@ -369,10 +356,10 @@ public class TraderEngine implements ITraderEngine {
 
     private void deleteOrderRequest(Request request) throws UnknownTraderIdException,
                                                             UnknownOrderIdException {
-        var orderId = request.getOrderId();
+        var orderId  = request.getOrderId();
         var traderId = findTraderIdByOrderId(orderId);
-        var ctx = findContextByTraderId(traderId);
-        var h = ctx.getHandler();
+        var ctx      = findContextByTraderId(traderId);
+        var h        = ctx.getHandler();
         Objects.requireNonNull(h);
         /*
          * Mock DELETE response.
@@ -603,7 +590,7 @@ public class TraderEngine implements ITraderEngine {
             }
             var sorted = new LinkedList<Contract>(cs);
             sorted.sort((Contract o1, Contract o2)
-                    -> o1.getOpenTimestamp().compareTo(o2.getOpenTimestamp()));
+                                -> o1.getOpenTimestamp().compareTo(o2.getOpenTimestamp()));
             // Scan from earlier to later.
             var it = sorted.iterator();
             while (it.hasNext()) {
@@ -667,7 +654,7 @@ public class TraderEngine implements ITraderEngine {
                                                AlgorithmException {
         try (var conn = ds.getConnection()) {
             final var tradingDay = conn.getTradingDay().getTradingDay();
-            final var ids = getRalatedInstrumentIds();
+            final var ids        = getRalatedInstrumentIds();
             return algo.getAccount(conn.getAccount(),
                                    conn.getDeposits(),
                                    conn.getWithdraws(),
@@ -691,7 +678,7 @@ public class TraderEngine implements ITraderEngine {
     private Collection<Request> group(Collection<Contract> cs, Request request) throws DeepCopyException,
                                                                                        DataAccessException {
         final var today = new HashMap<Integer, Request>(64);
-        final var yd = new HashMap<Integer, Request>(64);
+        final var yd    = new HashMap<Integer, Request>(64);
         try (var conn = ds.getConnection()) {
             var tradingDay = conn.getTradingDay().getTradingDay();
             for (var c : cs) {
@@ -967,8 +954,8 @@ public class TraderEngine implements ITraderEngine {
 
     private void setRequestHandler() throws InvalidSubscriptionException {
         es0.subscribe(RequestDetail.class, (IEvent<RequestDetail> event) -> {
-                  dispatchRequest(event.get());
-              });
+            dispatchRequest(event.get());
+        });
     }
 
     private void settle(ITraderDataSource ds,
@@ -982,7 +969,7 @@ public class TraderEngine implements ITraderEngine {
                                                             InstrumentNotFoundException,
                                                             WrongOrderIdException {
         try (var conn = ds.getConnection()) {
-            var rs = conn.getRequests();
+            var rs         = conn.getRequests();
             var tradingDay = conn.getTradingDay().getTradingDay();
             Objects.requireNonNull(rs);
             for (var r : rs) {

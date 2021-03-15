@@ -28,8 +28,6 @@ public interface IMarketGateway {
 
     void setHandler(IMarketGatewayHandler handler) throws GatewayException;
 
-    void setProperties(Properties properties) throws GatewayException;
-
     void subscribe(String instrumentId) throws GatewayException;
 
     int getStatus();
