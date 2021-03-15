@@ -54,13 +54,18 @@ public interface ITraderEngine {
 
     Collection<TraderGatewayContext> getTraderGatewayContexts();
 
-    void settle(Properties properties) throws SettlementException;
+    void settle() throws SettlementException;
 
-    void renew(Properties properties) throws TraderRenewException;
+    void renew() throws TraderRenewException;
 
-    void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException, GatewayException;
+    void registerTrader(int traderId,
+                        ITraderGateway trader) throws DuplicatedTraderIdException,
+                                                      GatewayException;
 
-    void request(Request request, Instrument instrument, Properties properties, int requestId);
+    void request(Request request,
+                 Instrument instrument,
+                 Properties properties,
+                 int requestId);
 
     void unregisterTrader(int traderId) throws UnknownTraderIdException;
 

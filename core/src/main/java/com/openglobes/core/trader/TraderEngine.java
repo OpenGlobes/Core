@@ -110,7 +110,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void settle(Properties properties) throws SettlementException {
+    public void settle() throws SettlementException {
         changeStatus(TraderEngineStatuses.SETTLING);
         checkDataSourceAlgorithmNotNull();
         try {
@@ -124,7 +124,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void renew(Properties properties) throws TraderRenewException {
+    public void renew() throws TraderRenewException {
         changeStatus(TraderEngineStatuses.INITIALIZING);
         checkDataSourceAlgorithmNotNull();
         try {

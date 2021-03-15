@@ -32,7 +32,5 @@ public interface IMarketGateway {
 
     int getStatus();
 
-    Properties getProperties();
-
     MarketGatewayInfo getGatewayInfo();
 }

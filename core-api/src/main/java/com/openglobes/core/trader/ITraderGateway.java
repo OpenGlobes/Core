@@ -18,7 +18,5 @@ public interface ITraderGateway {
 
     int getStatus();
 
-    Properties getProperties();
-
     TraderGatewayInfo getGatewayInfo();
 }
