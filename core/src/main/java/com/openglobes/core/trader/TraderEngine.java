@@ -184,41 +184,6 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void start(Properties properties) throws TraderStartException {
-        changeStatus(TraderEngineStatuses.STARTING);
-        try {
-            setRequestHandler();
-            globalStartProps.clear();
-            if (properties != null) {
-                globalStartProps.putAll(properties);
-            }
-            for (var p : traders.values()) {
-                startEach(p);
-            }
-            changeStatus(TraderEngineStatuses.WORKING);
-        } catch (Throwable th) {
-            changeStatus(TraderEngineStatuses.START_FAILED);
-            throw new TraderStartException(th.getMessage(),
-                                           th);
-        }
-    }
-
-    @Override
-    public void dispose() throws TraderDisposeException {
-        changeStatus(TraderEngineStatuses.STOPPING);
-        try {
-            for (var p : traders.values()) {
-                stopEach(p);
-            }
-            changeStatus(TraderEngineStatuses.STOPPED);
-        } catch (Throwable th) {
-            changeStatus(TraderEngineStatuses.STOP_FAILED);
-            throw new TraderDisposeException(th.getMessage(),
-                                             th);
-        }
-    }
-
-    @Override
     public void unregisterTrader(int traderId) throws UnknownTraderIdException {
         /*
          * Verify trader with specified ID exists, or throw exception.
@@ -253,11 +218,6 @@ public class TraderEngine implements ITraderEngine {
              */
             ex.printStackTrace();
         }
-    }
-
-    private void stopEach(TraderContext context) throws GatewayException {
-        Objects.requireNonNull(context);
-        context.stop();
     }
 
     private void addTrader(int traderId, ITraderGateway trader) {
@@ -1096,20 +1056,4 @@ public class TraderEngine implements ITraderEngine {
             }
         }
     }
-
-    private void startEach(TraderContext context) throws GatewayException {
-        Objects.requireNonNull(context);
-        if (!context.isEnabled()) {
-            return;
-        }
-        /*
-         * Trader services share the same class of handler, not same instance of
-         * handler. To shared information among these handlers, use STATIC.
-         */
-        if (context.getHandler() == null) {
-            context.setHandler(new TraderGatewayHandler(context));
-        }
-        context.start(globalStartProps);
-    }
-
 }

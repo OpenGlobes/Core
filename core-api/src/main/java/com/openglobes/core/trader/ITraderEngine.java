@@ -67,10 +67,6 @@ public interface ITraderEngine {
 
     void setStartProperties(int traderId, Properties properties) throws UnknownTraderIdException;
 
-    void start(Properties properties) throws TraderStartException;
-
-    void dispose() throws TraderDisposeException;
-
     void unregisterTrader(int traderId) throws UnknownTraderIdException;
 
 }

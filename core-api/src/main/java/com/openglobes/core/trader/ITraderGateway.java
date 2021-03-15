@@ -12,9 +12,9 @@ import java.util.Properties;
  */
 public interface ITraderGateway {
 
-    void start(Properties properties, ITraderGatewayHandler handler) throws GatewayException;
+    void setHandler(ITraderGatewayHandler handler) throws GatewayException;
 
-    void stop() throws GatewayException;
+    void setProperties(Properties properties) throws GatewayException;
 
     void insert(Request request, long requestId) throws GatewayException;
 

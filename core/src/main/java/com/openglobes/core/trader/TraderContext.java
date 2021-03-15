@@ -63,20 +63,4 @@ public class TraderContext extends IdTranslator {
     boolean isEnabled() {
         return ctx.isEnabled();
     }
-
-    void start(Properties globalProperties) throws GatewayException {
-        var properties = new Properties();
-        if (ctx.getStartProperties() != null) {
-            properties.putAll(ctx.getStartProperties());
-        }
-        if (globalProperties != null) {
-            properties.putAll(globalProperties);
-        }
-        ctx.getTrader().start(properties, ctx.getHandler());
-    }
-
-    void stop() throws GatewayException {
-        ctx.getTrader().stop();
-    }
-
 }

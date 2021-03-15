@@ -75,7 +75,6 @@ public class Core implements ICore {
     @Override
     public void dispose() throws CoreDisposeException {
         try {
-            engine.dispose();
             for (var c : connectors) {
                 c.get().dispose();
             }
@@ -84,7 +83,7 @@ public class Core implements ICore {
             }
             while (sharedCtx.getInterceptorChain().removeInterceptor() != null) {
             }
-        } catch (TraderException | ConnectorException | PluginException | InterceptorException ex) {
+        } catch (ConnectorException | PluginException | InterceptorException ex) {
             throw new CoreDisposeException(ex.getMessage(),
                                            ex);
         }
@@ -175,10 +174,8 @@ public class Core implements ICore {
     public void start() throws CoreStartException {
         try {
             installInterceptors();
-            engine.start(new Properties());
-        } catch (TraderStartException ex) {
-            throw new CoreStartException(ex.getMessage(),
-                                         ex);
+        } catch (Throwable th) {
+            throw new CoreStartException(th);
         }
     }
 
