@@ -16,10 +16,8 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.configuration.DataSourceConfiguration;
 import com.openglobes.core.data.ITraderDataSource;
 
-import java.util.Properties;
 
 /**
  * @author Hongbao Chen
@@ -27,55 +25,14 @@ import java.util.Properties;
  */
 public class DataSourceContext implements IDataSourceContext {
 
-    private final DataSourceConfiguration conf;
     private final ITraderDataSource source;
 
-    public DataSourceContext(DataSourceConfiguration configuration,
-                             ITraderDataSource source) {
-        this.conf = configuration;
+    public DataSourceContext(ITraderDataSource source) {
         this.source = source;
-    }
-
-    @Override
-    public String getClassName() {
-        return conf.getClassCanonicalName();
-    }
-
-    @Override
-    public String getDriverClass() {
-        return conf.getDriverClass();
-    }
-
-    @Override
-    public String getName() {
-        return conf.getName();
     }
 
     @Override
     public ITraderDataSource get() {
         return source;
     }
-
-    @Override
-    public String getPassword() {
-        return conf.getPassword();
-    }
-
-    @Override
-    public Properties getProperties() {
-        var r = new Properties();
-        r.putAll(conf.getProperties());
-        return r;
-    }
-
-    @Override
-    public String getUrl() {
-        return conf.getUrl();
-    }
-
-    @Override
-    public String getUsername() {
-        return conf.getUserName();
-    }
-
 }

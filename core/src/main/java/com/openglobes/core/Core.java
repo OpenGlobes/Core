@@ -16,10 +16,6 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.configuration.ConnectorConfiguration;
-import com.openglobes.core.configuration.DataSourceConfiguration;
-import com.openglobes.core.configuration.GatewayConfiguration;
-import com.openglobes.core.configuration.PluginConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
@@ -110,32 +106,24 @@ public class Core implements ICore {
     }
 
     @Override
-    public IConnectorContext getConnectorContext(IConnector connector,
-                                                 ConnectorConfiguration configuration) throws AcquireInformationException {
-        return new ConnectorContext(configuration,
-                                    connector,
+    public IConnectorContext getConnectorContext(IConnector connector) throws AcquireInformationException {
+        return new ConnectorContext(connector,
                                     factory.createSession(connector));
     }
 
     @Override
-    public void installDataSource(ITraderDataSource dataSource,
-                                  DataSourceConfiguration configuration) throws CoreInstallException {
+    public void installDataSource(ITraderDataSource dataSource) throws CoreInstallException {
         Objects.requireNonNull(dataSource);
-        Objects.requireNonNull(configuration);
         if (ds != null) {
             throw new CoreInstallException("Data source can't be reinstalled.");
         }
-        ds = new DataSourceContext(configuration,
-                                   dataSource);
+        ds = new DataSourceContext(dataSource);
     }
 
     @Override
-    public void installGateway(ITraderGateway gateway,
-                               GatewayConfiguration configuration) throws CoreInstallException {
+    public void installGateway(ITraderGateway gateway) throws CoreInstallException {
         Objects.requireNonNull(gateway);
-        Objects.requireNonNull(configuration);
-        GatewayContext gctx = new GatewayContext(configuration,
-                                                 gateway);
+        GatewayContext gctx = new GatewayContext(gateway);
         gates.add(gctx);
         try {
             engine.setDataSource(ds.get());
@@ -149,12 +137,9 @@ public class Core implements ICore {
     }
 
     @Override
-    public void installPlugin(IPlugin plugin,
-                              PluginConfiguration configuration) throws CoreInstallException {
+    public void installPlugin(IPlugin plugin) throws CoreInstallException {
         Objects.requireNonNull(plugin);
-        Objects.requireNonNull(configuration);
-        PluginContext pctx = new PluginContext(configuration,
-                                               plugin,
+        PluginContext pctx = new PluginContext(plugin,
                                                this);
         plugins.add(pctx);
         try {

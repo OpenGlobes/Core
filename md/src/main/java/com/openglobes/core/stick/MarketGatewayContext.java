@@ -26,12 +26,9 @@ public class MarketGatewayContext {
 
     private final IMarketGateway gateway;
     private final Integer marketId;
-    private final Properties props;
 
     public MarketGatewayContext(Integer marketId,
-                                IMarketGateway gateway,
-                                Properties properties) {
-        this.props = properties;
+                                IMarketGateway gateway) {
         this.gateway = gateway;
         this.marketId = marketId;
     }
@@ -42,9 +39,5 @@ public class MarketGatewayContext {
 
     public Integer getMarketId() {
         return marketId;
-    }
-
-    public Properties getProperties() {
-        return new Properties(props);
     }
 }

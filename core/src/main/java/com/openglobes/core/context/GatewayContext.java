@@ -16,10 +16,7 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.configuration.GatewayConfiguration;
 import com.openglobes.core.trader.ITraderGateway;
-
-import java.util.Properties;
 
 /**
  * @author Hongbao Chen
@@ -27,35 +24,14 @@ import java.util.Properties;
  */
 public class GatewayContext implements IGatewayContext {
 
-    private final GatewayConfiguration conf;
     private final ITraderGateway gate;
 
-    public GatewayContext(GatewayConfiguration configuration,
-                          ITraderGateway gateway) {
-        this.conf = configuration;
+    public GatewayContext(ITraderGateway gateway) {
         this.gate = gateway;
-    }
-
-    @Override
-    public String getClassName() {
-        return conf.getClassCanonicalName();
-    }
-
-    @Override
-    public String getName() {
-        return conf.getName();
     }
 
     @Override
     public ITraderGateway get() {
         return gate;
     }
-
-    @Override
-    public Properties getProperties() {
-        var r = new Properties();
-        r.putAll(conf.getProperties());
-        return r;
-    }
-
 }

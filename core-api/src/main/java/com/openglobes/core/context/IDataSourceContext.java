@@ -24,12 +24,4 @@ import com.openglobes.core.data.ITraderDataSource;
  * @since 1.0
  */
 public interface IDataSourceContext extends IConfiguredContext<ITraderDataSource> {
-
-    String getDriverClass();
-
-    String getUrl();
-
-    String getUsername();
-
-    String getPassword();
 }

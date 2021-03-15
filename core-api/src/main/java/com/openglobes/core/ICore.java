@@ -16,10 +16,6 @@
  */
 package com.openglobes.core;
 
-import com.openglobes.core.configuration.ConnectorConfiguration;
-import com.openglobes.core.configuration.DataSourceConfiguration;
-import com.openglobes.core.configuration.GatewayConfiguration;
-import com.openglobes.core.configuration.PluginConfiguration;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
 import com.openglobes.core.context.IGatewayContext;
@@ -41,17 +37,13 @@ public interface ICore {
 
     void dispose() throws CoreDisposeException;
 
-    void installPlugin(IPlugin plugin, 
-                       PluginConfiguration configuration) throws CoreInstallException;
+    void installPlugin(IPlugin plugin) throws CoreInstallException;
 
-    void installGateway(ITraderGateway gateway, 
-                        GatewayConfiguration configuration) throws CoreInstallException;
+    void installGateway(ITraderGateway gateway) throws CoreInstallException;
 
-    void installDataSource(ITraderDataSource dataSource,
-                           DataSourceConfiguration configuration) throws CoreInstallException;
+    void installDataSource(ITraderDataSource dataSource) throws CoreInstallException;
 
-    IConnectorContext getConnectorContext(IConnector connector,
-                                          ConnectorConfiguration configuration) throws AcquireInformationException;
+    IConnectorContext getConnectorContext(IConnector connector) throws AcquireInformationException;
 
     Collection<IConnectorContext> connectors();
 

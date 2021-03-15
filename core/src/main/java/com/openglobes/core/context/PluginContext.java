@@ -17,12 +17,10 @@
 package com.openglobes.core.context;
 
 import com.openglobes.core.ICore;
-import com.openglobes.core.configuration.PluginConfiguration;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
 
-import java.util.Properties;
 
 /**
  * @author Hongbao Chen
@@ -30,14 +28,11 @@ import java.util.Properties;
  */
 public class PluginContext implements IPluginContext {
 
-    private final PluginConfiguration conf;
     private final ICore core;
     private final IPlugin p;
 
-    public PluginContext(PluginConfiguration configuration,
-                         IPlugin plugin,
+    public PluginContext(IPlugin plugin,
                          ICore core) {
-        this.conf = configuration;
         this.p = plugin;
         this.core = core;
     }
@@ -48,25 +43,8 @@ public class PluginContext implements IPluginContext {
     }
 
     @Override
-    public String getClassName() {
-        return conf.getClassCanonicalName();
-    }
-
-    @Override
     public ICore getCore() {
         return core;
-    }
-
-    @Override
-    public String getName() {
-        return conf.getName();
-    }
-
-    @Override
-    public Properties getProperties() {
-        var r = new Properties();
-        r.putAll(conf.getProperties());
-        return r;
     }
 
     IPlugin getPlugin() throws PluginException {

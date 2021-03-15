@@ -26,11 +26,5 @@ import java.util.Properties;
  */
 public interface IConfiguredContext<T> {
 
-    String getClassName();
-
-    String getName();
-
-    Properties getProperties();
-
     T get();
 }

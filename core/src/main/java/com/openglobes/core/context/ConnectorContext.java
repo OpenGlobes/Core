@@ -16,17 +16,12 @@
  */
 package com.openglobes.core.context;
 
-import com.openglobes.core.IRequestContext;
-import com.openglobes.core.configuration.ConnectorConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
 import com.openglobes.core.session.ISession;
-import com.openglobes.core.session.ISessionFactory;
-import com.openglobes.core.session.SessionFactory;
 
 import java.util.Objects;
-import java.util.Properties;
 
 /**
  * @author Hongbao Chen
@@ -34,15 +29,11 @@ import java.util.Properties;
  */
 public class ConnectorContext implements IConnectorContext {
 
-    private final ConnectorConfiguration conf;
     private final IConnector conn;
     private final ISession session;
-    private ISessionFactory factory;
 
-    public ConnectorContext(ConnectorConfiguration configuration,
-                            IConnector connector,
+    public ConnectorContext(IConnector connector,
                             ISession session) {
-        conf = configuration;
         this.conn = connector;
         this.session = session;
     }
@@ -50,23 +41,6 @@ public class ConnectorContext implements IConnectorContext {
     @Override
     public IConnector get() {
         return conn;
-    }
-
-    @Override
-    public String getClassName() {
-        return conf.getClassCanonicalName();
-    }
-
-    @Override
-    public String getName() {
-        return conf.getName();
-    }
-
-    @Override
-    public Properties getProperties() {
-        var r = new Properties();
-        r.putAll(conf.getProperties());
-        return r;
     }
 
     @Override
