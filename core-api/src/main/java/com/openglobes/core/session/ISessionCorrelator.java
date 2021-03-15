@@ -26,6 +26,6 @@ public interface ISessionCorrelator {
 
     ISession getSessionByOrderId(Long orderId);
 
-    Long registerRequest(Request request, ISession session);
+    Long registerRequestWithNewId(Request request, ISession session);
 
 }

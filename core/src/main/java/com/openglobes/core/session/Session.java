@@ -95,14 +95,16 @@ class Session implements ISession {
         }
     }
 
-    private void adjuestDestId(Request r) throws RequestException {
+    private void adjustDestId(Request r) throws RequestException {
         if (r.getAction() == ActionType.NEW) {
             /*
              * Foe NEW action, register for a new destinated Id and set into
              * mapper.
              */
-            var scrId = req.getSessionCorrelator().registerRequest(r, this);
-            map.correlate(scrId, r.getOrderId());
+            var srcId = req.getSessionCorrelator()
+                           .registerRequestWithNewId(r, this);
+            map.correlate(srcId,
+                          r.getOrderId());
         } else {
             /*
              * For DELETE action, recover destinated Id from mapper.
@@ -157,7 +159,7 @@ class Session implements ISession {
     private void doRequest(Request request, Properties properties) throws AcquireInformationException,
                                                                           ForwardRequestException {
         try {
-            adjuestDestId(request);
+            adjustDestId(request);
             req.getSharedContext().getInterceptorChain()
                     .request(RequestInterceptingContext.class,
                              new RequestInterceptingContext(request,

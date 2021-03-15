@@ -6,6 +6,7 @@
 package com.openglobes.core.connector;
 
 import com.openglobes.core.IConfiguredContext;
+import com.openglobes.core.session.ISession;
 import com.openglobes.core.session.ISessionFactory;
 
 /**
@@ -14,5 +15,5 @@ import com.openglobes.core.session.ISessionFactory;
  */
 public interface IConnectorContext extends IConfiguredContext<IConnector> {
 
-    ISessionFactory getSessionFactory();
+    ISession getSession();
 }

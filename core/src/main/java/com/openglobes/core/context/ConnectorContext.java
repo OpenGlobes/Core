@@ -21,6 +21,7 @@ import com.openglobes.core.configuration.ConnectorConfiguration;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
+import com.openglobes.core.session.ISession;
 import com.openglobes.core.session.ISessionFactory;
 import com.openglobes.core.session.SessionFactory;
 
@@ -35,15 +36,15 @@ public class ConnectorContext implements IConnectorContext {
 
     private final ConnectorConfiguration conf;
     private final IConnector conn;
-    private final IRequestContext ctx;
+    private final ISession session;
     private ISessionFactory factory;
 
     public ConnectorContext(ConnectorConfiguration configuration,
                             IConnector connector,
-                            IRequestContext context) {
+                            ISession session) {
         conf = configuration;
         this.conn = connector;
-        this.ctx = context;
+        this.session = session;
     }
 
     @Override
@@ -69,11 +70,8 @@ public class ConnectorContext implements IConnectorContext {
     }
 
     @Override
-    public synchronized ISessionFactory getSessionFactory() {
-        if (factory == null) {
-            factory = new SessionFactory(ctx);
-        }
-        return factory;
+    public ISession getSession() {
+        return session;
     }
 
     IConnector getConnector() throws ConnectorException {

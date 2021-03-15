@@ -44,7 +44,7 @@ public class SessionCorrelator implements ISessionCorrelator {
     }
 
     @Override
-    public Long registerRequest(Request request, ISession session) {
+    public Long registerRequestWithNewId(Request request, ISession session) {
         Objects.requireNonNull(request);
         Objects.requireNonNull(session);
         var oldId = request.getOrderId();

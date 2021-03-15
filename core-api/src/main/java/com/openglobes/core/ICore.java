@@ -26,6 +26,7 @@ import com.openglobes.core.context.IGatewayContext;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
+import com.openglobes.core.session.AcquireInformationException;
 import com.openglobes.core.trader.ITraderEngine;
 import com.openglobes.core.trader.ITraderGateway;
 import java.util.Collection;
@@ -43,14 +44,14 @@ public interface ICore {
     void installPlugin(IPlugin plugin, 
                        PluginConfiguration configuration) throws CoreInstallException;
 
-    void installConnector(IConnector connector, 
-                          ConnectorConfiguration configuration) throws CoreInstallException;
-
     void installGateway(ITraderGateway gateway, 
                         GatewayConfiguration configuration) throws CoreInstallException;
 
     void installDataSource(ITraderDataSource dataSource,
                            DataSourceConfiguration configuration) throws CoreInstallException;
+
+    IConnectorContext getConnectorContext(IConnector connector,
+                                          ConnectorConfiguration configuration) throws AcquireInformationException;
 
     Collection<IConnectorContext> connectors();
 

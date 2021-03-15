@@ -29,6 +29,9 @@ import com.openglobes.core.interceptor.*;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
 import com.openglobes.core.plugin.PluginException;
+import com.openglobes.core.session.AcquireInformationException;
+import com.openglobes.core.session.ISessionFactory;
+import com.openglobes.core.session.SessionFactory;
 import com.openglobes.core.trader.*;
 import java.util.Collection;
 import java.util.Objects;
@@ -54,12 +57,14 @@ public class Core implements ICore {
     private Collection<IPluginContext> plugins;
     private final IRequestContext reqCtx;
     private final ISharedContext sharedCtx;
+    private final ISessionFactory factory;
 
     public Core() {
         sharedCtx = new SharedContext();
         engine = new TraderEngine();
         reqCtx = new RequestContext(engine, sharedCtx);
         algo = new DefaultTraderEngineAlgorithm();
+        factory = new SessionFactory(reqCtx);
     }
 
     @Override
@@ -106,20 +111,11 @@ public class Core implements ICore {
     }
 
     @Override
-    public void installConnector(IConnector connector,
-                                 ConnectorConfiguration configuration) throws CoreInstallException {
-        Objects.requireNonNull(connector);
-        Objects.requireNonNull(configuration);
-        ConnectorContext cctx = new ConnectorContext(configuration,
-                                                     connector,
-                                                     getRequest());
-        connectors.add(cctx);
-        try {
-            connector.listen(cctx);
-        } catch (ConnectorException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
-        }
+    public IConnectorContext getConnectorContext(IConnector connector,
+                                                 ConnectorConfiguration configuration) throws AcquireInformationException {
+        return new ConnectorContext(configuration,
+                                    connector,
+                                    factory.createSession(connector));
     }
 
     @Override

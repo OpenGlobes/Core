@@ -24,8 +24,10 @@ import java.util.Properties;
  */
 public interface ISession {
 
-    <T> void request(Class<T> clazz, T object, Properties properties) throws AcquireInformationException,
-                                                                             ForwardRequestException;
+    <T> void request(Class<T> clazz,
+                     T object,
+                     Properties properties) throws AcquireInformationException,
+                                                   ForwardRequestException;
 
     <T> void respond(T object) throws ForwardResponseException,
                                       InvalidSessionResponseException,

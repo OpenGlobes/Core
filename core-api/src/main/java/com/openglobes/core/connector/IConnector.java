@@ -32,7 +32,5 @@ public interface IConnector {
 
     void write(EngineRequestError error) throws ConnectorException;
 
-    void listen(IConnectorContext context) throws ConnectorException;
-
     void dispose() throws ConnectorException;
 }
