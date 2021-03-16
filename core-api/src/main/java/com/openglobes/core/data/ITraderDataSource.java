@@ -35,8 +35,8 @@ import java.sql.SQLException;
  * is specified in properties by the key {@code DataSource.URL} and the rest of
  * the properties are passed directly as second parameter.
  * <p>
- * To usea JDBC driver, set class path to contain that driver when building the
- * application, or load that driver programatically.
+ * To use a JDBC driver, set class path to contain that driver when building the
+ * application, or load that driver programmatically.
  *
  * @author Hongbao Chen
  * @since 1.0

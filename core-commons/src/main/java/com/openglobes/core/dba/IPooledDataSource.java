@@ -17,6 +17,7 @@
 package com.openglobes.core.dba;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -39,8 +40,7 @@ public interface IPooledDataSource {
                                          ClassNotFoundException;
 
     /**
-     * Free the binding of the specified connection to the
-     * {@link IDataConnection} object and return available for new connection.
+     * Free the binding of the specified connection and return available for new connection.
      *
      * @param connection SQl connection.
      *
@@ -50,7 +50,7 @@ public interface IPooledDataSource {
     void ungetSqlConnection(Connection connection) throws UnknownConnectionException;
 
     /**
-     * Get properites used on obtaining connection by
+     * Get properties used on obtaining connection by
      * {@link java.sql.DriverManager#getConnection(java.lang.String, java.util.Properties)}.
      *
      * @return properties used on obtaining connection.
