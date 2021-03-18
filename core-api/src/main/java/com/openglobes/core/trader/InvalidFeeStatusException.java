@@ -19,21 +19,21 @@ package com.openglobes.core.trader;
 /**
  * @author chenh
  */
-public class IllegalFeeStatusException extends TraderException {
+public class InvalidFeeStatusException extends TraderException {
 
-    public IllegalFeeStatusException(String message) {
+    public InvalidFeeStatusException(String message) {
         super(message);
     }
 
-    public IllegalFeeStatusException(String message, Throwable cause) {
+    public InvalidFeeStatusException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IllegalFeeStatusException(Throwable cause) {
+    public InvalidFeeStatusException(Throwable cause) {
         super(cause);
     }
 
-    public IllegalFeeStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public InvalidFeeStatusException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

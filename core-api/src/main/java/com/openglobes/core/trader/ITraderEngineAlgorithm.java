@@ -51,14 +51,14 @@ public interface ITraderEngineAlgorithm {
                                                                    InstrumentNotFoundException,
                                                                    InvalidContractStatusException,
                                                                    IllegalContractStatusException,
-                                                                   IllegalFeeStatusException,
+                                                                   InvalidFeeStatusException,
                                                                    InvalidCommissionException;
 
     Order getOrder(Request request,
                    Collection<Contract> contracts,
                    Collection<Trade> trades,
                    Collection<Response> responses,
-                   Map<String, Instrument> instruments) throws IllegalContractException,
+                   Map<String, Instrument> instruments) throws InvalidContractException,
                                                                QuantityOverflowException,
                                                                InstrumentNotFoundException,
                                                                WrongOrderIdException;

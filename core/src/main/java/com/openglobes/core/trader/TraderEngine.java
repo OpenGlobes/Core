@@ -964,7 +964,7 @@ public class TraderEngine implements ITraderEngine {
                                                             AlgorithmException,
                                                             UnknownTraderIdException,
                                                             UnknownOrderIdException,
-                                                            IllegalContractException,
+                                                            InvalidContractException,
                                                             QuantityOverflowException,
                                                             InstrumentNotFoundException,
                                                             WrongOrderIdException {
@@ -992,7 +992,7 @@ public class TraderEngine implements ITraderEngine {
                                                                   ContractNotFoundException,
                                                                   DataAccessException,
                                                                   QuantityOverflowException,
-                                                                  IllegalContractException,
+                                                                  InvalidContractException,
                                                                   UnknownTraderIdException,
                                                                   UnknownOrderIdException,
                                                                   WrongOrderIdException,

@@ -19,21 +19,21 @@ package com.openglobes.core.trader;
 /**
  * @author chenh
  */
-public class IllegalContractException extends TraderException {
+public class InvalidContractException extends TraderException {
 
-    public IllegalContractException(String message) {
+    public InvalidContractException(String message) {
         super(message);
     }
 
-    public IllegalContractException(String message, Throwable cause) {
+    public InvalidContractException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public IllegalContractException(Throwable cause) {
+    public InvalidContractException(Throwable cause) {
         super(cause);
     }
 
-    public IllegalContractException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public InvalidContractException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
