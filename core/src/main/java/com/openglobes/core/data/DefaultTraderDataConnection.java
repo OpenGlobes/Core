@@ -811,8 +811,9 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
 
     private <T> Collection<T> callGetMany(Class<T> clazz,
                                           ICondition<?> condition,
-                                          IDefaultFactory<T> factory) throws SQLException,
-                                                                             DataQueryException {
+                                          IDefaultFactory<T> factory)
+            throws SQLException,
+                   DataQueryException {
         try {
             return query.select(clazz, condition, factory);
         } catch (DbaException ex) {
@@ -823,9 +824,10 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
 
     private <T> T callGetSingle(Class<T> clazz,
                                 ICondition<?> condition,
-                                IDefaultFactory<T> factory) throws SQLException,
-                                                                   InvalidQueryResultException,
-                                                                   DataQueryException {
+                                IDefaultFactory<T> factory)
+            throws SQLException,
+                   InvalidQueryResultException,
+                   DataQueryException {
         Collection<T> c = callGetMany(clazz,
                                       condition,
                                       factory);
@@ -839,10 +841,11 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
     }
 
     private <T> void callInsert(Class<T> clazz,
-                                T object) throws DataQueryException,
-                                                 SQLException,
-                                                 EventException,
-                                                 UnknownDataChangeException {
+                                T object)
+            throws DataQueryException,
+                   SQLException,
+                   EventException,
+                   UnknownDataChangeException {
         try {
             int r = query.insert(clazz, object);
             if (r != 1) {
@@ -859,8 +862,9 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
 
     private <T> void callOnChange(Class<T> clazz,
                                   T object,
-                                  DataChangeType type) throws EventException,
-                                                              UnknownDataChangeException {
+                                  DataChangeType type)
+            throws EventException,
+                   UnknownDataChangeException {
         getDataSource().getEventSource(type).publish(clazz,
                                                      object);
     }
@@ -868,12 +872,13 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
     private <T, V> void callRemove(Class<T> clazz,
                                    String fieldName,
                                    V id,
-                                   IDefaultFactory<T> factory) throws SQLException,
-                                                                      EventException,
-                                                                      NoSuchFieldException,
-                                                                      DataQueryException,
-                                                                      UnknownDataChangeException,
-                                                                      InvalidQueryResultException {
+                                   IDefaultFactory<T> factory)
+            throws SQLException,
+                   EventException,
+                   NoSuchFieldException,
+                   DataQueryException,
+                   UnknownDataChangeException,
+                   InvalidQueryResultException {
         try {
             callOnChange(clazz,
                          callGetSingle(clazz,
@@ -893,10 +898,11 @@ public class DefaultTraderDataConnection extends AbstractTraderDataConnection {
 
     private <T> void callUpdate(Class<T> clazz,
                                 T object,
-                                Field field) throws DataQueryException,
-                                                    SQLException,
-                                                    EventException,
-                                                    UnknownDataChangeException {
+                                Field field)
+            throws DataQueryException,
+                   SQLException,
+                   EventException,
+                   UnknownDataChangeException {
         try {
             DbaUtils.enableAccess(field);
             int r = query.update(clazz,

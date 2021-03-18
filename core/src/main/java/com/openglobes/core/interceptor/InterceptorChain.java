@@ -53,7 +53,6 @@ public class InterceptorChain implements IInterceptorChain {
     private int timeout = 60;
     private final Queue<Trade> trades;
     private final Worker worker;
-    
 
     public InterceptorChain() {
         cond = new QuickCondition();
@@ -70,7 +69,8 @@ public class InterceptorChain implements IInterceptorChain {
     public <T, V> void addInterceptor(int position,
                                       Class<T> tClazz,
                                       Class<V> vClazz,
-                                      IInterceptor<T, V> interceptor) throws InterceptorException {
+                                      IInterceptor<T, V> interceptor)
+            throws InterceptorException {
         lock.writeLock().lock();
         try {
             chain.add(new InterceptorContext(position,
@@ -85,10 +85,11 @@ public class InterceptorChain implements IInterceptorChain {
 
     @Override
     public <T> void addInterceptor(int position,
-                                   Class<T> clazz, 
-                                   AbstractRequestInterceptor<T> interceptor) throws InterceptorException {
+                                   Class<T> clazz,
+                                   AbstractRequestInterceptor<T> interceptor)
+            throws InterceptorException {
         addInterceptor(position,
-                       clazz, 
+                       clazz,
                        Object.class,
                        interceptor);
     }
@@ -96,7 +97,8 @@ public class InterceptorChain implements IInterceptorChain {
     @Override
     public <R> void addInterceptor(int position,
                                    Class<R> clazz,
-                                   AbstractResponseInterceptor<R> interceptor) throws InterceptorException {
+                                   AbstractResponseInterceptor<R> interceptor)
+            throws InterceptorException {
         addInterceptor(position,
                        Object.class,
                        clazz,
@@ -204,10 +206,10 @@ public class InterceptorChain implements IInterceptorChain {
     private boolean wait0() {
         try {
             /*
-             * Don't wait infinitely.
-             * Wake up every second and check the enqueued data.
+             * Don't wait infinitely. Wake up every second and check the
+             * enqueued data.
              */
-            return cond.waitSignal(1, 
+            return cond.waitSignal(1,
                                    TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
             Loggers.getLogger(InterceptorChain.class.getCanonicalName()).log(Level.SEVERE,
@@ -292,8 +294,10 @@ public class InterceptorChain implements IInterceptorChain {
         private <R> void execute(Class<R> clazz,
                                  R object,
                                  int timeout,
-                                 TimeUnit unit) throws InterceptorException {
-            if (object instanceof Trade || object instanceof Response || object instanceof EngineRequestError) {
+                                 TimeUnit unit)
+                throws InterceptorException {
+            if (object instanceof Trade || object instanceof Response
+                || object instanceof EngineRequestError) {
                 executeResponse(clazz,
                                 object,
                                 timeout,
@@ -314,8 +318,8 @@ public class InterceptorChain implements IInterceptorChain {
             T object;
             try {
                 while ((object = pop(clazz)) != null) {
-                    execute(clazz, 
-                            object, 
+                    execute(clazz,
+                            object,
                             timeout,
                             unit);
                 }

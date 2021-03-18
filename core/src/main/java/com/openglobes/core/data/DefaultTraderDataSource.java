@@ -40,14 +40,15 @@ public class DefaultTraderDataSource extends AbstractTraderDataSource {
     @Override
     public <T> void addListener(Class<T> clazz,
                                 IEventHandler<T> handler,
-                                DataChangeType type) throws UnknownDataChangeException,
-                                                            InvalidSubscriptionException {
+                                DataChangeType type)
+            throws UnknownDataChangeException,
+                   InvalidSubscriptionException {
         getEventSource(type).subscribe(clazz, handler);
     }
 
     @Override
     public AbstractTraderDataConnection getConnection() throws SQLException,
-                                                       ClassNotFoundException {
+                                                               ClassNotFoundException {
         return new DefaultTraderDataConnection(getSqlConnection(), this);
     }
 
