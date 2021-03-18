@@ -37,7 +37,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     public Account getAccount(Account pre,
                               Collection<Deposit> deposits,
                               Collection<Withdraw> withdraws,
-                              Collection<Position> positions) throws InvalidAmountException {
+                              Collection<Position> positions)
+            throws InvalidAmountException {
         double closeProfit = 0D;
         double positionProfit = 0D;
         double frozenMargin = 0D;
@@ -47,14 +48,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         Objects.requireNonNull(positions);
         for (var p : positions) {
             /*
-             * 2021-03-18 Hongbao Chen
-             * When the account is running, frozen assets are not cleared so
-             * the frozenXxx may have values. But settlement would clear those
-             * frozen assets before updating account, the frozenXxx should
-             * be all zeros.
-             * 
-             * Since the only difference of a query account between running
-             * and settlement is the price used to evaluate assets, the two
+             * 2021-03-18 Hongbao Chen When the account is running, frozen
+             * assets are not cleared so the frozenXxx may have values. But
+             * settlement would clear those frozen assets before updating
+             * account, the frozenXxx should be all zeros.
+             *
+             * Since the only difference of a query account between running and
+             * settlement is the price used to evaluate assets, the two
              * processes share the same algorithm.
              */
             requireNotNulls(p.getCloseProfit(),
@@ -82,11 +82,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         r.setPositionProfit(positionProfit);
         r.setWithdraw(withdraw);
         /*
-         * 2021-03-18 Hongbao Chen
-         * Settlement balance is based on yesterday's balance and today's
-         * spread, which are calculated with yesterday's settlement price
-         * and today's settlement price correspondingly.
-         * 
+         * 2021-03-18 Hongbao Chen Settlement balance is based on yesterday's
+         * balance and today's spread, which are calculated with yesterday's
+         * settlement price and today's settlement price correspondingly.
+         *
          */
         var balance = r.getPreBalance() + r.getDeposit() - r.getWithdraw()
                   + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
@@ -161,10 +160,11 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                           Collection<Contract> contracts,
                           Collection<Trade> trades,
                           Collection<Response> responses,
-                          Map<String, Instrument> instruments) throws InvalidContractException,
-                                                                      QuantityOverflowException,
-                                                                      InstrumentNotFoundException,
-                                                                      WrongOrderIdException {
+                          Map<String, Instrument> instruments)
+            throws InvalidContractException,
+                   QuantityOverflowException,
+                   InstrumentNotFoundException,
+                   WrongOrderIdException {
         var r = new Order();
         /*
          * Don't change the order of calls.
@@ -193,18 +193,19 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                              Collection<Margin> margins,
                                              Map<String, SettlementPrice> prices,
                                              Map<String, Instrument> instruments,
-                                             LocalDate tradingDay) throws InvalidContractDirectionException,
-                                                                          IllegalInstrumentIdException,
-                                                                          InvalidContractIdException,
-                                                                          MarginNotFoundException,
-                                                                          CommissionNotFoundException,
-                                                                          SettlementNotFoundException,
-                                                                          InvalidSettlementPriceException,
-                                                                          InstrumentNotFoundException,
-                                                                          InvalidContractStatusException,
-                                                                          IllegalContractStatusException,
-                                                                          InvalidFeeStatusException,
-                                                                          InvalidCommissionException {
+                                             LocalDate tradingDay)
+            throws InvalidContractDirectionException,
+                   IllegalInstrumentIdException,
+                   InvalidContractIdException,
+                   MarginNotFoundException,
+                   CommissionNotFoundException,
+                   SettlementNotFoundException,
+                   InvalidSettlementPriceException,
+                   InstrumentNotFoundException,
+                   InvalidContractStatusException,
+                   IllegalContractStatusException,
+                   InvalidFeeStatusException,
+                   InvalidCommissionException {
         Objects.requireNonNull(contracts);
         final var lp = new HashMap<String, Position>(64);
         final var sp = new HashMap<String, Position>(64);
@@ -364,7 +365,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                  Collection<Commission> commissions,
                                  Margin margin,
                                  Double price,
-                                 Instrument instrument) throws InvalidCommissionException, 
+                                 Instrument instrument) throws InvalidCommissionException,
                                                                InvalidContractStatusException,
                                                                InvalidFeeStatusException {
         if (p.getAmount() == null) {
@@ -611,7 +612,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                   Map<Long, Set<Commission>> commissions) throws CommissionNotFoundException {
         var v = commissions.get(contractId);
         if (v == null) {
-            return new HashSet<>();
+            return new HashSet<>(0);
         }
         return v;
     }
@@ -711,12 +712,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         if (offset == Offset.OPEN) {
             return instrument.getCommissionOpenRatio();
         } else {
-            if (offset == Offset.CLOSE_YD) {
-                return instrument.getCommissionCloseYdRatio();
-            } else if (offset == Offset.CLOSE_TODAY) {
-                return instrument.getCommissionCloseTodayRatio();
-            } else {
-                throw new InvalidRequestOffsetException("Can't handle offset " + offset + ".");
+            switch (offset) {
+                case Offset.CLOSE_YD:
+                    return instrument.getCommissionCloseYdRatio();
+                case Offset.CLOSE_TODAY:
+                    return instrument.getCommissionCloseTodayRatio();
+                default:
+                    throw new InvalidRequestOffsetException("Can't handle offset " + offset + ".");
             }
         }
     }
