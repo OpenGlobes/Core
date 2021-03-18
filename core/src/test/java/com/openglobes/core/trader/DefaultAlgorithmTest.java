@@ -30,15 +30,16 @@ class DefaultAlgorithmTest extends AlgorithmData {
     @Test
     void getAccount() {
         assertDoesNotThrow(() -> {
+            var positions = algorithm().getPositions(contracts(),
+                                                     commissions(),
+                                                     margins(),
+                                                     settlements(),
+                                                     instruments(),
+                                                     LocalDate.now());
             Account account = algorithm().getAccount(account(),
                                                      deposits(),
                                                      withdraws(),
-                                                     algorithm().getPositions(contracts(),
-                                                                              commissions(),
-                                                                              margins(),
-                                                                              settlements(),
-                                                                              instruments(),
-                                                                              LocalDate.now()));
+                                                     positions);
             assertEquals(getCloseProfit(contracts()),
                          account.getCloseProfit());
             assertEquals(getPositionProfit(contracts(),

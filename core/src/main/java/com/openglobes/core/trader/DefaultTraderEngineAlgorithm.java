@@ -46,6 +46,17 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         double commission = 0D;
         Objects.requireNonNull(positions);
         for (var p : positions) {
+            /*
+             * 2021-03-18 Hongbao Chen
+             * When the account is running, frozen assets are not cleared so
+             * the frozenXxx may have values. But settlement would clear those
+             * frozen assets before updating account, the frozenXxx should
+             * be all zeros.
+             * 
+             * Since the only difference of a query account between running
+             * and settlement is the price used to evaluate assets, the two
+             * processes share the same algorithm.
+             */
             requireNotNulls(p.getCloseProfit(),
                             p.getPositionProfit(),
                             p.getFrozenMargin(),
@@ -70,6 +81,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         r.setMargin(margin);
         r.setPositionProfit(positionProfit);
         r.setWithdraw(withdraw);
+        /*
+         * 2021-03-18 Hongbao Chen
+         * Settlement balance is based on yesterday's balance and today's
+         * spread, which are calculated with yesterday's settlement price
+         * and today's settlement price correspondingly.
+         * 
+         */
         var balance = r.getPreBalance() + r.getDeposit() - r.getWithdraw()
                   + r.getCloseProfit() + r.getPositionProfit() - r.getCommission();
         r.setBalance(balance);
