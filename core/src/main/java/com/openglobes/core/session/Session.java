@@ -18,15 +18,12 @@ package com.openglobes.core.session;
 
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.IResponseContext;
-import com.openglobes.core.RequestException;
-import com.openglobes.core.ResponseException;
 import com.openglobes.core.connector.ConnectorException;
 import com.openglobes.core.data.DataQueryException;
 import com.openglobes.core.interceptor.InterceptorException;
 import com.openglobes.core.interceptor.RequestInterceptingContext;
 import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.Utils;
-
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -39,10 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class Session implements ISession {
 
+    private boolean disposed;
     private final IdMapper map;
     private final IRequestContext req;
     private final IResponseContext rsp;
-    private boolean disposed;
 
     Session(IRequestContext request, IResponseContext response) {
         req = request;
@@ -86,7 +83,7 @@ class Session implements ISession {
             } else {
                 throw new InvalidSessionResponseException(object.getClass().getCanonicalName());
             }
-        } catch (ConnectorException | ResponseException ex) {
+        } catch (ConnectorException ex) {
             throw new ForwardResponseException(ex.getMessage(),
                                                ex);
         } catch (NullPointerException ex) {
@@ -95,14 +92,14 @@ class Session implements ISession {
         }
     }
 
-    private void adjustDestId(Request r) throws RequestException {
+    private void adjustDestId(Request r) {
         if (r.getAction() == ActionType.NEW) {
             /*
              * Foe NEW action, register for a new destinated Id and set into
              * mapper.
              */
             var srcId = req.getSessionCorrelator()
-                           .registerRequestWithNewId(r, this);
+                    .registerRequestWithNewId(r, this);
             map.correlate(srcId,
                           r.getOrderId());
         } else {
@@ -166,14 +163,13 @@ class Session implements ISession {
                                                             getInstrument(request.getInstrumentId()),
                                                             properties,
                                                             Utils.nextId().intValue()));
-        } catch (RequestException | InterceptorException ex) {
+        } catch (InterceptorException ex) {
             throw new ForwardRequestException(ex.getMessage(),
                                               ex);
         }
     }
 
-    private Instrument getInstrument(String instrumentId) throws RequestException,
-                                                                 AcquireInformationException {
+    private Instrument getInstrument(String instrumentId) throws AcquireInformationException {
         var ds = req.getTraderEngine().getDataSource();
         try (var conn = ds.getConnection()) {
             return conn.getInstrumentById(instrumentId);

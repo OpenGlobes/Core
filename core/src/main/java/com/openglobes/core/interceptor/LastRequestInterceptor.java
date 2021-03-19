@@ -17,9 +17,7 @@
 package com.openglobes.core.interceptor;
 
 import com.openglobes.core.IRequestContext;
-import com.openglobes.core.RequestException;
 import com.openglobes.core.utils.Loggers;
-
 import java.util.logging.Level;
 
 /**
@@ -34,16 +32,16 @@ public class LastRequestInterceptor extends AbstractRequestInterceptor<RequestIn
     }
 
     @Override
-    public InterceptOperation onRequest(RequestInterceptingContext context, IInterceptorChain stack) {
+    public InterceptOperation onRequest(RequestInterceptingContext context,
+                                        IInterceptorChain stack) {
         try {
             ctx.getTraderEngine().request(context.getRequest(),
                                           context.getInstrument(),
                                           context.getProperties(),
                                           context.getRequestId());
-        } catch (RequestException ex) {
-            Loggers.getLogger(LastRequestInterceptor.class.getCanonicalName()).log(Level.SEVERE,
-                                                                                   ex.toString(),
-                                                                                   ex);
+        } catch (Throwable th) {
+            Loggers.getLogger(LastRequestInterceptor.class.getCanonicalName())
+                    .log(Level.SEVERE, th.toString(), th);
         }
         return InterceptOperation.SKIP_REST;
     }

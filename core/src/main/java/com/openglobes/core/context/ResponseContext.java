@@ -18,10 +18,8 @@ package com.openglobes.core.context;
 
 import com.openglobes.core.IResponseContext;
 import com.openglobes.core.ISharedContext;
-import com.openglobes.core.ResponseException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.session.ISessionCorrelator;
-
 import java.util.Objects;
 
 /**
@@ -39,19 +37,19 @@ public class ResponseContext implements IResponseContext {
     }
 
     @Override
-    public IConnector getConnector() throws ResponseException {
+    public IConnector getConnector() {
         Objects.requireNonNull(conn);
         return conn;
     }
 
     @Override
-    public ISessionCorrelator getSessionCorrelator() throws ResponseException {
+    public ISessionCorrelator getSessionCorrelator() {
         Objects.requireNonNull(shared);
         return shared.getSessionCorrelator();
     }
 
     @Override
-    public ISharedContext getSharedContext() throws ResponseException {
+    public ISharedContext getSharedContext() {
         Objects.requireNonNull(shared);
         return shared;
     }

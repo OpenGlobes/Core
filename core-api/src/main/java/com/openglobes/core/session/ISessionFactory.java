@@ -24,5 +24,5 @@ import com.openglobes.core.connector.IConnector;
  */
 public interface ISessionFactory {
 
-    ISession createSession(IConnector connector) throws AcquireInformationException;
+    ISession createSession(IConnector connector);
 }

@@ -17,10 +17,8 @@
 package com.openglobes.core.session;
 
 import com.openglobes.core.IRequestContext;
-import com.openglobes.core.RequestException;
 import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.context.ResponseContext;
-
 import java.util.Objects;
 
 /**
@@ -36,16 +34,11 @@ public class SessionFactory implements ISessionFactory {
     }
 
     @Override
-    public ISession createSession(IConnector connector) throws AcquireInformationException {
+    public ISession createSession(IConnector connector) {
         Objects.requireNonNull(connector);
-        try {
-            var shared = context.getSharedContext();
-            return new Session(context,
-                               new ResponseContext(connector, shared));
-        } catch (RequestException ex) {
-            throw new AcquireInformationException(ex.getMessage(),
-                                                  ex);
-        }
+        var shared = context.getSharedContext();
+        return new Session(context,
+                           new ResponseContext(connector, shared));
     }
 
 }

@@ -18,10 +18,8 @@ package com.openglobes.core.context;
 
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.ISharedContext;
-import com.openglobes.core.RequestException;
 import com.openglobes.core.session.ISessionCorrelator;
 import com.openglobes.core.trader.ITraderEngine;
-
 import java.util.Objects;
 
 /**
@@ -39,19 +37,19 @@ public class RequestContext implements IRequestContext {
     }
 
     @Override
-    public ISessionCorrelator getSessionCorrelator() throws RequestException {
+    public ISessionCorrelator getSessionCorrelator() {
         Objects.requireNonNull(shared);
         return shared.getSessionCorrelator();
     }
 
     @Override
-    public ISharedContext getSharedContext() throws RequestException {
+    public ISharedContext getSharedContext() {
         Objects.requireNonNull(shared);
         return shared;
     }
 
     @Override
-    public ITraderEngine getTraderEngine() throws RequestException {
+    public ITraderEngine getTraderEngine() {
         Objects.requireNonNull(eg);
         return eg;
     }

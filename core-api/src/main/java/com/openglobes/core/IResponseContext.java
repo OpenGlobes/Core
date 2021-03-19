@@ -20,14 +20,15 @@ import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.session.ISessionCorrelator;
 
 /**
- * @author chenh
+ * @author Hongbao Chen
+ * @since 1.0
  */
 public interface IResponseContext {
 
-    IConnector getConnector() throws ResponseException;
+    IConnector getConnector();
 
-    ISessionCorrelator getSessionCorrelator() throws ResponseException;
+    ISessionCorrelator getSessionCorrelator();
 
-    ISharedContext getSharedContext() throws ResponseException;
+    ISharedContext getSharedContext();
 
 }

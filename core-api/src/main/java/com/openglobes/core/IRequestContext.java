@@ -25,10 +25,10 @@ import com.openglobes.core.trader.ITraderEngine;
  */
 public interface IRequestContext {
 
-    ISessionCorrelator getSessionCorrelator() throws RequestException;
+    ISessionCorrelator getSessionCorrelator();
 
-    ISharedContext getSharedContext() throws RequestException;
+    ISharedContext getSharedContext();
 
-    ITraderEngine getTraderEngine() throws RequestException;
+    ITraderEngine getTraderEngine();
 
 }
