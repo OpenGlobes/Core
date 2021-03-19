@@ -16,41 +16,32 @@
  */
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.GatewayException;
-import com.openglobes.core.trader.ITraderGateway;
-import com.openglobes.core.trader.ITraderGatewayHandler;
+import com.openglobes.core.trader.IllegalRequestException;
 import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.TraderGatewayInfo;
+import java.util.LinkedList;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class SimulatedTraderGateway implements ITraderGateway {
+public class AskingOrderQueue extends LinkedList<RequestBucket> implements IOrderQueue{
+
+    private static final long serialVersionUID = 127649287430L;
 
     @Override
-    public TraderGatewayInfo getGatewayInfo() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public Object clone() {
+        return super.clone();
     }
 
     @Override
-    public void setHandler(ITraderGatewayHandler handler) throws GatewayException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public MarketMaker getMarketer() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getStatus() {
+    public void dequeOrder(Long orderId) throws UnkownOrderIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void insert(Request request, long requestId) throws GatewayException {
+    public void enqueOrder(Request request) throws IllegalRequestException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
 }

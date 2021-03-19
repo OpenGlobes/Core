@@ -20,7 +20,6 @@ import com.openglobes.core.GatewayException;
 import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.ITraderDataSource;
 import com.openglobes.core.event.IEventSource;
-
 import java.util.Collection;
 import java.util.Properties;
 
@@ -59,13 +58,16 @@ public interface ITraderEngine {
     void renew() throws TraderRenewException;
 
     void registerTrader(int traderId,
-                        ITraderGateway trader) throws DuplicatedTraderIdException,
-                                                      GatewayException;
+                        ITraderGateway trader)
+            throws DuplicatedTraderIdException,
+                   GatewayException;
 
     void request(Request request,
                  Instrument instrument,
                  Properties properties,
-                 int requestId);
+                 int requestId)
+            throws IllegalRequestException,
+                   InvalidRequestException;
 
     void unregisterTrader(int traderId) throws UnknownTraderIdException;
 

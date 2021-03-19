@@ -14,24 +14,37 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core.trader.simulation;
-
-import com.openglobes.core.trader.Request;
-import java.util.Collection;
+package com.openglobes.core.trader;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public interface ISimulatedMarketer {
-    void simulateInsertion(Request simulatedRequest);
+public class InvalidRequestException extends TraderException {
+
+    private static final long serialVersionUID = 11528981273L;
     
-    void abortQueuingRequest(Long requestId);
+    public InvalidRequestException(String message) {
+        super(message);
+    }
+
+    public InvalidRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public InvalidRequestException(Throwable cause) {
+        super(cause);
+    }
+
+    public InvalidRequestException(String message, 
+                                   Throwable cause,
+                                   boolean enableSuppression,
+                                   boolean writableStackTrace) {
+        super(message,
+              cause, 
+              enableSuppression, 
+              writableStackTrace);
+    }
     
-    void rejectRequest(Long requestId);
-    
-    void acceptRequest(Long requestId);
-    
-    Collection<Request> getQueuingRequest();
 }

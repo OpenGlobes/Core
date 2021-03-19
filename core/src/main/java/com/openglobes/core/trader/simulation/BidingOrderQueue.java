@@ -16,38 +16,31 @@
  */
 package com.openglobes.core.trader.simulation;
 
+import com.openglobes.core.trader.IllegalRequestException;
 import com.openglobes.core.trader.Request;
-import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class SimulatedMarketer implements ISimulatedMarketer {
+public class BidingOrderQueue extends LinkedList<RequestBucket> implements IOrderQueue {
+
+    private static final long serialVersionUID = 372740219L;
+
+    @Override
+    public Object clone() {
+        return super.clone();
+    }
     
     @Override
-    public void abortQueuingRequest(Long requestId) {
+    public void dequeOrder(Long orderId) throws UnkownOrderIdException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void acceptRequest(Long requestId) {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
-
-    @Override
-    public Collection<Request> getQueuingRequest() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void rejectRequest(Long requestId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void simulateInsertion(Request simulatedRequest) {
+    public void enqueOrder(Request request) throws IllegalRequestException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

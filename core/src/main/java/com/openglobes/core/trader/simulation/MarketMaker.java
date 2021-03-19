@@ -16,41 +16,47 @@
  */
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.GatewayException;
-import com.openglobes.core.trader.ITraderGateway;
-import com.openglobes.core.trader.ITraderGatewayHandler;
 import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.TraderGatewayInfo;
+import java.util.Collection;
 
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class SimulatedTraderGateway implements ITraderGateway {
+public class MarketMaker implements IMarketMaker {
+    
+    private final IOrderQueue askQue;
+    private final IOrderQueue bidQue;
+    
+    protected MarketMaker() {
+        askQue = new AskingOrderQueue();
+        bidQue = new BidingOrderQueue();
+    }
+    
+    @Override
+    public void abortQueuingRequest(Long requestId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
     @Override
-    public TraderGatewayInfo getGatewayInfo() {
+    public void acceptRequest(Long requestId) {
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
-    public void setHandler(ITraderGatewayHandler handler) throws GatewayException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public MarketMaker getMarketer() {
+    public Collection<Request> getQueuingRequest() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getStatus() {
+    public void rejectRequest(Long requestId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void insert(Request request, long requestId) throws GatewayException {
+    public void simulateInsertion(Request simulatedRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
 }
