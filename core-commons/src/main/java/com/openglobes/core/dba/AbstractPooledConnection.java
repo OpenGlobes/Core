@@ -17,7 +17,6 @@
 package com.openglobes.core.dba;
 
 import com.openglobes.core.utils.Loggers;
-
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,17 +27,15 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractPooledConnection implements AutoCloseable,
-                                                          IPooledConnection {
+public abstract class AbstractPooledConnection implements AutoCloseable, IPooledConnection {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
     private final Connection conn;
-    private final IPooledDataSource src;
     private Boolean exAutoCommit;
+    private final IPooledDataSource src;
 
-    public AbstractPooledConnection(Connection connection,
-                                    IPooledDataSource source) {
+    public AbstractPooledConnection(Connection connection, IPooledDataSource source) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(source);
         conn = connection;
@@ -110,9 +107,8 @@ public abstract class AbstractPooledConnection implements AutoCloseable,
             try {
                 src.ungetSqlConnection(conn);
             } catch (Throwable th) {
-                Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName()).log(Level.SEVERE,
-                                                                                         th.getMessage(),
-                                                                                         th);
+                Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
+                        .log(Level.SEVERE, th.getMessage(), th);
             }
         }
 

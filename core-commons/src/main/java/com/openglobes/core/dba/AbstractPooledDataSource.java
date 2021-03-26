@@ -17,7 +17,6 @@
 package com.openglobes.core.dba;
 
 import com.openglobes.core.utils.Loggers;
-
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,8 +30,7 @@ import java.util.logging.Level;
  * @author Hongbao Chen
  * @since 1.0
  */
-public abstract class AbstractPooledDataSource implements AutoCloseable,
-                                                          IPooledDataSource {
+public abstract class AbstractPooledDataSource implements AutoCloseable, IPooledDataSource {
 
     private static final Cleaner cleaner = Cleaner.create();
     private final Cleaner.Cleanable cleanable;
@@ -63,8 +61,7 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
     }
 
     @Override
-    public Connection getSqlConnection() throws SQLException,
-                                                ClassNotFoundException {
+    public Connection getSqlConnection() throws SQLException, ClassNotFoundException {
         synchronized (free) {
             for (var c : free.entrySet()) {
                 if (c.getValue()) {
@@ -102,9 +99,7 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
                     connection.close();
                 } catch (SQLException se) {
                     Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
-                            .log(Level.SEVERE,
-                                 se.getMessage() + "(" + se.getErrorCode() + ")",
-                                 se);
+                            .log(Level.SEVERE, se.getMessage() + "(" + se.getErrorCode() + ")", se);
                 } finally {
                     free.remove(connection);
                 }
@@ -112,13 +107,11 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
         }
     }
 
-    private Connection allocateConnection() throws ClassNotFoundException,
-                                                   SQLException {
+    private Connection allocateConnection() throws ClassNotFoundException, SQLException {
         if (free.isEmpty()) {
             Class.forName(findDriverClassName());
         }
-        return DriverManager.getConnection(findURL(),
-                                           getConnectionProperties());
+        return DriverManager.getConnection(findURL(), getConnectionProperties());
     }
 
     private String findDriverClassName() {
@@ -148,9 +141,8 @@ public abstract class AbstractPooledDataSource implements AutoCloseable,
                     try {
                         c.close();
                     } catch (SQLException ex) {
-                        Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName()).log(Level.SEVERE,
-                                                                                                 ex.toString(),
-                                                                                                 ex);
+                        Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
+                                .log(Level.SEVERE, ex.toString(), ex);
                     }
                 });
                 m.clear();

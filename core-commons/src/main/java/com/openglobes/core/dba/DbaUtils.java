@@ -54,8 +54,7 @@ public class DbaUtils {
         throw new UnsupportedFieldTypeException("Sql type" + semanticType + " is not supported.");
     }
 
-    public static Double getDouble(Field field,
-                                   Object object) throws IllegalAccessException {
+    public static Double getDouble(Field field, Object object) throws IllegalAccessException {
         if (field.getType() == Double.class) {
             var o = field.get(object);
             return o != null ? (Double) o : null;
@@ -66,8 +65,7 @@ public class DbaUtils {
         }
     }
 
-    public static Integer getInt(Field field,
-                                 Object object) throws IllegalAccessException {
+    public static Integer getInt(Field field, Object object) throws IllegalAccessException {
         if (field.getType() == Integer.class) {
             var o = field.get(object);
             return o != null ? (Integer) o : null;
@@ -78,8 +76,7 @@ public class DbaUtils {
         }
     }
 
-    public static Long getLong(Field field,
-                               Object object) throws IllegalAccessException {
+    public static Long getLong(Field field, Object object) throws IllegalAccessException {
         if (field.getType() == Long.class) {
             var o = field.get(object);
             return o != null ? (Long) o : null;
@@ -90,8 +87,8 @@ public class DbaUtils {
         }
     }
 
-    public static MetaField inspectField(Field f) throws IllegalFieldCharacterException,
-                                                         UnsupportedFieldTypeException {
+    public static MetaField inspectField(Field f) 
+            throws IllegalFieldCharacterException, UnsupportedFieldTypeException {
         MetaField info = new MetaField();
         var names = split(f.getName());
         var prefix = "FIELD_";
@@ -109,8 +106,8 @@ public class DbaUtils {
         return info;
     }
 
-    public static List<MetaField> inspectFields(Class<?> clazz) throws IllegalFieldCharacterException,
-                                                                       UnsupportedFieldTypeException {
+    public static List<MetaField> inspectFields(Class<?> clazz) 
+            throws IllegalFieldCharacterException, UnsupportedFieldTypeException {
         var fs = clazz.getDeclaredFields();
         var r = new LinkedList<MetaField>();
         for (var f : fs) {
@@ -122,9 +119,8 @@ public class DbaUtils {
         return r;
     }
 
-    public static void setDouble(Field field,
-                                 Object object,
-                                 Double d) throws IllegalArgumentException, IllegalAccessException {
+    public static void setDouble(Field field, Object object, Double d) 
+            throws IllegalArgumentException, IllegalAccessException {
         if (field.getType() == Double.class) {
             field.set(object,
                       d);
@@ -136,10 +132,8 @@ public class DbaUtils {
         }
     }
 
-    public static void setInteger(Field field,
-                                  Object object,
-                                  Integer integer) throws IllegalArgumentException,
-                                                          IllegalAccessException {
+    public static void setInteger(Field field, Object object, Integer integer)
+            throws IllegalArgumentException, IllegalAccessException {
         if (field.getType() == Integer.class) {
             field.set(object,
                       integer);
@@ -161,10 +155,8 @@ public class DbaUtils {
         return (fd.getModifiers() & Modifier.PUBLIC) != 0;
     }
 
-    public static void setLong(Field field,
-                               Object object,
-                               Long l) throws IllegalArgumentException,
-                                              IllegalAccessException {
+    public static void setLong(Field field, Object object, Long l)
+            throws IllegalArgumentException, IllegalAccessException {
         if (field.getType() == Long.class) {
             field.set(object,
                       l);
