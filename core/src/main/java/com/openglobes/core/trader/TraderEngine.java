@@ -520,9 +520,9 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private Map<String, SettlementPrice> findRelatedTicks(Collection<String> instrumentIds,
-                                                          ITraderDataConnection conn) throws SettlementNotFoundException,
-                                                                                             DataAccessException {
+    private Map<String, SettlementPrice> findSettlementPrices(Collection<String> instrumentIds,
+                                                              ITraderDataConnection conn) throws SettlementNotFoundException,
+                                                                                                 DataAccessException {
         final var r = new HashMap<String, SettlementPrice>(512);
         try {
             for (var i : instrumentIds) {
@@ -548,9 +548,9 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void forDelete(Request request) throws UnknownTraderIdException,
-                                                 GatewayException,
-                                                 CountDownNotFoundException,
-                                                 DestinatedIdNotFoundException {
+                                                   GatewayException,
+                                                   CountDownNotFoundException,
+                                                   DestinatedIdNotFoundException {
         Objects.requireNonNull(request);
         synchronized (this) {
             forwardDeleteRequest(request, request.getTraderId());
@@ -709,14 +709,12 @@ public class TraderEngine implements ITraderEngine {
         try (var conn = ds.getConnection()) {
             final var tradingDay = conn.getTradingDay().getTradingDay();
             final var ids = getRalatedInstrumentIds();
-            final var relatedIds = findRelatedTicks(ids,
-                                                    conn);
-            final var relatedInstruments = findRelatedInstruments(ids,
-                                                                  conn);
+            final var settlePrices = findSettlementPrices(ids, conn);
+            final var relatedInstruments = findRelatedInstruments(ids, conn);
             final var positions = algo.getPositions(conn.getContracts(),
                                                     conn.getCommissions(),
                                                     conn.getMargins(),
-                                                    relatedIds,
+                                                    settlePrices,
                                                     relatedInstruments,
                                                     tradingDay);
             return algo.getAccount(conn.getAccount(),
@@ -749,8 +747,7 @@ public class TraderEngine implements ITraderEngine {
                 if (!r.getTradingDay().equals(tradingDay)) {
                     continue;
                 }
-                settleRequest(r,
-                              conn);
+                settleRequest(r, conn);
             }
             // Clear everyday to avoid mem leak.
             clearInternals();
