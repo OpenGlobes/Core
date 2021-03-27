@@ -465,7 +465,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                                               InvalidFeeStatusException {
         var status = c.getStatus();
         if (status == null) {
-            throw new InvalidContractStatusException("Contract ID:" + c.getContractId() + ".");
+            throw new IllegalContractStatusException("Contract ID:" + c.getContractId() + ".");
         }
         switch (status) {
             case ContractStatus.CLOSED:
@@ -556,7 +556,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                    InvalidCommissionException {
         var status = c.getStatus();
         if (status == null) {
-            throw new InvalidContractStatusException("Contract ID:" + c.getContractId() + ".");
+            throw new IllegalContractStatusException("Contract ID:" + c.getContractId() + ".");
         }
         switch (status) {
             case ContractStatus.CLOSED:

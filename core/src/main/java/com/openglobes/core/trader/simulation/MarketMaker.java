@@ -45,17 +45,12 @@ public class MarketMaker implements IMarketMaker {
     }
 
     @Override
-    public Collection<Request> getQueuingRequest() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void rejectRequest(Long requestId) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void simulateInsertion(Request simulatedRequest) {
+    public void applyRequest(Request simulatedRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

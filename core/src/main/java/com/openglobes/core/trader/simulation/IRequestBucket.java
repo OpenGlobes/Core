@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (c) 2020-2021. Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,23 +14,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.trader.Order;
-import com.openglobes.core.trader.Request;
-import java.util.Collection;
+public interface IRequestBucket {
+    Double getPrice();
 
-/**
- *
- * @author Hongbao Chen
- * @since 1.0
- */
-public interface IMarketMaker {
-    void applyRequest(Request simulatedRequest);
-    
-    void abortQueuingRequest(Long requestId);
-    
-    void rejectRequest(Long requestId);
-    
-    void acceptRequest(Long requestId);
+    Long getVolumn();
+
+    int getDirection();
+
+    int getOffset();
 }

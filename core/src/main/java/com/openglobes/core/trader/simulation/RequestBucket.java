@@ -16,11 +16,199 @@
  */
 package com.openglobes.core.trader.simulation;
 
+import com.openglobes.core.trader.*;
+import com.openglobes.core.utils.Utils;
+
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 /**
  *
  * @author Hongbao Chen
  * @since 1.0
  */
-class RequestBucket {
-    
+class RequestBucket extends LinkedList<Order> implements IRequestBucket {
+
+    private final double price;
+    private final int direction;
+    private final int offset;
+    private final LinkedList<Trade> trades = new LinkedList<>();
+    private final LinkedList<Response> responses = new LinkedList<>();
+
+    public RequestBucket(double price, int direction, int offset) {
+        this.price = price;
+        this.direction = direction;
+        this.offset = offset;
+    }
+
+    public void enqueueRequest(Request request) {
+        var o = new Order();
+        o.setStatus(OrderStatus.ACCEPTED);
+        o.setTradedVolumn(0L);
+        o.setDirection(request.getDirection());
+        o.setDeleted(false);
+        o.setOffset(request.getOffset());
+        o.setDeleteTimestamp(null);
+        o.setInsertTimestamp(ZonedDateTime.now());
+        o.setInstrumentId(request.getInstrumentId());
+        o.setOrderId(request.getOrderId());
+        o.setPrice(request.getPrice());
+        o.setQuantity(request.getQuantity());
+        o.setTraderId(Integer.MAX_VALUE);
+        o.setTradingDay(LocalDate.now());
+        o.setUpdateTimestamp(ZonedDateTime.now());
+        addResponse(o);
+        super.add(o);
+    }
+
+    public Collection<Trade> getTradeUpdates() {
+        var r = new LinkedList<>(trades);
+        trades.clear();
+        return r;
+    }
+
+    public Collection<Response> getResponseUpdates() {
+        var r = new LinkedList<>(responses);
+        responses.clear();
+        return r;
+    }
+
+    public Order removeOrder(Long orderId) {
+        if (isEmpty()) {
+            throw new NoSuchElementException("Empty container.");
+        }
+        for(int i = 0; i < size(); ++i) {
+            var o = get(i);
+            if (o.getOrderId().equals(orderId)) {
+                return remove(i);
+            }
+        }
+        throw new NoSuchElementException("Order not found for ID: " + orderId + ".");
+    }
+
+    public void applyRequest(Request request) {
+        var vol = request.getQuantity();
+        var it = iterator();
+        while (it.hasNext()) {
+            var order = it.next();
+            checkRequest(request, order);
+            var traded = Math.min(vol, order.getQuantity() - order.getTradedVolumn());
+            doOrder(traded, order);
+            vol -= traded;
+        }
+    }
+
+    private void doOrder(long traded, Order order) {
+        order.setTradedVolumn(order.getTradedVolumn() + traded);
+        if (order.getTradedVolumn() == order.getQuantity()) {
+            order.setStatus(OrderStatus.ALL_TRADED);
+            addResponse(order);
+        } else {
+            order.setStatus(OrderStatus.QUEUED);
+            /* First trade on this order. */
+            if (order.getTradedVolumn() == traded) {
+                addResponse(order);
+            }
+        }
+        addTrade(traded, order);
+    }
+
+    private void addResponse(Order order) {
+        var r = new Response();
+        r.setAction(ActionType.NEW);
+        r.setResponseId(Utils.nextId());
+        r.setDirection(order.getDirection());
+        r.setStatus(order.getStatus());
+        r.setOffset(order.getOffset());
+        r.setInstrumentId(order.getInstrumentId());
+        r.setOrderId(order.getOrderId());
+        r.setSignature(UUID.randomUUID().toString());
+        r.setStatusCode(0);
+        setResponseMsg(r, order);
+        r.setTimestamp(ZonedDateTime.now());
+        r.setTraderId(Integer.MAX_VALUE);
+        r.setTradingDay(LocalDate.now());
+        responses.add(r);
+    }
+
+    private void setResponseMsg(Response r, Order order) {
+        switch (order.getStatus()) {
+            case OrderStatus.ALL_TRADED:
+                r.setStatusMessage("全部成交");
+                break;
+            case OrderStatus.ACCEPTED:
+                r.setStatusMessage("已提交");
+                break;
+            case OrderStatus.QUEUED:
+                r.setStatusMessage("部分成交队列中");
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected order status: " + order.getStatus() + ".");
+        }
+    }
+
+    private void addTrade(long traded, Order order) {
+        var r = new Trade();
+        r.setAction(ActionType.NEW);
+        r.setDirection(order.getDirection());
+        r.setOrderId(order.getOrderId());
+        r.setOffset(order.getOffset());
+        r.setPrice(order.getPrice());
+        r.setInstrumentId(order.getInstrumentId());
+        r.setQuantity(traded);
+        r.setSignature(UUID.randomUUID().toString());
+        r.setTimestamp(ZonedDateTime.now());
+        r.setTradeId(Utils.nextId());
+        r.setTraderId(Integer.MAX_VALUE);
+        r.setTradingDay(LocalDate.now());
+        trades.add(r);
+    }
+
+    private void checkRequest(Request request, Order order) {
+        if (request.getDirection() == order.getDirection()) {
+            throw new IllegalStateException("Request and order directions are not matched.");
+        }
+        if (!request.getInstrumentId().equals(order.getInstrumentId())) {
+            throw new IllegalStateException("Request and order instruments are not matched.");
+        }
+        if (order.getQuantity() - order.getTradedVolumn() <= 0) {
+            throw new IllegalStateException("Trade on a completed order.");
+        }
+    }
+
+    @Override
+    public Double getPrice() {
+        return price;
+    }
+
+    @Override
+    public Long getVolumn() {
+        return sumUpVolumn();
+    }
+
+    private Long sumUpVolumn() {
+        var v = 0L;
+        for (var o : this) {
+            var x = o.getQuantity() - o.getTradedVolumn();
+            if (x <= 0) {
+                throw new IllegalStateException("Order has been completed or over completed.");
+            }
+            v += x;
+        }
+        return v;
+    }
+
+    @Override
+    public int getDirection() {
+        return direction;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
 }
