@@ -37,8 +37,7 @@ public class LastRequestInterceptor extends AbstractRequestInterceptor<RequestIn
         try {
             ctx.getTraderEngine().request(context.getRequest(),
                                           context.getInstrument(),
-                                          context.getProperties(),
-                                          context.getRequestId());
+                                          context.getProperties());
         } catch (Throwable th) {
             Loggers.getLogger(LastRequestInterceptor.class.getCanonicalName())
                     .log(Level.SEVERE, th.toString(), th);

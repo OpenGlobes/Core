@@ -41,25 +41,19 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     @Override
-    public void onException(GatewayRuntimeException exception) {
+    public void onError(GatewayRuntimeException exception) {
         publishEvent(GatewayRuntimeException.class, exception);
     }
 
     @Override
-    public void onException(Request request,
-                            GatewayRuntimeException exception,
-                            int requestId) {
+    public void onError(Request request, Response response) {
         if (request.getAction() == ActionType.DELETE) {
-            publishRquestError(request,
-                               exception,
-                               requestId);
+            publishRquestError(request, response);
             /*
              * Delete action fails, so order is unchanged.
              */
         } else {
-            deleteOrderWhenException(request,
-                                     exception,
-                                     requestId);
+            deleteOrderWhenException(request, response);
         }
     }
 
@@ -104,9 +98,9 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private void callOnException(TraderRuntimeException e) {
         try {
-            onException(new GatewayRuntimeException(0,
-                                                    e.getMessage(),
-                                                    e));
+            onError(new GatewayRuntimeException(0,
+                                                e.getMessage(),
+                                                e));
         } catch (Throwable ignored) {
         }
     }
@@ -376,24 +370,20 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     }
 
-    private void deleteOrderWhenException(Request request,
-                                          GatewayRuntimeException exception,
-                                          int requestId) {
+    private void deleteOrderWhenException(Request request, Response response) {
         try {
             /*
              * Call cancel handler to cancel a bad request.
              */
             var delete = initResponse(request);
             delete.setAction(ActionType.DELETE);
-            delete.setStatusCode(exception.getCode());
-            delete.setStatusMessage(exception.getMessage());
+            delete.setStatusCode(response.getStatusCode());
+            delete.setStatusMessage(response.getStatusMessage());
             onResponse(delete);
             /*
              * Call user handler.
              */
-            publishRquestError(request,
-                               exception,
-                               requestId);
+            publishRquestError(request, response);
         } catch (Throwable th) {
             callOnException(new TraderRuntimeException(th.getMessage(),
                                                        th));
@@ -546,14 +536,10 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                        object);
     }
 
-    private void publishRquestError(Request request,
-                                    GatewayRuntimeException exception,
-                                    int requestId) {
+    private void publishRquestError(Request request, Response response) {
         var r = new EngineRequestError();
         r.setRequest(request);
-        r.setRequestId(requestId);
-        r.setException(new TraderRuntimeException(exception.getMessage(),
-                                                  exception));
+        r.setResponse(response);
         publishEvent(EngineRequestError.class,
                      r);
     }

@@ -31,9 +31,9 @@ public interface ITraderGatewayHandler {
 
     void onResponse(Response response);
 
-    void onException(GatewayRuntimeException exception);
+    void onError(Request request, Response response);
 
-    void onException(Request request, GatewayRuntimeException exception, int requestId);
+    void onError(GatewayRuntimeException exception);
 
     void onStatusChange(ServiceRuntimeStatus status);
 }

@@ -56,8 +56,8 @@ public class TraderContext extends IdTranslator {
         return ctx.getTraderId();
     }
 
-    void insert(Request request, int requestId) throws GatewayException {
-        ctx.getTrader().insert(request, requestId);
+    void insert(Request request) throws GatewayException {
+        ctx.getTrader().insert(request);
     }
 
     boolean isEnabled() {

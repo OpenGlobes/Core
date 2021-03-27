@@ -24,19 +24,18 @@ import java.io.Serializable;
  */
 public class EngineRequestError implements Serializable {
 
-    private Throwable exception;
+    private Response response;
     private Request request;
-    private int requestId;
 
     public EngineRequestError() {
     }
 
-    public Throwable getException() {
-        return exception;
+    public Response getResponse() {
+        return response;
     }
 
-    public void setException(Throwable exception) {
-        this.exception = exception;
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
     public Request getRequest() {
@@ -45,14 +44,6 @@ public class EngineRequestError implements Serializable {
 
     public void setRequest(Request request) {
         this.request = request;
-    }
-
-    public int getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
     }
 
 }

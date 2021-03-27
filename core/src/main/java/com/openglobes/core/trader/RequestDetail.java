@@ -27,16 +27,13 @@ public class RequestDetail {
     private final Instrument instrument;
     private final Properties properties;
     private final Request request;
-    private final int requestId;
 
     public RequestDetail(Request request,
                          Instrument instrument,
-                         Properties properties,
-                         int requestId) {
+                         Properties properties) {
         this.request = request;
         this.instrument = instrument;
         this.properties = properties;
-        this.requestId = requestId;
     }
 
     public Instrument getInstrument() {
@@ -49,10 +46,6 @@ public class RequestDetail {
 
     public Request getRequest() {
         return request;
-    }
-
-    public int getRequestId() {
-        return requestId;
     }
 
 }

@@ -49,7 +49,7 @@ public class SimulatedTraderGateway implements ITraderGateway {
     }
 
     @Override
-    public void insert(Request request, long requestId) throws GatewayException {
+    public void insert(Request request) throws GatewayException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

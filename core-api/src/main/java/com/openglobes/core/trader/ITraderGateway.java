@@ -14,7 +14,7 @@ public interface ITraderGateway {
 
     void setHandler(ITraderGatewayHandler handler) throws GatewayException;
 
-    void insert(Request request, long requestId) throws GatewayException;
+    void insert(Request request) throws GatewayException;
 
     int getStatus();
 
