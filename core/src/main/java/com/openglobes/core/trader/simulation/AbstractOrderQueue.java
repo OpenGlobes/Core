@@ -34,7 +34,7 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
         return super.clone();
     }
 
-    public void dequeOrder(Request request) throws UnkownOrderIdException {
+    public void dequeOrder(Request request) throws NoSuchElementException {
         var orderId = request.getOrderId();
         for (var b : this) {
             if (b.removeOrder(orderId)){
@@ -44,26 +44,27 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
         addResponse(request,
                     OrderStatus.REJECTED,
                     "找不到报单");
-        throw new UnkownOrderIdException("Unknown order ID: " + orderId + ".");
+        throw new NoSuchElementException("Unknown order ID: " + orderId + ".");
     }
 
-    public void enqueOrder(Request request) throws IllegalRequestException {
+    public void enqueOrder(Request request) throws IllegalArgumentException {
         try {
             checkOffset(request);
             checkOrderId(request);
             findBucketAtPrice(request).enqueueRequest(request);
             orderIds.add(request.getOrderId());
         } catch (Throwable th) {
-            throw new IllegalRequestException(th.getMessage(), th);
+            throw new IllegalArgumentException(th.getMessage(), th);
         }
     }
 
     protected void checkOrderId(Request request) {
-        if (orderIds.contains(request.getOrderId())) {
+        var orderId = request.getOrderId();
+        if (orderId != null && orderIds.contains(orderId)) {
             addResponse(request,
                         OrderStatus.REJECTED,
                         "重复报单");
-            throw new IllegalArgumentException("Duplicated order ID: " + request.getOrderId() + ".");
+            throw new IllegalArgumentException("Duplicated order ID: " + orderId + ".");
         }
     }
 

@@ -93,6 +93,12 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         return false;
     }
 
+    /**
+     * Trade the request with the specified volumn and price. The real traded price
+     * is the price of the specified request.
+     *
+     * @param request request to be trade on the queue.
+     */
     public void applyRequest(Request request) {
         var vol = request.getQuantity();
         var it = iterator();
@@ -100,7 +106,7 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
             var order = it.next();
             checkRequest(request, order);
             var traded = Math.min(vol, order.getQuantity() - order.getTradedVolumn());
-            doOrder(traded, order);
+            doOrder(traded, request.getPrice(), order);
             vol -= traded;
         }
         if (vol != 0) {
@@ -108,7 +114,7 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         }
     }
 
-    private void doOrder(long traded, Order order) {
+    private void doOrder(long traded, double price, Order order) {
         order.setTradedVolumn(order.getTradedVolumn() + traded);
         if (order.getTradedVolumn() == order.getQuantity()) {
             order.setStatus(OrderStatus.ALL_TRADED);
@@ -120,7 +126,7 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
                 addResponse(order);
             }
         }
-        addTrade(traded, order);
+        addTrade(traded, price, order);
     }
 
     private void addResponse(Order order) {
@@ -157,13 +163,13 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         }
     }
 
-    private void addTrade(long traded, Order order) {
+    private void addTrade(long traded, double price, Order order) {
         var r = new Trade();
         r.setAction(ActionType.NEW);
         r.setDirection(order.getDirection());
         r.setOrderId(order.getOrderId());
         r.setOffset(order.getOffset());
-        r.setPrice(order.getPrice());
+        r.setPrice(price);
         r.setInstrumentId(order.getInstrumentId());
         r.setQuantity(traded);
         r.setSignature(UUID.randomUUID().toString());
@@ -177,9 +183,6 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
     private void checkRequest(Request request, Order order) {
         if (request.getDirection() == order.getDirection()) {
             throw new IllegalStateException("Request and order directions are not matched.");
-        }
-        if (!request.getInstrumentId().equals(order.getInstrumentId())) {
-            throw new IllegalStateException("Request and order instruments are not matched.");
         }
         if (order.getQuantity() - order.getTradedVolumn() <= 0) {
             throw new IllegalStateException("Trade on a completed order.");

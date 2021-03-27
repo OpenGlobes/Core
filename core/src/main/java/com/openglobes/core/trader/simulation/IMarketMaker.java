@@ -29,7 +29,9 @@ import java.util.Collection;
  * @since 1.0
  */
 public interface IMarketMaker {
-    void applyRequest(Request request);
+    void enqueueRequest(Request request);
+
+    void matchTrade(int direction);
 
     Collection<Trade> getTradeUpdates();
 
