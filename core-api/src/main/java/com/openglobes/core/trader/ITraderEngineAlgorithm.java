@@ -34,37 +34,34 @@ public interface ITraderEngineAlgorithm {
     Account getAccount(Account pre,
                        Collection<Deposit> deposits,
                        Collection<Withdraw> withdraws,
-                       Collection<Position> positions) 
-            throws InvalidAmountException;
+                       Collection<Position> positions) throws InvalidAmountException;
 
     Collection<Position> getPositions(Collection<Contract> contracts,
                                       Collection<Commission> commissions,
                                       Collection<Margin> margins,
                                       Map<String, SettlementPrice> prices,
                                       Map<String, Instrument> instruments,
-                                      LocalDate tradingDay)
-            throws InvalidContractDirectionException,
-                   IllegalInstrumentIdException,
-                   InvalidContractIdException,
-                   MarginNotFoundException,
-                   CommissionNotFoundException,
-                   SettlementNotFoundException,
-                   InvalidSettlementPriceException,
-                   InstrumentNotFoundException,
-                   InvalidContractStatusException,
-                   IllegalContractStatusException,
-                   InvalidFeeStatusException,
-                   InvalidCommissionException;
+                                      LocalDate tradingDay) throws InvalidContractDirectionException,
+                                                                   IllegalInstrumentIdException,
+                                                                   InvalidContractIdException,
+                                                                   MarginNotFoundException,
+                                                                   CommissionNotFoundException,
+                                                                   SettlementNotFoundException,
+                                                                   InvalidSettlementPriceException,
+                                                                   InstrumentNotFoundException,
+                                                                   InvalidContractStatusException,
+                                                                   IllegalContractStatusException,
+                                                                   InvalidFeeStatusException,
+                                                                   InvalidCommissionException;
 
     Order getOrder(Request request,
                    Collection<Contract> contracts,
                    Collection<Trade> trades,
                    Collection<Response> responses,
-                   Map<String, Instrument> instruments)
-            throws InvalidContractException,
-                   QuantityOverflowException,
-                   InstrumentNotFoundException,
-                   WrongOrderIdException;
+                   Map<String, Instrument> instruments) throws InvalidContractException,
+                                                               QuantityOverflowException,
+                                                               InstrumentNotFoundException,
+                                                               WrongOrderIdException;
 
     double getAmount(double price,
                      Instrument instrument);
