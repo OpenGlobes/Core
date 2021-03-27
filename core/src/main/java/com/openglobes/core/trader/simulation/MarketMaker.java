@@ -33,7 +33,7 @@ public class MarketMaker implements IMarketMaker {
     private final LinkedList<Trade> trades = new LinkedList<>();
     private final LinkedList<Response> responses = new LinkedList<>();
 
-    protected MarketMaker() {
+    public MarketMaker() {
         askQue = new AskingOrderQueue();
         bidQue = new BidingOrderQueue();
     }

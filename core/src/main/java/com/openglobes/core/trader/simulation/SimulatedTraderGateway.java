@@ -17,10 +17,13 @@
 package com.openglobes.core.trader.simulation;
 
 import com.openglobes.core.GatewayException;
-import com.openglobes.core.trader.ITraderGateway;
-import com.openglobes.core.trader.ITraderGatewayHandler;
-import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.TraderGatewayInfo;
+import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.event.*;
+import com.openglobes.core.trader.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -29,28 +32,76 @@ import com.openglobes.core.trader.TraderGatewayInfo;
  */
 public class SimulatedTraderGateway implements ITraderGateway {
 
+    private ITraderGatewayHandler handler = null;
+    private int status = 0;
+    private final TraderGatewayInfo info = new TraderGatewayInfo();
+    private final Map<String, MarketMaker> makers = new HashMap<>();
+    private final EventSource es = new EventSource();
+
+    public SimulatedTraderGateway() {
+        try {
+            es.subscribe(Request.class, event -> {
+                var request = event.get();
+                var m = makers.computeIfAbsent(request.getInstrumentId(), k -> new MarketMaker());
+                m.enqueueRequest(request);
+                invokeHandler(m, request);
+                m.matchTrade(request.getDirection());
+                invokeHandler(m, request);
+            });
+        } catch (InvalidSubscriptionException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    private void invokeHandler(MarketMaker m, Request r) {
+        m.getTradeUpdates().forEach(trade -> {
+            try {
+                handler.onTrade(trade);
+            } catch (Throwable th) {
+                handler.onError(new GatewayRuntimeException(-1, th.getMessage(), th));
+            }
+        });
+        m.getResponseUpdates().forEach(response -> {
+            try {
+                if (response.getStatus() == OrderStatus.REJECTED) {
+                    handler.onError(r, response);
+                } else {
+                    handler.onResponse(response);
+                }
+            } catch (Throwable th) {
+                handler.onError(new GatewayRuntimeException(-1, th.getMessage(), th));
+            }
+        });
+    }
+
     @Override
     public TraderGatewayInfo getGatewayInfo() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        return info;
     }
 
     @Override
     public void setHandler(ITraderGatewayHandler handler) throws GatewayException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.handler = handler;
     }
 
-    public MarketMaker getMarketer() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public MarketMaker getMarketer(String instrumentId) {
+        return makers.get(instrumentId);
     }
 
     @Override
     public int getStatus() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return status;
     }
 
     @Override
     public void insert(Request request) throws GatewayException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Objects.requireNonNull(request);
+        Objects.requireNonNull(request.getInstrumentId());
+        try {
+            es.publish(Request.class, request);
+        } catch (NoSubscribedClassException e) {
+            throw new GatewayException(-1, e.getMessage(), e);
+        }
     }
 
 }

@@ -94,11 +94,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
     @Override
     public double getAmount(double price, Instrument instrument) {
-        Objects.requireNonNull(instrument,
-                               instrument.getInstrumentId());
+        Objects.requireNonNull(instrument, instrument.getInstrumentId());
         var multiple = instrument.getMultiple();
-        Objects.requireNonNull(multiple,
-                               instrument.getInstrumentId() + " multiple.");
+        Objects.requireNonNull(multiple, instrument.getInstrumentId() + " multiple.");
         return price * multiple;
     }
 
@@ -137,17 +135,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     @Override
     public double getMargin(double price,
                             Instrument instrument) {
-        Objects.requireNonNull(instrument,
-                               instrument.getInstrumentId());
+        Objects.requireNonNull(instrument, instrument.getInstrumentId());
         var type = instrument.getMarginType();
-        Objects.requireNonNull(type,
-                               instrument.getInstrumentId() + " margin type.");
+        Objects.requireNonNull(type, instrument.getInstrumentId() + " margin type.");
         var ratio = instrument.getMarginRatio();
-        Objects.requireNonNull(ratio,
-                               instrument.getInstrumentId() + " margin ratio.");
+        Objects.requireNonNull(ratio, instrument.getInstrumentId() + " margin ratio.");
         if (type == RatioType.BY_MONEY) {
-            double m = getAmount(price,
-                                 instrument);
+            double m = getAmount(price, instrument);
             return m * ratio;
         } else {
             return ratio;
@@ -170,17 +164,12 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         setRequests(r,
                     request);
         if (request.getOffset() == Offset.OPEN) {
-            setVolumnAmount(r,
-                            contracts);
+            setVolumnAmount(r, contracts);
         } else {
-            setVolumnAmount(r,
-                            trades,
-                            instruments);
+            setVolumnAmount(r, trades, instruments);
         }
-        setTimes(r,
-                 trades);
-        setDeleted(r,
-                   responses);
+        setTimes(r, trades);
+        setDeleted(r, responses);
         setOrderStatus(r);
         return r;
     }
@@ -226,11 +215,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                 throw new InvalidContractDirectionException(c.getInstrumentId());
             }
             if (direction == Direction.BUY) {
-                p = lp.computeIfAbsent(c.getInstrumentId(),
-                                       k -> initPosition(c, tradingDay));
+                p = lp.computeIfAbsent(c.getInstrumentId(), k -> initPosition(c, tradingDay));
             } else {
-                p = sp.computeIfAbsent(c.getInstrumentId(),
-                                       k -> initPosition(c, tradingDay));
+                p = sp.computeIfAbsent(c.getInstrumentId(), k -> initPosition(c, tradingDay));
             }
             var id = c.getInstrumentId();
             if (id.isBlank()) {
@@ -240,14 +227,10 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
             if (cid == null) {
                 throw new InvalidContractIdException("Contract ID null ptr.");
             }
-            var margin = findMargin(cid,
-                                    map);
-            var commission = findCommission(cid,
-                                            cmap);
-            var price = findPriceProperty(id,
-                                          prices);
-            var instrument = findInstrumentProperty(id,
-                                                    instruments);
+            var margin = findMargin(cid, map);
+            var commission = findCommission(cid, cmap);
+            var price = findPriceProperty(id, prices);
+            var instrument = findInstrumentProperty(id, instruments);
             if (c.getOpenTradingDay().isBefore(tradingDay)) {
                 addPrePosition(p,
                                c,
@@ -378,8 +361,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         } else {
             p.setCommission(p.getCommission() + commission);
         }
-        Long volumn = getProperVolumn(c.getStatus(),
-                                      ContractStatus.OPEN);
+        Long volumn = getProperVolumn(c.getStatus(), ContractStatus.OPEN);
         if (p.getVolumn() == null) {
             p.setVolumn(volumn);
         } else {
