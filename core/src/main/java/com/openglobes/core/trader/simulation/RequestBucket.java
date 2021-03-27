@@ -77,14 +77,16 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         return r;
     }
 
-    public Order removeOrder(Long orderId) {
+    public void removeOrder(Long orderId) {
         if (isEmpty()) {
             throw new NoSuchElementException("Empty container.");
         }
         for(int i = 0; i < size(); ++i) {
             var o = get(i);
             if (o.getOrderId().equals(orderId)) {
-                return remove(i);
+                remove(i);
+                o.setStatus(OrderStatus.DELETED);
+                addResponse(o);
             }
         }
         throw new NoSuchElementException("Order not found for ID: " + orderId + ".");

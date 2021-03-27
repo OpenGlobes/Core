@@ -17,6 +17,9 @@
 package com.openglobes.core.trader.simulation;
 
 import com.openglobes.core.trader.Request;
+import com.openglobes.core.trader.Response;
+import com.openglobes.core.trader.Trade;
+
 import java.util.Collection;
 
 /**
@@ -26,8 +29,8 @@ import java.util.Collection;
  */
 public class MarketMaker implements IMarketMaker {
     
-    private final IOrderQueue askQue;
-    private final IOrderQueue bidQue;
+    private final AbstractOrderQueue askQue;
+    private final AbstractOrderQueue bidQue;
     
     protected MarketMaker() {
         askQue = new AskingOrderQueue();
@@ -42,6 +45,16 @@ public class MarketMaker implements IMarketMaker {
     @Override
     public void acceptRequest(Long requestId) {
         throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Collection<Trade> getTradeUpdates() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Collection<Response> getResponseUpdates() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

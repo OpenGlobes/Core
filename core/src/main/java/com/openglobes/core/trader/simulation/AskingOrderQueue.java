@@ -16,32 +16,31 @@
  */
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.trader.IllegalRequestException;
+import com.openglobes.core.trader.Direction;
 import com.openglobes.core.trader.Request;
-import java.util.LinkedList;
+
+import java.util.Comparator;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
-public class AskingOrderQueue extends LinkedList<RequestBucket> implements IOrderQueue{
+public class AskingOrderQueue extends AbstractOrderQueue {
 
     private static final long serialVersionUID = 127649287430L;
 
-    @Override
-    public Object clone() {
-        return super.clone();
+    public AskingOrderQueue() {
     }
 
     @Override
-    public void dequeOrder(Long orderId) throws UnkownOrderIdException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void sortBuckets() {
+        sort(Comparator.comparingDouble(RequestBucket::getPrice));
     }
 
     @Override
-    public void enqueOrder(Request request) throws IllegalRequestException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected void checkRequest(Request request) {
+        if (request.getDirection() != Direction.SELL) {
+            throw new IllegalArgumentException("Asking request must SELL.");
+        }
     }
-    
 }
