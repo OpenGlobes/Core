@@ -38,7 +38,7 @@ public class BidingOrderQueue extends AbstractOrderQueue {
     }
 
     @Override
-    protected void checkRequest(Request request) {
+    protected void checkOffset(Request request) {
         if (request.getDirection() != Direction.BUY) {
             throw new IllegalArgumentException("Biding request must BUY.");
         }

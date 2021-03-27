@@ -29,13 +29,7 @@ import java.util.Collection;
  * @since 1.0
  */
 public interface IMarketMaker {
-    void applyRequest(Request simulatedRequest);
-    
-    void abortQueuingRequest(Long requestId);
-    
-    void rejectRequest(Long requestId);
-    
-    void acceptRequest(Long requestId);
+    void applyRequest(Request request);
 
     Collection<Trade> getTradeUpdates();
 

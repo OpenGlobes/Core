@@ -17,41 +17,72 @@
 
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.trader.IllegalRequestException;
-import com.openglobes.core.trader.Request;
-import com.openglobes.core.trader.Response;
-import com.openglobes.core.trader.Trade;
+import com.openglobes.core.trader.*;
+import com.openglobes.core.utils.Utils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
 
-    protected final Map<Long, RequestBucket> buckets = new HashMap<>(64);
+    protected final Set<Long> orderIds = new HashSet<>(64);
+    protected final LinkedList<Response> responses = new LinkedList<>();
 
     @Override
     public Object clone() {
         return super.clone();
     }
 
-    public void dequeOrder(Long orderId) throws UnkownOrderIdException {
-        if (!buckets.containsKey(orderId)) {
-            throw new UnkownOrderIdException("Unknown order ID: " + orderId + ".");
+    public void dequeOrder(Request request) throws UnkownOrderIdException {
+        var orderId = request.getOrderId();
+        for (var b : this) {
+            if (b.removeOrder(orderId)){
+                return;
+            }
         }
-        buckets.get(orderId).removeOrder(orderId);
+        addResponse(request,
+                    OrderStatus.REJECTED,
+                    "找不到报单");
+        throw new UnkownOrderIdException("Unknown order ID: " + orderId + ".");
     }
 
     public void enqueOrder(Request request) throws IllegalRequestException {
         try {
-            checkRequest(request);
-            var b = findBucketAtPrice(request);
-            b.enqueueRequest(request);
-            buckets.put(request.getOrderId(), b);
+            checkOffset(request);
+            checkOrderId(request);
+            findBucketAtPrice(request).enqueueRequest(request);
+            orderIds.add(request.getOrderId());
         } catch (Throwable th) {
             throw new IllegalRequestException(th.getMessage(), th);
         }
+    }
+
+    protected void checkOrderId(Request request) {
+        if (orderIds.contains(request.getOrderId())) {
+            addResponse(request,
+                        OrderStatus.REJECTED,
+                        "重复报单");
+            throw new IllegalArgumentException("Duplicated order ID: " + request.getOrderId() + ".");
+        }
+    }
+
+    private void addResponse(Request request, int status, String msg) {
+        var r = new Response();
+        r.setAction(request.getAction());
+        r.setResponseId(Utils.nextId());
+        r.setDirection(request.getDirection());
+        r.setStatus(status);
+        r.setOffset(request.getOffset());
+        r.setInstrumentId(request.getInstrumentId());
+        r.setOrderId(request.getOrderId());
+        r.setSignature(UUID.randomUUID().toString());
+        r.setStatusCode(0);
+        r.setStatusMessage(msg);
+        r.setTimestamp(ZonedDateTime.now());
+        r.setTraderId(Integer.MAX_VALUE);
+        r.setTradingDay(LocalDate.now());
+        responses.add(r);
     }
 
     protected RequestBucket findBucketAtPrice(Request request) {
@@ -81,10 +112,12 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
         forEach(bucket -> {
             r.addAll(bucket.getResponseUpdates());
         });
+        r.addAll(responses);
+        responses.clear();
         return r;
     }
 
     protected abstract void sortBuckets();
 
-    protected abstract void checkRequest(Request request);
+    protected abstract void checkOffset(Request request);
 }

@@ -36,16 +36,6 @@ public class MarketMaker implements IMarketMaker {
         askQue = new AskingOrderQueue();
         bidQue = new BidingOrderQueue();
     }
-    
-    @Override
-    public void abortQueuingRequest(Long requestId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void acceptRequest(Long requestId) {
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
 
     @Override
     public Collection<Trade> getTradeUpdates() {
@@ -58,12 +48,7 @@ public class MarketMaker implements IMarketMaker {
     }
 
     @Override
-    public void rejectRequest(Long requestId) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void applyRequest(Request simulatedRequest) {
+    public void applyRequest(Request request) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

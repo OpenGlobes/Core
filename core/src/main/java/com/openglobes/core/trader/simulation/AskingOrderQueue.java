@@ -38,7 +38,7 @@ public class AskingOrderQueue extends AbstractOrderQueue {
     }
 
     @Override
-    protected void checkRequest(Request request) {
+    protected void checkOffset(Request request) {
         if (request.getDirection() != Direction.SELL) {
             throw new IllegalArgumentException("Asking request must SELL.");
         }
