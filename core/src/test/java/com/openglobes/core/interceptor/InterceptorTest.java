@@ -20,29 +20,24 @@ import com.openglobes.core.trader.Instrument;
 import com.openglobes.core.trader.Request;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.utils.QuickCondition;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.junit.jupiter.api.*;
+
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InterceptorTest {
 
+    private final QuickCondition cond = new QuickCondition();
     private IInterceptorChain chain = null;
     private Integer requestCount = 0;
     private Integer respondCount = 0;
-
-    private final QuickCondition cond = new QuickCondition();
 
     public InterceptorTest() {
     }
@@ -55,63 +50,63 @@ public class InterceptorTest {
                                  RequestInterceptingContext.class,
                                  Response.class,
                                  new IInterceptor<RequestInterceptingContext, Response>() {
-                             @Override
-                             public InterceptOperation onRequest(RequestInterceptingContext request,
-                                                                 IInterceptorChain stack) {
-                                 ++requestCount;
-                                 return InterceptOperation.CONTINUE;
-                             }
+                                     @Override
+                                     public InterceptOperation onRequest(RequestInterceptingContext request,
+                                                                         IInterceptorChain stack) {
+                                         ++requestCount;
+                                         return InterceptOperation.CONTINUE;
+                                     }
 
-                             @Override
-                             public InterceptOperation onResponse(Response response,
-                                                                  IInterceptorChain stack) {
-                                 fail("Intercepting should be terminated or skipped.");
-                                 return InterceptOperation.CONTINUE;
-                             }
+                                     @Override
+                                     public InterceptOperation onResponse(Response response,
+                                                                          IInterceptorChain stack) {
+                                         fail("Intercepting should be terminated or skipped.");
+                                         return InterceptOperation.CONTINUE;
+                                     }
 
-                         });
+                                 });
             chain.addInterceptor(1,
                                  Response.class,
                                  new AbstractResponseInterceptor<Response>() {
-                             @Override
-                             public InterceptOperation onResponse(Response response,
-                                                                  IInterceptorChain stack) {
-                                 ++respondCount;
-                                 cond.signalOne();
-                                 return InterceptOperation.SKIP_REST;
-                             }
+                                     @Override
+                                     public InterceptOperation onResponse(Response response,
+                                                                          IInterceptorChain stack) {
+                                         ++respondCount;
+                                         cond.signalOne();
+                                         return InterceptOperation.SKIP_REST;
+                                     }
 
-                         });
+                                 });
             chain.addInterceptor(2,
                                  RequestInterceptingContext.class,
                                  new AbstractRequestInterceptor<RequestInterceptingContext>() {
-                             @Override
-                             public InterceptOperation onRequest(RequestInterceptingContext request,
-                                                                 IInterceptorChain stack) {
-                                 ++requestCount;
-                                 cond.signalOne();
-                                 return InterceptOperation.TERMINATE;
-                             }
-                         });
+                                     @Override
+                                     public InterceptOperation onRequest(RequestInterceptingContext request,
+                                                                         IInterceptorChain stack) {
+                                         ++requestCount;
+                                         cond.signalOne();
+                                         return InterceptOperation.TERMINATE;
+                                     }
+                                 });
             chain.addInterceptor(3,
                                  RequestInterceptingContext.class,
                                  Response.class,
                                  new IInterceptor<RequestInterceptingContext, Response>() {
-                             @Override
-                             public InterceptOperation onRequest(RequestInterceptingContext request,
-                                                                 IInterceptorChain stack) {
-                                 fail("Intercepting should be terminated or skipped.");
-                                 return InterceptOperation.CONTINUE;
-                             }
+                                     @Override
+                                     public InterceptOperation onRequest(RequestInterceptingContext request,
+                                                                         IInterceptorChain stack) {
+                                         fail("Intercepting should be terminated or skipped.");
+                                         return InterceptOperation.CONTINUE;
+                                     }
 
-                             @Override
-                             public InterceptOperation onResponse(Response response,
-                                                                  IInterceptorChain stack) {
-                                 ++respondCount;
-                                 return InterceptOperation.CONTINUE;
-                             }
+                                     @Override
+                                     public InterceptOperation onResponse(Response response,
+                                                                          IInterceptorChain stack) {
+                                         ++respondCount;
+                                         return InterceptOperation.CONTINUE;
+                                     }
 
-                         });
+                                 });
         });
     }
 
@@ -123,9 +118,9 @@ public class InterceptorTest {
     @Order(0)
     public void testRequest() {
         var r = new RequestInterceptingContext(new Request(),
-                                           new Instrument(),
-                                           new Properties(),
-                                           1);
+                                               new Instrument(),
+                                               new Properties(),
+                                               1);
         assertDoesNotThrow(() -> {
             chain.request(RequestInterceptingContext.class,
                           r);

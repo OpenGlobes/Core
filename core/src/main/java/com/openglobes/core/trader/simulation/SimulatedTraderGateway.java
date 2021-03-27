@@ -18,7 +18,9 @@ package com.openglobes.core.trader.simulation;
 
 import com.openglobes.core.GatewayException;
 import com.openglobes.core.GatewayRuntimeException;
-import com.openglobes.core.event.*;
+import com.openglobes.core.event.EventSource;
+import com.openglobes.core.event.InvalidSubscriptionException;
+import com.openglobes.core.event.NoSubscribedClassException;
 import com.openglobes.core.trader.*;
 
 import java.util.HashMap;
@@ -26,17 +28,16 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class SimulatedTraderGateway implements ITraderGateway {
 
-    private ITraderGatewayHandler handler = null;
-    private int status = 0;
     private final TraderGatewayInfo info = new TraderGatewayInfo();
     private final Map<String, MarketMaker> makers = new HashMap<>();
     private final EventSource es = new EventSource();
+    private ITraderGatewayHandler handler = null;
+    private int status = 0;
 
     public SimulatedTraderGateway() {
         try {

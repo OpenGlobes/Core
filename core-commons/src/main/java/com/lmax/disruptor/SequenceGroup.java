@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 public final class SequenceGroup extends Sequence {
 
     private static final AtomicReferenceFieldUpdater<SequenceGroup, Sequence[]> SEQUENCE_UPDATER
-                                                                                = AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
+            = AtomicReferenceFieldUpdater.newUpdater(SequenceGroup.class, Sequence[].class, "sequences");
     private volatile Sequence[] sequences = new Sequence[0];
 
     /**
@@ -70,7 +70,6 @@ public final class SequenceGroup extends Sequence {
      * {@link SequenceGroup#addWhileRunning(Cursored, Sequence)}
      *
      * @param sequence to be added to the aggregate.
-     *
      * @see SequenceGroup#addWhileRunning(Cursored, Sequence)
      */
     public void add(final Sequence sequence) {
@@ -89,7 +88,6 @@ public final class SequenceGroup extends Sequence {
      * Remove the first occurrence of the {@link Sequence} from this aggregate.
      *
      * @param sequence to be removed from this aggregate.
-     *
      * @return true if the sequence was removed otherwise false.
      */
     public boolean remove(final Sequence sequence) {

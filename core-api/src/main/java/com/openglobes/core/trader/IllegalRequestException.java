@@ -17,19 +17,18 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class IllegalRequestException extends TraderException {
 
     private static final long serialVersionUID = 23154989215L;
-    
+
     public IllegalRequestException(String message) {
         super(message);
     }
 
-    public IllegalRequestException(String message, 
+    public IllegalRequestException(String message,
                                    Throwable cause) {
         super(message, cause);
     }
@@ -39,13 +38,13 @@ public class IllegalRequestException extends TraderException {
     }
 
     public IllegalRequestException(String message,
-                                   Throwable cause, 
-                                   boolean enableSuppression, 
+                                   Throwable cause,
+                                   boolean enableSuppression,
                                    boolean writableStackTrace) {
-        super(message, 
-              cause, 
-              enableSuppression, 
+        super(message,
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

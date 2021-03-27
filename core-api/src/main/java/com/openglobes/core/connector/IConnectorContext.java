@@ -7,7 +7,6 @@ package com.openglobes.core.connector;
 
 import com.openglobes.core.IConfiguredContext;
 import com.openglobes.core.session.ISession;
-import com.openglobes.core.session.ISessionFactory;
 
 /**
  * @author Hongbao Chen

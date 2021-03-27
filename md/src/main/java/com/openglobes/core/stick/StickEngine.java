@@ -186,9 +186,9 @@ public class StickEngine implements IStickEngine, AutoCloseable {
         try (var conn = src.getConnection()) {
             for (var setting : conn.getInstrumentStickSettings()) {
                 var b = builders.computeIfAbsent(setting.getInstrumentId(),
-                                             k -> {
-                                                 return new StickBuilder(this);
-                                             });
+                                                 k -> {
+                                                     return new StickBuilder(this);
+                                                 });
                 b.addMinutes(setting.getMinutes());
             }
             for (var b : builders.values()) {

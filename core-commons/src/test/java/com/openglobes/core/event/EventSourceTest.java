@@ -299,9 +299,9 @@ public class EventSourceTest {
                 return;
             }
             var v = m.computeIfAbsent(instrumentId,
-                                  k -> {
-                                      return new AtomicLong(0);
-                                  });
+                                      k -> {
+                                          return new AtomicLong(0);
+                                      });
             assertEquals(v.get() + 1,
                          orderId);
             v.set(orderId);

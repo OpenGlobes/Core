@@ -296,9 +296,9 @@ class Query implements IQuery {
                                                  DatabaseMetaData dbMeta) throws SQLException {
         var t = new HashMap<String, Integer>(128);
         var cs = dbMeta.getColumns("",
-                               "",
-                               name,
-                               "%");
+                                   "",
+                                   name,
+                                   "%");
         while (cs.next()) {
             t.put(cs.getString("COLUMN_NAME"),
                   cs.getInt("DATA_TYPE"));

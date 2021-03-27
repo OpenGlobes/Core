@@ -17,7 +17,10 @@
 
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.trader.*;
+import com.openglobes.core.trader.OrderStatus;
+import com.openglobes.core.trader.Request;
+import com.openglobes.core.trader.Response;
+import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Utils;
 
 import java.time.LocalDate;
@@ -37,7 +40,7 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
     public void dequeOrder(Request request) throws NoSuchElementException {
         var orderId = request.getOrderId();
         for (var b : this) {
-            if (b.removeOrder(orderId)){
+            if (b.removeOrder(orderId)) {
                 return;
             }
         }

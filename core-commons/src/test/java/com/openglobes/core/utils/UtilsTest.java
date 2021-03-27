@@ -18,12 +18,13 @@ package com.openglobes.core.utils;
 
 import com.openglobes.core.trader.ActionType;
 import com.openglobes.core.trader.Request;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.TimerTask;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,10 +75,10 @@ class UtilsTest {
     @Test
     void inRange() {
         assertThrows(NullPointerException.class, () -> {
-                 Utils.inRange(LocalTime.now(),
-                               null,
-                               null);
-             });
+            Utils.inRange(LocalTime.now(),
+                          null,
+                          null);
+        });
         var t0 = LocalTime.of(12, 21, 1, 563);
         var t1 = LocalTime.of(12, 22, 1);
         var e0 = LocalTime.of(12, 21);
@@ -115,11 +116,11 @@ class UtilsTest {
     @Test
     void schedulePerDuration() {
         var r = Utils.schedulePerDuration(new TimerTask() {
-            @Override
-            public void run() {
-            }
-        },
-                                      Duration.ofHours(1));
+                                              @Override
+                                              public void run() {
+                                              }
+                                          },
+                                          Duration.ofHours(1));
         r.purge();
         r.cancel();
     }

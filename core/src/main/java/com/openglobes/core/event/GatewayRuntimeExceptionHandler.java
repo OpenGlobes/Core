@@ -18,7 +18,6 @@
 package com.openglobes.core.event;
 
 import com.openglobes.core.GatewayRuntimeException;
-import com.openglobes.core.ICore;
 import com.openglobes.core.ICoreListener;
 import com.openglobes.core.utils.Loggers;
 

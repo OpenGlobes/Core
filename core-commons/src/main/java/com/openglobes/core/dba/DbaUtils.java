@@ -87,7 +87,7 @@ public class DbaUtils {
         }
     }
 
-    public static MetaField inspectField(Field f) 
+    public static MetaField inspectField(Field f)
             throws IllegalFieldCharacterException, UnsupportedFieldTypeException {
         MetaField info = new MetaField();
         var names = split(f.getName());
@@ -106,7 +106,7 @@ public class DbaUtils {
         return info;
     }
 
-    public static List<MetaField> inspectFields(Class<?> clazz) 
+    public static List<MetaField> inspectFields(Class<?> clazz)
             throws IllegalFieldCharacterException, UnsupportedFieldTypeException {
         var fs = clazz.getDeclaredFields();
         var r = new LinkedList<MetaField>();
@@ -119,7 +119,7 @@ public class DbaUtils {
         return r;
     }
 
-    public static void setDouble(Field field, Object object, Double d) 
+    public static void setDouble(Field field, Object object, Double d)
             throws IllegalArgumentException, IllegalAccessException {
         if (field.getType() == Double.class) {
             field.set(object,

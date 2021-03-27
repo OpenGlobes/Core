@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -81,7 +80,7 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         if (isEmpty()) {
             throw new NoSuchElementException("Empty container.");
         }
-        for(int i = 0; i < size(); ++i) {
+        for (int i = 0; i < size(); ++i) {
             var o = get(i);
             if (o.getOrderId().equals(orderId)) {
                 o.setStatus(OrderStatus.DELETED);

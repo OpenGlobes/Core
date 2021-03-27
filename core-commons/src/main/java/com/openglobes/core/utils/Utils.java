@@ -75,7 +75,6 @@ public class Utils {
      * @param now       now's time.
      * @param rangeFrom exclusive begin of the time rane.
      * @param rangeTo   inclusive end of the time range.
-     *
      * @return {@code true} if the specifed now is in the time range.
      */
     public static boolean inRange(LocalTime now,
@@ -127,7 +126,6 @@ public class Utils {
      *
      * @param task     timer task.
      * @param duration duration between two tasks
-     *
      * @return timer.
      */
     public static Timer schedulePerDuration(TimerTask task, Duration duration) {
@@ -137,8 +135,8 @@ public class Utils {
          * Move time to next begin, may have fractional seconds of a minute.
          */
         var s = ZonedDateTime.of(now.toLocalDate(),
-                             LocalTime.of(0, 0),
-                             now.getZone());
+                                 LocalTime.of(0, 0),
+                                 now.getZone());
         while (s.isBefore(now)) {
             s = s.plus(duration);
         }

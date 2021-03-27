@@ -54,8 +54,8 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalDaysException(days.toString());
         }
         this.days.computeIfAbsent(days, m -> {
-                              return new StickContext(days, true);
-                          });
+            return new StickContext(days, true);
+        });
     }
 
     @Override
@@ -64,8 +64,8 @@ public class StickBuilder implements IStickBuilder {
             throw new IllegalMinutesException(minutes.toString());
         }
         mins.computeIfAbsent(minutes, m -> {
-                         return new StickContext(minutes, false);
-                     });
+            return new StickContext(minutes, false);
+        });
     }
 
     @Override

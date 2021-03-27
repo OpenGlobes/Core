@@ -50,7 +50,6 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
      * @param units        Time units used for the timeout values.
-     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLock(
@@ -69,7 +68,6 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
      * @param units        Time units used for the timeout values.
-     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withLiteLock(
@@ -88,7 +86,6 @@ public final class PhasedBackoffWaitStrategy implements WaitStrategy {
      * @param spinTimeout  The maximum time in to busy spin for.
      * @param yieldTimeout The maximum time in to yield for.
      * @param units        Time units used for the timeout values.
-     *
      * @return The constructed wait strategy.
      */
     public static PhasedBackoffWaitStrategy withSleep(

@@ -16,11 +16,8 @@
  */
 package com.openglobes.core;
 
-import java.util.Properties;
-
 /**
  * @param <T>
- *
  * @author Hongbao Chen
  * @since 1.0
  */

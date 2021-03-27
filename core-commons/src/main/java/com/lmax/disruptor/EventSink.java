@@ -18,9 +18,8 @@ public interface EventSink<E> {
      * false if specified capacity was not available.
      *
      * @param translator The user specified translation for the event
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
+     * capacity.
      */
     boolean tryPublishEvent(EventTranslator<E> translator);
 
@@ -30,7 +29,6 @@ public interface EventSink<E> {
      * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
-     *
      * @see #publishEvent(EventTranslator)
      */
     <A> void publishEvent(EventTranslatorOneArg<E, A> translator, A arg0);
@@ -41,10 +39,8 @@ public interface EventSink<E> {
      * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvent(EventTranslator)
      */
     <A> boolean tryPublishEvent(EventTranslatorOneArg<E, A> translator, A arg0);
@@ -57,7 +53,6 @@ public interface EventSink<E> {
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
-     *
      * @see #publishEvent(EventTranslator)
      */
     <A, B> void publishEvent(EventTranslatorTwoArg<E, A, B> translator, A arg0, B arg1);
@@ -70,10 +65,8 @@ public interface EventSink<E> {
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvent(EventTranslator)
      */
     <A, B> boolean tryPublishEvent(EventTranslatorTwoArg<E, A, B> translator, A arg0, B arg1);
@@ -88,7 +81,6 @@ public interface EventSink<E> {
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
      * @param arg2       A user supplied argument.
-     *
      * @see #publishEvent(EventTranslator)
      */
     <A, B, C> void publishEvent(EventTranslatorThreeArg<E, A, B, C> translator, A arg0, B arg1, C arg2);
@@ -103,10 +95,8 @@ public interface EventSink<E> {
      * @param arg0       A user supplied argument.
      * @param arg1       A user supplied argument.
      * @param arg2       A user supplied argument.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvent(EventTranslator)
      */
     <A, B, C> boolean tryPublishEvent(EventTranslatorThreeArg<E, A, B, C> translator, A arg0, B arg1, C arg2);
@@ -116,7 +106,6 @@ public interface EventSink<E> {
      *
      * @param translator The user specified translation for the event
      * @param args       User supplied arguments.
-     *
      * @see #publishEvent(EventTranslator)
      */
     void publishEvent(EventTranslatorVararg<E> translator, Object... args);
@@ -126,10 +115,8 @@ public interface EventSink<E> {
      *
      * @param translator The user specified translation for the event
      * @param args       User supplied arguments.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvent(EventTranslator)
      */
     boolean tryPublishEvent(EventTranslatorVararg<E> translator, Object... args);
@@ -176,9 +163,8 @@ public interface EventSink<E> {
      * translation. Will return false if specified capacity was not available.
      *
      * @param translators The user specified translation for the event
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
+     * capacity.
      */
     boolean tryPublishEvents(EventTranslator<E>[] translators);
 
@@ -192,9 +178,8 @@ public interface EventSink<E> {
      * @param batchStartsAt The first element of the array which is within the
      *                      batch.
      * @param batchSize     The actual size of the batch
-     *
      * @return true if all the values were published, false if there was
-     *         insufficient capacity.
+     * insufficient capacity.
      */
     boolean tryPublishEvents(EventTranslator<E>[] translators, int batchStartsAt, int batchSize);
 
@@ -204,7 +189,6 @@ public interface EventSink<E> {
      * @param <A>        Class of the user supplied argument
      * @param translator The user specified translation for the event
      * @param arg0       A user supplied argument.
-     *
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A> void publishEvents(EventTranslatorOneArg<E, A> translator, A[] arg0);
@@ -219,7 +203,6 @@ public interface EventSink<E> {
      * @param batchSize     The actual size of the batch
      * @param arg0          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @see #publishEvents(EventTranslator[])
      */
     <A> void publishEvents(EventTranslatorOneArg<E, A> translator, int batchStartsAt, int batchSize, A[] arg0);
@@ -231,10 +214,8 @@ public interface EventSink<E> {
      * @param translator The user specified translation for each event
      * @param arg0       An array of user supplied arguments, one element per
      *                   event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A> boolean tryPublishEvents(EventTranslatorOneArg<E, A> translator, A[] arg0);
@@ -249,10 +230,8 @@ public interface EventSink<E> {
      * @param batchSize     The actual size of the batch
      * @param arg0          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvents(EventTranslator[])
      */
     <A> boolean tryPublishEvents(EventTranslatorOneArg<E, A> translator, int batchStartsAt, int batchSize, A[] arg0);
@@ -267,7 +246,6 @@ public interface EventSink<E> {
      *                   event.
      * @param arg1       An array of user supplied arguments, one element per
      *                   event.
-     *
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B> void publishEvents(EventTranslatorTwoArg<E, A, B> translator, A[] arg0, B[] arg1);
@@ -285,7 +263,6 @@ public interface EventSink<E> {
      *                      event.
      * @param arg1          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @see #publishEvents(EventTranslator[])
      */
     <A, B> void publishEvents(
@@ -302,10 +279,8 @@ public interface EventSink<E> {
      *                   event.
      * @param arg1       An array of user supplied arguments, one element per
      *                   event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B> boolean tryPublishEvents(EventTranslatorTwoArg<E, A, B> translator, A[] arg0, B[] arg1);
@@ -323,10 +298,8 @@ public interface EventSink<E> {
      *                      event.
      * @param arg1          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #tryPublishEvents(EventTranslator[])
      */
     <A, B> boolean tryPublishEvents(
@@ -346,7 +319,6 @@ public interface EventSink<E> {
      *                   event.
      * @param arg2       An array of user supplied arguments, one element per
      *                   event.
-     *
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B, C> void publishEvents(EventTranslatorThreeArg<E, A, B, C> translator, A[] arg0, B[] arg1, C[] arg2);
@@ -367,7 +339,6 @@ public interface EventSink<E> {
      *                      event.
      * @param arg2          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @see #publishEvents(EventTranslator[])
      */
     <A, B, C> void publishEvents(
@@ -387,10 +358,8 @@ public interface EventSink<E> {
      *                   event.
      * @param arg2       An array of user supplied arguments, one element per
      *                   event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     <A, B, C> boolean tryPublishEvents(EventTranslatorThreeArg<E, A, B, C> translator, A[] arg0, B[] arg1, C[] arg2);
@@ -411,10 +380,8 @@ public interface EventSink<E> {
      *                      event.
      * @param arg2          An array of user supplied arguments, one element per
      *                      event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvents(EventTranslator[])
      */
     <A, B, C> boolean tryPublishEvents(
@@ -426,7 +393,6 @@ public interface EventSink<E> {
      *
      * @param translator The user specified translation for the event
      * @param args       User supplied arguments, one Object[] per event.
-     *
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     void publishEvents(EventTranslatorVararg<E> translator, Object[]... args);
@@ -439,7 +405,6 @@ public interface EventSink<E> {
      *                      batch.
      * @param batchSize     The actual size of the batch
      * @param args          User supplied arguments, one Object[] per event.
-     *
      * @see #publishEvents(EventTranslator[])
      */
     void publishEvents(EventTranslatorVararg<E> translator, int batchStartsAt, int batchSize, Object[]... args);
@@ -449,10 +414,8 @@ public interface EventSink<E> {
      *
      * @param translator The user specified translation for the event
      * @param args       User supplied arguments, one Object[] per event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvents(com.lmax.disruptor.EventTranslator[])
      */
     boolean tryPublishEvents(EventTranslatorVararg<E> translator, Object[]... args);
@@ -465,10 +428,8 @@ public interface EventSink<E> {
      *                      batch.
      * @param batchSize     The actual size of the batch.
      * @param args          User supplied arguments, one Object[] per event.
-     *
      * @return true if the value was published, false if there was insufficient
-     *         capacity.
-     *
+     * capacity.
      * @see #publishEvents(EventTranslator[])
      */
     boolean tryPublishEvents(EventTranslatorVararg<E> translator, int batchStartsAt, int batchSize, Object[]... args);

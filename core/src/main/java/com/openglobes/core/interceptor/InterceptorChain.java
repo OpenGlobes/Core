@@ -27,9 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
@@ -50,9 +47,9 @@ public class InterceptorChain implements IInterceptorChain {
     private final ReentrantReadWriteLock lock;
     private final Queue<RequestInterceptingContext> requests;
     private final Queue<Response> responses;
-    private int timeout = 60;
     private final Queue<Trade> trades;
     private final Worker worker;
+    private int timeout = 60;
 
     public InterceptorChain() {
         cond = new QuickCondition();
@@ -347,9 +344,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                    .log(Level.SEVERE,
-                                         "Interceptor request chaining run out of time({0}ns)",
-                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                   .log(Level.SEVERE,
+                                        "Interceptor request chaining run out of time({0}ns)",
+                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();
@@ -377,9 +374,9 @@ public class InterceptorChain implements IInterceptorChain {
                         nanos -= (System.nanoTime() - s0);
                         if (nanos <= 0) {
                             Loggers.getLogger(InterceptorChain.class.getCanonicalName())
-                                    .log(Level.SEVERE,
-                                         "Interceptor response chaining run out of time({0}ns)",
-                                         TimeUnit.NANOSECONDS.convert(timeout, unit));
+                                   .log(Level.SEVERE,
+                                        "Interceptor response chaining run out of time({0}ns)",
+                                        TimeUnit.NANOSECONDS.convert(timeout, unit));
                             break;
                         }
                         s0 = System.nanoTime();

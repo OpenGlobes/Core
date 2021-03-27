@@ -34,6 +34,9 @@ public class TestUtils {
         props.put("PASSWORD", "");
     }
 
+    private TestUtils() {
+    }
+
     public static Connection getDefaultConnection() {
         try {
             Class.forName("org.h2.Driver");
@@ -42,9 +45,6 @@ public class TestUtils {
         } catch (SQLException | ClassNotFoundException ex) {
             return null;
         }
-    }
-
-    private TestUtils() {
     }
 
 }

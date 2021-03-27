@@ -17,14 +17,13 @@
 package com.openglobes.core.trader;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class InvalidRequestException extends TraderException {
 
     private static final long serialVersionUID = 11528981273L;
-    
+
     public InvalidRequestException(String message) {
         super(message);
     }
@@ -37,14 +36,14 @@ public class InvalidRequestException extends TraderException {
         super(cause);
     }
 
-    public InvalidRequestException(String message, 
+    public InvalidRequestException(String message,
                                    Throwable cause,
                                    boolean enableSuppression,
                                    boolean writableStackTrace) {
         super(message,
-              cause, 
-              enableSuppression, 
+              cause,
+              enableSuppression,
               writableStackTrace);
     }
-    
+
 }

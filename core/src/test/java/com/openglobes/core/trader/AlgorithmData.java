@@ -17,6 +17,7 @@
 package com.openglobes.core.trader;
 
 import com.openglobes.core.utils.Utils;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -86,8 +87,8 @@ public class AlgorithmData {
         var r = new HashSet<Contract>(8);
         trades.forEach(tr -> {
             contracts.stream()
-                    .filter(c -> (c.getTradeId().equals(tr.getTradeId())))
-                    .forEachOrdered(c -> r.add(c));
+                     .filter(c -> (c.getTradeId().equals(tr.getTradeId())))
+                     .forEachOrdered(c -> r.add(c));
         });
         return r;
     }
@@ -95,16 +96,16 @@ public class AlgorithmData {
     protected Collection<Response> getResponsesByOrderId(Long orderId) {
         var r = new HashSet<Response>(8);
         responses.stream()
-                .filter(rs -> rs.getOrderId().equals(orderId))
-                .forEach(rs -> r.add(rs));
+                 .filter(rs -> rs.getOrderId().equals(orderId))
+                 .forEach(rs -> r.add(rs));
         return r;
     }
 
     protected Collection<Trade> getTradesByOrderId(Long orderId) {
         var r = new HashSet<Trade>(8);
         trades.stream()
-                .filter(x -> x.getOrderId().equals(orderId))
-                .forEach(x -> r.add(x));
+              .filter(x -> x.getOrderId().equals(orderId))
+              .forEach(x -> r.add(x));
         return r;
     }
 

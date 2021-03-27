@@ -26,6 +26,7 @@ import com.openglobes.core.market.Notices;
 import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.MinuteNotice;
 import com.openglobes.core.utils.Utils;
+
 import java.lang.ref.Cleaner;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -60,6 +61,10 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         setup();
     }
 
+    public static InstrumentNotifier create(IMarketDataSource source) throws DataException {
+        return new InstrumentNotifier(source);
+    }
+
     private void setup() throws DataException {
         Collection<InstrumentTime> instruments = new HashSet<>(1);
         try (var conn = ds.getConnection()) {
@@ -80,11 +85,11 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         instruments.forEach(time -> {
             try (var conn = ds.getConnection()) {
                 var set = times.computeIfAbsent(TimeKeeper.create(time.getWorkdayTimeSetId(),
-                                                              time.getHolidayTimeSetId(),
-                                                              conn),
-                                            key -> {
-                                                return new HashSet<>(12);
-                                            });
+                                                                  time.getHolidayTimeSetId(),
+                                                                  conn),
+                                                key -> {
+                                                    return new HashSet<>(12);
+                                                });
                 set.add(time.getInstrumentId());
             } catch (NoHolidayException | NoWorkdayException | DataException ex) {
                 Loggers.getLogger(InstrumentNotifier.class.getCanonicalName()).log(Level.SEVERE,
@@ -92,10 +97,6 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                                                                                    ex);
             }
         });
-    }
-
-    public static InstrumentNotifier create(IMarketDataSource source) throws DataException {
-        return new InstrumentNotifier(source);
     }
 
     @Override
@@ -127,10 +128,10 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
                             keeper,
                             instruments);
                 var type = getType(min.getAlignTime(),
-                               keeper);
+                                   keeper);
                 instruments.forEach(instrumentId -> {
                     var pre = preTypes.getOrDefault(instrumentId,
-                                                Notices.INSTRUMENT_NO_TRADE);
+                                                    Notices.INSTRUMENT_NO_TRADE);
                     if (!Objects.equals(pre, type)) {
                         preTypes.put(instrumentId, type);
                         sendInstrumentNotice(instrumentId,
@@ -169,7 +170,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
             if (keeper.isRegularTrading(now)) {
                 instruments.forEach(instrumentId -> {
                     var c = minCounters.computeIfAbsent(instrumentId,
-                                                    key -> new AtomicInteger(0));
+                                                        key -> new AtomicInteger(0));
                     c.addAndGet(plus);
                 });
             }
@@ -218,7 +219,7 @@ public class InstrumentNotifier implements IEventHandler<MinuteNotice>,
         synchronized (minCounters) {
             return minCounters.computeIfAbsent(instrumentId,
                                                key -> new AtomicInteger(1))
-                    .get();
+                              .get();
         }
     }
 

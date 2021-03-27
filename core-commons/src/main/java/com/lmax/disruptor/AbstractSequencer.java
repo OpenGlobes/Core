@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 public abstract class AbstractSequencer implements Sequencer {
 
     private static final AtomicReferenceFieldUpdater<AbstractSequencer, Sequence[]> SEQUENCE_UPDATER
-                                                                                    = AtomicReferenceFieldUpdater.newUpdater(AbstractSequencer.class, Sequence[].class, "gatingSequences");
+            = AtomicReferenceFieldUpdater.newUpdater(AbstractSequencer.class, Sequence[].class, "gatingSequences");
 
     protected final int bufferSize;
     protected final WaitStrategy waitStrategy;
@@ -108,9 +108,8 @@ public abstract class AbstractSequencer implements Sequencer {
      *
      * @param dataProvider    The data source for users of this event poller
      * @param gatingSequences Sequence to be gated on.
-     *
      * @return A poller that will gate on this ring buffer and the supplied
-     *         sequences.
+     * sequences.
      */
     @Override
     public <T> EventPoller<T> newPoller(DataProvider<T> dataProvider, Sequence... gatingSequences) {

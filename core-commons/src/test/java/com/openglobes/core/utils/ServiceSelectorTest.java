@@ -16,14 +16,16 @@
  */
 package com.openglobes.core.utils;
 
+import org.junit.jupiter.api.Test;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class ServiceSelectorTest {
 
@@ -38,10 +40,10 @@ class ServiceSelectorTest {
                                      false,
                                      loader);
         assertDoesNotThrow(() -> {
-            ServiceSelector.selectService(cls,
-                                          "test.Echo",
-                                          loader);
-        },
+                               ServiceSelector.selectService(cls,
+                                                             "test.Echo",
+                                                             loader);
+                           },
                            "Service loader failed.");
     }
 
@@ -110,8 +112,8 @@ class ServiceSelectorTest {
                          implFile);
 
         return new String[]{
-            interfaceFile.getPath(),
-            implFile.getPath()
+                interfaceFile.getPath(),
+                implFile.getPath()
         };
     }
 }

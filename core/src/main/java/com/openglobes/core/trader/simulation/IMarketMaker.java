@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.trader.Order;
 import com.openglobes.core.trader.Request;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
@@ -24,7 +23,6 @@ import com.openglobes.core.trader.Trade;
 import java.util.Collection;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

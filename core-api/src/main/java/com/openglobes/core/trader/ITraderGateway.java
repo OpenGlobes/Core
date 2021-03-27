@@ -2,8 +2,6 @@ package com.openglobes.core.trader;
 
 import com.openglobes.core.GatewayException;
 
-import java.util.Properties;
-
 /**
  * Underlying service that provides access to trading facilities.
  *

@@ -18,6 +18,7 @@ package com.openglobes.core.interceptor;
 
 import com.openglobes.core.IRequestContext;
 import com.openglobes.core.utils.Loggers;
+
 import java.util.logging.Level;
 
 /**
@@ -40,7 +41,7 @@ public class LastRequestInterceptor extends AbstractRequestInterceptor<RequestIn
                                           context.getProperties());
         } catch (Throwable th) {
             Loggers.getLogger(LastRequestInterceptor.class.getCanonicalName())
-                    .log(Level.SEVERE, th.toString(), th);
+                   .log(Level.SEVERE, th.toString(), th);
         }
         return InterceptOperation.SKIP_REST;
     }

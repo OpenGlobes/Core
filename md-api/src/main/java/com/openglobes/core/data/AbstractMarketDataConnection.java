@@ -33,7 +33,7 @@ public abstract class AbstractMarketDataConnection extends AbstractPooledConnect
      * implementation.
      */
     public AbstractMarketDataConnection(Connection connection,
-                                IPooledDataSource source) {
+                                        IPooledDataSource source) {
         super(connection, source);
     }
 }

@@ -17,6 +17,7 @@
 package com.openglobes.core.dba;
 
 import com.openglobes.core.utils.Loggers;
+
 import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -99,7 +100,7 @@ public abstract class AbstractPooledDataSource implements AutoCloseable, IPooled
                     connection.close();
                 } catch (SQLException se) {
                     Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
-                            .log(Level.SEVERE, se.getMessage() + "(" + se.getErrorCode() + ")", se);
+                           .log(Level.SEVERE, se.getMessage() + "(" + se.getErrorCode() + ")", se);
                 } finally {
                     free.remove(connection);
                 }
@@ -142,7 +143,7 @@ public abstract class AbstractPooledDataSource implements AutoCloseable, IPooled
                         c.close();
                     } catch (SQLException ex) {
                         Loggers.getLogger(AbstractPooledDataSource.class.getCanonicalName())
-                                .log(Level.SEVERE, ex.toString(), ex);
+                               .log(Level.SEVERE, ex.toString(), ex);
                     }
                 });
                 m.clear();

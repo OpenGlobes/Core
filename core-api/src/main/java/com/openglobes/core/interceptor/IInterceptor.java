@@ -19,7 +19,6 @@ package com.openglobes.core.interceptor;
 /**
  * @param <T>
  * @param <V>
- *
  * @author Hongbao Chen
  * @since 1.0
  */

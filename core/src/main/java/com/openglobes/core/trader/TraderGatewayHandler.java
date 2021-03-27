@@ -498,7 +498,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
                      b.getContract(),
                      trade,
                      conn
-            );
+                    );
             ++count;
         }
         if (count < trade.getQuantity()) {

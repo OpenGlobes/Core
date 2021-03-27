@@ -20,7 +20,6 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

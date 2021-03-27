@@ -50,17 +50,6 @@ public class TimeKeeper implements ITimeKeeper {
         setup();
     }
 
-    private void setup() {
-        workdays.sort((WorkdayTime o1, WorkdayTime o2) -> {
-            var r = o1.getDayRank().compareTo(o2.getDayRank());
-            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
-        });
-        holidays.sort((HolidayTime o1, HolidayTime o2) -> {
-            var r = o1.getDayRank().compareTo(o2.getDayRank());
-            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
-        });
-    }
-
     public static TimeKeeper create(Long holidayTimeSetId,
                                     Long workdayTimeSetId,
                                     IMarketDataConnection connection) throws NoWorkdayException,
@@ -81,6 +70,17 @@ public class TimeKeeper implements ITimeKeeper {
                               wd,
                               holidayTimeSetId,
                               hd);
+    }
+
+    private void setup() {
+        workdays.sort((WorkdayTime o1, WorkdayTime o2) -> {
+            var r = o1.getDayRank().compareTo(o2.getDayRank());
+            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
+        });
+        holidays.sort((HolidayTime o1, HolidayTime o2) -> {
+            var r = o1.getDayRank().compareTo(o2.getDayRank());
+            return r != 0 ? r : (o1.getFromTime().compareTo(o2.getFromTime()));
+        });
     }
 
     @Override

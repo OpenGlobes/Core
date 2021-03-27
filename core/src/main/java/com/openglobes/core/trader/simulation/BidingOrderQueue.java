@@ -17,12 +17,9 @@
 package com.openglobes.core.trader.simulation;
 
 import com.openglobes.core.trader.Direction;
-import com.openglobes.core.trader.IllegalRequestException;
 import com.openglobes.core.trader.Request;
-import java.util.LinkedList;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
@@ -30,7 +27,8 @@ public class BidingOrderQueue extends AbstractOrderQueue {
 
     private static final long serialVersionUID = 372740219L;
 
-    public BidingOrderQueue() {}
+    public BidingOrderQueue() {
+    }
 
     @Override
     protected void sortBuckets() {

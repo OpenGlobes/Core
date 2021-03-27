@@ -24,6 +24,7 @@ import com.openglobes.core.interceptor.InterceptorException;
 import com.openglobes.core.interceptor.RequestInterceptingContext;
 import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.Utils;
+
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
@@ -36,10 +37,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class Session implements ISession {
 
-    private boolean disposed;
     private final IdMapper map;
     private final IRequestContext req;
     private final IResponseContext rsp;
+    private boolean disposed;
 
     Session(IRequestContext request, IResponseContext response) {
         req = request;
@@ -99,7 +100,7 @@ class Session implements ISession {
              * mapper.
              */
             var srcId = req.getSessionCorrelator()
-                    .registerRequestWithNewId(r, this);
+                           .registerRequestWithNewId(r, this);
             map.correlate(srcId,
                           r.getOrderId());
         } else {
@@ -158,11 +159,11 @@ class Session implements ISession {
         try {
             adjustDestId(request);
             req.getSharedContext().getInterceptorChain()
-                    .request(RequestInterceptingContext.class,
-                             new RequestInterceptingContext(request,
-                                                            getInstrument(request.getInstrumentId()),
-                                                            properties,
-                                                            Utils.nextId().intValue()));
+               .request(RequestInterceptingContext.class,
+                        new RequestInterceptingContext(request,
+                                                       getInstrument(request.getInstrumentId()),
+                                                       properties,
+                                                       Utils.nextId().intValue()));
         } catch (InterceptorException ex) {
             throw new ForwardRequestException(ex.getMessage(),
                                               ex);

@@ -17,21 +17,20 @@
 package com.openglobes.core.event;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */
 public class NoSubscribedClassException extends EventException {
 
     private static final long serialVersionUID = 13627498237283L;
-    
+
     public NoSubscribedClassException(String message) {
         super(message);
     }
 
-    public NoSubscribedClassException(String message, 
+    public NoSubscribedClassException(String message,
                                       Throwable cause) {
-        super(message, 
+        super(message,
               cause);
     }
 
@@ -40,7 +39,7 @@ public class NoSubscribedClassException extends EventException {
     }
 
     public NoSubscribedClassException(String message,
-                                      Throwable cause, 
+                                      Throwable cause,
                                       boolean enableSuppression,
                                       boolean writableStackTrace) {
         super(message,
@@ -48,5 +47,5 @@ public class NoSubscribedClassException extends EventException {
               enableSuppression,
               writableStackTrace);
     }
-    
+
 }

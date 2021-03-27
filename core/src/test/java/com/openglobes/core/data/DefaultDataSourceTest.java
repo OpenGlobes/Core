@@ -18,15 +18,15 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.event.IEvent;
 import com.openglobes.core.trader.Contract;
+import org.junit.jupiter.api.*;
+
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- *
  * @author Hongbao Chen
  * @since 1.0
  */

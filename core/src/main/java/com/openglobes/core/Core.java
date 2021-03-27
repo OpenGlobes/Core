@@ -30,9 +30,9 @@ import com.openglobes.core.session.AcquireInformationException;
 import com.openglobes.core.session.ISessionFactory;
 import com.openglobes.core.session.SessionFactory;
 import com.openglobes.core.trader.*;
+
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,27 +42,26 @@ import java.util.logging.Logger;
  */
 public class Core implements ICore {
 
-    public static ICore create() {
-        return new Core();
-    }
-
     private final ITraderEngineAlgorithm algo;
-    private Collection<IConnectorContext> connectors;
-    private IDataSourceContext ds;
     private final ITraderEngine engine;
-    private Collection<IGatewayContext> gates;
-    private Collection<IPluginContext> plugins;
     private final IRequestContext reqCtx;
     private final ISharedContext sharedCtx;
     private final ISessionFactory factory;
+    private Collection<IConnectorContext> connectors;
+    private IDataSourceContext ds;
+    private Collection<IGatewayContext> gates;
+    private Collection<IPluginContext> plugins;
     private ICoreListener coreLis;
-
     public Core() {
         sharedCtx = new SharedContext();
         engine = new TraderEngine();
         reqCtx = new RequestContext(engine, sharedCtx);
         algo = new DefaultTraderEngineAlgorithm();
         factory = new SessionFactory(reqCtx);
+    }
+
+    public static ICore create() {
+        return new Core();
     }
 
     @Override

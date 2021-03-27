@@ -29,7 +29,6 @@ import com.openglobes.core.utils.MinuteNotifier;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 

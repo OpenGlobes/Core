@@ -20,9 +20,8 @@ public interface EventProcessorFactory<T> {
      *
      * @param ringBuffer       the ring buffer to receive events from.
      * @param barrierSequences the sequences to gate on
-     *
      * @return a new EventProcessor that gates on <code>barrierSequences</code>
-     *         before processing events
+     * before processing events
      */
     EventProcessor createEventProcessor(RingBuffer<T> ringBuffer, Sequence[] barrierSequences);
 }

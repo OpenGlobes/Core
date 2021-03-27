@@ -51,7 +51,6 @@ public final class Util {
      * From Hacker's Delight, Chapter 3, Harry S. Warren Jr.
      *
      * @param x Value to round up
-     *
      * @return The next power of 2 from x inclusive
      */
     public static int ceilingNextPowerOfTwo(final int x) {
@@ -63,9 +62,8 @@ public final class Util {
      * {@link com.lmax.disruptor.Sequence}s.
      *
      * @param sequences to compare.
-     *
      * @return the minimum sequence found or Long.MAX_VALUE if the array is
-     *         empty.
+     * empty.
      */
     public static long getMinimumSequence(final Sequence[] sequences) {
         return getMinimumSequence(sequences, Long.MAX_VALUE);
@@ -78,9 +76,8 @@ public final class Util {
      * @param sequences to compare.
      * @param minimum   an initial default minimum. If the array is empty this
      *                  value will be returned.
-     *
      * @return the smaller of minimum sequence value found in {@code sequences}
-     *         and {@code minimum}; {@code minimum} if {@code sequences} is empty
+     * and {@code minimum}; {@code minimum} if {@code sequences} is empty
      */
     public static long getMinimumSequence(final Sequence[] sequences, long minimum) {
         for (int i = 0, n = sequences.length; i < n; i++) {
@@ -95,7 +92,6 @@ public final class Util {
      * Get an array of {@link Sequence}s for the passed {@link EventProcessor}s
      *
      * @param processors for which to get the sequences
-     *
      * @return the array of {@link Sequence}s
      */
     public static Sequence[] getSequencesFor(final EventProcessor... processors) {
@@ -122,7 +118,6 @@ public final class Util {
      * location of the highest bit.
      *
      * @param i Value to calculate log2 for.
-     *
      * @return The log2 value
      */
     public static int log2(int i) {

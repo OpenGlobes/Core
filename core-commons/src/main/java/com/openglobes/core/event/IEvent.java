@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 
 /**
  * @param <T>
- *
  * @author Hongbao Chen
  * @since 1.0
  */

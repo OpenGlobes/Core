@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 
 /**
  * @param <T>
- *
  * @author Hongbao Chen
  * @since 1.0
  */

@@ -18,6 +18,7 @@ package com.openglobes.core.data;
 
 import com.openglobes.core.dba.AbstractPooledConnection;
 import com.openglobes.core.dba.IPooledDataSource;
+
 import java.sql.Connection;
 
 /**
@@ -32,7 +33,7 @@ public abstract class AbstractTraderDataConnection extends AbstractPooledConnect
      * implementation.
      */
     public AbstractTraderDataConnection(Connection connection,
-                                IPooledDataSource source) {
+                                        IPooledDataSource source) {
         super(connection, source);
     }
 }

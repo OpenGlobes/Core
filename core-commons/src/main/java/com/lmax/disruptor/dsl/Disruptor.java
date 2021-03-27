@@ -59,7 +59,6 @@ public class Disruptor<T> {
      * @param eventFactory   the factory to create events in the ring buffer.
      * @param ringBufferSize the size of the ring buffer.
      * @param executor       an {@link Executor} to execute event processors.
-     *
      * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as
      * a the ThreadFactory is able to report errors when it is unable to
      * construct a thread to run a producer.
@@ -77,7 +76,6 @@ public class Disruptor<T> {
      * @param executor       an {@link Executor} to execute event processors.
      * @param producerType   the claim strategy to use for the ring buffer.
      * @param waitStrategy   the wait strategy to use for the ring buffer.
-     *
      * @deprecated Use a {@link ThreadFactory} instead of an {@link Executor} as
      * a the ThreadFactory is able to report errors when it is unable to
      * construct a thread to run a producer.
@@ -152,9 +150,8 @@ public class Disruptor<T> {
      * setting up the Disruptor instance</p>
      *
      * @param handlers the event handlers that will process events.
-     *
      * @return a {@link EventHandlerGroup} that can be used to chain
-     *         dependencies.
+     * dependencies.
      */
     @SuppressWarnings("varargs")
     @SafeVarargs
@@ -188,9 +185,8 @@ public class Disruptor<T> {
      *
      * @param eventProcessorFactories the event processor factories to use to
      *                                create the event processors that will process events.
-     *
      * @return a {@link EventHandlerGroup} that can be used to chain
-     *         dependencies.
+     * dependencies.
      */
     @SafeVarargs
     public final EventHandlerGroup<T> handleEventsWith(final EventProcessorFactory<T>... eventProcessorFactories) {
@@ -211,9 +207,8 @@ public class Disruptor<T> {
      * <pre><code>dw.handleEventsWith(A).then(B);</code></pre>
      *
      * @param processors the event processors that will process events.
-     *
      * @return a {@link EventHandlerGroup} that can be used to chain
-     *         dependencies.
+     * dependencies.
      */
     public EventHandlerGroup<T> handleEventsWith(final EventProcessor... processors) {
         for (final EventProcessor processor : processors) {
@@ -237,9 +232,8 @@ public class Disruptor<T> {
      * when {@link #start()} is called.
      *
      * @param workHandlers the work handlers that will process events.
-     *
      * @return a {@link EventHandlerGroup} that can be used to chain
-     *         dependencies.
+     * dependencies.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -258,7 +252,6 @@ public class Disruptor<T> {
      *
      * @param exceptionHandler the exception handler to use for any future
      *                         {@link EventProcessor}.
-     *
      * @deprecated This method only applies to future event handlers. Use
      * setDefaultExceptionHandler instead which applies to existing and new
      * event handlers.
@@ -293,9 +286,8 @@ public class Disruptor<T> {
      *
      * @param eventHandler the event handler to set a different exception
      *                     handler for.
-     *
      * @return an ExceptionHandlerSetting dsl object - intended to be used by
-     *         chaining the with method call.
+     * chaining the with method call.
      */
     public ExceptionHandlerSetting<T> handleExceptionsFor(final EventHandler<T> eventHandler) {
         return new ExceptionHandlerSetting<>(eventHandler, consumerRepository);
@@ -313,9 +305,8 @@ public class Disruptor<T> {
      * @param handlers the event handlers, previously set up with
      *                 {@link #handleEventsWith(com.lmax.disruptor.EventHandler[])}, that will
      *                 form the barrier for subsequent handlers or processors.
-     *
      * @return an {@link EventHandlerGroup} that can be used to setup a
-     *         dependency barrier over the specified event handlers.
+     * dependency barrier over the specified event handlers.
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
@@ -334,10 +325,8 @@ public class Disruptor<T> {
      * @param processors the event processors, previously set up with
      *                   {@link #handleEventsWith(com.lmax.disruptor.EventProcessor...)}, that
      *                   will form the barrier for subsequent handlers or processors.
-     *
      * @return an {@link EventHandlerGroup} that can be used to setup a
-     *         {@link SequenceBarrier} over the specified event processors.
-     *
+     * {@link SequenceBarrier} over the specified event processors.
      * @see #after(com.lmax.disruptor.EventHandler[])
      */
     public EventHandlerGroup<T> after(final EventProcessor... processors) {
@@ -475,7 +464,6 @@ public class Disruptor<T> {
      *                 processed.
      *                 <code>-1</code> will give an infinite timeout
      * @param timeUnit the unit the timeOut is specified in
-     *
      * @throws TimeoutException if a timeout occurs before shutdown completes.
      */
     public void shutdown(final long timeout, final TimeUnit timeUnit) throws TimeoutException {
@@ -513,7 +501,6 @@ public class Disruptor<T> {
      * The capacity of the data structure to hold entries.
      *
      * @return the size of the RingBuffer.
-     *
      * @see com.lmax.disruptor.Sequencer#getBufferSize()
      */
     public long getBufferSize() {
@@ -524,9 +511,7 @@ public class Disruptor<T> {
      * Get the event for a given sequence in the RingBuffer.
      *
      * @param sequence for the event.
-     *
      * @return event for the sequence.
-     *
      * @see RingBuffer#get(long)
      */
     public T get(final long sequence) {
@@ -538,7 +523,6 @@ public class Disruptor<T> {
      * {@link SequenceBarrier} may be shared by multiple event handlers.
      *
      * @param handler the handler to get the barrier for.
-     *
      * @return the SequenceBarrier used by <i>handler</i>.
      */
     public SequenceBarrier getBarrierFor(final EventHandler<T> handler) {
@@ -549,7 +533,6 @@ public class Disruptor<T> {
      * Gets the sequence value for the specified event handlers.
      *
      * @param b1 eventHandler to get the sequence for.
-     *
      * @return eventHandler's sequence
      */
     public long getSequenceValueFor(final EventHandler<T> b1) {
@@ -581,7 +564,7 @@ public class Disruptor<T> {
             final EventHandler<? super T> eventHandler = eventHandlers[i];
 
             final BatchEventProcessor<T> batchEventProcessor
-                                         = new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
+                    = new BatchEventProcessor<>(ringBuffer, barrier, eventHandler);
 
             if (exceptionHandler != null) {
                 batchEventProcessor.setExceptionHandler(exceptionHandler);

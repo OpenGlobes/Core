@@ -154,14 +154,14 @@ public class MarketMaker implements IMarketMaker {
     }
 
     private void activeTrade(RequestBucket head, RequestBucket to) {
-            var q = Math.min(head.getVolumn(), to.getVolumn());
-            var r = new Request();
-            r.setPrice(to.getPrice());
-            r.setQuantity(q);
-            r.setDirection(head.getDirection());
-            to.applyRequest(r);
-            r.setDirection(oppositeDirection(head.getDirection()));
-            head.applyRequest(r);
+        var q = Math.min(head.getVolumn(), to.getVolumn());
+        var r = new Request();
+        r.setPrice(to.getPrice());
+        r.setQuantity(q);
+        r.setDirection(head.getDirection());
+        to.applyRequest(r);
+        r.setDirection(oppositeDirection(head.getDirection()));
+        head.applyRequest(r);
     }
 
     private int oppositeDirection(int direction) {

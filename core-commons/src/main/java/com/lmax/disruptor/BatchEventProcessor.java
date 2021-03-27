@@ -67,9 +67,9 @@ public final class BatchEventProcessor<T>
         }
 
         batchStartAware
-        = (eventHandler instanceof BatchStartAware) ? (BatchStartAware) eventHandler : null;
+                = (eventHandler instanceof BatchStartAware) ? (BatchStartAware) eventHandler : null;
         timeoutHandler
-        = (eventHandler instanceof TimeoutHandler) ? (TimeoutHandler) eventHandler : null;
+                = (eventHandler instanceof TimeoutHandler) ? (TimeoutHandler) eventHandler : null;
     }
 
     @Override
@@ -106,7 +106,7 @@ public final class BatchEventProcessor<T>
      * It is ok to have another thread rerun this method after a halt().
      *
      * @throws IllegalStateException if this object instance is already running
-     *                               in a thread
+     * in a thread
      */
     @Override
     public void run() {

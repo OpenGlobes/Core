@@ -109,7 +109,6 @@ public class Sequence extends RhsPadding {
      *
      * @param expectedValue The expected current value.
      * @param newValue      The value to update to.
-     *
      * @return true if the operation succeeds, false otherwise.
      */
     public boolean compareAndSet(final long expectedValue, final long newValue) {
@@ -129,7 +128,6 @@ public class Sequence extends RhsPadding {
      * Atomically add the supplied value.
      *
      * @param increment The value to add to the sequence.
-     *
      * @return The value after the increment.
      */
     public long addAndGet(final long increment) {

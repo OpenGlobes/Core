@@ -16,11 +16,12 @@
  */
 package com.openglobes.core.trader;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Map;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -123,16 +124,16 @@ class DefaultAlgorithmTest extends AlgorithmData {
     void getPositions() {
         assertDoesNotThrow(() -> {
             var positions = algorithm().getPositions(contracts(),
-                                                 commissions(),
-                                                 margins(),
-                                                 settlements(),
-                                                 instruments(),
-                                                 LocalDate.now());
+                                                     commissions(),
+                                                     margins(),
+                                                     settlements(),
+                                                     instruments(),
+                                                     LocalDate.now());
             assertEquals(2,
                          positions.size());
 
             var buy = getPosition(Direction.BUY,
-                              positions);
+                                  positions);
             assertEquals(1,
                          buy.getVolumn());
             assertEquals(2,
@@ -151,7 +152,7 @@ class DefaultAlgorithmTest extends AlgorithmData {
                          buy.getCommission());
 
             var sell = getPosition(Direction.SELL,
-                               positions);
+                                   positions);
             assertEquals(3,
                          sell.getVolumn());
             assertEquals(1,
@@ -166,10 +167,10 @@ class DefaultAlgorithmTest extends AlgorithmData {
              */
             r = requests().get(4L);
             var comm = algorithm().getCommission(r.getPrice(),
-                                             instrument(r.getInstrumentId()),
-                                             r.getOffset(),
-                                             getContractById(4L),
-                                             r.getTradingDay());
+                                                 instrument(r.getInstrumentId()),
+                                                 r.getOffset(),
+                                                 getContractById(4L),
+                                                 r.getTradingDay());
             assertEquals(comm,
                          sell.getFrozenCommission());
             /*
@@ -190,10 +191,10 @@ class DefaultAlgorithmTest extends AlgorithmData {
 
         assertDoesNotThrow(() -> {
             var order = algorithm().getOrder(r,
-                                         cs,
-                                         trades,
-                                         rs,
-                                         instruments());
+                                             cs,
+                                             trades,
+                                             rs,
+                                             instruments());
             assertEquals(OrderStatus.ACCEPTED,
                          order.getStatus());
             assertEquals(0,
@@ -315,10 +316,10 @@ class DefaultAlgorithmTest extends AlgorithmData {
 
         assertDoesNotThrow(() -> {
             var order = algorithm().getOrder(r,
-                                         cs,
-                                         trades,
-                                         rs,
-                                         instruments());
+                                             cs,
+                                             trades,
+                                             rs,
+                                             instruments());
             assertEquals(OrderStatus.ALL_TRADED,
                          order.getStatus());
             assertEquals(r.getQuantity(),

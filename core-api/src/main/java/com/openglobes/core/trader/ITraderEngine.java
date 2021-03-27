@@ -65,7 +65,7 @@ public interface ITraderEngine {
     void request(Request request,
                  Instrument instrument,
                  Properties properties) throws IllegalRequestException,
-                                       InvalidRequestException;
+                                               InvalidRequestException;
 
     void unregisterTrader(int traderId) throws UnknownTraderIdException;
 

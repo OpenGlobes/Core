@@ -18,7 +18,6 @@ package com.openglobes.core.event;
 
 /**
  * @param <T>
- *
  * @author Hongbao Chen
  * @since 1.0
  */

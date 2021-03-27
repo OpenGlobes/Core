@@ -186,7 +186,7 @@ public class NormalCaseTest extends Facilities {
             return query().select(Request.class,
                                   Queries.isNotNull(Request.class.getDeclaredField("requestId")),
                                   Request::new)
-                    .size();
+                          .size();
         } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
@@ -200,7 +200,7 @@ public class NormalCaseTest extends Facilities {
                                   Queries.equals(Request.class.getDeclaredField("requestId"),
                                                  requestId),
                                   Request::new)
-                    .size();
+                          .size();
         } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);
@@ -214,7 +214,7 @@ public class NormalCaseTest extends Facilities {
                                   Queries.equals(Request.class.getDeclaredField("instrumentId"),
                                                  instrumentId),
                                   Request::new)
-                    .size();
+                          .size();
         } catch (NoSuchFieldException | SecurityException ex) {
             throw new FieldAccessException(ex.getMessage(),
                                            ex);

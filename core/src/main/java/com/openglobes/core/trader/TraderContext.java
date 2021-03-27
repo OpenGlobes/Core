@@ -18,8 +18,6 @@ package com.openglobes.core.trader;
 
 import com.openglobes.core.GatewayException;
 
-import java.util.Properties;
-
 /**
  * @author Hongbao Chen
  * @since 1.0

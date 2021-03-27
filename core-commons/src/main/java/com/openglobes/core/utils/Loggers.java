@@ -16,13 +16,13 @@
  */
 package com.openglobes.core.utils;
 
-import com.openglobes.core.event.*;
+import com.openglobes.core.event.EventSource;
+import com.openglobes.core.event.IEventSource;
+import com.openglobes.core.event.InvalidSubscriptionException;
+import com.openglobes.core.event.NoSubscribedClassException;
 
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -42,11 +42,11 @@ public class Loggers {
     static {
         try {
             events.subscribe(LogRecord.class, event -> {
-                         var l = event.get();
-                         if (l != null) {
-                             publishLog(l);
-                         }
-                     });
+                var l = event.get();
+                if (l != null) {
+                    publishLog(l);
+                }
+            });
         } catch (InvalidSubscriptionException e) {
             e.printStackTrace();
         }
