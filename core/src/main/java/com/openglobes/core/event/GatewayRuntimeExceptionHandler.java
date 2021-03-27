@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (c) 2020-2021. Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,36 +14,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 package com.openglobes.core.event;
 
-import com.openglobes.core.interceptor.IInterceptorChain;
-import com.openglobes.core.interceptor.InterceptorException;
-import com.openglobes.core.trader.Trade;
+import com.openglobes.core.GatewayRuntimeException;
+import com.openglobes.core.ICore;
+import com.openglobes.core.ICoreListener;
 import com.openglobes.core.utils.Loggers;
 
 import java.util.logging.Level;
 
-/**
- * @author Hongbao Chen
- * @since 1.0
- */
-public class TradeHandler implements IEventHandler<Trade> {
+public class GatewayRuntimeExceptionHandler implements IEventHandler<GatewayRuntimeException> {
 
-    private final IInterceptorChain interceptors;
+    private final ICoreListener l;
 
-    public TradeHandler(IInterceptorChain interceptors) {
-        this.interceptors = interceptors;
+    public GatewayRuntimeExceptionHandler(ICoreListener listener) {
+        l = listener;
     }
 
     @Override
-    public void handle(IEvent<Trade> event) {
+    public void handle(IEvent<GatewayRuntimeException> event) {
         try {
-            var rsp = event.get();
-            interceptors.respond(Trade.class, rsp);
-        } catch (InterceptorException ex) {
-            Loggers.getLogger(TradeHandler.class.getCanonicalName())
-                   .log(Level.SEVERE, ex.toString(), ex);
+            if (l != null) {
+                l.onError(event.get());
+            }
+        } catch (Throwable th) {
+            Loggers.getLogger(GatewayRuntimeExceptionHandler.class.getCanonicalName())
+                   .log(Level.SEVERE, th.toString(), th);
         }
     }
-
 }

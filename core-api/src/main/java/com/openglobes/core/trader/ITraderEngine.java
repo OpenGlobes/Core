@@ -44,9 +44,9 @@ public interface ITraderEngine {
 
     IEventSource getEventSource();
 
-    Instrument getRelatedInstrument(String instrumentId);
+    Instrument getTodayInstrument(String instrumentId);
 
-    Collection<Instrument> getRelatedInstruments();
+    Collection<Instrument> getTodayInstruments();
 
     ServiceRuntimeStatus getStatus();
 

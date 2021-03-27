@@ -41,9 +41,8 @@ public class RequestErrorHandler implements IEventHandler<EngineRequestError> {
             var rsp = event.get();
             interceptors.respond(EngineRequestError.class, rsp);
         } catch (InterceptorException ex) {
-            Loggers.getLogger(ResponseHandler.class.getCanonicalName()).log(Level.SEVERE,
-                                                                            ex.toString(),
-                                                                            ex);
+            Loggers.getLogger(RequestErrorHandler.class.getCanonicalName())
+                   .log(Level.SEVERE, ex.toString(), ex);
         }
     }
 

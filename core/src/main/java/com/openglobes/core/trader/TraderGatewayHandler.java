@@ -195,7 +195,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
              * Update contract.
              */
             var price = trade.getPrice();
-            var instrument = getInstrument(trade.getInstrumentId());
+            var instrument = getTodayInstrument(trade.getInstrumentId());
             var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setCloseAmount(amount);
             contract.setStatus(ContractStatus.CLOSED);
@@ -280,7 +280,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
              * Update contract.
              */
             var price = trade.getPrice();
-            var instrument = getInstrument(trade.getInstrumentId());
+            var instrument = getTodayInstrument(trade.getInstrumentId());
             var amount = ctx.getEngine().getAlgorithm().getAmount(price, instrument);
             contract.setOpenAmount(amount);
             contract.setStatus(ContractStatus.OPEN);
@@ -419,8 +419,8 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         return map.values();
     }
 
-    private Instrument getInstrument(String instrumentId) throws InstrumentNotFoundException {
-        var instrument = ctx.getEngine().getRelatedInstrument(instrumentId);
+    private Instrument getTodayInstrument(String instrumentId) throws InstrumentNotFoundException {
+        var instrument = ctx.getEngine().getTodayInstrument(instrumentId);
         if (instrument == null) {
             throw new InstrumentNotFoundException(instrumentId);
         }
@@ -532,16 +532,14 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     private <T> void publishEvent(Class<T> clazz, T object) {
         var e = (TraderEngine) ctx.getEngine();
-        e.publishEvent(clazz,
-                       object);
+        e.publishEvent(clazz, object);
     }
 
     private void publishRquestError(Request request, Response response) {
         var r = new EngineRequestError();
         r.setRequest(request);
         r.setResponse(response);
-        publishEvent(EngineRequestError.class,
-                     r);
+        publishEvent(EngineRequestError.class, r);
     }
 
     private void requireStatus(Integer saw, Integer wanted) throws IllegalContractStatusException {
@@ -557,8 +555,7 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
         try {
             conn.rollback();
         } catch (SQLException ex) {
-            callOnException(new TraderRuntimeException(ex.getMessage(),
-                                                       ex));
+            callOnException(new TraderRuntimeException(ex.getMessage(), ex));
         }
     }
 

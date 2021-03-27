@@ -41,9 +41,8 @@ public class ResponseHandler implements IEventHandler<Response> {
             var rsp = event.get();
             interceptors.respond(Response.class, rsp);
         } catch (InterceptorException ex) {
-            Loggers.getLogger(ResponseHandler.class.getCanonicalName()).log(Level.SEVERE,
-                                                                            ex.toString(),
-                                                                            ex);
+            Loggers.getLogger(ResponseHandler.class.getCanonicalName())
+                   .log(Level.SEVERE, ex.toString(), ex);
         }
     }
 

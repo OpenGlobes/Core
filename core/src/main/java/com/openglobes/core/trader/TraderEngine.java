@@ -44,6 +44,13 @@ public class TraderEngine implements ITraderEngine {
         orderTraders = new HashMap<>(1024);
         instruments = new HashMap<>(512);
         es0 = new EventSource();
+        try {
+            es0.subscribe(RequestDetail.class, (IEvent<RequestDetail> event) -> {
+                dispatchRequest(event.get());
+            });
+        } catch (InvalidSubscriptionException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -81,12 +88,12 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public Instrument getRelatedInstrument(String instrumentId) {
+    public Instrument getTodayInstrument(String instrumentId) {
         return instruments.get(instrumentId);
     }
 
     @Override
-    public Collection<Instrument> getRelatedInstruments() {
+    public Collection<Instrument> getTodayInstruments() {
         return new HashSet<>(instruments.values());
     }
 
@@ -977,12 +984,6 @@ public class TraderEngine implements ITraderEngine {
                 conn.close();
             }
         }
-    }
-
-    private void setRequestHandler() throws InvalidSubscriptionException {
-        es0.subscribe(RequestDetail.class, (IEvent<RequestDetail> event) -> {
-            dispatchRequest(event.get());
-        });
     }
 
     private void settleAccount() throws DataAccessException,

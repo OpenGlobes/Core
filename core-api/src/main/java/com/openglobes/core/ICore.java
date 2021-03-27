@@ -43,6 +43,8 @@ public interface ICore {
 
     void installDataSource(ITraderDataSource dataSource) throws CoreInstallException;
 
+    void setListener(ICoreListener listener);
+
     IConnectorContext getConnectorContext(IConnector connector) throws AcquireInformationException;
 
     Collection<IConnectorContext> connectors();

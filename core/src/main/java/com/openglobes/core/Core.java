@@ -21,6 +21,7 @@ import com.openglobes.core.connector.IConnector;
 import com.openglobes.core.connector.IConnectorContext;
 import com.openglobes.core.context.*;
 import com.openglobes.core.data.ITraderDataSource;
+import com.openglobes.core.event.*;
 import com.openglobes.core.interceptor.*;
 import com.openglobes.core.plugin.IPlugin;
 import com.openglobes.core.plugin.IPluginContext;
@@ -54,6 +55,7 @@ public class Core implements ICore {
     private final IRequestContext reqCtx;
     private final ISharedContext sharedCtx;
     private final ISessionFactory factory;
+    private ICoreListener coreLis;
 
     public Core() {
         sharedCtx = new SharedContext();
@@ -121,6 +123,11 @@ public class Core implements ICore {
     }
 
     @Override
+    public void setListener(ICoreListener listener) {
+        coreLis = listener;
+    }
+
+    @Override
     public void installGateway(ITraderGateway gateway) throws CoreInstallException {
         Objects.requireNonNull(gateway);
         GatewayContext gctx = new GatewayContext(gateway);
@@ -128,25 +135,34 @@ public class Core implements ICore {
         try {
             engine.setDataSource(ds.get());
             engine.setAlgorithm(algo);
-            engine.registerTrader(gates.size(),
-                                  gateway);
-        } catch (DuplicatedTraderIdException | GatewayException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
+            engine.registerTrader(gates.size(), gateway);
+            /* Install event handlers. */
+            installEngineEventHandlers(engine);
+        } catch (DuplicatedTraderIdException | GatewayException | InvalidSubscriptionException ex) {
+            throw new CoreInstallException(ex.getMessage(), ex);
         }
+    }
+
+    private void installEngineEventHandlers(ITraderEngine engine) throws InvalidSubscriptionException {
+        var chain = sharedCtx.getInterceptorChain();
+        var src = engine.getEventSource();
+        src.subscribe(Trade.class, new TradeHandler(chain));
+        src.subscribe(Response.class, new ResponseHandler(chain));
+        src.subscribe(EngineRequestError.class, new RequestErrorHandler(chain));
+        src.subscribe(TraderRuntimeException.class, new TraderRuntimeExceptionHandler(coreLis));
+        src.subscribe(GatewayRuntimeException.class, new GatewayRuntimeExceptionHandler(coreLis));
+        src.subscribe(ServiceRuntimeStatus.class, new ServiceRuntimeStatusHandler(coreLis));
     }
 
     @Override
     public void installPlugin(IPlugin plugin) throws CoreInstallException {
         Objects.requireNonNull(plugin);
-        PluginContext pctx = new PluginContext(plugin,
-                                               this);
+        PluginContext pctx = new PluginContext(plugin, this);
         plugins.add(pctx);
         try {
             plugin.initialize(pctx);
         } catch (PluginException ex) {
-            throw new CoreInstallException(ex.getMessage(),
-                                           ex);
+            throw new CoreInstallException(ex.getMessage(), ex);
         }
     }
 
