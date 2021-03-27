@@ -118,16 +118,7 @@ public class MarketMaker implements IMarketMaker {
     }
 
     private void sell() {
-        RequestBucket head = askQue.getFirst();
-        while (head.getPrice() <= bidQue.getFirst().getPrice()) {
-            activeSell(head);
-            trimQueue();
-            head = askQue.getFirst();
-        }
-    }
-
-    private void activeSell(RequestBucket head) {
-        activeTrade(head, bidQue);
+        trade(askQue, bidQue, -1);
     }
 
     private void trimQueue() {
@@ -148,32 +139,29 @@ public class MarketMaker implements IMarketMaker {
     }
 
     private void buy() {
-        RequestBucket head = bidQue.getFirst();
-        while (head.getPrice() >= askQue.getFirst().getPrice()) {
-            activeBuy(head);
+        trade(bidQue, askQue, 1);
+    }
+
+    private void trade(LinkedList<RequestBucket> heads, LinkedList<RequestBucket> tos, int sign) {
+        RequestBucket head = heads.getFirst();
+        RequestBucket to = tos.getFirst();
+        while ((head.getPrice() - to.getPrice()) * sign >= 0) {
+            activeTrade(head, to);
             trimQueue();
-            head = bidQue.getFirst();
+            head = heads.getFirst();
+            to = tos.getFirst();
         }
     }
 
-    private void activeBuy(RequestBucket head) {
-        activeTrade(head, askQue);
-    }
-
-    private void activeTrade(RequestBucket head, LinkedList<RequestBucket> to) {
-        for (var bucket : to) {
-            var q = Math.min(head.getVolumn(), bucket.getVolumn());
+    private void activeTrade(RequestBucket head, RequestBucket to) {
+            var q = Math.min(head.getVolumn(), to.getVolumn());
             var r = new Request();
-            r.setPrice(bucket.getPrice());
+            r.setPrice(to.getPrice());
             r.setQuantity(q);
             r.setDirection(head.getDirection());
-            bucket.applyRequest(r);
+            to.applyRequest(r);
             r.setDirection(oppositeDirection(head.getDirection()));
             head.applyRequest(r);
-            if (head.getVolumn() == 0) {
-                break;
-            }
-        }
     }
 
     private int oppositeDirection(int direction) {
