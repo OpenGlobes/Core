@@ -93,12 +93,15 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
     public void applyRequest(Request request) {
         var vol = request.getQuantity();
         var it = iterator();
-        while (it.hasNext()) {
+        while (it.hasNext() && vol > 0) {
             var order = it.next();
             checkRequest(request, order);
             var traded = Math.min(vol, order.getQuantity() - order.getTradedVolumn());
             doOrder(traded, order);
             vol -= traded;
+        }
+        if (vol != 0) {
+            throw new IllegalStateException("Fail applying request with volumn diff: " + vol + ".");
         }
     }
 
