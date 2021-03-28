@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.GatewayException;
 import com.openglobes.core.ServiceRuntimeStatus;
 import com.openglobes.core.data.*;
 import com.openglobes.core.event.*;
@@ -117,9 +116,7 @@ public class TraderEngine implements ITraderEngine {
     }
 
     @Override
-    public void registerTrader(int traderId,
-                               ITraderGateway trader) throws DuplicatedTraderIdException,
-                                                             GatewayException {
+    public void registerTrader(int traderId, ITraderGateway trader) throws DuplicatedTraderIdException {
         Objects.requireNonNull(trader);
         if (traders.containsKey(traderId)) {
             throw new DuplicatedTraderIdException(Integer.toString(traderId));
@@ -184,7 +181,7 @@ public class TraderEngine implements ITraderEngine {
         traders.remove(traderId);
     }
 
-    private void addTrader(int traderId, ITraderGateway trader) throws GatewayException {
+    private void addTrader(int traderId, ITraderGateway trader) {
         var c = new TraderGatewayContext();
         c.setEnabled(false);
         c.setEngine(this);
@@ -432,10 +429,8 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void deleteRequest(Request request,
-                               TraderContext context) throws GatewayException,
-                                                             DestinatedIdNotFoundException,
-                                                             CountDownNotFoundException {
+    private void deleteRequest(Request request, TraderContext context)
+            throws DestinatedIdNotFoundException, CountDownNotFoundException {
         var ids = context.getDestinatedIds(request.getOrderId());
         if (ids == null) {
             throw new DestinatedIdNotFoundException("Source ID: " + request.getOrderId() + ".");
@@ -555,7 +550,6 @@ public class TraderEngine implements ITraderEngine {
     }
 
     private void forDelete(Request request) throws UnknownTraderIdException,
-                                                   GatewayException,
                                                    CountDownNotFoundException,
                                                    DestinatedIdNotFoundException {
         Objects.requireNonNull(request);
@@ -567,8 +561,7 @@ public class TraderEngine implements ITraderEngine {
     private void forNew(Request request,
                         Instrument instrument,
                         Properties properties,
-                        LocalDate tradingDay) throws GatewayException,
-                                                     UnknownTraderIdException,
+                        LocalDate tradingDay) throws UnknownTraderIdException,
                                                      IllegalQuantityException,
                                                      DataAccessException,
                                                      MoneyOverflowException,
@@ -602,26 +595,21 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void forwardDeleteRequest(Request request,
-                                      Integer traderId) throws UnknownTraderIdException,
-                                                               GatewayException,
-                                                               DestinatedIdNotFoundException,
-                                                               CountDownNotFoundException {
+    private void forwardDeleteRequest(Request request, Integer traderId)
+            throws UnknownTraderIdException, DestinatedIdNotFoundException,
+                   CountDownNotFoundException {
         var ctx = findContextByTraderId(traderId);
         deleteRequest(request, ctx);
     }
 
-    private void forwardNewRequest(Request request,
-                                   Integer traderId) throws GatewayException,
-                                                            UnknownTraderIdException {
+    private void forwardNewRequest(Request request, Integer traderId) throws UnknownTraderIdException {
         var ctx = findContextByTraderId(traderId);
         newRequest(request, ctx);
     }
 
-    private List<Contract> getAvailableContracts(Request request) throws ContractNotFoundException,
-                                                                         InvalidRequestOffsetException,
-                                                                         InvalidRequestDirectionException,
-                                                                         DataAccessException {
+    private List<Contract> getAvailableContracts(Request request)
+            throws ContractNotFoundException, InvalidRequestOffsetException,
+                   InvalidRequestDirectionException, DataAccessException {
         try (var conn = ds.getConnection()) {
             final var cs = conn.getContractsByInstrumentId(request.getInstrumentId());
             if (cs == null) {
@@ -830,10 +818,8 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void newRequest(Request request,
-                            TraderContext context) throws GatewayException {
-        Long destId = context.getDestinatedId(request.getOrderId(),
-                                              request.getQuantity());
+    private void newRequest(Request request, TraderContext context) {
+        Long destId = context.getDestinatedId(request.getOrderId(), request.getQuantity());
         request.setOrderId(destId);
         context.insert(request);
     }

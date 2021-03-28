@@ -28,8 +28,6 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
-
-    protected final Set<Long> orderIds = new HashSet<>(64);
     protected final LinkedList<Response> responses = new LinkedList<>();
 
     @Override
@@ -46,32 +44,20 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
         }
         addResponse(request,
                     OrderStatus.REJECTED,
+                    100,
                     "找不到报单");
-        throw new NoSuchElementException("Unknown order ID: " + orderId + ".");
     }
 
     public void enqueOrder(Request request) throws IllegalArgumentException {
         try {
             checkOffset(request);
-            checkOrderId(request);
             findBucketAtPrice(request).enqueueRequest(request);
-            orderIds.add(request.getOrderId());
         } catch (Throwable th) {
             throw new IllegalArgumentException(th.getMessage(), th);
         }
     }
 
-    protected void checkOrderId(Request request) {
-        var orderId = request.getOrderId();
-        if (orderId != null && orderIds.contains(orderId)) {
-            addResponse(request,
-                        OrderStatus.REJECTED,
-                        "重复报单");
-            throw new IllegalArgumentException("Duplicated order ID: " + orderId + ".");
-        }
-    }
-
-    private void addResponse(Request request, int status, String msg) {
+    public static Response createResponseWithError(Request request, int status, int code, String msg) {
         var r = new Response();
         r.setAction(request.getAction());
         r.setResponseId(Utils.nextId());
@@ -81,12 +67,16 @@ public abstract class AbstractOrderQueue extends LinkedList<RequestBucket> {
         r.setInstrumentId(request.getInstrumentId());
         r.setOrderId(request.getOrderId());
         r.setSignature(UUID.randomUUID().toString());
-        r.setStatusCode(0);
+        r.setStatusCode(code);
         r.setStatusMessage(msg);
         r.setTimestamp(ZonedDateTime.now());
         r.setTraderId(Integer.MAX_VALUE);
         r.setTradingDay(LocalDate.now());
-        responses.add(r);
+        return r;
+    }
+
+    private void addResponse(Request request, int status, int code, String msg) {
+        responses.add(createResponseWithError(request, status, code, msg));
     }
 
     protected RequestBucket findBucketAtPrice(Request request) {

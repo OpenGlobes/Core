@@ -157,6 +157,9 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
             case OrderStatus.QUEUED:
                 r.setStatusMessage("部分成交队列中");
                 break;
+            case OrderStatus.DELETED:
+                r.setStatusMessage("已撤单");
+                break;
             default:
                 throw new IllegalArgumentException("Unexpected order status: " + order.getStatus() + ".");
         }
@@ -202,8 +205,8 @@ class RequestBucket extends LinkedList<Order> implements IRequestBucket {
         var v = 0L;
         for (var o : this) {
             var x = o.getQuantity() - o.getTradedVolumn();
-            if (x <= 0) {
-                throw new IllegalStateException("Order has been completed or over completed.");
+            if (x < 0) {
+                throw new IllegalStateException("Order volumn is underflow.");
             }
             v += x;
         }

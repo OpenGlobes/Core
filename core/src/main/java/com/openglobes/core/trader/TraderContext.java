@@ -16,8 +16,6 @@
  */
 package com.openglobes.core.trader;
 
-import com.openglobes.core.GatewayException;
-
 /**
  * @author Hongbao Chen
  * @since 1.0
@@ -54,7 +52,7 @@ public class TraderContext extends IdTranslator {
         return ctx.getTraderId();
     }
 
-    void insert(Request request) throws GatewayException {
+    void insert(Request request) {
         ctx.getTrader().insert(request);
     }
 

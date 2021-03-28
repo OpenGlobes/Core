@@ -16,17 +16,15 @@
  */
 package com.openglobes.core.stick;
 
-import com.openglobes.core.GatewayException;
-
 /**
  * @author Hongbao Chen
  * @since 1.0
  */
 public interface IMarketGateway {
 
-    void setHandler(IMarketGatewayHandler handler) throws GatewayException;
+    void setHandler(IMarketGatewayHandler handler) ;
 
-    void subscribe(String instrumentId) throws GatewayException;
+    void subscribe(String instrumentId);
 
     int getStatus();
 

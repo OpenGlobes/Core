@@ -29,7 +29,7 @@ import java.util.Collection;
 public interface IMarketMaker {
     void enqueueRequest(Request request);
 
-    void matchTrade(int direction);
+    void matchTrade(Request request);
 
     Collection<Trade> getTradeUpdates();
 

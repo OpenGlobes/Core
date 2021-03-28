@@ -137,7 +137,7 @@ public class Core implements ICore {
             engine.registerTrader(gates.size(), gateway);
             /* Install event handlers. */
             installEngineEventHandlers(engine);
-        } catch (DuplicatedTraderIdException | GatewayException | InvalidSubscriptionException ex) {
+        } catch (DuplicatedTraderIdException | InvalidSubscriptionException ex) {
             throw new CoreInstallException(ex.getMessage(), ex);
         }
     }

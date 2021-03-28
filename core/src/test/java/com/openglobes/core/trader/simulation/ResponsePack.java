@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Hongbao Chen <chenhongbao@outlook.com>
+ * Copyright (c) 2020-2021. Hongbao Chen <chenhongbao@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,24 +14,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.openglobes.core;
 
-/**
- * Exception thrown by {@link ITraderService} with code and message.
- *
- * @author Hongbao Chen
- * @since 1.0
- */
-public class GatewayException extends ServiceStatus {
+package com.openglobes.core.trader.simulation;
 
-    private static final long serialVersionUID = 4875322229246237L;
+import com.openglobes.core.trader.Request;
+import com.openglobes.core.trader.Response;
+import com.openglobes.core.trader.Trade;
 
-    public GatewayException(Integer code, String msg) {
-        super(code, msg);
-    }
+import java.util.LinkedList;
+import java.util.List;
 
-    public GatewayException(Integer code, String message, Throwable cause) {
-        super(code, message, cause);
-    }
+public class ResponsePack {
+    public final List<Trade> trades = new LinkedList<>();
+    public final List<Response> goodResponses = new LinkedList<>();
+    public final List<Request> badRequests = new LinkedList<>();
+    public final List<Response> badResponses = new LinkedList<>();
+
+    public ResponsePack() {}
 
 }

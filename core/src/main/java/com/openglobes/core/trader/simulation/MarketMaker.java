@@ -104,8 +104,11 @@ public class MarketMaker implements IMarketMaker {
     }
 
     @Override
-    public void matchTrade(int direction) {
-        switch (direction) {
+    public void matchTrade(Request request) {
+        if (!hasCounterParty()) {
+            return;
+        }
+        switch (request.getDirection()) {
             case Direction.BUY:
                 buy();
                 break;
@@ -113,8 +116,12 @@ public class MarketMaker implements IMarketMaker {
                 sell();
                 break;
             default:
-                throw new IllegalArgumentException("Illegal direction: " + direction + ".");
+                throw new IllegalArgumentException("Illegal direction: " + request.getDirection() + ".");
         }
+    }
+
+    private boolean hasCounterParty() {
+        return !askQue.isEmpty() && !bidQue.isEmpty();
     }
 
     private void sell() {

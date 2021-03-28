@@ -1,7 +1,5 @@
 package com.openglobes.core.trader;
 
-import com.openglobes.core.GatewayException;
-
 /**
  * Underlying service that provides access to trading facilities.
  *
@@ -10,9 +8,9 @@ import com.openglobes.core.GatewayException;
  */
 public interface ITraderGateway {
 
-    void setHandler(ITraderGatewayHandler handler) throws GatewayException;
+    void setHandler(ITraderGatewayHandler handler);
 
-    void insert(Request request) throws GatewayException;
+    void insert(Request request);
 
     int getStatus();
 

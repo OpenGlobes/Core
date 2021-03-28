@@ -16,16 +16,14 @@
  */
 package com.openglobes.core.trader.simulation;
 
-import com.openglobes.core.GatewayException;
 import com.openglobes.core.GatewayRuntimeException;
 import com.openglobes.core.event.EventSource;
 import com.openglobes.core.event.InvalidSubscriptionException;
 import com.openglobes.core.event.NoSubscribedClassException;
 import com.openglobes.core.trader.*;
+import com.openglobes.core.utils.Loggers;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Hongbao Chen
@@ -33,6 +31,8 @@ import java.util.Objects;
  */
 public class SimulatedTraderGateway implements ITraderGateway {
 
+    protected final Set<Long> orderIds = new HashSet<>(64);
+    protected final LinkedList<Response> responses = new LinkedList<>();
     private final TraderGatewayInfo info = new TraderGatewayInfo();
     private final Map<String, MarketMaker> makers = new HashMap<>();
     private final EventSource es = new EventSource();
@@ -43,10 +43,25 @@ public class SimulatedTraderGateway implements ITraderGateway {
         try {
             es.subscribe(Request.class, event -> {
                 var request = event.get();
-                var m = makers.computeIfAbsent(request.getInstrumentId(), k -> new MarketMaker());
-                m.enqueueRequest(request);
+                var m = makers.computeIfAbsent(request.getInstrumentId(),
+                                               k -> new MarketMaker());
+                if (!isRequestValid(request)) {
+                    invokeHandler(m, request);
+                    return;
+                }
+                try {
+                    m.enqueueRequest(request);
+                } catch (Throwable th) {
+                    Loggers.getLogger(SimulatedTraderGateway.class.getCanonicalName())
+                           .severe(th.getMessage());
+                }
                 invokeHandler(m, request);
-                m.matchTrade(request.getDirection());
+                try {
+                    m.matchTrade(request);
+                } catch (Throwable th) {
+                    Loggers.getLogger(SimulatedTraderGateway.class.getCanonicalName())
+                           .severe(th.getMessage());
+                }
                 invokeHandler(m, request);
             });
         } catch (InvalidSubscriptionException e) {
@@ -54,16 +69,62 @@ public class SimulatedTraderGateway implements ITraderGateway {
         }
     }
 
+    private void addResponse(Request request, int status, int code, String msg) {
+        responses.add(AbstractOrderQueue.createResponseWithError(request, status, code, msg));
+    }
+
+    private boolean isRequestValid(Request request) {
+        if (request.getAction() != ActionType.NEW &&
+            request.getAction() != ActionType.DELETE) {
+            addResponse(request,
+                        OrderStatus.REJECTED,
+                        101,
+                        "请求类型错误");
+            return false;
+        }
+        if (request.getAction() == ActionType.NEW) {
+            return isNewRequestValid(request);
+        }
+        return true;
+    }
+
+    private boolean isNewRequestValid(Request request) {
+        var orderId = request.getOrderId();
+        if (orderId != null && orderIds.contains(orderId)) {
+            addResponse(request,
+                        OrderStatus.REJECTED,
+                        102,
+                        "重复报单");
+            return false;
+        }
+        if (request.getDirection() != Direction.BUY &&
+            request.getDirection() != Direction.SELL) {
+            addResponse(request,
+                        OrderStatus.REJECTED,
+                        103,
+                        "交易方向错误");
+            return false;
+        }
+        orderIds.add(orderId);
+        return true;
+    }
+
     private void invokeHandler(MarketMaker m, Request r) {
         m.getTradeUpdates().forEach(trade -> {
             try {
+                if (trade.getOrderId() == null) {
+                    return;
+                }
                 handler.onTrade(trade);
             } catch (Throwable th) {
                 handler.onError(new GatewayRuntimeException(-1, th.getMessage(), th));
             }
         });
-        m.getResponseUpdates().forEach(response -> {
+        getResponseUpdates(m).forEach(response -> {
             try {
+                if (response.getOrderId() == null) {
+                    return;
+                }
                 if (response.getStatus() == OrderStatus.REJECTED) {
                     handler.onError(r, response);
                 } else {
@@ -75,13 +136,21 @@ public class SimulatedTraderGateway implements ITraderGateway {
         });
     }
 
+    private Collection<Response> getResponseUpdates(MarketMaker m) {
+        var r = new LinkedList<Response>();
+        r.addAll(m.getResponseUpdates());
+        r.addAll(responses);
+        responses.clear();
+        return r;
+    }
+
     @Override
     public TraderGatewayInfo getGatewayInfo() {
         return info;
     }
 
     @Override
-    public void setHandler(ITraderGatewayHandler handler) throws GatewayException {
+    public void setHandler(ITraderGatewayHandler handler) {
         this.handler = handler;
     }
 
@@ -95,13 +164,13 @@ public class SimulatedTraderGateway implements ITraderGateway {
     }
 
     @Override
-    public void insert(Request request) throws GatewayException {
+    public void insert(Request request) {
         Objects.requireNonNull(request);
         Objects.requireNonNull(request.getInstrumentId());
         try {
             es.publish(Request.class, request);
         } catch (NoSubscribedClassException e) {
-            throw new GatewayException(-1, e.getMessage(), e);
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 
