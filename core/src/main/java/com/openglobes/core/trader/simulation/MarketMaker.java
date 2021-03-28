@@ -105,9 +105,6 @@ public class MarketMaker implements IMarketMaker {
 
     @Override
     public void matchTrade(Request request) {
-        if (!hasCounterParty()) {
-            return;
-        }
         switch (request.getDirection()) {
             case Direction.BUY:
                 buy();
@@ -150,6 +147,9 @@ public class MarketMaker implements IMarketMaker {
     }
 
     private void trade(LinkedList<RequestBucket> heads, LinkedList<RequestBucket> tos, int sign) {
+        if (!hasCounterParty()) {
+            return;
+        }
         RequestBucket head = heads.getFirst();
         RequestBucket to = tos.getFirst();
         while ((head.getPrice() - to.getPrice()) * sign >= 0) {
