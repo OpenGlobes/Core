@@ -63,11 +63,9 @@ public interface ITraderEngineAlgorithm {
                                                                InstrumentNotFoundException,
                                                                WrongOrderIdException;
 
-    double getAmount(double price,
-                     Instrument instrument);
+    double getAmount(double price, Instrument instrument);
 
-    double getMargin(double price,
-                     Instrument instrument);
+    double getMargin(double price, Instrument instrument);
 
     double getCommission(double price,
                          Instrument instrument,

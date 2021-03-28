@@ -147,15 +147,15 @@ class Session implements ISession {
         }
     }
 
-    private <T> void doRequest(Class<T> clazz, T request, Properties properties) throws AcquireInformationException,
-                                                                                        ForwardRequestException {
+    private <T> void doRequest(Class<T> clazz, T request, Properties properties)
+            throws AcquireInformationException, ForwardRequestException {
         if (clazz == Request.class) {
             doRequest((Request) request, properties);
         }
     }
 
-    private void doRequest(Request request, Properties properties) throws AcquireInformationException,
-                                                                          ForwardRequestException {
+    private void doRequest(Request request, Properties properties)
+            throws AcquireInformationException, ForwardRequestException {
         try {
             adjustDestId(request);
             req.getSharedContext().getInterceptorChain()

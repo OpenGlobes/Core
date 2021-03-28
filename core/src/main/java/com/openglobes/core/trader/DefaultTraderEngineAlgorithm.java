@@ -133,8 +133,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     }
 
     @Override
-    public double getMargin(double price,
-                            Instrument instrument) {
+    public double getMargin(double price, Instrument instrument) {
         Objects.requireNonNull(instrument, instrument.getInstrumentId());
         var type = instrument.getMarginType();
         Objects.requireNonNull(type, instrument.getInstrumentId() + " margin type.");
@@ -153,10 +152,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                           Collection<Contract> contracts,
                           Collection<Trade> trades,
                           Collection<Response> responses,
-                          Map<String, Instrument> instruments) throws InvalidContractException,
-                                                                      QuantityOverflowException,
-                                                                      InstrumentNotFoundException,
-                                                                      WrongOrderIdException {
+                          Map<String, Instrument> instruments)
+            throws InvalidContractException, QuantityOverflowException, InstrumentNotFoundException,
+                   WrongOrderIdException {
         var r = new Order();
         /*
          * Don't change the order of calls.
@@ -180,18 +178,13 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                              Collection<Margin> margins,
                                              Map<String, SettlementPrice> prices,
                                              Map<String, Instrument> instruments,
-                                             LocalDate tradingDay) throws InvalidContractDirectionException,
-                                                                          IllegalInstrumentIdException,
-                                                                          InvalidContractIdException,
-                                                                          MarginNotFoundException,
-                                                                          CommissionNotFoundException,
-                                                                          SettlementNotFoundException,
-                                                                          InvalidSettlementPriceException,
-                                                                          InstrumentNotFoundException,
-                                                                          InvalidContractStatusException,
-                                                                          IllegalContractStatusException,
-                                                                          InvalidFeeStatusException,
-                                                                          InvalidCommissionException {
+                                             LocalDate tradingDay)
+            throws InvalidContractDirectionException, IllegalInstrumentIdException,
+                   InvalidContractIdException, MarginNotFoundException,
+                   SettlementNotFoundException, InvalidSettlementPriceException,
+                   InstrumentNotFoundException, InvalidContractStatusException,
+                   IllegalContractStatusException, InvalidFeeStatusException,
+                   InvalidCommissionException {
         Objects.requireNonNull(contracts);
         final var lp = new HashMap<String, Position>(64);
         final var sp = new HashMap<String, Position>(64);
@@ -284,9 +277,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                     Collection<Commission> commissions,
                                     Margin margin,
                                     Double price,
-                                    Instrument instrument) throws InvalidCommissionException,
-                                                                  InvalidContractStatusException,
-                                                                  InvalidFeeStatusException {
+                                    Instrument instrument)
+            throws InvalidCommissionException, InvalidContractStatusException, InvalidFeeStatusException {
         if (p.getAmount() == null) {
             p.setAmount(c.getOpenAmount());
         } else {
@@ -308,8 +300,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         } else {
             p.setFrozenCommission(p.getFrozenCommission() + frozenCommission);
         }
-        Long frozenCloseVolumn = getProperVolumn(c.getStatus(),
-                                                 ContractStatus.CLOSING);
+        Long frozenCloseVolumn = getProperVolumn(c.getStatus(), ContractStatus.CLOSING);
         var volumn = frozenCloseVolumn;
         if (p.getVolumn() == null) {
             p.setVolumn(volumn);
@@ -345,9 +336,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                  Collection<Commission> commissions,
                                  Margin margin,
                                  Double price,
-                                 Instrument instrument) throws InvalidCommissionException,
-                                                               InvalidContractStatusException,
-                                                               InvalidFeeStatusException {
+                                 Instrument instrument)
+            throws InvalidCommissionException, InvalidContractStatusException,
+                   InvalidFeeStatusException {
         if (p.getAmount() == null) {
             p.setAmount(c.getOpenAmount());
         } else {
@@ -388,9 +379,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
     private void addOpeningContract(Position p,
                                     Contract c,
                                     Collection<Commission> commissions,
-                                    Margin margin) throws InvalidCommissionException,
-                                                          InvalidContractStatusException,
-                                                          InvalidFeeStatusException {
+                                    Margin margin)
+            throws InvalidCommissionException, InvalidContractStatusException,
+                   InvalidFeeStatusException {
         Double frozenCommission = getProperCommission(c.getContractId(),
                                                       commissions,
                                                       FeeStatus.FORZEN);
@@ -399,8 +390,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         } else {
             p.setFrozenCommission(p.getFrozenCommission() + frozenCommission);
         }
-        Long frozenOpenVolumn = getProperVolumn(c.getStatus(),
-                                                ContractStatus.OPENING);
+        Long frozenOpenVolumn = getProperVolumn(c.getStatus(), ContractStatus.OPENING);
         if (p.getFrozenOpenVolumn() == null) {
             p.setFrozenOpenVolumn(frozenOpenVolumn);
         } else {
@@ -416,9 +406,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private void addPreContract(Position p,
-                                Contract c,
-                                Margin margin) {
+    private void addPreContract(Position p, Contract c, Margin margin) {
         if (p.getPreAmount() == null) {
             p.setPreAmount(c.getOpenAmount());
         } else {
@@ -441,10 +429,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                 Collection<Commission> commissions,
                                 Margin margin,
                                 Double price,
-                                Instrument instrument) throws InvalidContractStatusException,
-                                                              IllegalContractStatusException,
-                                                              InvalidCommissionException,
-                                                              InvalidFeeStatusException {
+                                Instrument instrument)
+            throws InvalidContractStatusException, IllegalContractStatusException,
+                   InvalidCommissionException, InvalidFeeStatusException {
         var status = c.getStatus();
         if (status == null) {
             throw new IllegalContractStatusException("Contract ID:" + c.getContractId() + ".");
@@ -479,10 +466,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                        margin);
     }
 
-    private void addTodayContract(Position p,
-                                  Contract c,
-                                  Margin margin) throws InvalidFeeStatusException,
-                                                        InvalidContractStatusException {
+    private void addTodayContract(Position p, Contract c, Margin margin)
+            throws InvalidFeeStatusException, InvalidContractStatusException {
         if (p.getTodayAmount() == null) {
             p.setTodayAmount(c.getOpenAmount());
         } else {
@@ -506,9 +491,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private void addTodayOpenContract(Position p,
-                                      Contract c,
-                                      Margin margin) {
+    private void addTodayOpenContract(Position p, Contract c, Margin margin) {
         if (p.getTodayOpenAmount() == null) {
             p.setTodayOpenAmount(c.getOpenAmount());
         } else {
@@ -532,10 +515,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
                                   Margin margin,
                                   Double price,
                                   Instrument instrument)
-            throws InvalidContractStatusException,
-                   IllegalContractStatusException,
-                   InvalidFeeStatusException,
-                   InvalidCommissionException {
+            throws InvalidContractStatusException, IllegalContractStatusException,
+                   InvalidFeeStatusException, InvalidCommissionException {
         var status = c.getStatus();
         if (status == null) {
             throw new IllegalContractStatusException("Contract ID:" + c.getContractId() + ".");
@@ -588,8 +569,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private Collection<Commission> findCommission(Long contractId,
-                                                  Map<Long, Set<Commission>> commissions) throws CommissionNotFoundException {
+    private Collection<Commission> findCommission(
+            Long contractId, Map<Long, Set<Commission>> commissions) {
         var v = commissions.get(contractId);
         if (v == null) {
             return new HashSet<>(0);
@@ -597,8 +578,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return v;
     }
 
-    private Instrument findInstrumentProperty(String key,
-                                              Map<String, Instrument> instruments)
+    private Instrument findInstrumentProperty(String key, Map<String, Instrument> instruments)
             throws InstrumentNotFoundException {
         var v = instruments.get(key);
         if (v == null) {
@@ -607,8 +587,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return v;
     }
 
-    private Margin findMargin(Long contractId,
-                              Map<Long, Margin> margins) throws MarginNotFoundException {
+    private Margin findMargin(Long contractId, Map<Long, Margin> margins)
+            throws MarginNotFoundException {
         var v = margins.get(contractId);
         if (v == null) {
             throw new MarginNotFoundException("Contract ID:" + contractId + ".");
@@ -629,20 +609,16 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return p;
     }
 
-    private double getCommission(double price,
-                                 Instrument instrument,
-                                 Integer offset) throws InvalidRequestOffsetException {
+    private double getCommission(double price, Instrument instrument, Integer offset)
+            throws InvalidRequestOffsetException {
         Objects.requireNonNull(instrument,
                                instrument.getInstrumentId());
         var ctype = instrument.getCommissionType();
-        Objects.requireNonNull(ctype,
-                               instrument.getInstrumentId() + " commission type.");
+        Objects.requireNonNull(ctype, instrument.getInstrumentId() + " commission type.");
         var ratio = getProperCommissionRatio(instrument, offset);
-        Objects.requireNonNull(ratio,
-                               instrument.getInstrumentId() + " commission ratio.");
+        Objects.requireNonNull(ratio, instrument.getInstrumentId() + " commission ratio.");
         if (ctype == RatioType.BY_MONEY) {
-            double m = getAmount(price,
-                                 instrument);
+            double m = getAmount(price, instrument);
             return m * ratio;
         } else {
             return ratio;
@@ -685,10 +661,9 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return v;
     }
 
-    private Double getProperCommissionRatio(Instrument instrument,
-                                            Integer offset) throws InvalidRequestOffsetException {
-        Objects.requireNonNull(instrument,
-                               instrument.getInstrumentId());
+    private Double getProperCommissionRatio(Instrument instrument, Integer offset)
+            throws InvalidRequestOffsetException {
+        Objects.requireNonNull(instrument, instrument.getInstrumentId());
         if (offset == Offset.OPEN) {
             return instrument.getCommissionOpenRatio();
         } else {
@@ -716,9 +691,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return deposit;
     }
 
-    private double getProperMargin(Long contractId,
-                                   Margin margin,
-                                   Integer status) throws InvalidFeeStatusException {
+    private double getProperMargin(Long contractId, Margin margin, Integer status)
+            throws InvalidFeeStatusException {
         if (Objects.equals(contractId, margin.getContractId())
             && Objects.equals(margin.getStatus(), status)) {
             return margin.getMargin();
@@ -727,18 +701,14 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         }
     }
 
-    private double getProperPositionProfit(Contract c,
-                                           Double price,
-                                           Instrument instrument) {
+    private double getProperPositionProfit(Contract c, Double price, Instrument instrument) {
         var a = getAmount(price, instrument);
         return getProperProfit(c.getOpenAmount(),
                                a,
                                c.getDirection());
     }
 
-    private double getProperProfit(double pre,
-                                   double current,
-                                   Integer direction) {
+    private double getProperProfit(double pre, double current, Integer direction) {
         Objects.requireNonNull(direction);
         if (direction == Direction.BUY) {
             return current - pre;
@@ -851,8 +821,7 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         order.setTradingDay(request.getTradingDay());
     }
 
-    private void setTimes(Order order,
-                          Collection<Trade> trades) {
+    private void setTimes(Order order, Collection<Trade> trades) {
         Objects.requireNonNull(trades);
         if (trades.isEmpty()) {
             return;
@@ -863,8 +832,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         order.setUpdateTimestamp(ts.getLast().getTimestamp());
     }
 
-    private void setVolumnAmount(Order order,
-                                 Collection<Contract> contracts) throws InvalidContractException {
+    private void setVolumnAmount(Order order, Collection<Contract> contracts)
+            throws InvalidContractException {
         double amount = 0D;
         long tradedVolumn = 0L;
         for (var c : contracts) {
@@ -881,8 +850,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
 
     private void setVolumnAmount(Order order,
                                  Collection<Trade> trades,
-                                 Map<String, Instrument> instruments) throws WrongOrderIdException,
-                                                                             InstrumentNotFoundException {
+                                 Map<String, Instrument> instruments)
+            throws WrongOrderIdException, InstrumentNotFoundException {
         double amount = 0.0D;
         long volumn = 0L;
         for (var t : trades) {
