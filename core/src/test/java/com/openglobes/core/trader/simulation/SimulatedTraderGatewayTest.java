@@ -424,4 +424,116 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
         assertEquals("c2109", badRequests(9999L).get(0).getInstrumentId());
         assertEquals(Direction.BUY, badRequests(9999L).get(0).getDirection());
     }
+
+    @Test
+    @DisplayName("Sweep all orders.")
+    public void testSweep() {
+        var r = SimGatewayUtils.createNewRequest(25L,
+                                                 208L,
+                                                 "c2109",
+                                                 2688.0D,
+                                                 20L,
+                                                 Direction.SELL,
+                                                 Offset.CLOSE_YD);
+        gateway.insert(r);
+        waitResponse();
+
+        /*
+         * Check responses for Order(25L).
+         */
+        assertEquals(2, goodResponses(25L).size());
+        assertEquals(2, trades(25L).size());
+        assertEquals(0, badRequests(25L).size());
+        assertEquals(0, badResponses(25L).size());
+
+        assertEquals(OrderStatus.ACCEPTED, goodResponses(25L).get(0).getStatus());
+        assertEquals(OrderStatus.QUEUED, goodResponses(25L).get(1).getStatus());
+
+        assertEquals(25L, goodResponses(25L).get(1).getOrderId());
+        assertEquals(Direction.SELL, goodResponses(25L).get(1).getDirection());
+        assertEquals(Offset.CLOSE_YD, goodResponses(25L).get(1).getOffset());
+        assertEquals(ActionType.NEW, goodResponses(25L).get(1).getAction());
+        assertEquals("c2109", goodResponses(25L).get(1).getInstrumentId());
+        assertEquals(0, goodResponses(25L).get(1).getStatusCode());
+        assertEquals("部分成交队列中", goodResponses(25L).get(1).getStatusMessage());
+
+        /*
+         * Check trades for Order(23L).
+         */
+        assertEquals(5, trades(25L).get(0).getQuantity());
+        assertEquals(2690.0D, trades(25L).get(0).getPrice(), 0.5D);
+        assertEquals(Direction.SELL, trades(25L).get(0).getDirection());
+        assertEquals(Offset.CLOSE_YD, trades(25L).get(0).getOffset());
+        assertEquals("c2109", trades(25L).get(0).getInstrumentId());
+        assertEquals(25L, trades(25L).get(0).getOrderId());
+        assertEquals(ActionType.NEW, trades(25L).get(0).getAction());
+
+        assertEquals(4, trades(25L).get(1).getQuantity());
+        assertEquals(2689.0D, trades(25L).get(1).getPrice(), 0.5D);
+        assertEquals(Direction.SELL, trades(25L).get(1).getDirection());
+        assertEquals(Offset.CLOSE_YD, trades(25L).get(1).getOffset());
+        assertEquals("c2109", trades(25L).get(1).getInstrumentId());
+        assertEquals(25L, trades(25L).get(0).getOrderId());
+        assertEquals(ActionType.NEW, trades(25L).get(1).getAction());
+
+        /*
+         * Check responses for Order(1L).
+         */
+        assertEquals(2, goodResponses(1L).size());
+        assertEquals(1, trades(1L).size());
+        assertEquals(0, badRequests(1L).size());
+        assertEquals(0, badResponses(1L).size());
+
+        assertEquals(OrderStatus.ACCEPTED, goodResponses(1L).get(0).getStatus());
+        assertEquals(OrderStatus.ALL_TRADED, goodResponses(1L).get(1).getStatus());
+
+        assertEquals(1L, goodResponses(1L).get(1).getOrderId());
+        assertEquals(Direction.BUY, goodResponses(1L).get(1).getDirection());
+        assertEquals(Offset.OPEN, goodResponses(1L).get(1).getOffset());
+        assertEquals(ActionType.NEW, goodResponses(1L).get(1).getAction());
+        assertEquals("c2109", goodResponses(1L).get(1).getInstrumentId());
+        assertEquals(0, goodResponses(1L).get(1).getStatusCode());
+        assertEquals("全部成交", goodResponses(1L).get(1).getStatusMessage());
+
+        /*
+         * Check trades for Order(1L).
+         */
+        assertEquals(5, trades(1L).get(0).getQuantity());
+        assertEquals(2690.0D, trades(1L).get(0).getPrice(), 0.5D);
+        assertEquals(Direction.BUY, trades(1L).get(0).getDirection());
+        assertEquals(Offset.OPEN, trades(1L).get(0).getOffset());
+        assertEquals("c2109", trades(1L).get(0).getInstrumentId());
+        assertEquals(1L, trades(1L).get(0).getOrderId());
+        assertEquals(ActionType.NEW, trades(1L).get(0).getAction());
+
+        /*
+         * Check responses for Order(2L).
+         */
+        assertEquals(2, goodResponses(2L).size());
+        assertEquals(1, trades(2L).size());
+        assertEquals(0, badRequests(2L).size());
+        assertEquals(0, badResponses(2L).size());
+
+        assertEquals(OrderStatus.ACCEPTED, goodResponses(2L).get(0).getStatus());
+        assertEquals(OrderStatus.ALL_TRADED, goodResponses(2L).get(1).getStatus());
+
+        assertEquals(2L, goodResponses(2L).get(1).getOrderId());
+        assertEquals(Direction.BUY, goodResponses(2L).get(1).getDirection());
+        assertEquals(Offset.CLOSE_TODAY, goodResponses(2L).get(1).getOffset());
+        assertEquals(ActionType.NEW, goodResponses(2L).get(1).getAction());
+        assertEquals("c2109", goodResponses(2L).get(1).getInstrumentId());
+        assertEquals(0, goodResponses(2L).get(1).getStatusCode());
+        assertEquals("全部成交", goodResponses(2L).get(1).getStatusMessage());
+
+        /*
+         * Check trades for Order(2L).
+         */
+        assertEquals(4, trades(2L).get(0).getQuantity());
+        assertEquals(2689.0D, trades(2L).get(0).getPrice(), 0.5D);
+        assertEquals(Direction.BUY, trades(2L).get(0).getDirection());
+        assertEquals(Offset.CLOSE_TODAY, trades(2L).get(0).getOffset());
+        assertEquals("c2109", trades(2L).get(0).getInstrumentId());
+        assertEquals(2L, trades(2L).get(0).getOrderId());
+        assertEquals(ActionType.NEW, trades(2L).get(0).getAction());
+    }
 }

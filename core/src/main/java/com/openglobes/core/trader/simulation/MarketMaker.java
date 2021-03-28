@@ -155,6 +155,9 @@ public class MarketMaker implements IMarketMaker {
         while ((head.getPrice() - to.getPrice()) * sign >= 0) {
             activeTrade(head, to);
             trimQueue();
+            if (!hasCounterParty()) {
+                break;
+            }
             head = heads.getFirst();
             to = tos.getFirst();
         }
