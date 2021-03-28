@@ -23,7 +23,6 @@ import com.openglobes.core.utils.Loggers;
 import com.openglobes.core.utils.Utils;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -233,15 +232,10 @@ public class TraderEngine implements ITraderEngine {
         callOnStatusChange(this.status);
     }
 
-    private Collection<Contract> checkAssetsClose(Request request,
-                                                  Instrument instrument,
-                                                  LocalDate tradingDay) throws IllegalQuantityException,
-                                                                               QuantityOverflowException,
-                                                                               ContractNotFoundException,
-                                                                               InvalidRequestOffsetException,
-                                                                               InvalidRequestDirectionException,
-                                                                               DataAccessException,
-                                                                               MarginNotFoundException {
+    private Collection<Contract> checkAssetsClose(Request request, Instrument instrument)
+            throws IllegalQuantityException, QuantityOverflowException, ContractNotFoundException,
+                   InvalidRequestOffsetException, InvalidRequestDirectionException, DataAccessException,
+                   MarginNotFoundException, NoTraderException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -257,7 +251,7 @@ public class TraderEngine implements ITraderEngine {
                                        instrument,
                                        request.getOffset(),
                                        ctr,
-                                       tradingDay);
+                                       request.getTradingDay());
             setFrozenClose(c,
                            ctr,
                            getMarginByContract(ctr));
@@ -265,12 +259,9 @@ public class TraderEngine implements ITraderEngine {
         return r;
     }
 
-    private void checkAssetsOpen(Request request,
-                                 Instrument instrument,
-                                 LocalDate tradingDay) throws IllegalQuantityException,
-                                                              DataAccessException,
-                                                              MoneyOverflowException,
-                                                              AlgorithmException {
+    private void checkAssetsOpen(Request request, Instrument instrument)
+            throws IllegalQuantityException, DataAccessException, MoneyOverflowException,
+                   AlgorithmException, NoTraderException {
         if (request.getQuantity() < 0) {
             throw new IllegalQuantityException("Illegal request quantity.");
         }
@@ -281,7 +272,7 @@ public class TraderEngine implements ITraderEngine {
                                    instrument,
                                    request.getOffset(),
                                    null,
-                                   tradingDay);
+                                   request.getTradingDay());
         var total = request.getQuantity() * (m + c);
         var available = getAvailableMoney();
         if (available < total) {
@@ -457,19 +448,15 @@ public class TraderEngine implements ITraderEngine {
             if (null == detail.getRequest().getAction()) {
                 throw new IllegalRequestActionException("Action null ptr.");
             }
-            var day = conn.getTradingDay();
-            Objects.requireNonNull(day,
-                                   "Trading day unavailable.");
-            detail.getRequest().setTradingDay(day.getTradingDay());
+            var ctx = findContextByTraderId(detail.getRequest().getTraderId());
+            var tradingDay = ctx.getGatewayInfo().getTradingDay();
+            detail.getRequest().setTradingDay(tradingDay);
             switch (detail.getRequest().getAction()) {
                 case ActionType.DELETE:
                     forDelete(detail.getRequest());
                     break;
                 case ActionType.NEW:
-                    forNew(detail.getRequest(),
-                           detail.getInstrument(),
-                           detail.getProperties(),
-                           day.getTradingDay());
+                    forNew(detail.getRequest(), detail.getInstrument());
                     break;
                 default:
                     throw new IllegalRequestActionException(
@@ -558,22 +545,19 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void forNew(Request request,
-                        Instrument instrument,
-                        Properties properties,
-                        LocalDate tradingDay) throws UnknownTraderIdException,
-                                                     IllegalQuantityException,
-                                                     DataAccessException,
-                                                     MoneyOverflowException,
-                                                     TraderDisabledException,
-                                                     NoTraderException,
-                                                     QuantityOverflowException,
-                                                     ContractNotFoundException,
-                                                     InvalidRequestOffsetException,
-                                                     InvalidRequestDirectionException,
-                                                     DeepCopyException,
-                                                     AlgorithmException,
-                                                     MarginNotFoundException {
+    private void forNew(Request request, Instrument instrument) throws UnknownTraderIdException,
+                                                                       IllegalQuantityException,
+                                                                       DataAccessException,
+                                                                       MoneyOverflowException,
+                                                                       TraderDisabledException,
+                                                                       NoTraderException,
+                                                                       QuantityOverflowException,
+                                                                       ContractNotFoundException,
+                                                                       InvalidRequestOffsetException,
+                                                                       InvalidRequestDirectionException,
+                                                                       DeepCopyException,
+                                                                       AlgorithmException,
+                                                                       MarginNotFoundException {
         checkDataSourceAlgorithmNotNull();
         Objects.requireNonNull(instrument);
         /*
@@ -583,10 +567,10 @@ public class TraderEngine implements ITraderEngine {
         synchronized (this) {
             if (request.getOffset() == Offset.OPEN) {
                 decideTrader(request);
-                checkAssetsOpen(request, instrument, tradingDay);
+                checkAssetsOpen(request, instrument);
                 forwardNewRequest(request, request.getTraderId());
             } else {
-                var cs = checkAssetsClose(request, instrument, tradingDay);
+                var cs = checkAssetsClose(request, instrument);
                 var grp = group(cs, request);
                 for (var r : grp) {
                     forwardNewRequest(r, r.getTraderId());
@@ -699,10 +683,17 @@ public class TraderEngine implements ITraderEngine {
         return null;
     }
 
+    private TraderContext findAnyContext() throws NoTraderException {
+        if (traders.isEmpty()) {
+            throw new NoTraderException("No available trader.");
+        }
+        return traders.values().iterator().next();
+    }
+
     private Account getSettledAccount() throws DataAccessException,
                                                AlgorithmException {
         try (var conn = ds.getConnection()) {
-            final var tradingDay = conn.getTradingDay().getTradingDay();
+            final var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
             final var ids = getRalatedInstrumentIds();
             final var settlePrices = findSettlementPrices(ids, conn);
             final var relatedInstruments = findRelatedInstruments(ids, conn);
@@ -725,18 +716,14 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void settle(ITraderDataSource ds) throws DataAccessException,
-                                                     ContractNotFoundException,
-                                                     AlgorithmException,
-                                                     UnknownTraderIdException,
-                                                     UnknownOrderIdException,
-                                                     InvalidContractException,
-                                                     QuantityOverflowException,
-                                                     InstrumentNotFoundException,
-                                                     WrongOrderIdException {
+    private void settle(ITraderDataSource ds)
+            throws DataAccessException, ContractNotFoundException, AlgorithmException,
+                   NoTraderException, UnknownTraderIdException, UnknownOrderIdException,
+                   InvalidContractException, QuantityOverflowException, InstrumentNotFoundException,
+                   WrongOrderIdException {
         try (var conn = ds.getConnection()) {
             var rs = conn.getRequests();
-            var tradingDay = conn.getTradingDay().getTradingDay();
+            var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
             Objects.requireNonNull(rs);
             for (var r : rs) {
                 if (!r.getTradingDay().equals(tradingDay)) {
@@ -747,60 +734,52 @@ public class TraderEngine implements ITraderEngine {
             // Clear everyday to avoid mem leak.
             clearInternals();
         } catch (DataQueryException | ClassNotFoundException | SQLException ex) {
-            throw new DataAccessException(ex.getMessage(),
-                                          ex);
+            throw new DataAccessException(ex.getMessage(), ex);
         }
     }
 
-    private Collection<Request> group(Collection<Contract> cs,
-                                      Request request) throws DeepCopyException,
-                                                              DataAccessException {
+    private Collection<Request> group(Collection<Contract> cs, Request request)
+            throws DeepCopyException, NoTraderException {
         final var today = new HashMap<Integer, Request>(64);
         final var yd = new HashMap<Integer, Request>(64);
-        try (var conn = ds.getConnection()) {
-            var tradingDay = conn.getTradingDay().getTradingDay();
-            for (var c : cs) {
-                if (c.getOpenTradingDay().isBefore(tradingDay)) {
-                    Request o = yd.get(c.getTraderId());
+        var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
+        for (var c : cs) {
+            if (c.getOpenTradingDay().isBefore(tradingDay)) {
+                Request o = yd.get(c.getTraderId());
+                if (o == null) {
+                    o = Utils.copy(request);
                     if (o == null) {
-                        o = Utils.copy(request);
-                        if (o == null) {
-                            throw new DeepCopyException(Request.class.getCanonicalName());
-                        }
-                        o.setOffset(Offset.CLOSE_YD);
-                        o.setQuantity(0L);
-                        o.setTraderId(c.getTraderId());
+                        throw new DeepCopyException(Request.class.getCanonicalName());
                     }
-                    o.setQuantity(o.getQuantity() + 1);
-                } else {
-                    Request o = today.get(c.getTraderId());
-                    if (o == null) {
-                        o = Utils.copy(request);
-                        if (o == null) {
-                            throw new DeepCopyException(Request.class.getCanonicalName());
-                        }
-                        o.setOffset(Offset.CLOSE_TODAY);
-                        o.setQuantity(0L);
-                        o.setTraderId(c.getTraderId());
-                    }
-                    o.setQuantity(o.getQuantity() + 1);
+                    o.setOffset(Offset.CLOSE_YD);
+                    o.setQuantity(0L);
+                    o.setTraderId(c.getTraderId());
                 }
+                o.setQuantity(o.getQuantity() + 1);
+            } else {
+                Request o = today.get(c.getTraderId());
+                if (o == null) {
+                    o = Utils.copy(request);
+                    if (o == null) {
+                        throw new DeepCopyException(Request.class.getCanonicalName());
+                    }
+                    o.setOffset(Offset.CLOSE_TODAY);
+                    o.setQuantity(0L);
+                    o.setTraderId(c.getTraderId());
+                }
+                o.setQuantity(o.getQuantity() + 1);
             }
-
-            var r = new HashSet<Request>(today.values());
-            r.addAll(yd.values());
-            return r;
-        } catch (DataQueryException | SQLException | ClassNotFoundException ex) {
-            throw new DataAccessException(ex.getMessage(),
-                                          ex);
         }
+
+        var r = new HashSet<Request>(today.values());
+        r.addAll(yd.values());
+        return r;
     }
 
-    private void initAccount(Account a) throws DataAccessException {
+    private void initAccount(Account a) throws DataAccessException, NoTraderException {
         Objects.requireNonNull(a);
         try (var conn = ds.getConnection()) {
-            final var tradingDay = conn.getTradingDay().getTradingDay();
-
+            final var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
             a.setPreBalance(a.getBalance());
             a.setPreDeposit(a.getDeposit());
             a.setPreMargin(a.getMargin());
@@ -812,9 +791,8 @@ public class TraderEngine implements ITraderEngine {
             a.setTradingDay(tradingDay);
 
             conn.updateAccount(a);
-        } catch (SQLException | ClassNotFoundException | DataUpdateException | DataQueryException ex) {
-            throw new DataAccessException(ex.getMessage(),
-                                          ex);
+        } catch (SQLException | ClassNotFoundException | DataUpdateException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
         }
     }
 
@@ -867,13 +845,12 @@ public class TraderEngine implements ITraderEngine {
         }
     }
 
-    private void setFrozenClose(double commission,
-                                Contract contract,
-                                Margin margin) throws DataAccessException {
+    private void setFrozenClose(double commission, Contract contract, Margin margin)
+            throws DataAccessException, NoTraderException {
         ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
-            final var tradingDay = conn.getTradingDay().getTradingDay();
+            final var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
             conn.transaction();
             /*
              * Update contracts status to make it frozen.
@@ -902,8 +879,7 @@ public class TraderEngine implements ITraderEngine {
             conn.commit();
         } catch (ClassNotFoundException | SQLException | DataException ex) {
             rollback(conn);
-            throw new DataAccessException(ex.getMessage(),
-                                          ex);
+            throw new DataAccessException(ex.getMessage(), ex);
         } finally {
             if (conn != null) {
                 conn.close();
@@ -914,11 +890,12 @@ public class TraderEngine implements ITraderEngine {
     private void setFrozenOpen(double amount,
                                double margin,
                                double commission,
-                               Request request) throws DataAccessException {
+                               Request request) throws DataAccessException,
+                                                       NoTraderException {
         ITraderDataConnection conn = null;
         try {
             conn = ds.getConnection();
-            final var tradingDay = conn.getTradingDay().getTradingDay();
+            final var tradingDay = findAnyContext().getGatewayInfo().getTradingDay();
             conn.transaction();
             /*
              * Add preparing contract.

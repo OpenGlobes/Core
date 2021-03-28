@@ -616,10 +616,8 @@ public class DefaultTraderEngineAlgorithm implements ITraderEngineAlgorithm {
         return v;
     }
 
-    private double findPriceProperty(String key,
-                                     Map<String, SettlementPrice> prices)
-            throws SettlementNotFoundException,
-                   InvalidSettlementPriceException {
+    private double findPriceProperty(String key, Map<String, SettlementPrice> prices)
+            throws SettlementNotFoundException, InvalidSettlementPriceException {
         var v = prices.get(key);
         if (v == null) {
             throw new SettlementNotFoundException(key);

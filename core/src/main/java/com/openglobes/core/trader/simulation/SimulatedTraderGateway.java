@@ -23,6 +23,8 @@ import com.openglobes.core.event.NoSubscribedClassException;
 import com.openglobes.core.trader.*;
 import com.openglobes.core.utils.Loggers;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -146,6 +148,9 @@ public class SimulatedTraderGateway implements ITraderGateway {
 
     @Override
     public TraderGatewayInfo getGatewayInfo() {
+        info.setTradingDay(LocalDate.now());
+        info.setActionDay(LocalDate.now());
+        info.setUpdateTimestamp(ZonedDateTime.now());
         return info;
     }
 
