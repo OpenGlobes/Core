@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.interceptor;
 
-import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 import com.openglobes.core.utils.Loggers;
@@ -43,7 +42,6 @@ public class InterceptorChain implements IInterceptorChain {
 
     private final List<InterceptorContext> chain;
     private final QuickCondition cond;
-    private final Queue<EngineRequestError> errors;
     private final ReentrantReadWriteLock lock;
     private final Queue<RequestInterceptingContext> requests;
     private final Queue<Response> responses;
@@ -58,7 +56,6 @@ public class InterceptorChain implements IInterceptorChain {
         requests = new LinkedList<>();
         responses = new LinkedList<>();
         trades = new LinkedList<>();
-        errors = new LinkedList<>();
         worker = new Worker(this);
     }
 
@@ -136,20 +133,11 @@ public class InterceptorChain implements IInterceptorChain {
     public <T> void respond(Class<T> clazz, T response) throws InterceptorException {
         if (clazz == Trade.class) {
             addTrade((Trade) response);
-        } else if (clazz == EngineRequestError.class) {
-            addError((EngineRequestError) response);
         } else if (clazz == Response.class) {
             addResponse((Response) response);
         } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
         }
-    }
-
-    private void addError(EngineRequestError e) {
-        synchronized (errors) {
-            errors.add(e);
-        }
-        signal0();
     }
 
     private void addRequest(RequestInterceptingContext ctx) {
@@ -186,10 +174,6 @@ public class InterceptorChain implements IInterceptorChain {
         } else if (clazz == RequestInterceptingContext.class) {
             synchronized (requests) {
                 return (T) requests.poll();
-            }
-        } else if (clazz == EngineRequestError.class) {
-            synchronized (errors) {
-                return (T) errors.poll();
             }
         } else {
             throw new UnsupportedInterceptingTypeException(clazz.getCanonicalName());
@@ -279,9 +263,6 @@ public class InterceptorChain implements IInterceptorChain {
                     execute(RequestInterceptingContext.class,
                             timeout,
                             TimeUnit.SECONDS);
-                    execute(EngineRequestError.class,
-                            timeout,
-                            TimeUnit.SECONDS);
                 } finally {
                     lock.readLock().unlock();
                 }
@@ -293,8 +274,7 @@ public class InterceptorChain implements IInterceptorChain {
                                  int timeout,
                                  TimeUnit unit)
                 throws InterceptorException {
-            if (object instanceof Trade || object instanceof Response
-                || object instanceof EngineRequestError) {
+            if (object instanceof Trade || object instanceof Response) {
                 executeResponse(clazz,
                                 object,
                                 timeout,

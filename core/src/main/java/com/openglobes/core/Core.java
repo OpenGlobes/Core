@@ -147,7 +147,6 @@ public class Core implements ICore {
         var src = engine.getEventSource();
         src.subscribe(Trade.class, new TradeHandler(chain));
         src.subscribe(Response.class, new ResponseHandler(chain));
-        src.subscribe(EngineRequestError.class, new RequestErrorHandler(chain));
         src.subscribe(TraderRuntimeException.class, new TraderRuntimeExceptionHandler(coreLis));
         src.subscribe(GatewayRuntimeException.class, new GatewayRuntimeExceptionHandler(coreLis));
         src.subscribe(ServiceRuntimeStatus.class, new ServiceRuntimeStatusHandler(coreLis));
@@ -188,9 +187,6 @@ public class Core implements ICore {
             x.addInterceptor(-Integer.MAX_VALUE,
                              Response.class,
                              new LastResponseInterceptor(sharedCtx));
-            x.addInterceptor(-Integer.MAX_VALUE,
-                             EngineRequestError.class,
-                             new LastRequestErrorInterceptor(sharedCtx));
             x.addInterceptor(Integer.MAX_VALUE,
                              RequestInterceptingContext.class,
                              new LastRequestInterceptor(reqCtx));

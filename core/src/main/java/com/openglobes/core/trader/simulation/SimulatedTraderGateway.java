@@ -127,11 +127,7 @@ public class SimulatedTraderGateway implements ITraderGateway {
                 if (response.getOrderId() == null) {
                     return;
                 }
-                if (response.getStatus() == OrderStatus.REJECTED) {
-                    handler.onError(r, response);
-                } else {
-                    handler.onResponse(response);
-                }
+                handler.onResponse(response);
             } catch (Throwable th) {
                 handler.onError(new GatewayRuntimeException(-1, th.getMessage(), th));
             }

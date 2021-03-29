@@ -27,7 +27,6 @@ import java.util.List;
 public class ResponsePack {
     public final List<Trade> trades = new LinkedList<>();
     public final List<Response> goodResponses = new LinkedList<>();
-    public final List<Request> badRequests = new LinkedList<>();
     public final List<Response> badResponses = new LinkedList<>();
 
     public ResponsePack() {}

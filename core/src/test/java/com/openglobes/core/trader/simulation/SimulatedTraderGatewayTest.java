@@ -42,13 +42,11 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
 
             @Override
             public void onResponse(Response response) {
-                goodResponses(response.getOrderId()).add(response);
-            }
-
-            @Override
-            public void onError(Request request, Response response) {
-                badRequests(request.getOrderId()).add(request);
-                badResponses(response.getOrderId()).add(response);
+                if (response.getStatus() == OrderStatus.REJECTED) {
+                    badResponses(response.getOrderId()).add(response);
+                } else {
+                    goodResponses(response.getOrderId()).add(response);
+                }
             }
 
             @Override
@@ -112,7 +110,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(1L).size());
         assertEquals(1, trades(1L).size());
-        assertEquals(0, badRequests(1L).size());
         assertEquals(0, badResponses(1L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(1L).get(0).getStatus());
@@ -131,7 +128,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(21L).size());
         assertEquals(1, trades(21L).size());
-        assertEquals(0, badRequests(21L).size());
         assertEquals(0, badResponses(21L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(21L).get(0).getStatus());
@@ -182,7 +178,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(3, goodResponses(1L).size());
         assertEquals(2, trades(1L).size());
-        assertEquals(0, badRequests(1L).size());
         assertEquals(0, badResponses(1L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(1L).get(0).getStatus());
@@ -202,7 +197,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(22L).size());
         assertEquals(1, trades(22L).size());
-        assertEquals(0, badRequests(22L).size());
         assertEquals(0, badResponses(22L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(22L).get(0).getStatus());
@@ -253,7 +247,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(3, goodResponses(22L).size());
         assertEquals(2, trades(22L).size());
-        assertEquals(0, badRequests(22L).size());
         assertEquals(0, badResponses(22L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(22L).get(0).getStatus());
@@ -284,7 +277,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(23L).size());
         assertEquals(1, trades(23L).size());
-        assertEquals(0, badRequests(23L).size());
         assertEquals(0, badResponses(23L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(23L).get(0).getStatus());
@@ -328,7 +320,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(1, goodResponses(1L).size());
         assertEquals(0, trades(1L).size());
-        assertEquals(1, badRequests(1L).size());
         assertEquals(1, badResponses(1L).size());
 
         /*
@@ -337,12 +328,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
         assertEquals(OrderStatus.REJECTED, badResponses(1L).get(0).getStatus());
         assertEquals(102, badResponses(1L).get(0).getStatusCode());
         assertEquals("重复报单", badResponses(1L).get(0).getStatusMessage());
-
-        /*
-         * Verify bad request.
-         */
-        assertEquals(1L, badRequests(1L).get(0).getOrderId());
-        assertEquals(1001L, badRequests(1L).get(0).getRequestId());
     }
 
     @Test
@@ -369,7 +354,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(3, goodResponses(1L).size());
         assertEquals(1, trades(1L).size());
-        assertEquals(0, badRequests(1L).size());
         assertEquals(0, badResponses(1L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(1L).get(0).getStatus());
@@ -408,7 +392,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(0, goodResponses(9999L).size());
         assertEquals(0, trades(9999L).size());
-        assertEquals(1, badRequests(9999L).size());
         assertEquals(1, badResponses(9999L).size());
 
         assertEquals(OrderStatus.REJECTED, badResponses(9999L).get(0).getStatus());
@@ -416,13 +399,12 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
         assertEquals("找不到报单", badResponses(9999L).get(0).getStatusMessage());
 
         /*
-         * Check request.
+         * Check response details.
          */
-        assertEquals(9999L, badRequests(9999L).get(0).getOrderId());
-        assertEquals(206L, badRequests(9999L).get(0).getRequestId());
-        assertEquals(ActionType.DELETE, badRequests(9999L).get(0).getAction());
-        assertEquals("c2109", badRequests(9999L).get(0).getInstrumentId());
-        assertEquals(Direction.BUY, badRequests(9999L).get(0).getDirection());
+        assertEquals(9999L, badResponses(9999L).get(0).getOrderId());
+        assertEquals(ActionType.DELETE, badResponses(9999L).get(0).getAction());
+        assertEquals("c2109", badResponses(9999L).get(0).getInstrumentId());
+        assertEquals(Direction.BUY, badResponses(9999L).get(0).getDirection());
     }
 
     @Test
@@ -443,7 +425,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(25L).size());
         assertEquals(2, trades(25L).size());
-        assertEquals(0, badRequests(25L).size());
         assertEquals(0, badResponses(25L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(25L).get(0).getStatus());
@@ -481,7 +462,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(1L).size());
         assertEquals(1, trades(1L).size());
-        assertEquals(0, badRequests(1L).size());
         assertEquals(0, badResponses(1L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(1L).get(0).getStatus());
@@ -511,7 +491,6 @@ class SimulatedTraderGatewayTest extends SimTestSupporter {
          */
         assertEquals(2, goodResponses(2L).size());
         assertEquals(1, trades(2L).size());
-        assertEquals(0, badRequests(2L).size());
         assertEquals(0, badResponses(2L).size());
 
         assertEquals(OrderStatus.ACCEPTED, goodResponses(2L).get(0).getStatus());

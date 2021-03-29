@@ -16,7 +16,6 @@
  */
 package com.openglobes.core.connector;
 
-import com.openglobes.core.trader.EngineRequestError;
 import com.openglobes.core.trader.Response;
 import com.openglobes.core.trader.Trade;
 
@@ -29,8 +28,6 @@ public interface IConnector {
     void write(Trade trade) throws ConnectorException;
 
     void write(Response response) throws ConnectorException;
-
-    void write(EngineRequestError error) throws ConnectorException;
 
     void dispose() throws ConnectorException;
 }

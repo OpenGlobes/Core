@@ -42,10 +42,6 @@ public class SimTestSupporter {
         return pack(orderId).goodResponses;
     }
 
-    protected List<Request> badRequests(Long orderId) {
-        return pack(orderId).badRequests;
-    }
-
     protected List<Response> badResponses(Long orderId) {
         return pack(orderId).badResponses;
     }

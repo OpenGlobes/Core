@@ -46,23 +46,19 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     }
 
     @Override
-    public void onError(Request request, Response response) {
-        if (request.getAction() == ActionType.DELETE) {
-            publishRquestError(request, response);
-            /*
-             * Delete action fails, so order is unchanged.
-             */
-        } else {
-            deleteOrderWhenException(request, response);
-        }
-    }
-
-    @Override
     public void onResponse(Response response) {
         try (var conn = ctx.getEngine().getDataSource().getConnection()) {
             preprocess(response);
             synchronized (ctx.getEngine()) {
                 conn.addResponse(response);
+                /*
+                 * If the request is create a new order, but now it fails, delete that
+                 * order.
+                 */
+                if (response.getStatus() == OrderStatus.REJECTED &&
+                    response.getAction() == ActionType.NEW) {
+                    resetRejectedResponse(response);
+                }
                 if (response.getAction() == ActionType.DELETE) {
                     dealDelete(response);
                 }
@@ -370,24 +366,12 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
 
     }
 
-    private void deleteOrderWhenException(Request request, Response response) {
-        try {
-            /*
-             * Call cancel handler to cancel a bad request.
-             */
-            var delete = initResponse(request);
-            delete.setAction(ActionType.DELETE);
-            delete.setStatusCode(response.getStatusCode());
-            delete.setStatusMessage(response.getStatusMessage());
-            onResponse(delete);
-            /*
-             * Call user handler.
-             */
-            publishRquestError(request, response);
-        } catch (Throwable th) {
-            callOnException(new TraderRuntimeException(th.getMessage(),
-                                                       th));
-        }
+    private void resetRejectedResponse(Response response) {
+        response.setAction(ActionType.DELETE);
+        response.setStatus(OrderStatus.DELETED);
+        response.setStatusCode(response.getStatusCode());
+        response.setStatusMessage(response.getStatusMessage());
+
     }
 
     private ITraderDataSource getDataSource() throws InvalidDataSourceException {
@@ -533,13 +517,6 @@ public class TraderGatewayHandler implements ITraderGatewayHandler {
     private <T> void publishEvent(Class<T> clazz, T object) {
         var e = (TraderEngine) ctx.getEngine();
         e.publishEvent(clazz, object);
-    }
-
-    private void publishRquestError(Request request, Response response) {
-        var r = new EngineRequestError();
-        r.setRequest(request);
-        r.setResponse(response);
-        publishEvent(EngineRequestError.class, r);
     }
 
     private void requireStatus(Integer saw, Integer wanted) throws IllegalContractStatusException {

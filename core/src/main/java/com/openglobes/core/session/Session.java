@@ -79,9 +79,7 @@ class Session implements ISession {
                 rsp.getConnector().write((Trade) object);
             } else if (object instanceof Response) {
                 rsp.getConnector().write((Response) object);
-            } else if (object instanceof EngineRequestError) {
-                rsp.getConnector().write((EngineRequestError) object);
-            } else {
+            }else {
                 throw new InvalidSessionResponseException(object.getClass().getCanonicalName());
             }
         } catch (ConnectorException ex) {
@@ -120,10 +118,6 @@ class Session implements ISession {
             var r = (Response) object;
             r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
             checkRemoveMapping(r);
-        } else if (object instanceof EngineRequestError) {
-            var r = ((EngineRequestError) object).getRequest();
-            Objects.requireNonNull(r);
-            r.setOrderId(map.getSrcIdByDest(r.getOrderId()));
         } else {
             throw new UnsupportedSessionResponseException(object.getClass().getCanonicalName());
         }
