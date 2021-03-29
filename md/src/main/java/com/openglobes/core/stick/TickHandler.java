@@ -38,7 +38,7 @@ public class TickHandler implements IMarketGatewayHandler {
     }
 
     @Override
-    public void onException(GatewayRuntimeException ex) {
+    public void onError(GatewayRuntimeException ex) {
         Loggers.getLogger(TickHandler.class.getCanonicalName()).log(Level.SEVERE,
                                                                     ex.getMessage(),
                                                                     ex);

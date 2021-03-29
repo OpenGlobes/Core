@@ -28,7 +28,7 @@ public interface IMarketGatewayHandler {
 
     void onTick(Tick tick);
 
-    void onException(GatewayRuntimeException exception);
+    void onError(GatewayRuntimeException exception);
 
     void onStatusChange(ServiceRuntimeStatus status);
 }
