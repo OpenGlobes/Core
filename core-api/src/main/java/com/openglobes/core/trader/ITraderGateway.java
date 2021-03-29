@@ -12,7 +12,5 @@ public interface ITraderGateway {
 
     void insert(Request request);
 
-    int getStatus();
-
     TraderGatewayInfo getGatewayInfo();
 }

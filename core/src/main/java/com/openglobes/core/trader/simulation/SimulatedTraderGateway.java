@@ -39,7 +39,6 @@ public class SimulatedTraderGateway implements ITraderGateway {
     private final Map<String, MarketMaker> makers = new HashMap<>();
     private final EventSource es = new EventSource();
     private ITraderGatewayHandler handler = null;
-    private int status = 0;
 
     public SimulatedTraderGateway() {
         try {
@@ -157,11 +156,6 @@ public class SimulatedTraderGateway implements ITraderGateway {
 
     public MarketMaker getMarketer(String instrumentId) {
         return makers.get(instrumentId);
-    }
-
-    @Override
-    public int getStatus() {
-        return status;
     }
 
     @Override
